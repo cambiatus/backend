@@ -158,7 +158,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:creator_id, non_null(:string))
     field(:reward, non_null(:float))
     field(:verifier_reward, non_null(:float))
-    field(:deadline, non_null(:datetime))
+    field(:deadline, :datetime)
     field(:usages, non_null(:integer))
     field(:usages_left, non_null(:integer))
     field(:verifications, non_null(:integer))
