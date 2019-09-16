@@ -417,4 +417,103 @@ defmodule BeSpiral.Commune do
   def get_members_count(symbol) when is_binary(symbol) do
     get_members_count(%Community{symbol: symbol})
   end
+
+  def get_verifications_history(%{validator: account}) do
+    query = """
+      select
+        objectives.id as objective_id,
+        actions.id as action_id,
+        claims.id as claim_id,
+        communities.logo as logo,
+        actions.description as description,
+        claims.created_at,
+        case
+          when checks.validator_id is null then 'pending'
+          when checks.is_verified = false then 'disapproval'
+          else 'approval'
+        end as status
+      from
+        communities,
+        objectives,
+        actions,
+        claims left join checks on claims.id = checks.claim_id and checks.validator_id = $1,
+        validators
+      where
+        communities.symbol = objectives.community_id
+        and objectives.id = actions.objective_id
+        and actions.id = claims.action_id
+        and actions.id = validators.action_id
+        and actions.verification_type = 'claimable'
+        and validators.validator_id = $1
+        and (claims.is_verified = false or (claims.is_verified = true and checks.validator_id is not null))
+      order by claims.id desc
+    """
+
+    response = Ecto.Adapters.SQL.query!(Repo, query, [account])
+
+    columns = Enum.map(response.columns, &(String.to_atom(&1)))
+
+    result =
+      Enum.map(response.rows, fn(row) ->
+        Enum.into(Enum.zip(columns, row), %{})
+      end)
+
+    result =
+      Enum.map(result, fn(row) ->
+        %{row | created_at: DateTime.from_naive!(row.created_at, "Etc/UTC")}
+      end)
+
+    {:ok, result}
+  end
+
+  def get_verification(%{id: id, validator: account}) do
+    query = """
+      select
+        communities.symbol,
+        communities.logo,
+        communities."name",
+        objectives.description as objective_description,
+        actions.description as action_description,
+        actions.reward as claimer_reward,
+        actions.verifier_reward,
+        claimers.account as claimer,
+        claims.created_at,
+        case
+          when claims.is_verified = false and checks.validator_id is null then 'pending'
+          when claims.is_verified = false and checks.is_verified = false then 'disapproved_and_under_review'
+          when claims.is_verified = false and checks.is_verified = true then 'approved_and_under_review'
+          when claims.is_verified = true and checks.is_verified = false then 'disapproved'
+          else 'approved'
+        end as status
+      from
+        communities,
+        objectives,
+        actions,
+        validators,
+        claims left join checks on claims.id = checks.claim_id and checks.validator_id = $2,
+        users as claimers
+      where
+        communities.symbol = objectives.community_id
+        and objectives.id = actions.objective_id
+        and actions.id = claims.action_id
+        and actions.id = validators.action_id
+        and validators.validator_id = $2
+        and claims.claimer_id = claimers.account
+        and claims.id = $1
+        and (claims.is_verified = false or (claims.is_verified = true and checks.validator_id is not null))
+    """
+
+    response = Ecto.Adapters.SQL.query!(Repo, query, [id, account])
+
+    columns = Enum.map(response.columns, &(String.to_atom(&1)))
+
+    [result | _] =
+      Enum.map(response.rows, fn(row) ->
+        Enum.into(Enum.zip(columns, row), %{})
+      end)
+
+    result = %{result | created_at: DateTime.from_naive!(result.created_at, "Etc/UTC")}
+
+    {:ok, result}
+  end
 end
