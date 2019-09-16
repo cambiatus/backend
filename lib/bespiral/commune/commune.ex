@@ -457,9 +457,7 @@ defmodule BeSpiral.Commune do
       Enum.map(response.rows, fn(row) ->
         Enum.into(Enum.zip(columns, row), %{})
       end)
-
-    result =
-      Enum.map(result, fn(row) ->
+      |> Enum.map(fn(row) ->
         %{row | created_at: DateTime.from_naive!(row.created_at, "Etc/UTC")}
       end)
 
@@ -507,13 +505,18 @@ defmodule BeSpiral.Commune do
 
     columns = Enum.map(response.columns, &(String.to_atom(&1)))
 
-    [result | _] =
+    results =
       Enum.map(response.rows, fn(row) ->
         Enum.into(Enum.zip(columns, row), %{})
       end)
 
-    result = %{result | created_at: DateTime.from_naive!(result.created_at, "Etc/UTC")}
+    case results do
+      [result | _] ->
+        result = %{result | created_at: DateTime.from_naive!(result.created_at, "Etc/UTC")}
+        {:ok, result}
 
-    {:ok, result}
+      [] ->
+        {:ok, nil}
+    end
   end
 end
