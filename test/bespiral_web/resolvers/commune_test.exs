@@ -9,6 +9,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
     Accounts.User,
     Commune.Action,
     Commune.AvailableSale,
+    Commune.Claim,
     Commune.Community,
     Commune.Objective,
     Commune.Transfer
@@ -740,6 +741,188 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       assert total_count == @num
       assert fetched_count == fetch
       assert Repo.aggregate(Transfer, :count, :id) == @num * 2
+    end
+
+    test "get all verifications from a single validator", %{conn: conn} do
+      # users
+      cmm_manager = insert(:user)
+      claimer = insert(:user)
+      validator1 = insert(:user)
+      validator2 = insert(:user)
+
+      # communities
+      community = insert(:community)
+
+      # objectives
+      objective = insert(:objective, %{creator: cmm_manager, community: community})
+
+      # actions
+      insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "automatic"})
+      claimable_action = insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "claimable", verifications: 1})
+
+      # validators
+      insert(:validator, %{validator: validator1, action: claimable_action})
+      insert(:validator, %{validator: validator2, action: claimable_action})
+
+      # claims
+      claim_finished1 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+      claim_finished2 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+      claim_finished3 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+      claim_under_review1 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: false})
+      claim_under_review2 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: false})
+
+      # checks
+      insert(:check, %{claim: claim_finished1, validator: validator1, is_verified: true})
+      insert(:check, %{claim: claim_finished2, validator: validator1, is_verified: false})
+      insert(:check, %{claim: claim_finished2, validator: validator2, is_verified: true})
+      insert(:check, %{claim: claim_finished3, validator: validator1, is_verified: false})
+      insert(:check, %{claim: claim_finished3, validator: validator2, is_verified: false})
+      insert(:check, %{claim: claim_under_review1, validator: validator1, is_verified: false})
+      insert(:check, %{claim: claim_under_review2, validator: validator2, is_verified: false})
+
+
+      variables = %{
+        "input" => %{"validator" => validator2.account}
+      }
+
+      query = """
+      query($input: VerificationsInput!) {
+        verifications(input: $input) {
+          status
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "verifications" => verifications
+        }
+      } = json_response(res, 200)
+
+      # Total of claims
+      assert Repo.aggregate(Claim, :count, :id) == 5
+
+      # A total of 4 claims minus 1 verified claim that validator2 not participated
+      assert Enum.count(verifications) == 4
+
+      # Status of each verification made by validator2
+      assert Enum.at(verifications, 0)["status"] == "DISAPPROVAL"
+      assert Enum.at(verifications, 1)["status"] == "PENDING"
+      assert Enum.at(verifications, 2)["status"] == "DISAPPROVAL"
+      assert Enum.at(verifications, 3)["status"] == "APPROVAL"
+    end
+
+    test "collects a single verification from an authorized validator", %{conn: conn} do
+      # users
+      cmm_manager = insert(:user)
+      claimer = insert(:user)
+      validator1 = insert(:user)
+      validator2 = insert(:user)
+
+      # communities
+      community = insert(:community)
+
+      # objectives
+      objective = insert(:objective, %{creator: cmm_manager, community: community})
+
+      # actions
+      insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "automatic"})
+      claimable_action = insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "claimable", verifications: 1})
+
+      # validators
+      insert(:validator, %{validator: validator1, action: claimable_action})
+      insert(:validator, %{validator: validator2, action: claimable_action})
+
+      # claims
+      claim_under_review = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+
+      # checks
+      insert(:check, %{claim: claim_under_review, validator: validator1, is_verified: false})
+      insert(:check, %{claim: claim_under_review, validator: validator2, is_verified: false})
+
+      variables = %{
+        "input" => %{
+          "id" => claim_under_review.id,
+          "validator" => validator2.account
+        }
+      }
+
+      query = """
+      query($input: VerificationInput!) {
+        verification(input: $input) {
+          status
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "verification" => %{
+            "status" => status
+          }
+        }
+      } = json_response(res, 200)
+
+      # Status of each verification made by validator2
+      assert status == "DISAPPROVED"
+    end
+
+    test "collects a single verification from an unauthorized validator", %{conn: conn} do
+      # users
+      cmm_manager = insert(:user)
+      claimer = insert(:user)
+      validator1 = insert(:user)
+      validator2 = insert(:user)
+
+      # communities
+      community = insert(:community)
+
+      # objectives
+      objective = insert(:objective, %{creator: cmm_manager, community: community})
+
+      # actions
+      insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "automatic"})
+      claimable_action = insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "claimable", verifications: 1})
+
+      # validators
+      insert(:validator, %{validator: validator1, action: claimable_action})
+      insert(:validator, %{validator: validator2, action: claimable_action})
+
+      # claims
+      claim_under_review = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+
+      # checks
+      insert(:check, %{claim: claim_under_review, validator: validator1, is_verified: true})
+
+      variables = %{
+        "input" => %{
+          "id" => claim_under_review.id,
+          "validator" => validator2.account
+        }
+      }
+
+      query = """
+      query($input: VerificationInput!) {
+        verification(input: $input) {
+          status
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "verification" => verification
+        }
+      } = json_response(res, 200)
+
+      # Status of each verification made by validator2
+      assert verification == nil
     end
   end
 end
