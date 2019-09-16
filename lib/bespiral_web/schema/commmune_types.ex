@@ -208,6 +208,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, :checks_input)
       resolve(dataloader(BeSpiral.Commune))
     end
+
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
@@ -338,9 +339,22 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
   @desc "Verification status type"
   enum :verification_status_type do
     value(:pending, as: "pending", description: "A verification that is pending")
-    value(:disapproved_and_under_review, as: "disapproved_and_under_review", description: "A verification that was disapproved but still is under review")
-    value(:approved_and_under_review, as: "approved_and_under_review", description: "A verification that was approved but still is under review")
-    value(:disapproved, as: "disapproved", description: "A verification that was disapproved and finished")
+
+    value(:disapproved_and_under_review,
+      as: "disapproved_and_under_review",
+      description: "A verification that was disapproved but still is under review"
+    )
+
+    value(:approved_and_under_review,
+      as: "approved_and_under_review",
+      description: "A verification that was approved but still is under review"
+    )
+
+    value(:disapproved,
+      as: "disapproved",
+      description: "A verification that was disapproved and finished"
+    )
+
     value(:approved, as: "approved", description: "A verification that was approved and finished")
   end
 end

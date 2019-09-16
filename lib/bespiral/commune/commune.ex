@@ -32,7 +32,9 @@ defmodule BeSpiral.Commune do
 
         {:validator, account}, query ->
           query
-          |> join(:inner, [a], v in Validator, on: a.id == v.action_id and v.validator_id == ^account)
+          |> join(:inner, [a], v in Validator,
+            on: a.id == v.action_id and v.validator_id == ^account
+          )
 
         {:is_completed, is_completed}, query ->
           query
@@ -451,13 +453,13 @@ defmodule BeSpiral.Commune do
 
     response = Ecto.Adapters.SQL.query!(Repo, query, [account])
 
-    columns = Enum.map(response.columns, &(String.to_atom(&1)))
+    columns = Enum.map(response.columns, &String.to_atom(&1))
 
     result =
-      Enum.map(response.rows, fn(row) ->
+      Enum.map(response.rows, fn row ->
         Enum.into(Enum.zip(columns, row), %{})
       end)
-      |> Enum.map(fn(row) ->
+      |> Enum.map(fn row ->
         %{row | created_at: DateTime.from_naive!(row.created_at, "Etc/UTC")}
       end)
 
@@ -503,10 +505,10 @@ defmodule BeSpiral.Commune do
 
     response = Ecto.Adapters.SQL.query!(Repo, query, [id, account])
 
-    columns = Enum.map(response.columns, &(String.to_atom(&1)))
+    columns = Enum.map(response.columns, &String.to_atom(&1))
 
     results =
-      Enum.map(response.rows, fn(row) ->
+      Enum.map(response.rows, fn row ->
         Enum.into(Enum.zip(columns, row), %{})
       end)
 

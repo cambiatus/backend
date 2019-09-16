@@ -119,7 +119,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -183,7 +183,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -232,7 +232,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -281,7 +281,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -330,7 +330,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -757,19 +757,39 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       objective = insert(:objective, %{creator: cmm_manager, community: community})
 
       # actions
-      insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "automatic"})
-      claimable_action = insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "claimable", verifications: 1})
+      insert(:action, %{
+        creator: cmm_manager,
+        objective: objective,
+        verification_type: "automatic"
+      })
+
+      claimable_action =
+        insert(:action, %{
+          creator: cmm_manager,
+          objective: objective,
+          verification_type: "claimable",
+          verifications: 1
+        })
 
       # validators
       insert(:validator, %{validator: validator1, action: claimable_action})
       insert(:validator, %{validator: validator2, action: claimable_action})
 
       # claims
-      claim_finished1 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
-      claim_finished2 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
-      claim_finished3 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
-      claim_under_review1 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: false})
-      claim_under_review2 = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: false})
+      claim_finished1 =
+        insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+
+      claim_finished2 =
+        insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+
+      claim_finished3 =
+        insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+
+      claim_under_review1 =
+        insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: false})
+
+      claim_under_review2 =
+        insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: false})
 
       # checks
       insert(:check, %{claim: claim_finished1, validator: validator1, is_verified: true})
@@ -779,7 +799,6 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       insert(:check, %{claim: claim_finished3, validator: validator2, is_verified: false})
       insert(:check, %{claim: claim_under_review1, validator: validator1, is_verified: false})
       insert(:check, %{claim: claim_under_review2, validator: validator2, is_verified: false})
-
 
       variables = %{
         "input" => %{"validator" => validator2.account}
@@ -828,15 +847,27 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       objective = insert(:objective, %{creator: cmm_manager, community: community})
 
       # actions
-      insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "automatic"})
-      claimable_action = insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "claimable", verifications: 1})
+      insert(:action, %{
+        creator: cmm_manager,
+        objective: objective,
+        verification_type: "automatic"
+      })
+
+      claimable_action =
+        insert(:action, %{
+          creator: cmm_manager,
+          objective: objective,
+          verification_type: "claimable",
+          verifications: 1
+        })
 
       # validators
       insert(:validator, %{validator: validator1, action: claimable_action})
       insert(:validator, %{validator: validator2, action: claimable_action})
 
       # claims
-      claim_under_review = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+      claim_under_review =
+        insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
 
       # checks
       insert(:check, %{claim: claim_under_review, validator: validator1, is_verified: false})
@@ -885,15 +916,27 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       objective = insert(:objective, %{creator: cmm_manager, community: community})
 
       # actions
-      insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "automatic"})
-      claimable_action = insert(:action, %{creator: cmm_manager, objective: objective, verification_type: "claimable", verifications: 1})
+      insert(:action, %{
+        creator: cmm_manager,
+        objective: objective,
+        verification_type: "automatic"
+      })
+
+      claimable_action =
+        insert(:action, %{
+          creator: cmm_manager,
+          objective: objective,
+          verification_type: "claimable",
+          verifications: 1
+        })
 
       # validators
       insert(:validator, %{validator: validator1, action: claimable_action})
       insert(:validator, %{validator: validator2, action: claimable_action})
 
       # claims
-      claim_under_review = insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
+      claim_under_review =
+        insert(:claim, %{claimer: claimer, action: claimable_action, is_verified: true})
 
       # checks
       insert(:check, %{claim: claim_under_review, validator: validator1, is_verified: true})
