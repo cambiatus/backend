@@ -8,15 +8,15 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
   alias BeSpiralWeb.Resolvers.Commune
 
-  @desc "Community Queries on BeSpiral"
+  @desc "Community Queries"
   object :community_queries do
-    @desc "A list of sales in BeSpiral"
+    @desc "A list of sales"
     field :sales, non_null(list_of(non_null(:sale))) do
       arg(:input, non_null(:sales_input))
       resolve(&Commune.get_sales/3)
     end
 
-    @desc "A list of communities in BeSpiral"
+    @desc "A list of communities"
     field :communities, non_null(list_of(non_null(:community))) do
       resolve(&Commune.get_communities/3)
     end
@@ -27,19 +27,31 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       resolve(&Commune.find_community/3)
     end
 
+    @desc "A list of verifications"
+    field :verifications, non_null(list_of(:verification_history)) do
+      arg(:input, non_null(:verifications_input))
+      resolve(&Commune.get_verifications_history/3)
+    end
+
+    @desc "A single verification"
+    field :verification, :verification do
+      arg(:input, non_null(:verification_input))
+      resolve(&Commune.get_verification/3)
+    end
+
     @desc "A list of sale history"
     field :sale_history, list_of(:sale_history) do
       resolve(&Commune.get_sales_history/3)
     end
 
-    @desc "A single sale from BeSpiral"
+    @desc "A single sale"
     field :sale, :sale do
       arg(:input, non_null(:sale_input))
       resolve(&Commune.get_sale/3)
     end
   end
 
-  @desc "Community Subscriptions on BeSpiral"
+  @desc "Community Subscriptions"
   object :community_subscriptions do
     @desc "A subscription to resolve operations on the sales table"
     field :sales_operation, :sale do
@@ -99,7 +111,18 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:validator, :string)
   end
 
-  @desc "A community on BeSpiral"
+  @desc "Input to collect verifications"
+  input_object :verifications_input do
+    field(:validator, non_null(:string))
+  end
+
+  @desc "Input to collect verification"
+  input_object :verification_input do
+    field(:id, non_null(:integer))
+    field(:validator, non_null(:string))
+  end
+
+  @desc "A community"
   object :community do
     field(:symbol, non_null(:string))
     field(:creator, non_null(:string))
@@ -202,7 +225,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:created_at, non_null(:datetime))
   end
 
-  @desc "A network in BeSpiral"
+  @desc "A network"
   object :network do
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
@@ -213,7 +236,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:invited_by, :string)
   end
 
-  @desc "A sale on BeSpiral"
+  @desc "A sale"
   object :sale do
     field(:id, non_null(:integer))
     field(:creator_id, non_null(:string))
@@ -250,7 +273,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:units, :integer)
   end
 
-  @desc "A transfer on BeSpiral"
+  @desc "A transfer"
   object :transfer do
     field(:from_id, non_null(:string))
     field(:to_id, non_null(:string))
@@ -274,9 +297,50 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:created_at, non_null(:datetime))
   end
 
+  @desc "A minimal verification used to on a historical list"
+  object :verification_history do
+    field(:objective_id, non_null(:integer))
+    field(:action_id, non_null(:integer))
+    field(:claim_id, non_null(:integer))
+    field(:logo, non_null(:string))
+    field(:description, non_null(:string))
+    field(:created_at, non_null(:datetime))
+    field(:status, non_null(:verification_history_status_type))
+  end
+
+  @desc "A claimed action verification"
+  object :verification do
+    field(:symbol, non_null(:string))
+    field(:logo, non_null(:string))
+    field(:name, non_null(:string))
+    field(:objective_description, non_null(:string))
+    field(:action_description, non_null(:string))
+    field(:claimer_reward, non_null(:float))
+    field(:verifier_reward, non_null(:float))
+    field(:claimer, non_null(:string))
+    field(:created_at, non_null(:datetime))
+    field(:status, non_null(:verification_status_type))
+  end
+
   @desc "Action verification types"
   enum :verification_type do
     value(:automatic, as: "automatic", description: "An action that is verified automatically")
     value(:claimable, as: "claimable", description: "An action that needs be mannually verified")
+  end
+
+  @desc "Verification history status type"
+  enum :verification_history_status_type do
+    value(:pending, as: "pending", description: "A verification that is pending")
+    value(:disapproval, as: "disapproval", description: "A verification that was disapproved")
+    value(:approval, as: "approval", description: "A verification that was approved")
+  end
+
+  @desc "Verification status type"
+  enum :verification_status_type do
+    value(:pending, as: "pending", description: "A verification that is pending")
+    value(:disapproved_and_under_review, as: "disapproved_and_under_review", description: "A verification that was disapproved but still is under review")
+    value(:approved_and_under_review, as: "approved_and_under_review", description: "A verification that was approved but still is under review")
+    value(:disapproved, as: "disapproved", description: "A verification that was disapproved and finished")
+    value(:approved, as: "approved", description: "A verification that was approved and finished")
   end
 end

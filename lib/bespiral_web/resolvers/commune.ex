@@ -88,4 +88,12 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   def get_members_count(%Community{} = community, _, _) do
     Commune.get_members_count(community)
   end
+
+  def get_verifications_history(_, %{input: input}, _) do
+    Commune.get_verifications_history(input)
+  end
+
+  def get_verification(_, %{input: input}, _) do
+    Commune.get_verification(input)
+  end
 end
