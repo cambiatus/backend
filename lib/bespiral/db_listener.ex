@@ -7,6 +7,7 @@ defmodule BeSpiral.DbListener do
 
   alias BeSpiral.{
     Accounts,
+    Commune,
     Commune.Transfer,
     Notifications,
     Repo
@@ -42,7 +43,8 @@ defmodule BeSpiral.DbListener do
   def init(opts) do
     with {:ok, _pid, _ref} <- Repo.listen("sales_changed"),
          {:ok, _pid, _ref} <- Repo.listen("transfers_changed"),
-         {:ok, _pid, _ref} <- Repo.listen("sale_history_changed") do
+         {:ok, _pid, _ref} <- Repo.listen("sale_history_changed"),
+         {:ok, _pid, _ref} <- Repo.listen("claim_added") do
       {:ok, opts}
     else
       error ->
@@ -104,6 +106,22 @@ defmodule BeSpiral.DbListener do
   def handle_info({:notification, _pid, _ref, "sale_history_changed", payload}, _state) do
     with {:ok, data} <- Jason.decode(payload, keys: :atoms),
          :ok <- Absinthe.Subscription.publish(Endpoint, data.record, sale_history_operation: "*") do
+      {:noreply, :event_handled}
+    else
+      err ->
+        log_sentry_error(err)
+    end
+  end
+
+  @doc """
+  Call back to handle claims table additions, This call back will decode the claim data 
+  collect the claim's action and hand that over to the Notifications context to send notifications
+  """
+  @spec handle_info(tuple(), term()) :: callback_return()
+  def handle_info({:notification, _, _, "claim_added", payload}, _state) do
+    with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
+         {:ok, action} <- Commune.get_action(record.action_id),
+         {:ok, :notified} <- Notifications.notify_validators(action) do
       {:noreply, :event_handled}
     else
       err ->
