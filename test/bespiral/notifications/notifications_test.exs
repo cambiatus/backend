@@ -43,7 +43,7 @@ defmodule BeSpiral.NotificationsTest do
       assert Enum.count(subs) == @num
     end
 
-    test "send_push/2 sends a push notification" do
+    test "send_push/2 sends a  transfer push notification" do
       push = insert(:push_subscription)
 
       payload = %{
@@ -62,6 +62,34 @@ defmodule BeSpiral.NotificationsTest do
       end)
 
       assert {:ok, %{status_code: 201}} = Notifications.send_push(payload, push)
+    end
+
+    test "notify_validators/1 sends a verification push notification" do
+      # Create a push subscription, which has our validator
+      push = insert(:push_subscription)
+
+      # create an action to validate
+      action = insert(:action)
+
+      # use the validator from above for the action abobe
+      insert(:validator, %{action: action, validator: push.account})
+
+      payload = %{
+        title: "Claim Verification Request",
+        body: action.description,
+        type: :verification
+      }
+
+      BeSpiral.Notifications.TestAdapter
+      |> expect(:send_web_push, fn load, sub ->
+        assert load == Jason.encode!(payload)
+        assert sub.keys.auth == push.auth_key
+        assert sub.keys.p256dh == push.p_key
+
+        {:ok, %{status_code: 201}}
+      end)
+
+      assert {:ok, :notified} = Notifications.notify_validators(action)
     end
   end
 end
