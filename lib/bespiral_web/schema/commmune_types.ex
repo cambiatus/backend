@@ -37,6 +37,12 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, non_null(:sale_input))
       resolve(&Commune.get_sale/3)
     end
+
+    @desc "A list of claims"
+    field :claims, list_of(non_null(:claim)) do
+      arg(:input, non_null(:claims_input))
+      resolve(&Commune.get_claims/3)
+    end
   end
 
   @desc "Community Subscriptions on BeSpiral"
@@ -61,6 +67,11 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
         {:ok, topic: "*"}
       end)
     end
+  end
+
+  @desc "Input to collect claims"
+  input_object :claims_input do
+    field(:validator, :string)
   end
 
   @desc "Input to collect a sale"
@@ -185,6 +196,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, :checks_input)
       resolve(dataloader(BeSpiral.Commune))
     end
+
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
