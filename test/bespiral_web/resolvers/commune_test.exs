@@ -10,8 +10,10 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
     Commune.Action,
     Commune.AvailableSale,
     Commune.Community,
+    Commune.Claim,
     Commune.Objective,
-    Commune.Transfer
+    Commune.Transfer,
+    Commune.Validator
   }
 
   @num 3
@@ -118,7 +120,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -182,7 +184,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -231,7 +233,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -280,7 +282,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -329,7 +331,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       assert 1 == Enum.count(objectives)
 
-      assert (1 + @num) ==
+      assert 1 + @num ==
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
@@ -740,6 +742,66 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       assert total_count == @num
       assert fetched_count == fetch
       assert Repo.aggregate(Transfer, :count, :id) == @num * 2
+    end
+
+    test "collect a validator's claims", %{conn: conn} do
+      assert Repo.aggregate(Claim, :count, :id) == 0
+      assert Repo.aggregate(Action, :count, :id) == 0
+      assert Repo.aggregate(Validator, :count, :validator_id) == 0
+      validator = insert(:user)
+      claimer = insert(:user)
+
+      actions = insert_list(@num, :action, %{verification_type: "claimable"})
+
+      _ =
+        actions
+        |> Enum.map(fn action ->
+          insert(:validator, %{action: action, validator: validator})
+        end)
+
+      insert_list(@num, :action, %{verification_type: "claimable"})
+      assert Repo.aggregate(Action, :count, :id) == @num * 2
+
+      # Claim all actions 
+      _ =
+        Repo.all(Action)
+        |> Enum.map(fn action ->
+          insert(:claim, %{claimer: claimer, action: action})
+        end)
+
+      assert Repo.aggregate(Claim, :count, :id) == @num * 2
+
+      variables = %{
+        "input" => %{
+          "validator" => validator.account
+        }
+      }
+
+      query = """
+      query($input: ClaimsInput) {
+        claims(input: $input) {
+          id
+          created_at
+          action {
+            id
+          }
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "claims" => cs
+        }
+      } = json_response(res, 200)
+
+      action_ids = Enum.map(actions, & &1.id) |> Enum.sort()
+
+      claim_action_ids = Enum.map(cs, & &1["action"]["id"]) |> Enum.sort()
+
+      assert action_ids == claim_action_ids
     end
   end
 end
