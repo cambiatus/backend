@@ -3,7 +3,8 @@ defmodule BeSpiral.CommuneTest do
 
   alias BeSpiral.{
     Commune,
-    Commune.Community
+    Commune.Community,
+    Commune.Action
   }
 
   describe "communities" do
@@ -59,6 +60,23 @@ defmodule BeSpiral.CommuneTest do
       community = insert(:community)
       assert {:ok, %Community{}} = Commune.delete_community(community)
       assert_raise Ecto.NoResultsError, fn -> Commune.get_community!(community.symbol) end
+    end
+
+    @action_id 1
+    test "get_action/1 collects errors out if action doesn't exist" do
+      assert Repo.aggregate(Action, :count, :id) == 0
+
+      assert {:error, "Action with id: #{@action_id} not found"} == Commune.get_action(@action_id)
+    end
+
+    test "get_action/1 collects an action with a valid id" do
+      assert Repo.aggregate(Action, :count, :id) == 0
+
+      action = insert(:action)
+
+      assert Repo.aggregate(Action, :count, :id) == 1
+
+      assert {:ok, act} = Commune.get_action(action.id)
     end
   end
 

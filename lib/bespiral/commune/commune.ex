@@ -32,7 +32,9 @@ defmodule BeSpiral.Commune do
 
         {:validator, account}, query ->
           query
-          |> join(:inner, [a], v in Validator, on: a.id == v.action_id and v.validator_id == ^account)
+          |> join(:inner, [a], v in Validator,
+            on: a.id == v.action_id and v.validator_id == ^account
+          )
 
         {:is_completed, is_completed}, query ->
           query
@@ -71,7 +73,27 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
+  Fetch an action 
+
+  ## Parameters 
+  * id: the id of the action being sought
+  """
+  @spec get_action(integer()) :: {:ok, Action.t()} | {:error, term}
+  def get_action(id) do
+    case Repo.get(Action, id) do
+      nil ->
+        {:error, "Action with id: #{id} not found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
   Fetch sale
+
+  ## Parameters 
+  * id: the id of the sale in question 
   """
   @spec get_sale(integer()) :: {:ok, AvailableSale.t()} | {:error, term}
   def get_sale(id) do
