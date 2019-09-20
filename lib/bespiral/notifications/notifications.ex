@@ -9,7 +9,7 @@ defmodule BeSpiral.Notifications do
     Repo
   }
 
-  @valid_types ~w(transfer)a
+  @valid_types ~w(transfer verification)a
 
   @doc """
   Adds a push subscription to the database for a user 
@@ -63,8 +63,44 @@ defmodule BeSpiral.Notifications do
     {:ok, loaded_user.push_subscriptions}
   end
 
+  @doc """
+  Notifies an action's validators of a claim that they need to verify
+
+  ## Parameters
+  * action: The action whose validators should be notified of the incoming claim
+  """
+  @spec notify_validators(Action.t()) :: {:ok, atom()} | {:error, term}
+  def notify_validators(action) do
+    loaded_action =
+      action
+      |> Repo.preload(validators: [:validator])
+
+    # Task analyse the responses from sending out validations and perhaps
+    # Modify the returned result
+    _ =
+      loaded_action.validators
+      |> Enum.map(fn v ->
+        notify(
+          %{title: "Claim Verification Request", body: action.description, type: :verification},
+          v.validator
+        )
+      end)
+
+    {:ok, :notified}
+  end
+
   @doc false
   defp adapter do
     Application.get_env(:bespiral, __MODULE__)[:adapter]
+  end
+
+  @doc false
+  defp notify(payload, user) do
+    {:ok, subs} = get_subscriptions(user)
+
+    subs
+    |> Enum.map(fn sub ->
+      send_push(payload, sub)
+    end)
   end
 end
