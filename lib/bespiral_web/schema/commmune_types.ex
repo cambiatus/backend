@@ -71,7 +71,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
   @desc "Input to collect claims"
   input_object :claims_input do
-    field(:validator, :string)
+    field(:validator, non_null(:string))
   end
 
   @desc "Input to collect a sale"
