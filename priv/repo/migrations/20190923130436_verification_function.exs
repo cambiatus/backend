@@ -1,4 +1,7 @@
 defmodule BeSpiral.Repo.Migrations.VerificationFunction do
+  @moduledoc """
+  Function to create trigger when claims are added to the database
+  """
   use Ecto.Migration
 
   @function "verification_notification"

@@ -74,7 +74,6 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
-<<<<<<< HEAD
   Fetch an action 
 
   ## Parameters 
@@ -91,7 +90,7 @@ defmodule BeSpiral.Commune do
     end
   end
 
-  @doc """  
+  @doc """
   Fetch a validators claims
   """
   @spec get_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
