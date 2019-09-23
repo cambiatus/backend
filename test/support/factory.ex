@@ -9,6 +9,7 @@ defmodule BeSpiral.Factory do
     Accounts.User,
     Commune.Action,
     Commune.AvailableSale,
+    Commune.Check,
     Commune.Community,
     Commune.Claim,
     Commune.Network,
@@ -147,7 +148,7 @@ defmodule BeSpiral.Factory do
       usages_left: 5,
       verifications: 10,
       verification_type: sequence(:verification_type, ["automatic", "claimable"]),
-      is_completed: sequence(:is_completed, [true, false]),
+      is_completed: false,
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
@@ -171,6 +172,18 @@ defmodule BeSpiral.Factory do
       is_verified: false,
       action: build(:action),
       claimer: build(:user),
+      created_block: sequence(:created_block, &"#{&1}"),
+      created_tx: sequence(:tx, &"c_tx-#{&1}"),
+      created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
+      created_at: NaiveDateTime.utc_now()
+    }
+  end
+
+  def check_factory do
+    %Check{
+      is_verified: false,
+      claim: build(:claim),
+      validator: build(:validator),
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
