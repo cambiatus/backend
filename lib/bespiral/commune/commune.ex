@@ -96,16 +96,33 @@ defmodule BeSpiral.Commune do
   """
   @spec get_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_claims(account) do
-    query =
+    available_claims =
       from(a in Action,
+        where: a.is_completed == false,
         join: v in Validator,
         on: v.action_id == a.id and v.validator_id == ^account,
         join: c in Claim,
         on: c.action_id == a.id,
         select: c
       )
+      |> Repo.all()
 
-    {:ok, Repo.all(query)}
+    voted_claims =
+      from(c in Check,
+        where: c.validator_id == ^account,
+        join: cl in Claim,
+        on: cl.id == c.claim_id,
+        select: cl
+      )
+      |> Repo.all()
+
+    all_claims =
+      (available_claims ++ voted_claims)
+      |> Enum.sort(fn x, y ->
+        Calendar.Date.before?(x.created_at, y.created_at)
+      end)
+
+    {:ok, all_claims}
   end
 
   @doc """
