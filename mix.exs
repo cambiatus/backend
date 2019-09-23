@@ -26,6 +26,7 @@ defmodule BeSpiral.Mixfile do
 
   defp deps do
     [
+      {:calendar, "~> 1.0.0", override: true},
       {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
@@ -37,7 +38,6 @@ defmodule BeSpiral.Mixfile do
       {:jason, "~> 1.0.0"},
       {:cors_plug, "~> 1.5"},
       {:poolboy, ">= 0.0.0"},
-      {:quantum, "~> 2.2"},
       {:timex, "~> 3.4"},
       {:bamboo, "~> 1.1"},
       {:plug_cowboy, "~> 1.0"},
