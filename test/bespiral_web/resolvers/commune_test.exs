@@ -745,7 +745,6 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       assert Repo.aggregate(Transfer, :count, :id) == @num * 2
     end
 
-    @tag :claims
     test "collect a validator's claims", %{conn: conn} do
       assert Repo.aggregate(Claim, :count, :id) == 0
       assert Repo.aggregate(Action, :count, :id) == 0
@@ -771,7 +770,6 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       _ =
         Repo.all(Action)
         |> Enum.map(fn action ->
-          :timer.sleep(2000)
           insert(:claim, %{claimer: claimer, action: action})
         end)
 
