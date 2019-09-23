@@ -89,9 +89,7 @@ defmodule BeSpiral.Commune do
       val ->
         {:ok, val}
     end
-  end
-
-  @doc """  
+=======
   Fetch a validators claims
   """
   @spec get_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
@@ -106,6 +104,7 @@ defmodule BeSpiral.Commune do
       )
 
     {:ok, Repo.all(query)}
+>>>>>>> d6227b3... Build context function to collect a validators claims
   end
 
   @doc """
