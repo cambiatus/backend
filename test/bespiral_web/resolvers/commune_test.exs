@@ -780,18 +780,17 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       claim1 = Repo.get_by!(Claim, action_id: act1.id)
       insert(:check, %{claim: claim1, validator: v1, is_verified: true})
 
+      claim1
+      |> Claim.changeset(%{is_verified: true})
+      |> Repo.update!()
+
       act2 = actions |> tl |> hd
       claim2 = Repo.get_by!(Claim, action_id: act2.id)
       insert(:check, %{claim: claim2, validator: v2, is_verified: true})
 
-      # update the database state for our query
-      _ =
-        [act1, act2]
-        |> Enum.map(fn vAct ->
-          vAct
-          |> Action.changeset(%{usages_left: 1})
-          |> Repo.update!()
-        end)
+      claim2
+      |> Claim.changeset(%{is_verified: true})
+      |> Repo.update!()
 
       assert Repo.aggregate(Check, :count, :is_verified) == 2
 
@@ -805,6 +804,10 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       query($input: ClaimsInput) {
         claims(input: $input) {
           created_at
+          id
+          action {
+            id 
+          }
         }
       }
       """
