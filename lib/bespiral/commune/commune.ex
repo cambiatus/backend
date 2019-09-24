@@ -97,11 +97,16 @@ defmodule BeSpiral.Commune do
   def get_claims(account) do
     available_claims =
       from(a in Action,
+        # all uncompleted actions
         where: a.is_completed == false,
         join: v in Validator,
+        # where validator can vote
         on: v.action_id == a.id and v.validator_id == ^account,
         join: c in Claim,
         on: c.action_id == a.id,
+        # where validator hasn't voted
+        join: ch in Check,
+        on: ch.claim_id == c.id and ch.validator_id != ^account,
         select: c
       )
       |> Repo.all()
