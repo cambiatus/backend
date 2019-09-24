@@ -122,6 +122,7 @@ defmodule BeSpiral.Commune do
 
     all_claims =
       (available_claims ++ voted_claims)
+      |> Enum.uniq_by(fn c -> c.id end)
       |> Enum.sort(fn x, y ->
         Calendar.Date.before?(x.created_at, y.created_at)
       end)
