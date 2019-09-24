@@ -754,7 +754,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       claimer = insert(:user)
 
       actions =
-        insert_list(@num, :action, %{verification_type: "claimable", usages: 1, usages_left: 1})
+        insert_list(@num, :action, %{verification_type: "claimable", usages: 2, usages_left: 2})
 
       _ =
         actions
@@ -789,7 +789,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
         [act1, act2]
         |> Enum.map(fn vAct ->
           vAct
-          |> Action.changeset(%{is_completed: true, usages_left: 0})
+          |> Action.changeset(%{usages_left: 1})
           |> Repo.update!()
         end)
 
