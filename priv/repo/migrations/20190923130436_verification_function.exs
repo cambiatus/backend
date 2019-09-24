@@ -8,6 +8,9 @@ defmodule BeSpiral.Repo.Migrations.VerificationFunction do
   @event "claims_changed"
 
   def up do
+    # Remove botched former migration
+    execute("DROP FUNCTION IF EXISTS #{@function} CASCADE")
+
     execute("""
       CREATE OR REPLACE FUNCTION #{@function}()
       RETURNS trigger AS $$
