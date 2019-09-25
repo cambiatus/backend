@@ -155,6 +155,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:created_at, non_null(:datetime))
 
     field(:creator, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
+    field(:community, non_null(:community), resolve: dataloader(BeSpiral.Commune))
 
     field(:actions, non_null(list_of(non_null(:action)))) do
       arg(:input, :actions_input)
@@ -176,6 +177,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:is_completed, non_null(:boolean))
     field(:verification_type, non_null(:verification_type))
 
+    field(:objective, non_null(:objective), resolve: dataloader(BeSpiral.Commune))
     field(:validators, list_of(non_null(:validator)), resolve: dataloader(BeSpiral.Commune))
     field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(BeSpiral.Commune))
     field(:creator, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
