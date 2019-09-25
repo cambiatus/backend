@@ -91,7 +91,27 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
+  Fetch a single claim by id 
+
+  ## Paramters
+  * id: the id of the claim to be fetched
+  """
+  @spec get_claim(integer()) :: {:ok, Claim.t()} | {:error, term}
+  def get_claim(id) do
+    case Repo.get(Claim, id) do
+      nil ->
+        {:error, "No claim with id: #{id} found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
   Fetch a validators claims
+
+  ## Paramters
+  * account: the validator in question's account name
   """
   @spec get_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_claims(account) do

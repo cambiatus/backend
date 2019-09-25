@@ -43,6 +43,12 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, non_null(:claims_input))
       resolve(&Commune.get_claims/3)
     end
+
+    @desc "A single claim"
+    field :claim, non_null(:claim) do
+      arg(:input, non_null(:claim_input))
+      resolve(&Commune.get_claim/3)
+    end
   end
 
   @desc "Community Subscriptions on BeSpiral"
@@ -89,6 +95,11 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:account, :string)
     field(:communities, :string)
     field(:all, :string)
+  end
+
+  @desc "Input to collect a claim"
+  input_object :claim_input do
+    field(:id, non_null(:integer))
   end
 
   @desc "Input to collect a user's transfers"
