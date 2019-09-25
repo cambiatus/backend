@@ -12,6 +12,7 @@ defmodule BeSpiral.Commune do
     Commune.AvailableSale,
     Commune.Check,
     Commune.Community,
+    Commune.Claim,
     Commune.Network,
     Commune.SaleHistory,
     Commune.Transfer,
@@ -87,6 +88,64 @@ defmodule BeSpiral.Commune do
       val ->
         {:ok, val}
     end
+  end
+
+  @doc """
+  Fetch a single claim by id 
+
+  ## Paramters
+  * id: the id of the claim to be fetched
+  """
+  @spec get_claim(integer()) :: {:ok, Claim.t()} | {:error, term}
+  def get_claim(id) do
+    case Repo.get(Claim, id) do
+      nil ->
+        {:error, "No claim with id: #{id} found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
+  Fetch a validators claims
+
+  ## Paramters
+  * account: the validator in question's account name
+  """
+  @spec get_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_claims(account) do
+    available_claims =
+      from(a in Action,
+        # where validator can vote 
+        join: v in Validator,
+        on: v.action_id == a.id and v.validator_id == ^account,
+        # select claims 
+        join: c in Claim,
+        on: c.action_id == a.id and c.is_verified == ^false,
+        distinct: c,
+        order_by: c.created_at,
+        select: c
+      )
+      |> Repo.all()
+
+    voted_claims =
+      from(c in Check,
+        where: c.validator_id == ^account,
+        join: cl in Claim,
+        on: cl.id == c.claim_id,
+        select: cl
+      )
+      |> Repo.all()
+
+    all_claims =
+      (available_claims ++ voted_claims)
+      |> Enum.uniq_by(fn c -> c.id end)
+      |> Enum.sort(fn x, y ->
+        Calendar.Date.before?(x.created_at, y.created_at)
+      end)
+
+    {:ok, all_claims}
   end
 
   @doc """

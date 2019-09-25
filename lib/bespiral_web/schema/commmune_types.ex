@@ -37,6 +37,18 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, non_null(:sale_input))
       resolve(&Commune.get_sale/3)
     end
+
+    @desc "A list of claims"
+    field :claims, non_null(list_of(non_null(:claim))) do
+      arg(:input, non_null(:claims_input))
+      resolve(&Commune.get_claims/3)
+    end
+
+    @desc "A single claim"
+    field :claim, non_null(:claim) do
+      arg(:input, non_null(:claim_input))
+      resolve(&Commune.get_claim/3)
+    end
   end
 
   @desc "Community Subscriptions on BeSpiral"
@@ -63,6 +75,11 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     end
   end
 
+  @desc "Input to collect claims"
+  input_object :claims_input do
+    field(:validator, non_null(:string))
+  end
+
   @desc "Input to collect a sale"
   input_object :sale_input do
     field(:id, non_null(:integer))
@@ -78,6 +95,11 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:account, :string)
     field(:communities, :string)
     field(:all, :string)
+  end
+
+  @desc "Input to collect a claim"
+  input_object :claim_input do
+    field(:id, non_null(:integer))
   end
 
   @desc "Input to collect a user's transfers"
@@ -144,6 +166,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:created_at, non_null(:datetime))
 
     field(:creator, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
+    field(:community, non_null(:community), resolve: dataloader(BeSpiral.Commune))
 
     field(:actions, non_null(list_of(non_null(:action)))) do
       arg(:input, :actions_input)
@@ -165,6 +188,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:is_completed, non_null(:boolean))
     field(:verification_type, non_null(:verification_type))
 
+    field(:objective, non_null(:objective), resolve: dataloader(BeSpiral.Commune))
     field(:validators, list_of(non_null(:validator)), resolve: dataloader(BeSpiral.Commune))
     field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(BeSpiral.Commune))
     field(:creator, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
@@ -185,6 +209,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, :checks_input)
       resolve(dataloader(BeSpiral.Commune))
     end
+
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))

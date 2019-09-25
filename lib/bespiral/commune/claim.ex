@@ -26,7 +26,7 @@ defmodule BeSpiral.Commune.Claim do
     field(:created_at, :utc_datetime)
   end
 
-  @required_fields ~w(is_verified, action_id, claimer_id, created_block, created_tx, created_eos_account, created_at)a
+  @required_fields ~w(is_verified action_id claimer_id created_block created_tx created_eos_account created_at)a
 
   @spec changeset(Claim.t(), map()) :: Ecto.Changeset.t()
   def changeset(%Claim{} = claim, attrs) do

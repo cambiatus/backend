@@ -32,8 +32,8 @@ defmodule BeSpiral.Commune.Action do
     has_many(:validators, Validator)
     has_many(:claims, Claim)
 
-    @required_fields ~w(creator_id community_objective_id reward verifier_reward description)a
-    @optional_fields ~w(is_verified created_block created_tx created_at created_eos_account)a
+    @required_fields ~w(creator_id objective_id reward description verification_type)a
+    @optional_fields ~w(is_completed deadline usages usages_left verifier_reward verifications created_block created_tx created_at created_eos_account)a
 
     @doc false
     def changeset(action, attrs) do
