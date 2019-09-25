@@ -745,6 +745,37 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       assert Repo.aggregate(Transfer, :count, :id) == @num * 2
     end
 
+    test "collect's a single claim", %{conn: conn} do
+      assert Repo.aggregate(Claim, :count, :id) == 0
+
+      claim = insert(:claim)
+
+      variables = %{
+        "input" => %{
+          "id" => claim.id
+        }
+      }
+
+      query = """
+      query ($input: ClaimInput!) {
+        claim (input: $input) {
+          id
+          createdAt
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "claim" => fetched_claim
+        }
+      } = json_response(res, 200)
+
+      assert fetched_claim["id"] == claim.id
+    end
+
     test "collect a validator's claims", %{conn: conn} do
       assert Repo.aggregate(Claim, :count, :id) == 0
       assert Repo.aggregate(Action, :count, :id) == 0
