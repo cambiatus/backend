@@ -1,10 +1,14 @@
 defmodule BeSpiral.Notifications do
   @moduledoc """
-  Context to handle notifications in the BeSpiral Backend 
+  Context to handle notifications in the BeSpiral Backend
   """
+
+  import Ecto.Query
+
   alias BeSpiral.{
     Notifications.PushSubscription,
     Notifications.Payload,
+    Notifications.NotificationHistory,
     Accounts.User,
     Repo
   }
@@ -12,7 +16,7 @@ defmodule BeSpiral.Notifications do
   @valid_types ~w(transfer verification)a
 
   @doc """
-  Adds a push subscription to the database for a user 
+  Adds a push subscription to the database for a user
   """
   @spec add_push_subscription(map(), map()) ::
           {:ok, PushSubscription.t()} | {:error, Ecto.Changeset.t()}
@@ -113,6 +117,23 @@ defmodule BeSpiral.Notifications do
       )
 
     {:ok, :notified}
+  end
+  
+  @spec create_notification_history(map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  def create_notification_history(attrs \\ %{}) do
+    %NotificationHistory{}
+    |> NotificationHistory.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @spec get_user_notification_history(binary()) :: {:ok, list(Ecto.Schama.t())}
+  def get_user_notification_history(user) do
+    query =
+      NotificationHistory
+      |> where([n], n.recipient_id == ^user)
+    |> order_by([n], desc: n.inserted_at)
+
+    {:ok, Repo.all(query)}
   end
 
   @doc false

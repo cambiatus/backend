@@ -22,7 +22,7 @@ defmodule BeSpiral.Notifications.PushSubscription do
   @fields ~w(endpoint auth_key p_key)a
 
   @doc """
-  Builds a changeset for push subscriptions 
+  Builds a changeset for push subscriptions
   """
   @spec changeset(PushSubscription.t(), map()) :: Ecto.Changeset.t()
   def changeset(%PushSubscription{} = push_sub, attrs) do
@@ -32,7 +32,7 @@ defmodule BeSpiral.Notifications.PushSubscription do
   end
 
   @doc """
-  Associates a user to a new push subscription 
+  Associates a user to a new push subscription
   """
   @spec create_changeset(map(), map()) :: Ecto.Changeset.t()
   def create_changeset(%User{} = usr, params) do

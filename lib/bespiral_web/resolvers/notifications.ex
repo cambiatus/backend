@@ -8,7 +8,7 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
   }
 
   @doc """
-  Function to register push subscriptions 
+  Function to register push subscriptions
   """
   @spec register(map(), map(), map()) :: {:ok, map()} | {:error, term}
   def register(_, %{input: params}, _) do
@@ -16,5 +16,13 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
          {:ok, push} <- Notifications.add_push_subscription(user, params) do
       {:ok, push}
     end
+  end
+
+  @doc """
+  Finds all of the users notifications
+  """
+  @spec user_notification_history(map(), map(), map()) :: {:ok, list(map())} | {:error, term}
+  def user_notification_history(_, %{user: params}, _) do
+    Notifications.get_user_notification_history(params)
   end
 end
