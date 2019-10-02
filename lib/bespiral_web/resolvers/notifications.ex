@@ -22,7 +22,7 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
   Finds all of the users notifications
   """
   @spec user_notification_history(map(), map(), map()) :: {:ok, list(map())} | {:error, term}
-  def user_notification_history(_, %{user: params}, _) do
+  def user_notification_history(_, %{account: params}, _) do
     Notifications.get_user_notification_history(params)
   end
 end
