@@ -13,7 +13,7 @@ defmodule BeSpiral.Notifications.NotificationHistory do
     field(:payload, :string)
     field(:is_read, :boolean, default: false)
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @required_fields ~w(recipient_id type payload)a

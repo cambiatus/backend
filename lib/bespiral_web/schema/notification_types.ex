@@ -33,7 +33,7 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
   @desc "Notification history queries"
   object :notification_queries do
     field(:notification_history, list_of(non_null(:notification_history))) do
-      arg(:user, non_null(:string))
+      arg(:account, non_null(:string))
       resolve(&Notifications.user_notification_history/3)
     end
   end
@@ -43,8 +43,8 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
     field(:recipient, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
     field(:type, non_null(:string))
     field(:payload, non_null(:string))
-    field(:is_read, non_null(:string))
-    field(:inserted_at, non_null(:string))
-    field(:updated_at, non_null(:string))
+    field(:is_read, non_null(:boolean))
+    field(:inserted_at, non_null(:datetime))
+    field(:updated_at, non_null(:datetime))
   end
 end
