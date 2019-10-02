@@ -42,9 +42,21 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
     field(:recipient_id, non_null(:string))
     field(:recipient, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
     field(:type, non_null(:string))
-    field(:payload, non_null(:string))
+    field(:payload, non_null(:notification_type), resolve: &Notifications.get_payload/3)
     field(:is_read, non_null(:boolean))
     field(:inserted_at, non_null(:datetime))
     field(:updated_at, non_null(:datetime))
   end
+
+  union(:notification_type) do
+    types [:transfer, :sale_history]
+    resolve_type fn
+      %BeSpiral.Commune.Transfer{}, _ ->
+        :transfer
+
+      %BeSpiral.Commune.SaleHistory{}, _ ->
+        :sale_history
+    end
+  end
+
 end

@@ -4,7 +4,10 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
   """
   alias BeSpiral.{
     Accounts,
-    Notifications
+    Commune.Transfer,
+    Commune.SaleHistory,
+    Notifications,
+    Repo
   }
 
   @doc """
@@ -24,5 +27,25 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
   @spec user_notification_history(map(), map(), map()) :: {:ok, list(map())} | {:error, term}
   def user_notification_history(_, %{account: params}, _) do
     Notifications.get_user_notification_history(params)
+  end
+
+  @spec get_payload(map(), map(), map()) :: {:ok, map()} | {:error, term}
+  def get_payload(notification_history, _, _) do
+    with {:ok, %{record: data}} <- notification_history.payload |> Jason.decode(keys: :atoms) do
+      case notification_history do
+        %{type: "transfer"} ->
+          {:ok, Repo.get(Transfer, data.id)}
+
+        %{type: "sale_history"} ->
+          {:ok, Repo.get(SaleHistory, data.id)}
+
+        _ ->
+          {:ok, nil}
+      end
+
+      else
+        _ ->
+          {:error, "Failed to parse notification"}
+      end
   end
 end

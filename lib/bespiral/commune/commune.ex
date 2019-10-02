@@ -74,9 +74,9 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
-  Fetch an action 
+  Fetch an action
 
-  ## Parameters 
+  ## Parameters
   * id: the id of the action being sought
   """
   @spec get_action(integer()) :: {:ok, Action.t()} | {:error, term}
@@ -91,7 +91,7 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
-  Fetch a single claim by id 
+  Fetch a single claim by id
 
   ## Paramters
   * id: the id of the claim to be fetched
@@ -117,10 +117,10 @@ defmodule BeSpiral.Commune do
   def get_claims(account) do
     available_claims =
       from(a in Action,
-        # where validator can vote 
+        # where validator can vote
         join: v in Validator,
         on: v.action_id == a.id and v.validator_id == ^account,
-        # select claims 
+        # select claims
         join: c in Claim,
         on: c.action_id == a.id and c.is_verified == ^false,
         distinct: c,
@@ -151,8 +151,8 @@ defmodule BeSpiral.Commune do
   @doc """
   Fetch sale
 
-  ## Parameters 
-  * id: the id of the sale in question 
+  ## Parameters
+  * id: the id of the sale in question
   """
   @spec get_sale(integer()) :: {:ok, AvailableSale.t()} | {:error, term}
   def get_sale(id) do

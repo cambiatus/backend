@@ -27,7 +27,7 @@ defmodule BeSpiral.Commune.Transfer do
     belongs_to(:community, Community, references: :symbol, type: :string)
   end
 
-  @required_fields ~w(amount memo created_block created_tx created_eos_account)
+  @required_fields ~w(amount memo created_block created_tx created_eos_account)a
 
   @doc """
   This function takes a Tranfer and a map of parameters and proceeeds to build a changeset for the transfer
