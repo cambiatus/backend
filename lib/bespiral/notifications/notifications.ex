@@ -67,6 +67,23 @@ defmodule BeSpiral.Notifications do
     {:ok, loaded_user.push_subscriptions}
   end
 
+  @spec create_notification_history(map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  def create_notification_history(attrs \\ %{}) do
+    %NotificationHistory{}
+    |> NotificationHistory.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @spec get_user_notification_history(binary()) :: {:ok, list(Ecto.Schama.t())}
+  def get_user_notification_history(user) do
+    query =
+      NotificationHistory
+      |> where([n], n.recipient_id == ^user)
+    |> order_by([n], desc: n.inserted_at)
+
+    {:ok, Repo.all(query)}
+  end
+
   @doc """
   Notifies an action's validators of a claim that they need to verify
 

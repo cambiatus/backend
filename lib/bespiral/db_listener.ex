@@ -146,7 +146,7 @@ defmodule BeSpiral.DbListener do
   end
 
   @doc """
-  Call back to handle claims table additions, This call back will decode the claim data 
+  Call back to handle claims table additions, This call back will decode the claim data
   collect the claim's action and hand that over to the Notifications context to send notifications
   """
   @spec handle_info(tuple(), term()) :: callback_return()
