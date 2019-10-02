@@ -32,7 +32,7 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
 
   @desc "Notification history queries"
   object :notification_queries do
-    field(:notification_history, list_of(non_null(:notification_history))) do
+    field(:notification_history, non_null(list_of(non_null(:notification_history)))) do
       arg(:account, non_null(:string))
       resolve(&Notifications.user_notification_history/3)
     end
