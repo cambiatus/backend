@@ -67,7 +67,8 @@ defmodule BeSpiral.Notifications do
     {:ok, loaded_user.push_subscriptions}
   end
 
-  @spec create_notification_history(map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  @spec create_notification_history(map()) ::
+          {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
   def create_notification_history(attrs \\ %{}) do
     %NotificationHistory{}
     |> NotificationHistory.changeset(attrs)
@@ -79,7 +80,7 @@ defmodule BeSpiral.Notifications do
     query =
       NotificationHistory
       |> where([n], n.recipient_id == ^user)
-    |> order_by([n], desc: n.inserted_at)
+      |> order_by([n], desc: n.inserted_at)
 
     {:ok, Repo.all(query)}
   end
@@ -151,6 +152,27 @@ defmodule BeSpiral.Notifications do
     |> order_by([n], desc: n.inserted_at)
 
     {:ok, Repo.all(query)}
+  end
+
+  @doc """
+  Collects unread notifications metadata for a user
+
+  ## Parameters 
+  * account: account name of the user in question
+  """
+  @spec get_unread(String.t()) :: {:ok, map()} | {:error, term}
+  def get_unread(acc) do
+    items =
+      from(n in NotificationHistory, where: n.recipient_id == ^acc and n.is_read == false)
+      |> Repo.all()
+
+    case items do
+      [] ->
+        {:ok, %{count: 0}}
+
+      vals ->
+        {:ok, %{count: Enum.count(vals)}}
+    end
   end
 
   @doc false
