@@ -175,6 +175,37 @@ defmodule BeSpiral.Notifications do
     end
   end
 
+  @doc """
+  Collects a notification history object 
+
+  ## Parameters
+  * id: id of the notification
+  """
+  @spec get_notification_history(integer()) ::
+          {:ok, NotificationHistory.t()} | {:error, String.t()}
+  def get_notification_history(id) do
+    case Repo.get(NotificationHistory, id) do
+      nil ->
+        {:error, "NotificationHistory with id: #{id} not found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
+  Flags a notification history as read
+
+  ## Parameters 
+  * notification: the instance of notification history
+  """
+  @spec mark_as_read(NotificationHistory.t()) :: {:ok, map()} | {:error, term}
+  def mark_as_read(notification) do
+    notification
+    |> NotificationHistory.flag_as_read()
+    |> Repo.update()
+  end
+
   @doc false
   defp adapter do
     Application.get_env(:bespiral, __MODULE__)[:adapter]

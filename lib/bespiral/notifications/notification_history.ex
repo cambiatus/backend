@@ -32,4 +32,11 @@ defmodule BeSpiral.Notifications.NotificationHistory do
     |> put_assoc(:recipient, attrs.creator)
     |> foreign_key_constraint(:recipient_id)
   end
+
+  @spec flag_as_read(NotificationHistory.t()) :: Ecto.Changeset.t()
+  def flag_as_read(notification) do
+    notification
+    |> changeset(%{})
+    |> put_change(:is_read, true)
+  end
 end
