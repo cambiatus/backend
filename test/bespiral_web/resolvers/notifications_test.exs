@@ -89,5 +89,37 @@ defmodule BeSpiralWeb.Resolvers.NotificationsTests do
 
       assert unread["count"] == Enum.count(unread_histories)
     end
+
+    test "flags a notification as read", %{conn: conn} do
+      notif = insert(:notification_history)
+
+      mutation = """
+      mutation($input: ReadNotificationInput!) {
+        readNotification(input: $input) {
+          id
+          isRead 
+        }
+      }
+      """
+
+      variables = %{
+        "input" => %{
+          "id" => notif.id
+        }
+      }
+
+      assert notif.is_read == false
+
+      res = conn |> post("/api/graph", query: mutation, variables: variables)
+
+      %{
+        "data" => %{
+          "readNotification" => read
+        }
+      } = json_response(res, 200)
+
+      assert read["id"] == notif.id
+      assert read["isRead"] == true
+    end
   end
 end
