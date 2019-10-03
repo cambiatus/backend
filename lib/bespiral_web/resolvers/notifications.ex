@@ -49,10 +49,23 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
   end
 
   @doc """
-  Cound number of unread notifications for a user
+  Count number of unread notifications for a user
   """
   @spec unread_notifications(map(), map(), map()) :: {:ok, map()} | {:error, term}
   def unread_notifications(_, %{input: %{account: acc}}, _) do
     Notifications.get_unread(acc)
+  end
+
+  @doc """
+  Flag a notification as read
+  """
+  @spec read_notification(map(), map(), map()) :: {:ok, map()} | {:error, term}
+  def read_notification(_, %{input: %{id: id}}, _) do
+    with {:ok, n} <- Notifications.get_notification_history(id) do
+      Notifications.mark_as_read(n)
+    else
+      {:error, err} ->
+        {:error, err}
+    end
   end
 end

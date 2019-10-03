@@ -14,6 +14,12 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
       arg(:input, non_null(:push_subscription_input))
       resolve(&Notifications.register/3)
     end
+
+    @desc "Mark a notification history as read"
+    field(:read_notification, non_null(:notification_history)) do
+      arg(:input, non_null(:read_notification_input))
+      resolve(&Notifications.read_notification/3)
+    end
   end
 
   @desc "Notification history queries"
@@ -40,6 +46,11 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
     field(:count, non_null(:integer))
   end
 
+  @desc "Input object to mark notification history as read"
+  input_object :read_notification_input do
+    field(:id, non_null(:integer))
+  end
+
   @desc "Input object to collect unread notifications data"
   input_object :unread_notifications_input do
     field(:account, non_null(:string))
@@ -55,6 +66,7 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
 
   @desc "A notification history object"
   object :notification_history do
+    field(:id, non_null(:integer))
     field(:recipient_id, non_null(:string))
     field(:recipient, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
     field(:type, non_null(:string))
