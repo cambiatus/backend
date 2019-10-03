@@ -74,6 +74,40 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
+  Fetch a transfer
+
+  ## Parameters 
+  * id: id of the tranfer to be fetched 
+  """
+  @spec get_transfer(integer()) :: {:ok, Transfer.t()} | {:error, term}
+  def get_transfer(id) do
+    case Repo.get(Transfer, id) do
+      nil ->
+        {:error, "No tranfer with the id: #{id} found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
+  Fetch a sale history record 
+
+  ## Parameters 
+  * id: id of the history to be fetched 
+  """
+  @spec get_sale_history(integer()) :: {:ok, SaleHistory.t()} | {:error, term}
+  def get_sale_history(id) do
+    case Repo.get(SaleHistoy, id) do
+      nil ->
+        {:error, "No SaleHistory record with the id: #{id} found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
   Fetch an action
 
   ## Parameters

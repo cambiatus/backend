@@ -4,10 +4,8 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
   """
   alias BeSpiral.{
     Accounts,
-    Commune.Transfer,
-    Commune.SaleHistory,
-    Notifications,
-    Repo
+    Commune,
+    Notifications
   }
 
   @doc """
@@ -34,10 +32,10 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
     with {:ok, %{record: data}} <- notification_history.payload |> Jason.decode(keys: :atoms) do
       case notification_history do
         %{type: "transfer"} ->
-          {:ok, Repo.get(Transfer, data.id)}
+          Commune.get_transfer(data.id)
 
         %{type: "sale_history"} ->
-          {:ok, Repo.get(SaleHistory, data.id)}
+          Commune.get_sale_history(data.id)
 
         _ ->
           {:ok, nil}
