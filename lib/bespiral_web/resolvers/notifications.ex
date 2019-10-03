@@ -42,10 +42,17 @@ defmodule BeSpiralWeb.Resolvers.Notifications do
         _ ->
           {:ok, nil}
       end
+    else
+      _ ->
+        {:error, "Failed to parse notification"}
+    end
+  end
 
-      else
-        _ ->
-          {:error, "Failed to parse notification"}
-      end
+  @doc """
+  Cound number of unread notifications for a user
+  """
+  @spec unread_notifications(map(), map(), map()) :: {:ok, map()} | {:error, term}
+  def unread_notifications(_, %{input: %{account: acc}}, _) do
+    Notifications.get_unread(acc)
   end
 end
