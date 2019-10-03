@@ -69,7 +69,7 @@ defmodule BeSpiral.Notifications do
 
   @spec create_notification_history(map()) ::
           {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
-  def create_notification_history(attrs \\ %{}) do
+  def create_notification_history(attrs) do
     %NotificationHistory{}
     |> NotificationHistory.changeset(attrs)
     |> Repo.insert()
