@@ -44,7 +44,7 @@ defmodule BeSpiral.DbListener do
     with {:ok, _pid, _ref} <- Repo.listen("sales_changed"),
          {:ok, _pid, _ref} <- Repo.listen("transfers_changed"),
          {:ok, _pid, _ref} <- Repo.listen("sale_history_changed"),
-         {:ok, _pid, _ref} <- Repo.listen("claim_added") do
+         {:ok, _pid, _ref} <- Repo.listen("claims_changed") do
       {:ok, opts}
     else
       error ->
