@@ -118,7 +118,7 @@ defmodule BeSpiral.DbListener do
   collect the claim's action and hand that over to the Notifications context to send notifications
   """
   @spec handle_info(tuple(), term()) :: callback_return()
-  def handle_info({:notification, _, _, "claim_added", payload}, _state) do
+  def handle_info({:notification, _, _, "claims_changed", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          {:ok, action} <- Commune.get_action(record.action_id),
          {:ok, :notified} <- Notifications.notify_validators(action) do
