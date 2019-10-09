@@ -137,23 +137,6 @@ defmodule BeSpiral.Notifications do
     {:ok, :notified}
   end
   
-  @spec create_notification_history(map()) :: {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
-  def create_notification_history(attrs \\ %{}) do
-    %NotificationHistory{}
-    |> NotificationHistory.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @spec get_user_notification_history(binary()) :: {:ok, list(Ecto.Schama.t())}
-  def get_user_notification_history(user) do
-    query =
-      NotificationHistory
-      |> where([n], n.recipient_id == ^user)
-    |> order_by([n], desc: n.inserted_at)
-
-    {:ok, Repo.all(query)}
-  end
-
   @doc """
   Collects unread notifications metadata for a user
 
