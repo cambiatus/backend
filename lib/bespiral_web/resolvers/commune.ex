@@ -21,6 +21,14 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   end
 
   @doc """
+  Fetches all the claims for a claimer
+  """
+  @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_claims(_, %{input: %{claimer: c}}, _) do
+    Commune.get_validations(c)
+  end
+
+  @doc """
   Fetches all the claims for a validator
   """
   @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}

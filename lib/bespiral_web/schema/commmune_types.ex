@@ -77,7 +77,8 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
   @desc "Input to collect claims"
   input_object :claims_input do
-    field(:validator, non_null(:string))
+    field(:validator, :string)
+    field(:claimer, :string)
   end
 
   @desc "Input to collect a sale"
@@ -189,7 +190,11 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:verification_type, non_null(:verification_type))
 
     field(:objective, non_null(:objective), resolve: dataloader(BeSpiral.Commune))
-    field(:validators, non_null(list_of(non_null(:validator))), resolve: dataloader(BeSpiral.Commune))
+
+    field(:validators, non_null(list_of(non_null(:validator))),
+      resolve: dataloader(BeSpiral.Commune)
+    )
+
     field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(BeSpiral.Commune))
     field(:creator, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
     field(:created_block, non_null(:integer))

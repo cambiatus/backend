@@ -142,6 +142,23 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
+  Fetch a claimer's validations 
+
+  ## Parameters 
+  * claimer: the claimer's account name
+  """
+  @spec get_validations(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_validations(claimer) do
+    validations =
+      from(c in Claim,
+        where: c.claimer_id == ^claimer
+      )
+      |> Repo.all()
+
+    {:ok, validations}
+  end
+
+  @doc """
   Fetch a validators claims
 
   ## Paramters
