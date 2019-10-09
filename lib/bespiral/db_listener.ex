@@ -44,7 +44,8 @@ defmodule BeSpiral.DbListener do
     with {:ok, _pid, _ref} <- Repo.listen("sales_changed"),
          {:ok, _pid, _ref} <- Repo.listen("transfers_changed"),
          {:ok, _pid, _ref} <- Repo.listen("sale_history_changed"),
-         {:ok, _pid, _ref} <- Repo.listen("claims_changed") do
+         {:ok, _pid, _ref} <- Repo.listen("claims_changed"),
+         {:ok, _pid, _ref} <- Repo.listen("check_added") do
       {:ok, opts}
     else
       error ->
@@ -122,6 +123,22 @@ defmodule BeSpiral.DbListener do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          {:ok, action} <- Commune.get_action(record.action_id),
          {:ok, :notified} <- Notifications.notify_validators(action) do
+      {:noreply, :event_handled}
+    else
+      err ->
+        log_sentry_error(err)
+    end
+  end
+
+  @doc """
+  Callback to handle check table additions and updates. This will decode the check data 
+  collect the check's claom and hand that over to the notifications context to send out notifications 
+  """
+  @spec handle_info(tuple(), term()) :: callback_return()
+  def handle_info({:notification, _, _, "check_added", payload}, _state) do
+    with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
+         {:ok, claim} <- Commune.get_claim(record.claim_id),
+         {:ok, :notified} <- Notifications.notify_claimer(claim) do
       {:noreply, :event_handled}
     else
       err ->

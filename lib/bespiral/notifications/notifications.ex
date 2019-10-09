@@ -89,6 +89,32 @@ defmodule BeSpiral.Notifications do
     {:ok, :notified}
   end
 
+  @doc """
+  Notifies a Claimer of a check their claim has recieved
+
+  ## Parameters 
+  * claim: The claim whose claimer should be notified of the incoming check 
+  """
+  @spec notify_claimer(Claim.t()) :: {:ok, atom()} | {:error, term}
+  def notify_claimer(claim) do
+    loaded_claim =
+      claim
+      |> Repo.preload([:claimer, :action])
+
+    # Task analyse the responses from sending out notifications
+    _ =
+      notify(
+        %{
+          title: "Your claim has received a validation",
+          body: loaded_claim.action.description,
+          type: :validation
+        },
+        loaded_claim.claimer
+      )
+
+    {:ok, :notified}
+  end
+
   @doc false
   defp adapter do
     Application.get_env(:bespiral, __MODULE__)[:adapter]
