@@ -1,10 +1,14 @@
 defmodule BeSpiral.Notifications do
   @moduledoc """
-  Context to handle notifications in the BeSpiral Backend 
+  Context to handle notifications in the BeSpiral Backend
   """
+
+  import Ecto.Query
+
   alias BeSpiral.{
     Notifications.PushSubscription,
     Notifications.Payload,
+    Notifications.NotificationHistory,
     Accounts.User,
     Repo
   }
@@ -12,7 +16,7 @@ defmodule BeSpiral.Notifications do
   @valid_types ~w(transfer verification)a
 
   @doc """
-  Adds a push subscription to the database for a user 
+  Adds a push subscription to the database for a user
   """
   @spec add_push_subscription(map(), map()) ::
           {:ok, PushSubscription.t()} | {:error, Ecto.Changeset.t()}
@@ -61,6 +65,24 @@ defmodule BeSpiral.Notifications do
       |> Repo.preload([:push_subscriptions])
 
     {:ok, loaded_user.push_subscriptions}
+  end
+
+  @spec create_notification_history(map()) ::
+          {:ok, Ecto.Schema.t()} | {:error, Ecto.Changeset.t()}
+  def create_notification_history(attrs) do
+    %NotificationHistory{}
+    |> NotificationHistory.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @spec get_user_notification_history(binary()) :: {:ok, list(Ecto.Schama.t())}
+  def get_user_notification_history(user) do
+    query =
+      NotificationHistory
+      |> where([n], n.recipient_id == ^user)
+      |> order_by([n], desc: n.inserted_at)
+
+    {:ok, Repo.all(query)}
   end
 
   @doc """
@@ -113,6 +135,58 @@ defmodule BeSpiral.Notifications do
       )
 
     {:ok, :notified}
+  end
+  
+  @doc """
+  Collects unread notifications metadata for a user
+
+  ## Parameters 
+  * account: account name of the user in question
+  """
+  @spec get_unread(String.t()) :: {:ok, map()} | {:error, term}
+  def get_unread(acc) do
+    items =
+      from(n in NotificationHistory, where: n.recipient_id == ^acc and n.is_read == false)
+      |> Repo.all()
+
+    case items do
+      [] ->
+        {:ok, %{count: 0}}
+
+      vals ->
+        {:ok, %{count: Enum.count(vals)}}
+    end
+  end
+
+  @doc """
+  Collects a notification history object 
+
+  ## Parameters
+  * id: id of the notification
+  """
+  @spec get_notification_history(integer()) ::
+          {:ok, NotificationHistory.t()} | {:error, String.t()}
+  def get_notification_history(id) do
+    case Repo.get(NotificationHistory, id) do
+      nil ->
+        {:error, "NotificationHistory with id: #{id} not found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
+  Flags a notification history as read
+
+  ## Parameters 
+  * notification: the instance of notification history
+  """
+  @spec mark_as_read(NotificationHistory.t()) :: {:ok, map()} | {:error, term}
+  def mark_as_read(notification) do
+    notification
+    |> NotificationHistory.flag_as_read()
+    |> Repo.update()
   end
 
   @doc false

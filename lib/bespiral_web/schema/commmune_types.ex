@@ -271,7 +271,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
     field(:to_id, non_null(:string))
     field(:to, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
-    field(:amount, :float)
+    field(:amount, non_null(:float))
     field(:units, :integer)
   end
 

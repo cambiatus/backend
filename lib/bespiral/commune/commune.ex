@@ -74,9 +74,43 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
-  Fetch an action 
+  Fetch a transfer
 
   ## Parameters 
+  * id: id of the tranfer to be fetched 
+  """
+  @spec get_transfer(integer()) :: {:ok, Transfer.t()} | {:error, term}
+  def get_transfer(id) do
+    case Repo.get(Transfer, id) do
+      nil ->
+        {:error, "No tranfer with the id: #{id} found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
+  Fetch a sale history record 
+
+  ## Parameters 
+  * id: id of the history to be fetched 
+  """
+  @spec get_sale_history(integer()) :: {:ok, SaleHistory.t()} | {:error, term}
+  def get_sale_history(id) do
+    case Repo.get(SaleHistoy, id) do
+      nil ->
+        {:error, "No SaleHistory record with the id: #{id} found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
+
+  @doc """
+  Fetch an action
+
+  ## Parameters
   * id: the id of the action being sought
   """
   @spec get_action(integer()) :: {:ok, Action.t()} | {:error, term}
@@ -91,7 +125,7 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
-  Fetch a single claim by id 
+  Fetch a single claim by id
 
   ## Paramters
   * id: the id of the claim to be fetched
@@ -117,10 +151,10 @@ defmodule BeSpiral.Commune do
   def get_claims(account) do
     available_claims =
       from(a in Action,
-        # where validator can vote 
+        # where validator can vote
         join: v in Validator,
         on: v.action_id == a.id and v.validator_id == ^account,
-        # select claims 
+        # select claims
         join: c in Claim,
         on: c.action_id == a.id and c.is_verified == ^false,
         distinct: c,
@@ -151,8 +185,8 @@ defmodule BeSpiral.Commune do
   @doc """
   Fetch sale
 
-  ## Parameters 
-  * id: the id of the sale in question 
+  ## Parameters
+  * id: the id of the sale in question
   """
   @spec get_sale(integer()) :: {:ok, AvailableSale.t()} | {:error, term}
   def get_sale(id) do

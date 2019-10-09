@@ -33,6 +33,7 @@ defmodule BeSpiralWeb.Schema do
     import_fields(:account_queries)
     import_fields(:community_queries)
     import_fields(:chat_queries)
+    import_fields(:notification_queries)
   end
 
   mutation do

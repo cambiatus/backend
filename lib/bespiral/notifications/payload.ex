@@ -6,12 +6,12 @@ defmodule BeSpiral.Notifications.Payload do
   The datastructure is comprised of a number of elements
 
   1. `title` - This is the notification title and will be the most prominently displayed information on the
-  notification it should be 30 characters or less 
+  notification it should be 30 characters or less
 
-  2. `body` - This is the body of the notification, this will usually be displayed when the notification is expanded 
-  use this as a call to action to inform the user what to do about the notification 
+  2. `body` - This is the body of the notification, this will usually be displayed when the notification is expanded
+  use this as a call to action to inform the user what to do about the notification
 
-  3. `type` - This will be enumerated type based on all the notifications we have, this will be used to inform the 
+  3. `type` - This will be enumerated type based on all the notifications we have, this will be used to inform the
   frontend what actions it should display for the notification and how to handle those actions
   """
 

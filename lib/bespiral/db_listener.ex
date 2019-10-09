@@ -92,6 +92,21 @@ defmodule BeSpiral.DbListener do
           Logger.info("Send push results: #{inspect(resp)}")
         end)
 
+      # Save notification history for both the sender and the receiver of the transaction
+      %{
+        recipient_id: record.from_id,
+        type: "transfer",
+        payload: payload
+      }
+      |> Notifications.create_notification_history()
+
+      %{
+        recipient_id: record.to_id,
+        type: "transfer",
+        payload: payload
+      }
+      |> Notifications.create_notification_history()
+
       {:noreply, :event_handled}
     else
       err ->
@@ -107,6 +122,22 @@ defmodule BeSpiral.DbListener do
   def handle_info({:notification, _pid, _ref, "sale_history_changed", payload}, _state) do
     with {:ok, data} <- Jason.decode(payload, keys: :atoms),
          :ok <- Absinthe.Subscription.publish(Endpoint, data.record, sale_history_operation: "*") do
+
+      # After the notification has been sent, save it on the notification history table
+      %{
+        recipient_id: data.record.to_id,
+        type: "sale_history",
+        payload: payload
+      }
+      |> Notifications.create_notification_history()
+
+      %{
+        recipient_id: data.record.from_id,
+        type: "sale_history",
+        payload: payload
+      }
+      |> Notifications.create_notification_history()
+
       {:noreply, :event_handled}
     else
       err ->
@@ -115,7 +146,7 @@ defmodule BeSpiral.DbListener do
   end
 
   @doc """
-  Call back to handle claims table additions, This call back will decode the claim data 
+  Call back to handle claims table additions, This call back will decode the claim data
   collect the claim's action and hand that over to the Notifications context to send notifications
   """
   @spec handle_info(tuple(), term()) :: callback_return()

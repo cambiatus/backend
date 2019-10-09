@@ -17,6 +17,7 @@ defmodule BeSpiral.Factory do
     Commune.Sale,
     Commune.Transfer,
     Commune.Validator,
+    Notifications.NotificationHistory,
     Notifications.PushSubscription
   }
 
@@ -188,6 +189,16 @@ defmodule BeSpiral.Factory do
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
       created_at: NaiveDateTime.utc_now()
+    }
+  end
+
+  def notification_history_factory do
+    %NotificationHistory{
+      recipient: build(:user),
+      type:
+        sequence(:notification_type, ["sale", "transfer", "sale_history", "claim", "verification"]),
+      payload: "some rad json",
+      is_read: false
     }
   end
 end
