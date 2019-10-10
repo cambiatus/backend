@@ -76,8 +76,8 @@ defmodule BeSpiral.Commune do
   @doc """
   Fetch a transfer
 
-  ## Parameters 
-  * id: id of the tranfer to be fetched 
+  ## Parameters
+  * id: id of the tranfer to be fetched
   """
   @spec get_transfer(integer()) :: {:ok, Transfer.t()} | {:error, term}
   def get_transfer(id) do
@@ -91,14 +91,14 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
-  Fetch a sale history record 
+  Fetch a sale history record
 
-  ## Parameters 
-  * id: id of the history to be fetched 
+  ## Parameters
+  * id: id of the history to be fetched
   """
   @spec get_sale_history(integer()) :: {:ok, SaleHistory.t()} | {:error, term}
   def get_sale_history(id) do
-    case Repo.get(SaleHistoy, id) do
+    case Repo.get(SaleHistory, id) do
       nil ->
         {:error, "No SaleHistory record with the id: #{id} found"}
 
@@ -144,7 +144,7 @@ defmodule BeSpiral.Commune do
   @doc """
   Fetch a claimer's claimed action
 
-  ## Parameters 
+  ## Parameters
   * claimer: the claimer's account name
   """
   @spec get_actor_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
