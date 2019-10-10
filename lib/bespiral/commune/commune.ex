@@ -225,7 +225,6 @@ defmodule BeSpiral.Commune do
     query =
       AvailableSale
       |> where([s], s.creator_id != ^acc)
-      |> where([s], (s.track_stock == true and s.units > 0) or s.track_stock == false)
       |> order_by([s], desc: s.created_at)
 
     sales =
@@ -265,7 +264,6 @@ defmodule BeSpiral.Commune do
       AvailableSale
       |> where([s], s.creator_id != ^acc)
       |> where([s], s.community_id in ^symbols)
-      |> where([s], (s.track_stock == true and s.units > 0) or s.track_stock == false)
       |> order_by([s], desc: s.created_at)
 
     sales =
