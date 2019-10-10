@@ -151,7 +151,8 @@ defmodule BeSpiral.Commune do
   def get_validations(claimer) do
     validations =
       from(c in Claim,
-        where: c.claimer_id == ^claimer
+        where: c.claimer_id == ^claimer,
+        order_by: fragment("? DESC", c.created_at)
       )
       |> Repo.all()
 

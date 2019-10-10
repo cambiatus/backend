@@ -788,6 +788,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
         |> Enum.map(fn c -> c.id end)
 
       assert Repo.aggregate(Claim, :count, :id) == @num
+      
 
       variables = %{
         "input" => %{
@@ -798,7 +799,7 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       query = """
       query($input: ClaimsInput!) {
         claims(input: $input) {
-          id 
+          id
         }
       }
       """
