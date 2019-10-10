@@ -284,7 +284,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
   object :transfer do
     field(:from_id, non_null(:string))
     field(:to_id, non_null(:string))
-    field(:amount, non_null(:string))
+    field(:amount, non_null(:float))
     field(:community_id, non_null(:string))
     field(:memo, :string)
     field(:community, non_null(:community), resolve: dataloader(BeSpiral.Commune))
