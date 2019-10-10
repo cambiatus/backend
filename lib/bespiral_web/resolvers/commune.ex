@@ -25,7 +25,7 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   """
   @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_claims(_, %{input: %{claimer: c}}, _) do
-    Commune.get_validations(c)
+    Commune.get_actor_claims(c)
   end
 
   @doc """
@@ -33,7 +33,7 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   """
   @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_claims(_, %{input: %{validator: v}}, _) do
-    Commune.get_claims(v)
+    Commune.get_validator_claims(v)
   end
 
   @doc """
