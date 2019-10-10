@@ -776,6 +776,50 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       assert fetched_claim["id"] == claim.id
     end
 
+    test "collect a actor's claims", %{conn: conn} do
+      assert Repo.aggregate(Claim, :count, :id) == 0
+      assert Repo.aggregate(User, :count, :account) == 0
+
+      actor = insert(:user)
+
+      # make claims with our actor 
+      ids =
+        insert_list(@num, :claim, %{claimer: actor})
+        |> Enum.map(fn c -> c.id end)
+
+      assert Repo.aggregate(Claim, :count, :id) == @num
+      
+
+      variables = %{
+        "input" => %{
+          "claimer" => actor.account
+        }
+      }
+
+      query = """
+      query($input: ClaimsInput!) {
+        claims(input: $input) {
+          id
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "claims" => cs
+        }
+      } = json_response(res, 200)
+
+      assert Enum.count(cs) == Enum.count(ids)
+
+      fetched_ids = cs |> Enum.map(fn c -> c["id"] end)
+
+      # Check that the ids are the same
+      assert ids -- fetched_ids == []
+    end
+
     test "collect a validator's claims", %{conn: conn} do
       assert Repo.aggregate(Claim, :count, :id) == 0
       assert Repo.aggregate(Action, :count, :id) == 0

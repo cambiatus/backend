@@ -142,13 +142,31 @@ defmodule BeSpiral.Commune do
   end
 
   @doc """
+  Fetch a claimer's claimed action
+
+  ## Parameters 
+  * claimer: the claimer's account name
+  """
+  @spec get_actor_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_actor_claims(claimer) do
+    validations =
+      from(c in Claim,
+        where: c.claimer_id == ^claimer,
+        order_by: fragment("? DESC", c.created_at)
+      )
+      |> Repo.all()
+
+    {:ok, validations}
+  end
+
+  @doc """
   Fetch a validators claims
 
   ## Paramters
   * account: the validator in question's account name
   """
-  @spec get_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
-  def get_claims(account) do
+  @spec get_validator_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_validator_claims(account) do
     available_claims =
       from(a in Action,
         # where validator can vote
@@ -172,14 +190,14 @@ defmodule BeSpiral.Commune do
       )
       |> Repo.all()
 
-    all_claims =
+    validator_claims =
       (available_claims ++ voted_claims)
       |> Enum.uniq_by(fn c -> c.id end)
       |> Enum.sort(fn x, y ->
         Calendar.Date.after?(x.created_at, y.created_at)
       end)
 
-    {:ok, all_claims}
+    {:ok, validator_claims}
   end
 
   @doc """
