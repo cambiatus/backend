@@ -149,11 +149,16 @@ defmodule BeSpiral.DbListener do
   """
   @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info({:notification, _, _, "claims_changed", payload}, _state) do
-    with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
+    with {:ok, %{record: record, operation: "INSERT"}} <- Jason.decode(payload, keys: :atoms),
          {:ok, action} <- Commune.get_action(record.action_id),
          {:ok, :notified} <- Notifications.notify_validators(action) do
       {:noreply, :event_handled}
     else
+      {:ok, %{record: record, operation: "UPDATE"}} ->
+        if record.is_verified do
+         Notifications.notify_claim_approved(record.id) 
+        end 
+           
       err ->
         log_sentry_error(err)
     end
