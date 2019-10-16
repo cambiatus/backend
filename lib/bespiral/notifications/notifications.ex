@@ -6,6 +6,7 @@ defmodule BeSpiral.Notifications do
   import Ecto.Query
 
   alias BeSpiral.{
+    Commune,
     Notifications.PushSubscription,
     Notifications.Payload,
     Notifications.NotificationHistory,
@@ -136,7 +137,37 @@ defmodule BeSpiral.Notifications do
 
     {:ok, :notified}
   end
-  
+
+  @doc """
+  Notifies a Claimer when their claim is approved 
+
+  ## Parameters: 
+  * claim_id: id  of the claim that has just been verified
+  """
+  @spec notify_claim_approved(integer()) :: {:ok, atom()} | {:error, term}
+  def notify_claim_approved(claim_id) do
+    with {:ok, claim} <- Commune.get_claim(claim_id) do
+      loaded_claim =
+        claim
+        |> Repo.preload([:action, :claimer])
+
+      _ =
+        notify(
+          %{
+            title: "Your claim has been approved",
+            body: loaded_claim.action.description,
+            type: :validation
+          },
+          loaded_claim.claimer
+        )
+
+      {:ok, :notified}
+    else
+      v ->
+        {:error, v}
+    end
+  end
+
   @doc """
   Collects unread notifications metadata for a user
 

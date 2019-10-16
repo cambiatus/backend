@@ -79,8 +79,7 @@ defmodule BeSpiral.DbListener do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          {:ok, record} <- format_record(Transfer, record),
          {:ok, account} <- Accounts.get_account_profile(record.to_id),
-         {:ok, user_subs} <- Notifications.get_subscriptions(account),
-         :ok <- Absinthe.Subscription.publish(Endpoint, record, transfers: "*") do
+         {:ok, user_subs} <- Notifications.get_subscriptions(account) do
       message =
         "Transfer of #{record.amount}#{record.community_id} from #{record.from_id} received"
 
@@ -120,8 +119,7 @@ defmodule BeSpiral.DbListener do
   """
   @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info({:notification, _pid, _ref, "sale_history_changed", payload}, _state) do
-    with {:ok, data} <- Jason.decode(payload, keys: :atoms),
-         :ok <- Absinthe.Subscription.publish(Endpoint, data.record, sale_history_operation: "*") do
+    with {:ok, data} <- Jason.decode(payload, keys: :atoms) do
 
       # After the notification has been sent, save it on the notification history table
       %{
@@ -151,11 +149,16 @@ defmodule BeSpiral.DbListener do
   """
   @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info({:notification, _, _, "claims_changed", payload}, _state) do
-    with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
+    with {:ok, %{record: record, operation: "INSERT"}} <- Jason.decode(payload, keys: :atoms),
          {:ok, action} <- Commune.get_action(record.action_id),
          {:ok, :notified} <- Notifications.notify_validators(action) do
       {:noreply, :event_handled}
     else
+      {:ok, %{record: record, operation: "UPDATE"}} ->
+        if record.is_verified do
+         Notifications.notify_claim_approved(record.id) 
+        end 
+           
       err ->
         log_sentry_error(err)
     end
