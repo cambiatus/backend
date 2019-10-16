@@ -55,6 +55,8 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
   object :community_subscriptions do
     @desc "A subscription to resolve operations on the sales table"
     field :sales_operation, :sale do
+      deprecate("Use push notifications to receive these updates")
+
       config(fn _args, _info ->
         {:ok, topic: "*"}
       end)
@@ -62,6 +64,8 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
     @desc "A subscription for sale history"
     field :sale_history_operation, :sale_history do
+      deprecate("Use push notifications to receive these updates")
+
       config(fn _args, _info ->
         {:ok, topic: "*"}
       end)
