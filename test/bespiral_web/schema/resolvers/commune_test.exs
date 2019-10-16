@@ -514,9 +514,8 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       assert %{"title" => ^f_title} = hd(community_sales)
       assert Repo.aggregate(AvailableSale, :count, :id) == @num * 3
       # Assert that the collected items are the total less the 
-      # 3 sales with units 0
       # 1 sale belonging to the user
-      assert Enum.count(community_sales) == @num * 3 - 4
+      assert Enum.count(community_sales) == @num * 3 - 1
     end
 
     test "collects a user's sales", %{conn: conn} do
