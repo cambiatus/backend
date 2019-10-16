@@ -1,4 +1,4 @@
-defmodule BeSpiralWeb.Resolvers.ChatTest do
+defmodule BeSpiralWeb.Schema.Resolvers.ChatTest do
   @moduledoc """
   This module integration tests to for resolvers that work with the chat context
   """
