@@ -1,4 +1,4 @@
-defmodule BeSpiralWeb.Resolvers.AccountsTest do
+defmodule BeSpiralWeb.Schema.Resolvers.AccountsTest do
   @moduledoc """
   This module integration tests to for resolvers that work with the accounts context
   """

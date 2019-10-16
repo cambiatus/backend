@@ -55,6 +55,8 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
   object :community_subscriptions do
     @desc "A subscription to resolve operations on the sales table"
     field :sales_operation, :sale do
+      deprecate("Use push notifications to receive these updates")
+
       config(fn _args, _info ->
         {:ok, topic: "*"}
       end)
@@ -62,6 +64,8 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
     @desc "A subscription for sale history"
     field :sale_history_operation, :sale_history do
+      deprecate("Use push notifications to receive these updates")
+
       config(fn _args, _info ->
         {:ok, topic: "*"}
       end)
@@ -69,10 +73,30 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
     @desc "A subscription for transfers"
     field :transfers, :transfer do
+      deprecate("Use push notifications to receive these updates")
+
       config(fn _args, _info ->
         {:ok, topic: "*"}
       end)
     end
+
+    @desc "A subscription for new community addition"
+    field :new_community, :community do
+      arg(:input, non_null(:new_community_input))
+
+      config(fn %{input: %{symbol: sym}}, _ ->
+        {:ok, topic: sym}
+      end)
+
+      resolve(fn community, _, _ ->
+        {:ok, community}
+      end)
+    end
+  end
+
+  @desc "Input to subscribe for a new community creation"
+  input_object :new_community_input do
+    field(:symbol, :string)
   end
 
   @desc "Input to collect claims"

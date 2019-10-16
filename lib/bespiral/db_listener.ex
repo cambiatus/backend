@@ -45,7 +45,8 @@ defmodule BeSpiral.DbListener do
          {:ok, _pid, _ref} <- Repo.listen("transfers_changed"),
          {:ok, _pid, _ref} <- Repo.listen("sale_history_changed"),
          {:ok, _pid, _ref} <- Repo.listen("claims_changed"),
-         {:ok, _pid, _ref} <- Repo.listen("check_added") do
+         {:ok, _pid, _ref} <- Repo.listen("check_added"),
+         {:ok, _pid, _ref} <- Repo.listen("community_created") do
       {:ok, opts}
     else
       error ->
@@ -56,11 +57,16 @@ defmodule BeSpiral.DbListener do
   end
 
   @doc """
+  Callback Spec
+  """
+  @spec handle_info(tuple(), term()) :: callback_return()
+  def handle_info(details, state)
+
+  @doc """
   Callback to handle notification events from the database
   Whenever a notification is received we out to run publish an to a GraphQL subscription so actors
   that are listening can take the correct actions
   """
-  @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info({:notification, _pid, _ref, "sales_changed", payload}, _state) do
     with {:ok, data} <- Jason.decode(payload, keys: :atoms),
          :ok <- Absinthe.Subscription.publish(Endpoint, data.record, sales_operation: "*") do
@@ -74,7 +80,6 @@ defmodule BeSpiral.DbListener do
   @doc """
   Callback to handle transfer activity notifications from the database
   """
-  @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info({:notification, _, _, "transfers_changed", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          {:ok, record} <- format_record(Transfer, record),
@@ -117,10 +122,8 @@ defmodule BeSpiral.DbListener do
   Callback to handle sale_history table activity.
   It will trigger database notifications handled by this function
   """
-  @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info({:notification, _pid, _ref, "sale_history_changed", payload}, _state) do
     with {:ok, data} <- Jason.decode(payload, keys: :atoms) do
-
       # After the notification has been sent, save it on the notification history table
       %{
         recipient_id: data.record.to_id,
@@ -147,7 +150,6 @@ defmodule BeSpiral.DbListener do
   Call back to handle claims table additions, This call back will decode the claim data
   collect the claim's action and hand that over to the Notifications context to send notifications
   """
-  @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info({:notification, _, _, "claims_changed", payload}, _state) do
     with {:ok, %{record: record, operation: "INSERT"}} <- Jason.decode(payload, keys: :atoms),
          {:ok, action} <- Commune.get_action(record.action_id),
@@ -156,9 +158,9 @@ defmodule BeSpiral.DbListener do
     else
       {:ok, %{record: record, operation: "UPDATE"}} ->
         if record.is_verified do
-         Notifications.notify_claim_approved(record.id) 
-        end 
-           
+          Notifications.notify_claim_approved(record.id)
+        end
+
       err ->
         log_sentry_error(err)
     end
@@ -168,11 +170,24 @@ defmodule BeSpiral.DbListener do
   Callback to handle check table additions and updates. This will decode the check data 
   collect the check's claom and hand that over to the notifications context to send out notifications 
   """
-  @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info({:notification, _, _, "check_added", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          {:ok, claim} <- Commune.get_claim(record.claim_id),
          {:ok, :notified} <- Notifications.notify_claimer(claim) do
+      {:noreply, :event_handled}
+    else
+      err ->
+        log_sentry_error(err)
+    end
+  end
+
+  @doc """
+  Callback to publish a GraphQL subscription whenever a new community is added to the database
+  will publish to the community's symbol topic
+  """
+  def handle_info({:notification, _pid, _ref, "community_created", payload}, _state) do
+    with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
+         :ok <- Absinthe.Subscription.publish(Endpoint, record, new_commmunity: record.symbol) do
       {:noreply, :event_handled}
     else
       err ->
