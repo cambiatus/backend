@@ -48,8 +48,8 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   Fetch a objective
   """
   @spec get_objective(map(), map(), map()) :: {:ok, map()} | {:error, term}
-  def get_objective(_, %{id: objective_id}, _) do
-    Commune.get_objective(objective_id)
+  def get_objective(_, %{input: params}, _) do
+    Commune.get_objective(params.id)
   end
 
   @doc """

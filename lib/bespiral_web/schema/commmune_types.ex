@@ -52,7 +52,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
     @desc "A single objective"
     field :objective, :objective do
-      arg(:id, non_null(:integer))
+      arg(:input, non_null(:objective_input))
       resolve(&Commune.get_objective/3)
     end
   end
@@ -79,6 +79,11 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
         {:ok, topic: "*"}
       end)
     end
+  end
+
+  @desc "Input object to collect a single Objective"
+  input_object :objective_input do
+    field(:id, non_null(:integer))
   end
 
   @desc "Input to collect claims"
