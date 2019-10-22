@@ -49,6 +49,12 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, non_null(:claim_input))
       resolve(&Commune.get_claim/3)
     end
+
+    @desc "A single objective"
+    field :objective, :objective do
+      arg(:id, non_null(:integer))
+      resolve(&Commune.get_objective/3)
+    end
   end
 
   @desc "Community Subscriptions on BeSpiral"
