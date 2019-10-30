@@ -14,6 +14,7 @@ defmodule BeSpiral.Commune do
     Commune.Community,
     Commune.Claim,
     Commune.Network,
+    Commune.Objective,
     Commune.SaleHistory,
     Commune.Transfer,
     Commune.Validator,
@@ -157,6 +158,31 @@ defmodule BeSpiral.Commune do
       |> Repo.all()
 
     {:ok, validations}
+  end
+
+  @doc """
+  Fetch all claims from a community 
+
+  ### Parameters 
+  * symbol: the community's symbol
+  """
+  @spec get_community_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_community_claims(symbol) do
+    community_claims =
+      from(o in Objective,
+        where: o.community_id == ^symbol,
+        # pick this objectives actions 
+        join: a in Action,
+        on: a.objective_id == o.id,
+        # pick the actions claims
+        join: c in Claim,
+        on: c.action_id == a.id,
+        order_by: c.created_at,
+        select: c
+      )
+      |> Repo.all()
+
+    {:ok, community_claims}
   end
 
   @doc """
