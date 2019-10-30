@@ -177,7 +177,7 @@ defmodule BeSpiral.Commune do
         # pick the actions claims
         join: c in Claim,
         on: c.action_id == a.id,
-        order_by: c.created_at,
+        order_by: fragment("? DESC", c.created_at),
         select: c
       )
       |> Repo.all()
