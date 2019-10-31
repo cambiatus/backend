@@ -785,7 +785,6 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
         |> Enum.map(fn c -> c.id end)
 
       assert Repo.aggregate(Claim, :count, :id) == @num
-      
 
       variables = %{
         "input" => %{
@@ -899,6 +898,69 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
 
       # since act2 was validated by a different user  we should not have it in the list 
       refute Enum.member?(claim_action_ids, act2.id)
+    end
+
+    @tag :claimsy
+    test "collects all claims in a community", %{conn: conn} do
+      assert Repo.aggregate(Claim, :count, :id) == 0
+      assert Repo.aggregate(Community, :count, :symbol) == 0
+      assert Repo.aggregate(Objective, :count, :id) == 0
+
+      communities = insert_list(@num, :community)
+
+      communities
+      |> Enum.map(fn c ->
+        insert_list(@num, :objective, %{community: c})
+      end)
+
+      Repo.all(Objective)
+      |> Enum.map(fn o ->
+        insert_list(@num, :action, %{objective: o})
+      end)
+
+      assert Repo.aggregate(Action, :count, :id) == @num * @num * @num
+
+      Repo.all(Action)
+      |> Enum.map(fn a ->
+        insert_list(@num, :claim, %{action: a})
+      end)
+
+      assert Repo.aggregate(Claim, :count, :id) == @num * @num * @num * @num
+
+      c1 = hd(communities)
+
+      variables = %{
+        "input" => %{
+          "symbol" => c1.symbol
+        }
+      }
+
+      query = """
+      query($input: ClaimsInput) {
+        claims(input: $input) {
+          created_at
+          id
+          action {
+            objective {
+              community {
+                symbol
+              }
+            }
+          }
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "claims" => cs
+        }
+      } = json_response(res, 200)
+
+      # Ensure we only get 3 claims for 3 actions for 3 objectives in the community
+      assert Enum.count(cs) == @num * @num * @num
     end
   end
 end
