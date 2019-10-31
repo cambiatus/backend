@@ -81,7 +81,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     end
 
     @desc "A subscription for new community addition"
-    field :new_community, :community do
+    field :newcommunity, non_null(:community) do
       arg(:input, non_null(:new_community_input))
 
       config(fn %{input: %{symbol: sym}}, _ ->
@@ -96,7 +96,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
   @desc "Input to subscribe for a new community creation"
   input_object :new_community_input do
-    field(:symbol, :string)
+    field(:symbol, non_null(:string))
   end
 
   @desc "Input to collect claims"

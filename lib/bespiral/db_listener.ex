@@ -187,7 +187,7 @@ defmodule BeSpiral.DbListener do
   """
   def handle_info({:notification, _pid, _ref, "community_created", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
-         :ok <- Absinthe.Subscription.publish(Endpoint, record, new_commmunity: record.symbol) do
+         :ok <- Absinthe.Subscription.publish(Endpoint, record, newcommunity: record.symbol) do
       {:noreply, :event_handled}
     else
       err ->
