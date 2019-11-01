@@ -13,7 +13,7 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   }
 
   @doc """
-  Fetches a claim 
+  Fetches a claim
   """
   @spec get_claim(map(), map(), map()) :: {:ok, Claim.t()} | {:error, term}
   def get_claim(_, %{input: %{id: id}}, _) do
@@ -50,6 +50,14 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   @spec get_sale(map(), map(), map()) :: {:ok, map()} | {:error, term}
   def get_sale(_, %{input: params}, _) do
     Commune.get_sale(params.id)
+  end
+
+  @doc """
+  Fetch a objective
+  """
+  @spec get_objective(map(), map(), map()) :: {:ok, map()} | {:error, term}
+  def get_objective(_, %{input: params}, _) do
+    Commune.get_objective(params.id)
   end
 
   @doc """

@@ -49,6 +49,12 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, non_null(:claim_input))
       resolve(&Commune.get_claim/3)
     end
+
+    @desc "A single objective"
+    field :objective, :objective do
+      arg(:input, non_null(:objective_input))
+      resolve(&Commune.get_objective/3)
+    end
   end
 
   @desc "Community Subscriptions on BeSpiral"
@@ -97,6 +103,11 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
   @desc "Input to subscribe for a new community creation"
   input_object :new_community_input do
     field(:symbol, non_null(:string))
+  end
+
+  @desc "Input object to collect a single Objective"
+  input_object :objective_input do
+    field(:id, non_null(:integer))
   end
 
   @desc "Input to collect claims"

@@ -128,7 +128,7 @@ defmodule BeSpiral.Commune do
   @doc """
   Fetch a single claim by id
 
-  ## Paramters
+  ## Parameters
   * id: the id of the claim to be fetched
   """
   @spec get_claim(integer()) :: {:ok, Claim.t()} | {:error, term}
@@ -139,6 +139,23 @@ defmodule BeSpiral.Commune do
 
       val ->
         {:ok, val}
+    end
+  end
+
+  @doc """
+  Fetch a single objective by id
+
+  ## Parameters
+  * id: the objective id
+  """
+  @spec get_objective(integer()) :: {:ok, Objective.t()} | {:error, term}
+  def get_objective(id) do
+    case Repo.get(Objective, id) do
+      nil ->
+        {:error, "No objective with id: #{id} found"}
+
+      objective ->
+        {:ok, objective}
     end
   end
 
