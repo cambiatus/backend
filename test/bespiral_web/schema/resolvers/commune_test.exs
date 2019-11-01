@@ -1,4 +1,4 @@
-defmodule BeSpiralWeb.Resolvers.CommuneTest do
+defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
   @moduledoc """
   This module holds integration tests for resolvers used when interacting with the
   Commune context, use it to ensure that the the context acts as expected
@@ -19,7 +19,6 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
   @num 3
   describe "Commnune Resolver" do
-    @tag :actions
     test "collects claimable actions with their validators", %{conn: conn} do
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       comm = insert(:community)
@@ -469,7 +468,6 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       assert Enum.count(all_sales) == @num
     end
 
-    @tag :comm_sales
     test "collects all sales from a user's communities", %{conn: conn} do
       assert Repo.aggregate(AvailableSale, :count, :id) == 0
 
@@ -516,9 +514,8 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
       assert %{"title" => ^f_title} = hd(community_sales)
       assert Repo.aggregate(AvailableSale, :count, :id) == @num * 3
       # Assert that the collected items are the total less the 
-      # 3 sales with units 0
       # 1 sale belonging to the user
-      assert Enum.count(community_sales) == @num * 3 - 4
+      assert Enum.count(community_sales) == @num * 3 - 1
     end
 
     test "collects a user's sales", %{conn: conn} do
@@ -788,7 +785,6 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
         |> Enum.map(fn c -> c.id end)
 
       assert Repo.aggregate(Claim, :count, :id) == @num
-      
 
       variables = %{
         "input" => %{
@@ -902,6 +898,69 @@ defmodule BeSpiralWeb.Resolvers.CommuneTest do
 
       # since act2 was validated by a different user  we should not have it in the list 
       refute Enum.member?(claim_action_ids, act2.id)
+    end
+
+    @tag :claimsy
+    test "collects all claims in a community", %{conn: conn} do
+      assert Repo.aggregate(Claim, :count, :id) == 0
+      assert Repo.aggregate(Community, :count, :symbol) == 0
+      assert Repo.aggregate(Objective, :count, :id) == 0
+
+      communities = insert_list(@num, :community)
+
+      communities
+      |> Enum.map(fn c ->
+        insert_list(@num, :objective, %{community: c})
+      end)
+
+      Repo.all(Objective)
+      |> Enum.map(fn o ->
+        insert_list(@num, :action, %{objective: o})
+      end)
+
+      assert Repo.aggregate(Action, :count, :id) == @num * @num * @num
+
+      Repo.all(Action)
+      |> Enum.map(fn a ->
+        insert_list(@num, :claim, %{action: a})
+      end)
+
+      assert Repo.aggregate(Claim, :count, :id) == @num * @num * @num * @num
+
+      c1 = hd(communities)
+
+      variables = %{
+        "input" => %{
+          "symbol" => c1.symbol
+        }
+      }
+
+      query = """
+      query($input: ClaimsInput) {
+        claims(input: $input) {
+          created_at
+          id
+          action {
+            objective {
+              community {
+                symbol
+              }
+            }
+          }
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "claims" => cs
+        }
+      } = json_response(res, 200)
+
+      # Ensure we only get 3 claims for 3 actions for 3 objectives in the community
+      assert Enum.count(cs) == @num * @num * @num
     end
   end
 end

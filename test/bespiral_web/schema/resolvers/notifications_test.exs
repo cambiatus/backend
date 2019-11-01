@@ -1,4 +1,4 @@
-defmodule BeSpiralWeb.Resolvers.NotificationsTests do
+defmodule BeSpiralWeb.Schema.Resolvers.NotificationsTests do
   @moduledoc """
   Integration tests for the notifications resolvers
   """

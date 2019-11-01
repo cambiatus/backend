@@ -37,7 +37,15 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   end
 
   @doc """
-  Fetch a sale from the database
+  Fetches all the claims in a community
+  """
+  @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_claims(_, %{input: %{symbol: s}}, _) do
+    Commune.get_community_claims(s)
+  end
+
+  @doc """
+  Fetch a sale from the database 
   """
   @spec get_sale(map(), map(), map()) :: {:ok, map()} | {:error, term}
   def get_sale(_, %{input: params}, _) do

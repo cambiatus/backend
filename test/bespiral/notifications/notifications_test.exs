@@ -92,7 +92,6 @@ defmodule BeSpiral.NotificationsTest do
       assert {:ok, :notified} = Notifications.notify_validators(action)
     end
 
-    @tag :claim
     test "notify_claimer/1 sends a validation push notification" do
       # create a claim to validate
       claim = insert(:claim)
@@ -117,5 +116,29 @@ defmodule BeSpiral.NotificationsTest do
 
       assert {:ok, :notified} = Notifications.notify_claimer(claim)
     end
+
+    test "notify_claim_approved/1 sends an approval push notification" do 
+      claim = insert(:claim)
+
+      push = insert(:push_subscription, %{account: claim.claimer})
+
+      payload = %{
+        title: "Your claim has been approved",
+        body: "",
+        type: :validation
+      }
+
+
+      BeSpiral.Notifications.TestAdapter
+      |> expect(:send_web_push, fn load, sub ->
+        assert load == Jason.encode!(payload)
+        assert sub.keys.auth == push.auth_key
+        assert sub.keys.p256dh == push.p_key
+
+        {:ok, %{status_code: 201}}
+      end)
+
+      assert {:ok, :notified} = Notifications.notify_claim_approved(claim.id)
+    end 
   end
 end
