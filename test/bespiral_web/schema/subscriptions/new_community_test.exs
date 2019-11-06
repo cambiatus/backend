@@ -1,9 +1,9 @@
-defmodule BeSpiralWeb.Schema.Subscriptions.NewCommunityTest do 
+defmodule BeSpiralWeb.Schema.Subscriptions.NewCommunityTest do
   use BeSpiralWeb.SubscriptionCase
 
-  describe "New Community Subscription" do 
+  describe "New Community Subscription" do
     test "Can be subscribed to", %{socket: socket} do
-      community  = insert(:community)
+      community = insert(:community)
 
       subscription = """
       subscription($input: NewCommunityInput!) {
@@ -21,20 +21,22 @@ defmodule BeSpiralWeb.Schema.Subscriptions.NewCommunityTest do
 
       ref = push_doc(socket, subscription, variables: variables)
 
-      assert_reply ref, :ok, %{subscriptionId: subscription_id}
+      assert_reply(ref, :ok, %{subscriptionId: subscription_id})
 
       # Publish our subscription 
-      Absinthe.Subscription.publish(BeSpiralWeb.Endpoint, community, newcommunity: community.symbol)
+      Absinthe.Subscription.publish(BeSpiralWeb.Endpoint, community,
+        newcommunity: community.symbol
+      )
 
-      expected_payload = %{ "symbol" => community.symbol }
+      expected_payload = %{"symbol" => community.symbol}
 
       expected_result = %{
         result: %{data: %{"newcommunity" => expected_payload}},
         subscriptionId: subscription_id
       }
 
-      assert_push "subscription:data", push 
+      assert_push("subscription:data", push)
       assert expected_result == push
     end
-  end 
-end 
+  end
+end
