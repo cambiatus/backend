@@ -1,16 +1,26 @@
 defmodule BeSpiralWeb.Schema.Subscriptions.NotificationsTest do
   use BeSpiralWeb.SubscriptionCase
 
+  alias BeSpiral.Notifications.NotificationHistory
+
   describe "Notifications Subscriptions" do
+    @num 3
     test "Can be subscribed to", %{socket: socket} do
       user = insert(:user)
 
-      notification = insert(:notification_history)
+      unread_notifications =
+        insert_list(@num, :notification_history, %{recipient: user, is_read: false})
+
+      read_notifications =
+        insert_list(@num * 2, :notification_history, %{recipient: user, is_read: true})
+
+      assert Repo.aggregate(NotificationHistory, :count, :id) ==
+               Enum.count(unread_notifications) + Enum.count(read_notifications)
 
       subscription = """
-      subscription($input: NotificationsSubscriptionInput!) {
-        notifications(input: $input) {
-         type
+      subscription($input: UnreadNotificationsSubscriptionInput!) {
+        unreads(input: $input) {
+         unreads
         }
       }
       """
@@ -25,15 +35,15 @@ defmodule BeSpiralWeb.Schema.Subscriptions.NotificationsTest do
 
       assert_reply(ref, :ok, %{subscriptionId: subscription_id})
 
-      # Publish our subscription 
-      Absinthe.Subscription.publish(BeSpiralWeb.Endpoint, notification,
-        notifications: user.account
-      )
+      payload = %{unreads: Enum.count(unread_notifications)}
 
-      expected_payload = %{"notifications" => user.account}
+      # Publish our subscription 
+      Absinthe.Subscription.publish(BeSpiralWeb.Endpoint, payload, unreads: user.account)
+
+      expected_payload = %{"unreads" => Enum.count(unread_notifications)}
 
       expected_result = %{
-        result: %{data: %{"notifications" => expected_payload}},
+        result: %{data: %{"unreads" => expected_payload}},
         subscriptionId: subscription_id
       }
 
