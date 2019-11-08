@@ -19,6 +19,7 @@ defmodule BeSpiralWeb.SubscriptionCase do
       @endpoint BeSpiralWeb.Endpoint
 
       import BeSpiral.Factory
+      alias BeSpiral.Repo
     end
   end
 
