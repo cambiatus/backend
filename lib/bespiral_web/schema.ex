@@ -44,5 +44,6 @@ defmodule BeSpiralWeb.Schema do
 
   subscription do
     import_fields(:community_subscriptions)
+    import_fields(:notifications_subscriptions)
   end
 end

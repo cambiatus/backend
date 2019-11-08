@@ -28,10 +28,21 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
       arg(:account, non_null(:string))
       resolve(&Notifications.user_notification_history/3)
     end
+  end
 
-    field(:unread_notifications, non_null(:unread_notifications)) do
-      arg(:input, non_null(:unread_notifications_input))
-      resolve(&Notifications.unread_notifications/3)
+  @desc "Notifications Subscriptions on BeSpiral"
+  object :notifications_subscriptions do
+    @desc "A subscription for the number of unread notifications"
+    field :unreads, non_null(:unread_notifications) do
+      arg(:input, non_null(:unread_notifications_subscription_input))
+
+      config(fn %{input: %{account: acc}}, _ ->
+        {:ok, topic: acc}
+      end)
+
+      resolve(fn unreads, _, _ ->
+        {:ok, unreads}
+      end)
     end
   end
 
@@ -43,17 +54,17 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
 
   @desc "An unread notifications object"
   object :unread_notifications do
-    field(:count, non_null(:integer))
+    field(:unreads, non_null(:integer))
+  end
+
+  @desc "Input object to collect number of unread notifications"
+  input_object :unread_notifications_subscription_input do
+    field(:account, non_null(:string))
   end
 
   @desc "Input object to mark notification history as read"
   input_object :read_notification_input do
     field(:id, non_null(:integer))
-  end
-
-  @desc "Input object to collect unread notifications data"
-  input_object :unread_notifications_input do
-    field(:account, non_null(:string))
   end
 
   @desc "Input object for registering a push subscription"
