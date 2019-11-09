@@ -37,6 +37,10 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
       arg(:input, non_null(:unread_notifications_subscription_input))
 
       config(fn %{input: %{account: acc}}, _ ->
+        # Publish initial results async will run after current stack
+        Task.async(BeSpiral.Notifications.update_unread(acc))
+
+        # Accept subscription will run before above line
         {:ok, topic: acc}
       end)
 
