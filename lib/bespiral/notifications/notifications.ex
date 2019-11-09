@@ -139,21 +139,6 @@ defmodule BeSpiral.Notifications do
   end
 
   @doc """
-  Update the number of unread notifications for a user whenever their notificatios are updated 
-
-  ## Parameters 
-  * account: The user whose unread notifications we are updating at the moment
-  """
-  @spec update_unread(String.t()) :: :ok | {:error, term}
-  def update_unread(acct) do
-    {:ok, payload} =
-      acct
-      |> get_unread()
-
-    Absinthe.Subscription.publish(Endpoint, payload, unreads: acct)
-  end
-
-  @doc """
   Notifies a Claimer when their claim is approved 
 
   ## Parameters: 
@@ -182,6 +167,22 @@ defmodule BeSpiral.Notifications do
         {:error, v}
     end
   end
+
+  @doc """
+  Update the number of unread notifications for a user whenever their notificatios are updated 
+
+  ## Parameters 
+  * account: The user whose unread notifications we are updating at the moment
+  """
+  @spec update_unread(String.t()) :: :ok | {:error, term}
+  def update_unread(acct) do
+    {:ok, payload} =
+      acct
+      |> get_unread()
+
+    Absinthe.Subscription.publish(BeSpiralWeb.Endpoint, payload, unreads: acct)
+  end
+
 
   @doc """
   Collects unread notifications metadata for a user
