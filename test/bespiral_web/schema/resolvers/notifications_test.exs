@@ -6,7 +6,6 @@ defmodule BeSpiralWeb.Schema.Resolvers.NotificationsTests do
 
   alias BeSpiral.{
     Notifications.PushSubscription,
-    Notifications.NotificationHistory
   }
 
   describe "Notifications resolvers" do
