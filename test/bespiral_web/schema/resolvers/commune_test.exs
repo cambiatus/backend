@@ -40,7 +40,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       query = """
       query {
         community(symbol: "#{comm.symbol}") {
-          symbol 
+          symbol
           objectives {
             actions {
               validators {
@@ -513,7 +513,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
 
       assert %{"title" => ^f_title} = hd(community_sales)
       assert Repo.aggregate(AvailableSale, :count, :id) == @num * 3
-      # Assert that the collected items are the total less the 
+      # Assert that the collected items are the total less the
       # 1 sale belonging to the user
       assert Enum.count(community_sales) == @num * 3 - 1
     end
@@ -575,7 +575,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
         sale(input: $input) {
           id
           title
-          description 
+          description
           createdAt
         }
       }
@@ -779,9 +779,10 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
 
       actor = insert(:user)
 
-      # make claims with our actor 
+      # make claims with our actor
       ids =
-        insert_list(@num, :claim, %{claimer: actor})
+        @num
+        |> insert_list(:claim, %{claimer: actor})
         |> Enum.map(fn c -> c.id end)
 
       assert Repo.aggregate(Claim, :count, :id) == @num
@@ -837,9 +838,10 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       insert_list(@num, :action, %{verification_type: "claimable"})
       assert Repo.aggregate(Action, :count, :id) == @num * 2
 
-      # Claim all actions 
+      # Claim all actions
       _ =
-        Repo.all(Action)
+        Action
+        |> Repo.all()
         |> Enum.map(fn action ->
           insert(:claim, %{claimer: claimer, action: action})
         end)
@@ -877,7 +879,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
           created_at
           id
           action {
-            id 
+            id
           }
         }
       }
@@ -896,7 +898,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       # Ensure all claims except the one voted for by v2
       assert Enum.count(cs) == @num - 1
 
-      # since act2 was validated by a different user  we should not have it in the list 
+      # since act2 was validated by a different user  we should not have it in the list
       refute Enum.member?(claim_action_ids, act2.id)
     end
 
@@ -913,14 +915,16 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
         insert_list(@num, :objective, %{community: c})
       end)
 
-      Repo.all(Objective)
+      Objective
+      |> Repo.all()
       |> Enum.map(fn o ->
         insert_list(@num, :action, %{objective: o})
       end)
 
       assert Repo.aggregate(Action, :count, :id) == @num * @num * @num
 
-      Repo.all(Action)
+      Action
+      |> Repo.all()
       |> Enum.map(fn a ->
         insert_list(@num, :claim, %{action: a})
       end)
