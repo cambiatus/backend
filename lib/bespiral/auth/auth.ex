@@ -197,6 +197,25 @@ defmodule BeSpiral.Auth do
     Invitation.changeset(invitation, %{})
   end
 
+  def create_invites(%{"inviter" => inviter, "invites" => emails, "symbol" => community}) do
+    create_invites(community, inviter, emails)
+  end
+
+  def create_invites(community, inviter, emails) do
+    x =
+    emails
+    |> String.split(",")
+    |> Enum.map(
+      &%{
+        community: community,
+        inviter: inviter,
+        invitee_email: &1
+      }
+    )
+    |> Enum.map(&create_invitation(&1))
+    |> Enum.map(send_invite)
+  end
+
   def send_invite(
         {:ok,
          %{id: id, community: community_symbol, inviter: inviter_account, invitee_email: email}}

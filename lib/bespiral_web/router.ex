@@ -52,5 +52,7 @@ defmodule BeSpiralWeb.Router do
 
     get("/chain/info", ChainController, :info)
     post("/chain/account", ChainController, :create_account)
+
+    post("/communities/:symbol/invite", InviteController, :invite)
   end
 end
