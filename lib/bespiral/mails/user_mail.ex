@@ -20,15 +20,11 @@ defmodule BeSpiral.Mails.UserMail do
     new_email(
       to: recipient,
       from: Mailer.sender(),
-      subject: "Invitation for #{community} on BeSpiral",
+      subject: "Invitation for #{community} on Cambiatus",
       html_body:
-        "#{inviter} invited you to join #{community} <br> <a href=\"http://dev.bespiral.io/#/register/#{
-          invitation_id
-        }\" target=\"_blank\">Click here to join</a>",
+        "#{inviter} invited you to join #{community} <br> <a href=\"http://dev.cambiatus.io/#/register/#{invitation_id}\" target=\"_blank\">Click here to join</a>",
       text_body:
-        "Use this URL to join #{community} on BeSpiral: http://dev.bespiral.io/#/register/#{
-          invitation_id
-        }"
+        "Use this URL to join #{community} on Cambiatus: http://dev.cambiatus.io/#/register/#{invitation_id}"
     )
     |> Mailer.deliver_later()
   end

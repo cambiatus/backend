@@ -4,9 +4,11 @@ defmodule BeSpiralWeb.InviteController do
   use BeSpiralWeb, :controller
   alias BeSpiral.Auth
 
+  action_fallback(BeSpiralWeb.FallbackController)
+
   def invite(conn, params) do
-    with :ok <- Auth.create_invites(params) do
-      render(conn, %{ok: ""})
+    with result <- Auth.create_invites(params) do
+      render(conn, %{result: result})
     end
   end
 end

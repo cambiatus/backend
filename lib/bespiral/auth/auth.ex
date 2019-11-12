@@ -202,7 +202,6 @@ defmodule BeSpiral.Auth do
   end
 
   def create_invites(community, inviter, emails) do
-    x =
     emails
     |> String.split(",")
     |> Enum.map(
@@ -213,12 +212,12 @@ defmodule BeSpiral.Auth do
       }
     )
     |> Enum.map(&create_invitation(&1))
-    |> Enum.map(send_invite)
+    |> Enum.map(&send_invite/1)
   end
 
   def send_invite(
         {:ok,
-         %{id: id, community: community_symbol, inviter: inviter_account, invitee_email: email}}
+         %{id: id, community: community_symbol, inviter: inviter_account, invitee_email: email} = original_invite}
       ) do
     community = Commune.get_community!(community_symbol)
     inviter = Accounts.get_user!(inviter_account)
@@ -230,6 +229,7 @@ defmodule BeSpiral.Auth do
     }
 
     UserMail.invitation(email, invite)
+    {:ok, original_invite}
   end
 
   def send_invite({:error, _reason} = err), do: err
