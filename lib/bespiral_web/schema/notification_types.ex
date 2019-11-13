@@ -92,7 +92,7 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
   end
 
   union(:notification_type) do
-    types([:transfer, :sale_history])
+    types([:transfer, :sale_history, :mint])
 
     resolve_type(fn
       %BeSpiral.Commune.Transfer{}, _ ->
@@ -100,6 +100,9 @@ defmodule BeSpiralWeb.Schema.NotificationTypes do
 
       %BeSpiral.Commune.SaleHistory{}, _ ->
         :sale_history
+
+      %BeSpiral.Commune.Mint{}, _ ->
+        :mint
     end)
   end
 end

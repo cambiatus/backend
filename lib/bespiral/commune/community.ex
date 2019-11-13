@@ -4,6 +4,7 @@ defmodule BeSpiral.Commune.Community do
   alias BeSpiral.{
     Commune.Community,
     Commune.Network,
+    Commune.Mint,
     Commune.Objective,
     Commune.Sale,
     Commune.Transfer
@@ -38,6 +39,7 @@ defmodule BeSpiral.Commune.Community do
     has_many(:network, Network, foreign_key: :community_id)
     has_many(:members, through: [:network, :account])
     has_many(:objectives, Objective, foreign_key: :community_id)
+    has_many(:mints, Mint, foreign_key: :community_id)
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a

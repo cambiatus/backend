@@ -158,7 +158,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:validator, :string)
   end
 
-  @disc "A mint object in Cambiatus"
+  @desc "A mint object in Cambiatus"
   object :mint do
     field(:memo, :string)
     field(:quantity, non_null(:float))
@@ -200,6 +200,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       resolve: dataloader(BeSpiral.Commune)
     )
 
+    field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(BeSpiral.Commune))
     field(:members, non_null(list_of(non_null(:profile))), resolve: dataloader(BeSpiral.Commune))
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
   end
