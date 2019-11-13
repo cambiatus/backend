@@ -146,8 +146,8 @@ defmodule BeSpiral.NotificationsTest do
       push = insert(:push_subscription, %{account: mint.to})
 
       payload = %{
-        title: "You have received a Mint",
-        body: "#{mint.quantity}#{mint.community.symbol} has just been minted for you",
+        title: "You have received an issue",
+        body: "#{mint.quantity}#{mint.community.symbol} has been issued to your account",
         type: :mint
       }
 
@@ -160,7 +160,7 @@ defmodule BeSpiral.NotificationsTest do
         {:ok, %{status_code: 201}}
       end)
 
-      assert {:ok, :notified} = Notifications.notify_mintee(mint.to)
+      assert {:ok, :notified} = Notifications.notify_mintee(mint)
     end
   end
 end
