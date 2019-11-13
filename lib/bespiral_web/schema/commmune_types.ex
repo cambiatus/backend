@@ -158,6 +158,19 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:validator, :string)
   end
 
+  @disc "A mint object in Cambiatus"
+  object :mint do
+    field(:memo, :string)
+    field(:quantity, non_null(:float))
+    field(:to, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
+    field(:community, non_null(:community), resolve: dataloader(BeSpiral.Commune))
+
+    field(:created_block, non_null(:integer))
+    field(:created_tx, non_null(:string))
+    field(:created_eos_account, non_null(:string))
+    field(:created_at, non_null(:datetime))
+  end
+
   @desc "A community on BeSpiral"
   object :community do
     field(:symbol, non_null(:string))
