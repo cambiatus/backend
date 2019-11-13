@@ -167,11 +167,12 @@ defmodule BeSpiral.Commune do
   """
   @spec get_actor_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_actor_claims(claimer) do
-    validations =
+    query =
       from c in Claim,
         where: c.claimer_id == ^claimer,
         order_by: fragment("? DESC", c.created_at)
-      |> Repo.all()
+
+    validations = Repo.all(query)
 
     {:ok, validations}
   end
@@ -184,7 +185,7 @@ defmodule BeSpiral.Commune do
   """
   @spec get_community_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_community_claims(symbol) do
-    community_claims =
+    query =
       from o in Objective,
         where: o.community_id == ^symbol,
         # pick this objectives actions
@@ -196,7 +197,7 @@ defmodule BeSpiral.Commune do
         order_by: fragment("? DESC", c.created_at),
         select: c
 
-      |> Repo.all()
+      community_claims = Repo.all(query)
 
     {:ok, community_claims}
   end
@@ -209,7 +210,7 @@ defmodule BeSpiral.Commune do
   """
   @spec get_validator_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_validator_claims(account) do
-    available_claims =
+    query_action =
       from a in Action,
         # where validator can vote
         join: v in Validator,
@@ -220,15 +221,15 @@ defmodule BeSpiral.Commune do
         distinct: c,
         order_by: c.created_at,
         select: c
-      |> Repo.all()
+    available_claims = Repo.all(query_action)
 
-    voted_claims =
+    query_check =
       from c in Check,
         where: c.validator_id == ^account,
         join: cl in Claim,
         on: cl.id == c.claim_id,
         select: cl
-      |> Repo.all()
+    voted_claims = Repo.all(query_check)
 
     validator_claims =
       (available_claims ++ voted_claims)
