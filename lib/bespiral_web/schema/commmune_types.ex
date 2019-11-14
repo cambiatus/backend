@@ -300,7 +300,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:community_id, non_null(:string))
     field(:title, non_null(:string))
     field(:description, non_null(:string))
-    field(:price, non_null(:string))
+    field(:price, non_null(:float))
     field(:image, :string)
     field(:track_stock, non_null(:boolean))
     field(:units, non_null(:integer))
