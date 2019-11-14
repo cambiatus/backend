@@ -115,8 +115,8 @@ defmodule BeSpiral.Notifications do
   @doc """
   Notifies a Claimer of a check their claim has recieved
 
-  ## Parameters 
-  * claim: The claim whose claimer should be notified of the incoming check 
+  ## Parameters
+  * claim: The claim whose claimer should be notified of the incoming check
   """
   @spec notify_claimer(Claim.t()) :: {:ok, atom()} | {:error, term}
   def notify_claimer(claim) do
@@ -139,9 +139,9 @@ defmodule BeSpiral.Notifications do
   end
 
   @doc """
-  Notifies a Claimer when their claim is approved 
+  Notifies a Claimer when their claim is approved
 
-  ## Parameters: 
+  ## Parameters:
   * claim_id: id  of the claim that has just been verified
   """
   @spec notify_claim_approved(integer()) :: {:ok, atom()} | {:error, term}
@@ -187,14 +187,17 @@ defmodule BeSpiral.Notifications do
   @doc """
   Collects unread notifications metadata for a user
 
-  ## Parameters 
+  ## Parameters
   * account: account name of the user in question
   """
   @spec get_unread(String.t()) :: {:ok, map()} | {:error, term}
   def get_unread(acc) do
-    items =
-      from(n in NotificationHistory, where: n.recipient_id == ^acc and n.is_read == false)
-      |> Repo.all()
+    query =
+      from(n in NotificationHistory,
+        where: n.recipient_id == ^acc and n.is_read == false
+      )
+
+    items = Repo.all(query)
 
     case items do
       [] ->
@@ -206,7 +209,7 @@ defmodule BeSpiral.Notifications do
   end
 
   @doc """
-  Collects a notification history object 
+  Collects a notification history object
 
   ## Parameters
   * id: id of the notification
@@ -226,7 +229,7 @@ defmodule BeSpiral.Notifications do
   @doc """
   Flags a notification history as read
 
-  ## Parameters 
+  ## Parameters
   * notification: the instance of notification history
   """
   @spec mark_as_read(NotificationHistory.t()) :: {:ok, map()} | {:error, term}

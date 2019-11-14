@@ -20,16 +20,31 @@ defmodule BeSpiral.Mails.UserMail do
     new_email(
       to: recipient,
       from: Mailer.sender(),
-      subject: "Invitation for #{community} on BeSpiral",
+      subject: "Invitation for #{community} on Cambiatus",
       html_body:
-        "#{inviter} invited you to join #{community} <br> <a href=\"http://dev.bespiral.io/#/register/#{
+        "#{inviter} invited you to join #{community} <br> <a href=\"#{endpoint()}/register/#{
           invitation_id
         }\" target=\"_blank\">Click here to join</a>",
       text_body:
-        "Use this URL to join #{community} on BeSpiral: http://dev.bespiral.io/#/register/#{
+        "Use this URL to join #{community} on Cambiatus: #{endpoint()}/register/#{
           invitation_id
         }"
     )
     |> Mailer.deliver_later()
+  end
+
+  def endpoint() do
+    BeSpiralWeb.Endpoint.url()
+    |> case do
+      "http://localhost:4000" ->
+           "http://localhost:"
+
+      "https://api.cambiatus.io:8025" ->
+           "https://api.cambiatus.io"
+
+      domain ->
+           api_url = Regex.replace(~r{(-api)}, domain, "")
+           Regex.replace(~r{(:8025)}, api_url, "")
+    end
   end
 end

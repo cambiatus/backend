@@ -23,11 +23,8 @@ defmodule BeSpiralWeb.Schema.Subscriptions.NewCommunityTest do
 
       assert_reply(ref, :ok, %{subscriptionId: subscription_id})
 
-      # Publish our subscription 
-      Absinthe.Subscription.publish(BeSpiralWeb.Endpoint, community,
-        newcommunity: community.symbol
-      )
-
+      # Publish our subscription
+      Absinthe.Subscription.publish(BeSpiralWeb.Endpoint, community, newcommunity: community.symbol)
       expected_payload = %{"symbol" => community.symbol}
 
       expected_result = %{

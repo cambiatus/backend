@@ -30,7 +30,7 @@ config :bespiral, BeSpiral.Repo,
 
 
 config :bespiral, BeSpiral.Mailer,
-  sender_email: "admin@bespiral.io"
+  sender_email: "no-reply@cambiatus.io"
 
 config :sentry, dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
   included_environments: [:prod],
