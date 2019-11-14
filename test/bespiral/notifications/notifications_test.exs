@@ -96,7 +96,7 @@ defmodule BeSpiral.NotificationsTest do
       # create a claim to validate
       claim = insert(:claim)
 
-      # create a push subscription for the claimer 
+      # create a push subscription for the claimer
       push = insert(:push_subscription, %{account: claim.claimer})
 
       payload = %{
@@ -117,7 +117,7 @@ defmodule BeSpiral.NotificationsTest do
       assert {:ok, :notified} = Notifications.notify_claimer(claim)
     end
 
-    test "notify_claim_approved/1 sends an approval push notification" do 
+    test "notify_claim_approved/1 sends an approval push notification" do
       claim = insert(:claim)
 
       push = insert(:push_subscription, %{account: claim.claimer})
@@ -127,7 +127,6 @@ defmodule BeSpiral.NotificationsTest do
         body: "",
         type: :validation
       }
-
 
       BeSpiral.Notifications.TestAdapter
       |> expect(:send_web_push, fn load, sub ->
@@ -139,6 +138,29 @@ defmodule BeSpiral.NotificationsTest do
       end)
 
       assert {:ok, :notified} = Notifications.notify_claim_approved(claim.id)
-    end 
+    end
+
+    test "notify_mintee/1 notifies a user of currency minted for them" do
+      mint = insert(:mint)
+
+      push = insert(:push_subscription, %{account: mint.to})
+
+      payload = %{
+        title: "You have received an issue",
+        body: "#{mint.quantity}#{mint.community.symbol} has been issued to your account",
+        type: :mint
+      }
+
+      BeSpiral.Notifications.TestAdapter
+      |> expect(:send_web_push, fn load, sub ->
+        assert load == Jason.encode!(payload)
+        assert sub.keys.auth == push.auth_key
+        assert sub.keys.p256dh == push.p_key
+
+        {:ok, %{status_code: 201}}
+      end)
+
+      assert {:ok, :notified} = Notifications.notify_mintee(mint)
+    end
   end
 end

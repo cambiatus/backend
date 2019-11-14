@@ -7,6 +7,7 @@ defmodule BeSpiral.Notifications do
 
   alias BeSpiral.{
     Commune,
+    Commune.Mint,
     Notifications.PushSubscription,
     Notifications.Payload,
     Notifications.NotificationHistory,
@@ -14,7 +15,7 @@ defmodule BeSpiral.Notifications do
     Repo
   }
 
-  @valid_types ~w(transfer verification)a
+  @valid_types ~w(transfer verification mint)a
 
   @doc """
   Adds a push subscription to the database for a user
@@ -169,9 +170,36 @@ defmodule BeSpiral.Notifications do
   end
 
   @doc """
-  Update the number of unread notifications for a user whenever their notificatios are updated 
+  Notifies a reciever of a mint whenever some currency is issued to them
 
-  ## Parameters 
+
+  ## Parameters:
+  * mint: The mint record of the issue in question
+  """
+  @spec notify_mintee(Mint.t()) :: {:ok, atom()} | {:error, term}
+  def notify_mintee(mint) do
+    loaded_mint =
+      mint
+      |> Repo.preload([:to, :community])
+
+    _ =
+      notify(
+        %{
+          title: "You have received an issue",
+          body:
+            "#{loaded_mint.quantity}#{loaded_mint.community.symbol} has been issued to your account",
+          type: :mint
+        },
+        loaded_mint.to
+      )
+
+    {:ok, :notified}
+  end
+
+  @doc """
+  Update the number of unread notifications for a user whenever their notificatios are updated
+
+  ## Parameters
   * account: The user whose unread notifications we are updating at the moment
   """
   @spec update_unread(String.t()) :: :ok | {:error, term}
@@ -182,7 +210,6 @@ defmodule BeSpiral.Notifications do
 
     Absinthe.Subscription.publish(BeSpiralWeb.Endpoint, payload, unreads: acct)
   end
-
 
   @doc """
   Collects unread notifications metadata for a user

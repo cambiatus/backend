@@ -47,7 +47,8 @@ defmodule BeSpiral.DbListener do
          {:ok, _pid, _ref} <- Repo.listen("claims_changed"),
          {:ok, _pid, _ref} <- Repo.listen("check_added"),
          {:ok, _pid, _ref} <- Repo.listen("community_created"),
-         {:ok, _pid, _ref} <- Repo.listen("notifications_updated") do
+         {:ok, _pid, _ref} <- Repo.listen("notifications_updated"),
+         {:ok, _pid, _ref} <- Repo.listen("mints_modified") do
       {:ok, opts}
     else
       error ->
@@ -168,8 +169,8 @@ defmodule BeSpiral.DbListener do
   end
 
   @doc """
-  Callback to handle check table additions and updates. This will decode the check data 
-  collect the check's claom and hand that over to the notifications context to send out notifications 
+  Callback to handle check table additions and updates. This will decode the check data
+  collect the check's claim and hand that over to the notifications context to send out notifications
   """
   def handle_info({:notification, _, _, "check_added", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
@@ -197,12 +198,33 @@ defmodule BeSpiral.DbListener do
   end
 
   @doc """
-  Callback to publish GraphQL subscription whenever a new notificaiton is added to the database 
+  Callback to publish GraphQL subscription whenever a new notificaiton is added to the database
   will publish to the persons notifications
   """
   def handle_info({:notification, _pid, _ref, "notifications_updated", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          :ok <- Notifications.update_unread(record.recipient_id) do
+      {:noreply, :event_handled}
+    else
+      err ->
+        log_sentry_error(err)
+    end
+  end
+
+  @doc """
+  Callback to handle broacasting of mint information whenever a new issue of a currency occurs
+  """
+  def handle_info({:notification, _pid, _ref, "mints_modified", payload}, _state) do
+    with {:ok, %{record: mint}} <- Jason.decode(payload, keys: :atoms),
+         {:ok, :notified} <- Notifications.notify_mintee(mint) do
+      # Log notification
+      %{
+        recipient_id: mint.to_id,
+        type: "mint",
+        payload: payload
+      }
+      |> Notifications.create_notification_history()
+
       {:noreply, :event_handled}
     else
       err ->

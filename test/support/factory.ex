@@ -13,6 +13,7 @@ defmodule BeSpiral.Factory do
     Commune.Community,
     Commune.Claim,
     Commune.Network,
+    Commune.Mint,
     Commune.Objective,
     Commune.Sale,
     Commune.Transfer,
@@ -199,6 +200,19 @@ defmodule BeSpiral.Factory do
         sequence(:notification_type, ["sale", "transfer", "sale_history", "claim", "verification"]),
       payload: "some rad json",
       is_read: false
+    }
+  end
+
+  def mint_factory do
+    %Mint{
+      memo: "some rad memo",
+      quantity: sequence(:quantity, &"#{&1}.5687"),
+      community: build(:community),
+      to: build(:user),
+      created_block: sequence(:created_block, &"#{&1}"),
+      created_tx: sequence(:tx, &"c_tx-#{&1}"),
+      created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
+      created_at: NaiveDateTime.utc_now()
     }
   end
 end
