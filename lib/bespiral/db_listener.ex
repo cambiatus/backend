@@ -46,7 +46,8 @@ defmodule BeSpiral.DbListener do
          {:ok, _pid, _ref} <- Repo.listen("sale_history_changed"),
          {:ok, _pid, _ref} <- Repo.listen("claims_changed"),
          {:ok, _pid, _ref} <- Repo.listen("check_added"),
-         {:ok, _pid, _ref} <- Repo.listen("community_created") do
+         {:ok, _pid, _ref} <- Repo.listen("community_created"),
+         {:ok, _pid, _ref} <- Repo.listen("notifications_updated") do
       {:ok, opts}
     else
       error ->
@@ -188,6 +189,20 @@ defmodule BeSpiral.DbListener do
   def handle_info({:notification, _pid, _ref, "community_created", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          :ok <- Absinthe.Subscription.publish(Endpoint, record, newcommunity: record.symbol) do
+      {:noreply, :event_handled}
+    else
+      err ->
+        log_sentry_error(err)
+    end
+  end
+
+  @doc """
+  Callback to publish GraphQL subscription whenever a new notificaiton is added to the database 
+  will publish to the persons notifications
+  """
+  def handle_info({:notification, _pid, _ref, "notifications_updated", payload}, _state) do
+    with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
+         :ok <- Notifications.update_unread(record.recipient_id) do
       {:noreply, :event_handled}
     else
       err ->
