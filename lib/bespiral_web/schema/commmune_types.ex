@@ -55,6 +55,12 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
       arg(:input, non_null(:objective_input))
       resolve(&Commune.get_objective/3)
     end
+
+    @desc "A single Transfer"
+    field :transfer, :transfer do
+      arg(:input, non_null(:transfer_input))
+      resolve(&Commune.get_transfer/3)
+    end
   end
 
   @desc "Community Subscriptions on BeSpiral"
@@ -124,7 +130,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
   @desc "Input for run transfer"
   input_object :transfer_input do
-    field(:id, :integer)
+    field(:id, non_null(:integer))
   end
 
   @desc "Input to collect sales"
@@ -332,6 +338,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
   @desc "A transfer on BeSpiral"
   object :transfer do
+    field(:id, non_null(:integer))
     field(:from_id, non_null(:string))
     field(:to_id, non_null(:string))
     field(:amount, non_null(:float))

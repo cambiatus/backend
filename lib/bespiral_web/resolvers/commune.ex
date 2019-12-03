@@ -13,6 +13,14 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   }
 
   @doc """
+  Fetches a single transfer
+  """
+  @spec get_transfer(map(), map(), map()) :: {:ok, Transfer.t()} | {:error, term}
+  def get_transfer(_, %{input: %{id: id}}, _) do
+    Commune.get_transfer(id)
+  end
+
+  @doc """
   Fetches a claim
   """
   @spec get_claim(map(), map(), map()) :: {:ok, Claim.t()} | {:error, term}
@@ -45,7 +53,7 @@ defmodule BeSpiralWeb.Resolvers.Commune do
   end
 
   @doc """
-  Fetch a sale from the database 
+  Fetch a sale from the database
   """
   @spec get_sale(map(), map(), map()) :: {:ok, map()} | {:error, term}
   def get_sale(_, %{input: params}, _) do
