@@ -344,6 +344,8 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
     field(:amount, non_null(:float))
     field(:community_id, non_null(:string))
     field(:memo, :string)
+    field(:from, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
+    field(:to, non_null(:profile), resolve: dataloader(BeSpiral.Commune))
     field(:community, non_null(:community), resolve: dataloader(BeSpiral.Commune))
 
     field(:created_block, non_null(:integer))
