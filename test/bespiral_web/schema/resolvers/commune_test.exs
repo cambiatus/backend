@@ -337,6 +337,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
                end)
     end
 
+    @tag :trans
     test "collects a single transfer", %{conn: conn} do
       assert(Repo.aggregate(Transfer, :count, :id) == 0)
 
@@ -354,6 +355,12 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       query($input: TransferInput!){
         transfer(input: $input) {
           id
+          from {
+            account
+          }
+          to {
+            account
+          }
         }
       }
       """
@@ -367,6 +374,8 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       } = json_response(res, 200)
 
       assert collected_transfer["id"] == transfer.id
+      assert collected_transfer["from"]["account"] == transfer.from.account
+      assert collected_transfer["to"]["account"] == transfer.to.account
     end
 
     test "collects a community with its objectives and their actions", %{conn: conn} do
