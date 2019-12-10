@@ -337,7 +337,6 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
                end)
     end
 
-    @tag :trans
     test "collects a single transfer", %{conn: conn} do
       assert(Repo.aggregate(Transfer, :count, :id) == 0)
 
