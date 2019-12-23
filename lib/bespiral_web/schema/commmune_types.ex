@@ -303,7 +303,10 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
   object :sale do
     field(:id, non_null(:integer))
     field(:creator_id, non_null(:string))
+
     field(:community_id, non_null(:string))
+    field(:community, non_null(:community), resolve: dataloader(BeSpiral.Commune))
+
     field(:title, non_null(:string))
     field(:description, non_null(:string))
     field(:price, non_null(:float))
