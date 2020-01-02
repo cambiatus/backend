@@ -4,7 +4,7 @@ defmodule BeSpiral.Mixfile do
   def project do
     [
       app: :bespiral,
-      version: "1.5.3",
+      version: "1.5.4",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
