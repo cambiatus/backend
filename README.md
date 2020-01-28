@@ -2,7 +2,7 @@
 
 Welcome to the Application that serves as one of the backends for the Cambiatus Ecosystem, One of the backends since this is the one that contains the data in a manner than is easy to index and search.
 
-In the context of the diagram below which is a high level view of how the data flows in our application this application sserves as the datastore using a postgress db and as the API using Phoenix running a Graphql Server
+In the context of the diagram below which is a high level view of how the data flows in our application this application serves as the datastore using a postgress db and as the API using Phoenix running a Graphql Server
 
 ## Dataflow
 <img src='https://i.imgur.com/MFfGOe3.png' height='492' alt='Cambiatus Data Flow' />
