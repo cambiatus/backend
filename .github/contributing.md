@@ -49,7 +49,7 @@ After feedback has been given we expect responses within two weeks. After two we
 You can chat with the core team on the discord channel linked above. We try to be available on all weekdays.
 
 
-## Deployment
+# Deployment
 Oh wow! you are grown now, you even have your very own deployment keys how do you get this to work in the wild?
 Well follow the guide below and you should be having lots of fun soon!
 
