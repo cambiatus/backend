@@ -1,73 +1,34 @@
-# BeSpiral
+# Cambiatus ~ Backend
 
-[![CircleCI](https://circleci.com/gh/BeSpiral/backend/tree/master.svg?style=svg&circle-token=0dde8b1ae9164d53b9d0e624b25cff89e2718ead)](https://circleci.com/gh/BeSpiral/backend/tree/master)
+Welcome to the Application that serves as one of the backends for the Cambiatus Ecosystem, One of the backends since this is the one that contains the data in a manner than is easy to index and search.
 
-To start your Phoenix server in development:
+In the context of the diagram below which is a high level view of how the data flows in our application this application serves as the datastore using a postgress db and as the API using Phoenix running a Graphql Server
 
-  * Install dependencies with `mix deps.get`
-  * Start Phoenix endpoint with `mix phx.server`
+## Dataflow
+<img src='https://i.imgur.com/MFfGOe3.png' height='492' alt='Cambiatus Data Flow' />
+
+At a highlevel this is a database that is synced to events on an blockchain which then presents a Graphql API that makes
+it simpler to consume the information from the blockhain. At the moment this is a normal database with the the usual
+CRUD actions however creation and updating happens as a result of events that trigger writes and updates to our database.
+
+The intention down the line is to make this database a write only database in an Event Sourced structure which will enable us to replay events and give us much more observability.
+
+
+## Building and running the application locally
+To build this backend follow the following
+1. Clone this repository by running `git clone git@github.com:cambiatus/backend.git`
+2. Change directory into the new repository by `cd backend`
+3. Install dependencies by running `mix deps.get`
+4. Run tests by running the test command as `mix test`
+5. Run the server using `mix phx.server`
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-## Deploy
+## Contributing
 
-We use [distillery](https://hexdocs.pm/distillery/home.html) and docker for deploy.
+When you are ready to make your first contribution please check out our [Contribution guide](/.github/contributing.md), this will get your up to speed on where and how to start
 
-  * Build the release `make build`
-  * Deploy it to the registry `make push`
-  <!-- * Run it on production `` -->
 
-## Server
+## License
 
-Once in the server you can run the following commands
-
-  * `~/bespiral/bespiral/bin/bespiral remote_console` to attach to the running process
-  * `~/bespiral/bespiral/bin/bespiral foreground` to run it and keep the output locked to the current session
-  * `~/bespiral/bespiral/bin/bespiral start` to start it on the background
-  * `~/bespiral/bespiral/bin/bespiral console` for a IEx session
-  
-To run migrations you can run:
-
-  * `~/bespiral/bespiral/bin/bespiral migrate` For running migrations
-  * `~/bespiral/bespiral/bin/bespiral seed` For adding seeding
-
-## Docker
-
-### Build image
-```
-docker build -t 'bespiral/backend:latest' .
-```
-
-The default env will be development, if you want to build it for `prod`:
-
-```
-docker build -t 'bespiral/backend:latest' --build-arg "MIX_ENV=prod" .
-```
-
-### Run image
-`docker run -t 'bespiral/backend:latest'`
-
-If you are running in `prod` env you'll also need to set the database env variables:
-
-```sh
-docker run -e "DB_HOST=example.host" -e "DB_PORT=5432" -e "DB_USER=user" -e "DB_PASSWORD=123" -e "BESPIRAL_WALLET_PASSWORD=kw123" -t 'bespiral/backend:latest'
-# OR
-docker run --env-file=env_file_path -t 'bespiral/backend:latest'
-```
-
-If you are using docker-compose:
-
-```yml
-version: '3'
-
-services:
-  x:
-    image: 'someimage:latest'
-    env_file: env_file_path
-    -- or
-    environment:
-      - BESPIRAL_WALLET_PASSWORD=123
-      - DB_HOST=example.host
-      - DB_PORT=5432
-      - DB_USER=user
-```
+- TBD
