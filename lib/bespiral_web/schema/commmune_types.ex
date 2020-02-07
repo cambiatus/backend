@@ -247,10 +247,7 @@ defmodule BeSpiralWeb.Schema.CommuneTypes do
 
     field(:objective, non_null(:objective), resolve: dataloader(BeSpiral.Commune))
 
-    field(:validators, non_null(
-          list_of(non_null(:profile))
-        ), resolve: dataloader(BeSpiral.Commune)
-    )
+    field(:validators, non_null(list_of(non_null(:profile))), resolve: dataloader(BeSpiral.Commune))
 
     field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(BeSpiral.Commune))
     field(:creator, non_null(:profile), resolve: dataloader(BeSpiral.Commune))

@@ -29,7 +29,8 @@ defmodule BeSpiral.Commune.Action do
 
     belongs_to(:creator, User, references: :account, type: :string)
     belongs_to(:objective, Objective, references: :id, type: :integer)
-    has_many(:validators, Validator)
+    has_many(:vals, Validator)
+    has_many(:validators, through: [:vals, :validator])
     has_many(:claims, Claim)
 
     @required_fields ~w(creator_id objective_id reward description verification_type)a
