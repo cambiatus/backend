@@ -24,10 +24,9 @@ defmodule BeSpiral.Commune do
   @spec data :: Dataloader.Ecto.t()
   def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
 
-  def query(Objective, %{input: filters}) do
+  def query(Objective, _) do
     query =
-      filters
-      |> Enum.reduce(Objective, fn
+      Enum.reduce(Objective, fn
         _, query ->
           query
       end)
