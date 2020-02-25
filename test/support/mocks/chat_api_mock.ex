@@ -1,11 +1,11 @@
-defmodule BeSpiral.Chat.ApiMock do
+defmodule Cambiatus.Chat.ApiMock do
   @moduledoc "Chat API Manager"
 
-  import BeSpiral.Chat.Api
+  import Cambiatus.Chat.Api
 
-  @behaviour BeSpiral.Chat.Api
+  @behaviour Cambiatus.Chat.Api
 
-  @impl BeSpiral.Chat.Api
+  @impl Cambiatus.Chat.Api
   def login(%{username: _, password: _pass} = body) do
     case body do
       %{username: "success", password: _} ->
@@ -23,7 +23,7 @@ defmodule BeSpiral.Chat.ApiMock do
     end
   end
 
-  @impl BeSpiral.Chat.Api
+  @impl Cambiatus.Chat.Api
   def register(%{username: _, email: _, password: _, name: _} = user) do
     case user do
       %{username: "success", email: _, password: _, name: _} ->
@@ -40,7 +40,7 @@ defmodule BeSpiral.Chat.ApiMock do
     end
   end
 
-  @impl BeSpiral.Chat.Api
+  @impl Cambiatus.Chat.Api
   def get_preferences(%{user_id: _, token: _} = header) do
     case header do
       %{user_id: "user_id", token: "success"} ->
@@ -57,7 +57,7 @@ defmodule BeSpiral.Chat.ApiMock do
     end
   end
 
-  @impl BeSpiral.Chat.Api
+  @impl Cambiatus.Chat.Api
   def update_language(%{user_id: _, language: _} = body) do
     case body do
       %{user_id: "user_id", language: "bad_request"} ->

@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.RenameShopRatingsToSaleRatings do
+defmodule Cambiatus.Repo.Migrations.RenameShopRatingsToSaleRatings do
   @moduledoc """
   Migration to rename shop_ratings table to sale_ratings
   """

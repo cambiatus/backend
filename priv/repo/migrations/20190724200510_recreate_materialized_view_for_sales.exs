@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.RecreateMaterializedViewForSales do
+defmodule Cambiatus.Repo.Migrations.RecreateMaterializedViewForSales do
   @moduledoc """
   Migration to recreate the available_sales materialized view with track_stock
   """

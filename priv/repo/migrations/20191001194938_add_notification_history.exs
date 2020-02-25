@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddNotificationHistory do
+defmodule Cambiatus.Repo.Migrations.AddNotificationHistory do
   use Ecto.Migration
 
   def change do

@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddClaims do
+defmodule Cambiatus.Repo.Migrations.AddClaims do
   @moduledoc """
   Migration to build claims table, used to record a claim by a community member on an
   action they completed

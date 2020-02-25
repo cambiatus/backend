@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.DefaultClaimIsVerified do
+defmodule Cambiatus.Repo.Migrations.DefaultClaimIsVerified do
   use Ecto.Migration
 
   def change do

@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddCommunityIdToSaleHistory do
+defmodule Cambiatus.Repo.Migrations.AddCommunityIdToSaleHistory do
   use Ecto.Migration
 
   def change do

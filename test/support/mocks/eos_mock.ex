@@ -1,13 +1,13 @@
-defmodule BeSpiral.EosMock do
-  @moduledoc "Mocked implementation of BeSpiral.Eos"
-  @behaviour BeSpiral.Eos
+defmodule Cambiatus.EosMock do
+  @moduledoc "Mocked implementation of Cambiatus.Eos"
+  @behaviour Cambiatus.Eos
 
-  alias BeSpiral.Commune
+  alias Cambiatus.Commune
 
-  @bespiral_community "BES"
-  @bespiral_account "bespiraltest"
+  @cambiatus_community "BES"
+  @cambiatus_account "cambiatustest"
 
-  def netlink(new_user, inviter, community \\ @bespiral_community) do
+  def netlink(new_user, inviter, community \\ @cambiatus_community) do
     {:ok, _network} =
       Commune.create_network(%{
         account_id: new_user,
@@ -18,6 +18,6 @@ defmodule BeSpiral.EosMock do
     %{transaction_id: "mockedtransactionid"}
   end
 
-  def bespiral_community, do: @bespiral_community
-  def bespiral_account, do: @bespiral_account
+  def cambiatus_community, do: @cambiatus_community
+  def cambiatus_account, do: @cambiatus_account
 end

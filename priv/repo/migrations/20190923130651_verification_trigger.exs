@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.VerificationTrigger do
+defmodule Cambiatus.Repo.Migrations.VerificationTrigger do
   @moduledoc """
   Trigger to run when claims are added to the database
   """

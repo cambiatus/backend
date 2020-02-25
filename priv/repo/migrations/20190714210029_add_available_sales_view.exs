@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddAvailableSalesView do
+defmodule Cambiatus.Repo.Migrations.AddAvailableSalesView do
   use Ecto.Migration
 
   def up do

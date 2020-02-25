@@ -1,4 +1,4 @@
-defmodule BeSpiralWeb.ConnCase do
+defmodule CambiatusWeb.ConnCase do
   @moduledoc """
   This module defines the test case to be used by
   tests that require setting up a connection.
@@ -19,10 +19,10 @@ defmodule BeSpiralWeb.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-      import BeSpiralWeb.Router.Helpers
+      import CambiatusWeb.Router.Helpers
 
       # The default endpoint for testing
-      @endpoint BeSpiralWeb.Endpoint
+      @endpoint CambiatusWeb.Endpoint
     end
   end
 

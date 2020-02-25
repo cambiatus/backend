@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.ChangeSalesStructure do
+defmodule Cambiatus.Repo.Migrations.ChangeSalesStructure do
   @moduledoc """
   Migration to update sales and shop_ratings structure
   """

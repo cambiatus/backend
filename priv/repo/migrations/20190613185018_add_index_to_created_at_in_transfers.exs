@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddIndexToCreatedAtInTransfers do
+defmodule Cambiatus.Repo.Migrations.AddIndexToCreatedAtInTransfers do
   use Ecto.Migration
 
   def change do

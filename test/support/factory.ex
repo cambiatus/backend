@@ -1,11 +1,11 @@
-defmodule BeSpiral.Factory do
+defmodule Cambiatus.Factory do
   @moduledoc """
   This module holds functionality to enable us to build data samples for use in testing
   """
 
-  use ExMachina.Ecto, repo: BeSpiral.Repo
+  use ExMachina.Ecto, repo: Cambiatus.Repo
 
-  alias BeSpiral.{
+  alias Cambiatus.{
     Accounts.User,
     Auth.Invitation,
     Commune.Action,

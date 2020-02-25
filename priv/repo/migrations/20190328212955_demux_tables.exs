@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.DemuxTables do
+defmodule Cambiatus.Repo.Migrations.DemuxTables do
   use Ecto.Migration
 
   def change do

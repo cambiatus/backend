@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CompoundIds do
+defmodule Cambiatus.Repo.Migrations.CompoundIds do
   @moduledoc """
   Migration to build compound ids for checks and claims
   """

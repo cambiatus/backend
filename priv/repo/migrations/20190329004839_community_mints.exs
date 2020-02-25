@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CommunityIssue do
+defmodule Cambiatus.Repo.Migrations.CommunityIssue do
   use Ecto.Migration
 
   def change do

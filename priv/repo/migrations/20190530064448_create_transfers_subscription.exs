@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreateTransfersSubscription do
+defmodule Cambiatus.Repo.Migrations.CreateTransfersSubscription do
   @moduledoc """
   Function and trigger fot transfer table operations
   """

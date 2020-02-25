@@ -1,4 +1,4 @@
-defmodule BeSpiral.ApiCase do
+defmodule Cambiatus.ApiCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -18,21 +18,21 @@ defmodule BeSpiral.ApiCase do
   using do
     quote do
       use Phoenix.ConnTest
-      alias BeSpiral.Repo
+      alias Cambiatus.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import BeSpiral.Factory
-      @endpoint BeSpiralWeb.Endpoint
+      import Cambiatus.Factory
+      @endpoint CambiatusWeb.Endpoint
     end
   end
 
   setup tags do
-    :ok = Sandbox.checkout(BeSpiral.Repo)
+    :ok = Sandbox.checkout(Cambiatus.Repo)
 
     unless tags[:async] do
-      Sandbox.mode(BeSpiral.Repo, {:shared, self()})
+      Sandbox.mode(Cambiatus.Repo, {:shared, self()})
     end
 
     {:ok, conn: build_conn()}

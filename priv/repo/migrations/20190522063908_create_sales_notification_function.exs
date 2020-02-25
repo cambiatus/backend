@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreateSalesNotificationFunction do
+defmodule Cambiatus.Repo.Migrations.CreateSalesNotificationFunction do
   @moduledoc """
   Defines a Notification function that will create a trigger for operations to the sales table
   """

@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.NewCommunityTrigger do
+defmodule Cambiatus.Repo.Migrations.NewCommunityTrigger do
   @moduledoc """
   Trigger to run when a community is added to the database
   """

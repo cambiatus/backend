@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreateValidationFunction do
+defmodule Cambiatus.Repo.Migrations.CreateValidationFunction do
   @moduledoc """
   Function to create a trigger when a claim validation is added to the database
   """

@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddValidators do
+defmodule Cambiatus.Repo.Migrations.AddValidators do
   @moduledoc """
   Migration to build a validators table, which holds memmbers that can validate
   an actions completion

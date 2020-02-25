@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.RemoveBuyOptionFromSales do
+defmodule Cambiatus.Repo.Migrations.RemoveBuyOptionFromSales do
   use Ecto.Migration
 
   def change do

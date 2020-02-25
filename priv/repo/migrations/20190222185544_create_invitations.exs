@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreateInvitations do
+defmodule Cambiatus.Repo.Migrations.CreateInvitations do
   use Ecto.Migration
 
   def change do

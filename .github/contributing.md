@@ -67,39 +67,39 @@ invokes a make file that builds a constainer image of a release.
 
 Once built and now you intend to run it on a server you can run the following commands
 
-  * `~/bespiral/bespiral/bin/bespiral remote_console` to attach to the running process
-  * `~/bespiral/bespiral/bin/bespiral foreground` to run it and keep the output locked to the current session
-  * `~/bespiral/bespiral/bin/bespiral start` to start it on the background
-  * `~/bespiral/bespiral/bin/bespiral console` for a IEx session
+  * `~/cambiatus/cambiatus/bin/cambiatus remote_console` to attach to the running process
+  * `~/cambiatus/cambiatus/bin/cambiatus foreground` to run it and keep the output locked to the current session
+  * `~/cambiatus/cambiatus/bin/cambiatus start` to start it on the background
+  * `~/cambiatus/cambiatus/bin/cambiatus console` for a IEx session
 
 To run migrations you can run:
 
-  * `~/bespiral/bespiral/bin/bespiral migrate` For running migrations
-  * `~/bespiral/bespiral/bin/bespiral seed` For adding seeding
+  * `~/cambiatus/cambiatus/bin/cambiatus migrate` For running migrations
+  * `~/cambiatus/cambiatus/bin/cambiatus seed` For adding seeding
 	* Note these are now run automatically when starting a release
 
 ## To use Docker outide of our make script
 
 ### Build image
 ```
-docker build -t 'bespiral/backend:latest' .
+docker build -t 'cambiatus/backend:latest' .
 ```
 
 The default env will be development, if you want to build it for `prod`:
 
 ```
-docker build -t 'bespiral/backend:latest' --build-arg "MIX_ENV=prod" .
+docker build -t 'cambiatus/backend:latest' --build-arg "MIX_ENV=prod" .
 ```
 
 ### Run image
-`docker run -t 'bespiral/backend:latest'`
+`docker run -t 'cambiatus/backend:latest'`
 
 If you are running in `prod` env you'll also need to set the database env variables:
 
 ```sh
-docker run -e "DB_HOST=example.host" -e "DB_PORT=5432" -e "DB_USER=user" -e "DB_PASSWORD=123" -e "BESPIRAL_WALLET_PASSWORD=kw123" -t 'bespiral/backend:latest'
+docker run -e "DB_HOST=example.host" -e "DB_PORT=5432" -e "DB_USER=user" -e "DB_PASSWORD=123" -e "BESPIRAL_WALLET_PASSWORD=kw123" -t 'cambiatus/backend:latest'
 # OR
-docker run --env-file=env_file_path -t 'bespiral/backend:latest'
+docker run --env-file=env_file_path -t 'cambiatus/backend:latest'
 ```
 
 If you are using docker-compose:

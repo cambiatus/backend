@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreateNotificationHistoryTrigger do
+defmodule Cambiatus.Repo.Migrations.CreateNotificationHistoryTrigger do
   @moduledoc """
   Trigger to run when checks are added to the database
   """

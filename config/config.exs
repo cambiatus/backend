@@ -12,24 +12,24 @@ config :logger, :console,
 
 config :phoenix, :json_library, Jason
 
-config :bespiral, env: Mix.env
+config :cambiatus, env: Mix.env
 
 # Configures the endpoint
-config :bespiral, BeSpiralWeb.Endpoint,
+config :cambiatus, CambiatusWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "Tbckg2miZcMoSPt4L5vSwyjKG6VHCwbg3MBp+e/tszbcvQ/a4HJOI3G4/IRYwo8m",
-  render_errors: [view: BeSpiralWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: BeSpiral.PubSub,
+  render_errors: [view: CambiatusWeb.ErrorView, accepts: ~w(json)],
+  pubsub: [name: Cambiatus.PubSub,
            adapter: Phoenix.PubSub.PG2]
 
-config :bespiral,
-  ecto_repos: [BeSpiral.Repo]
+config :cambiatus,
+  ecto_repos: [Cambiatus.Repo]
 
-config :bespiral, BeSpiral.Repo,
+config :cambiatus, Cambiatus.Repo,
   pool_size: 15
 
 
-config :bespiral, BeSpiral.Mailer,
+config :cambiatus, Cambiatus.Mailer,
   sender_email: "no-reply@cambiatus.io"
 
 config :sentry, dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",

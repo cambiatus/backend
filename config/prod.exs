@@ -1,6 +1,6 @@
 use Mix.Config
 
-config :bespiral, BeSpiralWeb.Endpoint,
+config :cambiatus, CambiatusWeb.Endpoint,
   http: [port: 8025],
   url: [host: System.get_env("HOSTNAME"), port: 80],
   server: true,
@@ -11,31 +11,31 @@ config :bespiral, BeSpiralWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :bespiral, BeSpiral.Mailer,
+config :cambiatus, Cambiatus.Mailer,
   adapter: Bamboo.SendGridAdapter,
   api_key: System.get_env("SENDGRID_KEY")
 
-config :bespiral, BeSpiral.Mailer, adapter: Bamboo.SendGridAdapter
+config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.SendGridAdapter
 
-config :bespiral, :ipfs, conn: %{host: System.get_env("IPFS_URL"), port: 5001}
+config :cambiatus, :ipfs, conn: %{host: System.get_env("IPFS_URL"), port: 5001}
 
-config :bespiral, BeSpiral.Chat.ApiHttp,
+config :cambiatus, Cambiatus.Chat.ApiHttp,
   chat_base_url: System.get_env("CHAT_BASE_URL"),
   chat_token: System.get_env("CHAT_TOKEN"),
   chat_user_id: System.get_env("CHAT_USER_ID"),
   chat_user_role: System.get_env("CHAT_USER_ROLE")
 
-config :bespiral, :eosrpc_wallet, EOSRPC.Wallet
-config :bespiral, :eosrpc_helper, EOSRPC.Helper
-config :bespiral, :contract, BeSpiral.Eos
-config :bespiral, :chat_api, BeSpiral.Chat.ApiHttp
+config :cambiatus, :eosrpc_wallet, EOSRPC.Wallet
+config :cambiatus, :eosrpc_helper, EOSRPC.Helper
+config :cambiatus, :contract, Cambiatus.Eos
+config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
 
-config :bespiral, BeSpiral.Eos,
-  bespiral_wallet: "default",
-  bespiral_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
-  bespiral_account: "bespiral",
+config :cambiatus, Cambiatus.Eos,
+  cambiatus_wallet: "default",
+  cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
+  cambiatus_account: "bespiral",
   mcc_contract: "bespiral",
-  bespiral_cmm: "BES"
+  cambiatus_cmm: "BES"
 
 config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
 
@@ -57,7 +57,7 @@ config :sentry,
 # To get SSL working, you will need to add the `https` key
 # to the previous section and set your `:url` port to 443:
 #
-#     config :bespiral, BeSpiralWeb.Endpoint,
+#     config :cambiatus, CambiatusWeb.Endpoint,
 #       ...
 #       url: [host: "example.com", port: 443],
 #       https: [:inet6,
@@ -72,7 +72,7 @@ config :sentry,
 # We also recommend setting `force_ssl`, ensuring no data is
 # ever sent via http, always redirecting to https:
 #
-#     config :bespiral, BeSpiralWeb.Endpoint,
+#     config :cambiatus, CambiatusWeb.Endpoint,
 #       force_ssl: [hsts: true]
 #
 # Check `Plug.SSL` for all available options in `force_ssl`.
@@ -87,13 +87,13 @@ config :phoenix, :serve_endpoints, true
 # Alternatively, you can configure exactly which server to
 # start per endpoint:
 #
-#     config :bespiral, BeSpiralWeb.Endpoint, server: true
+#     config :cambiatus, CambiatusWeb.Endpoint, server: true
 #
 
 # Finally import the config/prod.secret.exs
 # which should be versioned separately.
 # import_config "prod.secret.exs"
-config :bespiral, BeSpiral.Notifications, adapter: BeSpiral.Notifications.HttpAdapter
+config :cambiatus, Cambiatus.Notifications, adapter: Cambiatus.Notifications.HttpAdapter
 
 ## configure push notifs
 config :web_push_encryption, :vapid_details,

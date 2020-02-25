@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddChecks do
+defmodule Cambiatus.Repo.Migrations.AddChecks do
   @moduledoc """
   Migration to add a checks table that contains, validation checks on actions 
   """

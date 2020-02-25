@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.BlockchainTimestampsSaleHistory do
+defmodule Cambiatus.Repo.Migrations.BlockchainTimestampsSaleHistory do
   use Ecto.Migration
 
   def change do
