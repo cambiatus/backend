@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreateMintTrigger do
+defmodule Cambiatus.Repo.Migrations.CreateMintTrigger do
   @moduledoc """
   Trigger to run when mints are added to the database
   """

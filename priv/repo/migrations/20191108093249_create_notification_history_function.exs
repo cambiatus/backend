@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreateNotificationHistoryFunction do
+defmodule Cambiatus.Repo.Migrations.CreateNotificationHistoryFunction do
   @moduledoc """
   Function to create a trigger when a claom validation is added to the database
   """

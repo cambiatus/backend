@@ -1,4 +1,4 @@
-defmodule BeSpiral.DataCase do
+defmodule Cambiatus.DataCase do
   @moduledoc """
   This module defines the setup for tests requiring
   access to the application's data layer.
@@ -16,21 +16,21 @@ defmodule BeSpiral.DataCase do
 
   using do
     quote do
-      alias BeSpiral.Repo
+      alias Cambiatus.Repo
 
       import Ecto
       import Ecto.Changeset
       import Ecto.Query
-      import BeSpiral.DataCase
-      import BeSpiral.Factory
+      import Cambiatus.DataCase
+      import Cambiatus.Factory
     end
   end
 
   setup tags do
-    :ok = Sandbox.checkout(BeSpiral.Repo)
+    :ok = Sandbox.checkout(Cambiatus.Repo)
 
     unless tags[:async] do
-      Sandbox.mode(BeSpiral.Repo, {:shared, self()})
+      Sandbox.mode(Cambiatus.Repo, {:shared, self()})
     end
 
     :ok
@@ -53,9 +53,9 @@ defmodule BeSpiral.DataCase do
   def valid_community_and_user(_context) do
     community_params = %{
       symbol: "BES",
-      issuer: "bespiraltest",
+      issuer: "cambiatustest",
       creator: "testtesttest",
-      name: "BeSpiral",
+      name: "Cambiatus",
       description: "Default test community",
       supply: 10.0,
       max_supply: 100.0,
@@ -66,13 +66,13 @@ defmodule BeSpiral.DataCase do
       subcommunity_price: 0.0
     }
 
-    {:ok, community} = BeSpiral.Commune.create_community(community_params)
+    {:ok, community} = Cambiatus.Commune.create_community(community_params)
 
     root_params = %{
-      account: "bespiraltest"
+      account: "cambiatustest"
     }
 
-    {:ok, root} = BeSpiral.Accounts.create_user(root_params)
+    {:ok, root} = Cambiatus.Accounts.create_user(root_params)
 
     user_params = %{
       account: "testtesttest",
@@ -80,7 +80,7 @@ defmodule BeSpiral.DataCase do
       email: "test_user_1@email.com"
     }
 
-    {:ok, user} = BeSpiral.Accounts.create_user(user_params)
+    {:ok, user} = Cambiatus.Accounts.create_user(user_params)
 
     another_user_params = %{
       account: "anothertest1",
@@ -88,7 +88,7 @@ defmodule BeSpiral.DataCase do
       email: "test_user_2@email.com"
     }
 
-    {:ok, another_user} = BeSpiral.Accounts.create_user(another_user_params)
+    {:ok, another_user} = Cambiatus.Accounts.create_user(another_user_params)
 
     user_chat_success_params = %{
       user_id: "user_id",
@@ -126,7 +126,7 @@ defmodule BeSpiral.DataCase do
       community: community,
       user: user,
       another_user: another_user,
-      bespiral_account: root,
+      cambiatus_account: root,
       user_chat_success: user_chat_success_params,
       user_chat_bad_request: user_chat_bad_request_params,
       user_chat_unauthorized: user_chat_unauthorized_params,
@@ -135,6 +135,6 @@ defmodule BeSpiral.DataCase do
   end
 
   def invitation(_context) do
-    BeSpiral.Auth.create_invitation()
+    Cambiatus.Auth.create_invitation()
   end
 end

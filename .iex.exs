@@ -1,4 +1,4 @@
-alias BeSpiral.{
+alias Cambiatus.{
   Accounts,
   Accounts.User, 
   Commune,

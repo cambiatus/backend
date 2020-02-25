@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.RenameCommunityTables do
+defmodule Cambiatus.Repo.Migrations.RenameCommunityTables do
   use Ecto.Migration
 
   def change do

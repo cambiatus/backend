@@ -1,4 +1,4 @@
-defmodule BeSpiralWeb.SubscriptionCase do
+defmodule CambiatusWeb.SubscriptionCase do
   @moduledoc """
   A test case for testing Absinter Subscriptions 
   """
@@ -6,28 +6,28 @@ defmodule BeSpiralWeb.SubscriptionCase do
   use ExUnit.CaseTemplate
   use Phoenix.ChannelTest
 
-  @endpoint BeSpiralWeb.Endpoint
-  alias BeSpiralWeb.UserSocket
+  @endpoint CambiatusWeb.Endpoint
+  alias CambiatusWeb.UserSocket
 
   using do
     quote do
       use Phoenix.ChannelTest
 
       use Absinthe.Phoenix.SubscriptionTest,
-        schema: BeSpiralWeb.Schema
+        schema: CambiatusWeb.Schema
 
-      @endpoint BeSpiralWeb.Endpoint
+      @endpoint CambiatusWeb.Endpoint
 
-      import BeSpiral.Factory
-      alias BeSpiral.Repo
+      import Cambiatus.Factory
+      alias Cambiatus.Repo
     end
   end
 
   setup tags do
-    :ok = Ecto.Adapters.SQL.Sandbox.checkout(BeSpiral.Repo)
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Cambiatus.Repo)
 
     unless tags[:async] do
-      Ecto.Adapters.SQL.Sandbox.mode(BeSpiral.Repo, {:shared, self()})
+      Ecto.Adapters.SQL.Sandbox.mode(Cambiatus.Repo, {:shared, self()})
     end
 
     {:ok, socket} = Phoenix.ChannelTest.connect(UserSocket, %{})

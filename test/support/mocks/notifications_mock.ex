@@ -1,1 +1,1 @@
-Mox.defmock(BeSpiral.Notifications.TestAdapter, for: BeSpiral.Notifications.Adapter)
+Mox.defmock(Cambiatus.Notifications.TestAdapter, for: Cambiatus.Notifications.Adapter)

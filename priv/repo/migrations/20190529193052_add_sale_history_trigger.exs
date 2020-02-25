@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddSaleHistoryTrigger do
+defmodule Cambiatus.Repo.Migrations.AddSaleHistoryTrigger do
   use Ecto.Migration
 
   @table "sale_history"

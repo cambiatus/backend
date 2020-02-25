@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddAccountToShop do
+defmodule Cambiatus.Repo.Migrations.AddAccountToShop do
   use Ecto.Migration
 
   def change do

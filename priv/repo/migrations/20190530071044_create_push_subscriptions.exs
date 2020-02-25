@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreatePushSubscriptions do
+defmodule Cambiatus.Repo.Migrations.CreatePushSubscriptions do
   @moduledoc """
   Migration for push subscription objects that belong to a user account
   """

@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.CreateValidationTrigger do
+defmodule Cambiatus.Repo.Migrations.CreateValidationTrigger do
   @moduledoc """
   Trigger to run when checks are added to the database
   """

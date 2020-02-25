@@ -1,2 +1,0 @@
-# defmodule BeSpiral. do
-# end

@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddTrackStockToSalesTable do
+defmodule Cambiatus.Repo.Migrations.AddTrackStockToSalesTable do
   @moduledoc """
   Migration to add track_stock field to sales table
   """

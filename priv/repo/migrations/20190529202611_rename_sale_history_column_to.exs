@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.RenameSaleHistoryColumnTo do
+defmodule Cambiatus.Repo.Migrations.RenameSaleHistoryColumnTo do
   use Ecto.Migration
 
   def change do

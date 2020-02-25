@@ -1,9 +1,9 @@
-defmodule BeSpiral.Mixfile do
+defmodule Cambiatus.Mixfile do
   use Mix.Project
 
   def project do
     [
-      app: :bespiral,
+      app: :cambiatus,
       version: "1.5.6",
       elixir: "~> 1.7",
       elixirc_paths: elixirc_paths(Mix.env()),
@@ -16,7 +16,7 @@ defmodule BeSpiral.Mixfile do
 
   def application do
     [
-      mod: {BeSpiral.Application, []},
+      mod: {Cambiatus.Application, []},
       extra_applications: [:sentry, :logger, :runtime_tools, :bamboo, :plug]
     ]
   end
@@ -58,6 +58,7 @@ defmodule BeSpiral.Mixfile do
       # dev
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:edeliver, "~> 1.6"},
+      {:rename, "~> 0.1.0", only: :dev},
       {:distillery, "~> 2.0", runtime: false},
 
       # test

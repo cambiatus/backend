@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.ModifyActions do
+defmodule Cambiatus.Repo.Migrations.ModifyActions do
   @moduledoc """
   Migration to update actions field according to smart contract
   """

@@ -46,8 +46,8 @@ end
 # when running `mix release`, the first release in the file
 # will be used by default
 
-release :bespiral do
-  set version: current_version(:bespiral)
+release :cambiatus do
+  set version: current_version(:cambiatus)
 
   set config_providers: [
     {Mix.Releases.Config.Providers.Elixir, ["${RELEASE_ROOT_DIR}/etc/runtime_config.exs"]}
@@ -59,7 +59,7 @@ release :bespiral do
 
   set applications: [
     :runtime_tools,
-    bespiral: :permanent
+    cambiatus: :permanent
   ]
 
   set commands: [

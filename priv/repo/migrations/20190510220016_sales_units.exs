@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.SalesUnits do
+defmodule Cambiatus.Repo.Migrations.SalesUnits do
   use Ecto.Migration
 
   def change do

@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.RenameShopToSales do
+defmodule Cambiatus.Repo.Migrations.RenameShopToSales do
   @moduledoc """
   Migration to rename the shop table to sales
   """

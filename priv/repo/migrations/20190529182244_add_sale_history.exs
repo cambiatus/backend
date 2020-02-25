@@ -1,4 +1,4 @@
-defmodule BeSpiral.Repo.Migrations.AddSaleHistory do
+defmodule Cambiatus.Repo.Migrations.AddSaleHistory do
   @moduledoc """
   Adds Sale history table
   """
