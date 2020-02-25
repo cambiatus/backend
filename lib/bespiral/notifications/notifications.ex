@@ -97,7 +97,7 @@ defmodule BeSpiral.Notifications do
   def notify_validators(action) do
     loaded_action =
       action
-      |> Repo.preload(validators: [:validator])
+      |> Repo.preload(:validators)
 
     # Task analyse the responses from sending out validations and perhaps
     # Modify the returned result
@@ -105,8 +105,12 @@ defmodule BeSpiral.Notifications do
       loaded_action.validators
       |> Enum.map(fn v ->
         notify(
-          %{title: "Claim Verification Request", body: action.description, type: :verification},
-          v.validator
+          %{
+            title: "Claim Verification Request",
+            body: action.description,
+            type: :verification
+          },
+          v
         )
       end)
 

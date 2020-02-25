@@ -25,7 +25,7 @@ defmodule BeSpiral.Commune.Check do
     field(:created_at, :utc_datetime)
   end
 
-  @required_fields ~w(is_verified claim_id validator_id, created_block created_tx created_eos_account created_at)a
+  @required_fields ~w(is_verified claim_id validator_id created_block created_tx created_eos_account created_at)a
 
   @spec changeset(Check.t(), map()) :: Ecto.Changeset.t()
   def changeset(%Check{} = check, attrs) do

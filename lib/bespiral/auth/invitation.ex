@@ -4,21 +4,21 @@ defmodule BeSpiral.Auth.Invitation do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias BeSpiral.{Commune.Community, Accounts.User}
+
   schema "invitations" do
-    field(:accepted, :boolean, default: false)
-    field(:community, :string)
-    field(:invitee_email, :string)
-    field(:inviter, :string)
+    belongs_to(:community, Community, references: :symbol, type: :string)
+    belongs_to(:creator, User, references: :account, type: :string)
 
     timestamps()
   end
 
+  @required_fields ~w(community_id creator_id)a
+
   @doc false
   def changeset(invitation, attrs) do
     invitation
-    |> cast(attrs, [:community, :inviter, :invitee_email, :accepted])
-    |> validate_required([:invitee_email, :inviter, :community])
-    |> validate_format(:invitee_email, ~r/@/)
-    |> unique_constraint(:invitee_email, name: :invitations_community_invitee_index)
+    |> cast(attrs, @required_fields)
+    |> validate_required(@required_fields)
   end
 end

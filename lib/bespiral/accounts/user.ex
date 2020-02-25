@@ -37,7 +37,7 @@ defmodule BeSpiral.Accounts.User do
     has_many(:from_transfers, Transfer, foreign_key: :from_id)
     has_many(:network, Network, foreign_key: :account_id)
     has_many(:communities, through: [:network, :community])
-    has_many(:invitations, Invitation, foreign_key: :invitee_email, references: :email)
+    has_many(:invitations, Invitation, foreign_key: :creator_id)
   end
 
   @required_fields ~w(account)a
