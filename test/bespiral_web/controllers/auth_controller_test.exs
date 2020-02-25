@@ -38,9 +38,8 @@ defmodule BeSpiralWeb.AuthControllerTest do
 
     test "sign up with invitation", %{conn: conn, user: user, community: community} do
       invite_params = %{
-        community: community.symbol,
-        invitee_email: "xname@email.com",
-        inviter: user.account
+        community_id: community.symbol,
+        creator_id: user.account
       }
 
       assert {:ok, invitation} = Auth.create_invitation(invite_params)
@@ -55,28 +54,6 @@ defmodule BeSpiralWeb.AuthControllerTest do
 
       conn = post(conn, auth_path(conn, :sign_up), sign_up_params)
       assert json_response(conn, 200)["data"]["user"]["account"] == "newaccount"
-    end
-
-    test "sign up with used invitation", %{conn: conn, community: community, user: user} do
-      invite_params = %{
-        community: community.symbol,
-        invitee_email: "xname@email.com",
-        inviter: user.account
-      }
-
-      assert {:ok, invitation} = Auth.create_invitation(invite_params)
-      assert {:ok, _} = Auth.update_invitation(invitation, %{accepted: true})
-
-      sign_up_params = %{
-        user: %{
-          account: "newaccount",
-          invitation_id: invitation.id,
-          name: "name"
-        }
-      }
-
-      conn = post(conn, auth_path(conn, :sign_up), sign_up_params)
-      assert conn.status == 404
     end
 
     test "sign up with existing user", %{conn: conn, user: user} do

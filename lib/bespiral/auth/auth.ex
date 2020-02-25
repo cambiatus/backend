@@ -3,13 +3,16 @@ defmodule BeSpiral.Auth do
 
   import Ecto.Query
 
-  alias BeSpiral.Accounts
-  alias BeSpiral.Accounts.User
-  alias BeSpiral.Auth.Invitation
-  alias BeSpiral.Chat
-  alias BeSpiral.Commune
-  alias BeSpiral.Mails.UserMail
-  alias BeSpiral.Repo
+  alias BeSpiral.{
+    Accounts,
+    Accounts.User,
+    Auth,
+    Auth.Invitation,
+    Chat,
+    Commune,
+    Mails.UserMail,
+    Repo
+  }
 
   @contract Application.get_env(:bespiral, :contract)
 
@@ -60,15 +63,17 @@ defmodule BeSpiral.Auth do
 
   If no invitation is found we assume the user is being invited to BeSpiral community.
   """
-  def sign_up(%{"name" => name, "account" => account, "invitation_id" => invitation_id}) do
-    with %Invitation{} = invitation <-
-           Repo.get_by(Invitation, id: invitation_id, accepted: false),
+  def sign_up(%{
+        "name" => name,
+        "account" => account,
+        "email" => email,
+        "invitation_id" => invitation_id
+      }) do
+    with %Invitation{} = invitation <- Auth.get_invitation(invitation_id),
          nil <- Accounts.get_user(account),
-         {:ok, user} <-
-           Accounts.create_user(%{name: name, account: account, email: invitation.invitee_email}),
+         {:ok, user} <- Accounts.create_user(%{name: name, account: account, email: email}),
          %{transaction_id: _txid} <-
-           @contract.netlink(user.account, invitation.inviter, invitation.community),
-         {:ok, _invitation} <- invitation |> update_invitation(%{accepted: true}) do
+           @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
       user = user |> Repo.preload(:communities)
       {:ok, user}
     else
@@ -106,7 +111,8 @@ defmodule BeSpiral.Auth do
       [%Invitation{}, ...]
 
   """
-  def list_invitations, do: Repo.all(Invitation)
+  def list_invitations,
+    do: Invitation |> Repo.all() |> Repo.preload(:community) |> Repo.preload(:creator)
 
   @doc """
   Gets a single invitation.
@@ -123,7 +129,10 @@ defmodule BeSpiral.Auth do
 
   """
   def get_invitation!(id) do
-    Repo.get!(Invitation, id)
+    Invitation
+    |> Repo.get!(id)
+    |> Repo.preload(:community)
+    |> Repo.preload(:creator)
   end
 
   @doc """
@@ -141,11 +150,14 @@ defmodule BeSpiral.Auth do
 
   """
   def get_invitation(id) do
-    Repo.get(Invitation, id)
+    Invitation
+    |> Repo.get(id)
+    |> Repo.preload(:community)
+    |> Repo.preload(:creator)
   end
 
-  def user_invitations(%User{email: email}) when not is_nil(email) do
-    Repo.all(from(i in Invitation, where: i.invitee_email == ^email and i.accepted == false))
+  def user_invitations(%User{account: account}) do
+    Repo.all(from(i in Invitation, where: i.creator_id == ^account))
   end
 
   @doc """
@@ -167,24 +179,6 @@ defmodule BeSpiral.Auth do
   end
 
   @doc """
-  Updates an invitation.
-
-  ## Examples
-
-  iex> update_invitation(invitation, %{field: new_value})
-  {:ok, %Invitation{}}
-
-  iex> update_invitation(invitation, %{field: bad_value})
-  {:error, %Ecto.Changeset{}}
-
-  """
-  def update_invitation(%Invitation{} = invitation, attrs) do
-    invitation
-    |> Invitation.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
   Returns an `%Ecto.Changeset{}` for tracking invitation changes.
 
   ## Examples
@@ -196,41 +190,4 @@ defmodule BeSpiral.Auth do
   def change_invitation(%Invitation{} = invitation) do
     Invitation.changeset(invitation, %{})
   end
-
-  def create_invites(%{"inviter" => inviter, "invites" => emails, "symbol" => community}) do
-    create_invites(community, inviter, emails)
-  end
-
-  def create_invites(community, inviter, emails) do
-    emails
-    |> String.split(",")
-    |> Enum.map(
-      &%{
-        community: community,
-        inviter: inviter,
-        invitee_email: &1
-      }
-    )
-    |> Enum.map(&create_invitation(&1))
-    |> Enum.map(&send_invite/1)
-  end
-
-  def send_invite(
-        {:ok,
-         %{id: id, community: community_symbol, inviter: inviter_account, invitee_email: email} = original_invite}
-      ) do
-    community = Commune.get_community!(community_symbol)
-    inviter = Accounts.get_user!(inviter_account)
-
-    invite = %{
-      community_name: community.name,
-      inviter: inviter.name || inviter.account,
-      id: to_string(id)
-    }
-
-    UserMail.invitation(email, invite)
-    {:ok, original_invite}
-  end
-
-  def send_invite({:error, _reason} = err), do: err
 end

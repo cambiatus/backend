@@ -25,14 +25,8 @@ defmodule BeSpiral.Commune do
   def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
 
   def query(Objective, _) do
-    query =
-      Enum.reduce(Objective, fn
-        _, query ->
-          query
-      end)
-      |> order_by([c], c.created_at)
-
-    query
+    Objective
+    |> order_by([c], desc: c.created_at)
   end
 
   def query(Action, %{input: filters}) do
@@ -179,9 +173,10 @@ defmodule BeSpiral.Commune do
   @spec get_actor_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_actor_claims(claimer) do
     query =
-      from c in Claim,
+      from(c in Claim,
         where: c.claimer_id == ^claimer,
         order_by: fragment("? DESC", c.created_at)
+      )
 
     validations = Repo.all(query)
 
@@ -197,7 +192,7 @@ defmodule BeSpiral.Commune do
   @spec get_community_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_community_claims(symbol) do
     query =
-      from o in Objective,
+      from(o in Objective,
         where: o.community_id == ^symbol,
         # pick this objectives actions
         join: a in Action,
@@ -207,8 +202,9 @@ defmodule BeSpiral.Commune do
         on: c.action_id == a.id,
         order_by: fragment("? DESC", c.created_at),
         select: c
+      )
 
-      community_claims = Repo.all(query)
+    community_claims = Repo.all(query)
 
     {:ok, community_claims}
   end
@@ -222,7 +218,7 @@ defmodule BeSpiral.Commune do
   @spec get_validator_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_validator_claims(account) do
     query_action =
-      from a in Action,
+      from(a in Action,
         # where validator can vote
         join: v in Validator,
         on: v.action_id == a.id and v.validator_id == ^account,
@@ -232,14 +228,18 @@ defmodule BeSpiral.Commune do
         distinct: c,
         order_by: c.created_at,
         select: c
+      )
+
     available_claims = Repo.all(query_action)
 
     query_check =
-      from c in Check,
+      from(c in Check,
         where: c.validator_id == ^account,
         join: cl in Claim,
         on: cl.id == c.claim_id,
         select: cl
+      )
+
     voted_claims = Repo.all(query_check)
 
     validator_claims =

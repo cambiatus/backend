@@ -31,10 +31,8 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
         _validators = insert_list(@num, :validator, %{action: action})
       end)
 
-      assert(Repo.aggregate(Community, :count, :symbol) == 1)
-
+      assert Repo.aggregate(Community, :count, :symbol) == 1
       assert Repo.aggregate(Objective, :count, :id) == @num
-
       assert Repo.aggregate(Action, :count, :created_at) == @num
 
       query = """
@@ -44,9 +42,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
           objectives {
             actions {
               validators {
-                validator {
-                  avatar
-                }
+                avatar
               }
             }
           }
@@ -71,11 +67,8 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
 
     test "collects all actions from a specific creator", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
-
       assert Repo.aggregate(Community, :count, :symbol) == 0
-
       assert Repo.aggregate(Objective, :count, :id) == 0
-
       assert Repo.aggregate(Action, :count, :id) == 0
 
       user1 = insert(:user)
@@ -90,11 +83,8 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       insert_list(@num, :action, %{creator: user2, objective: objective})
 
       assert Repo.aggregate(User, :count, :account) == 2
-
       assert Repo.aggregate(Community, :count, :symbol) == 1
-
       assert Repo.aggregate(Objective, :count, :id) == 1
-
       assert Repo.aggregate(Action, :count, :id) == 1 + @num + @num
 
       query = """
@@ -128,11 +118,8 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
 
     test "collects all actions from a specific validator", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
-
       assert Repo.aggregate(Community, :count, :symbol) == 0
-
       assert Repo.aggregate(Objective, :count, :id) == 0
-
       assert Repo.aggregate(Action, :count, :id) == 0
 
       user1 = insert(:user)
@@ -154,11 +141,8 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       end)
 
       assert Repo.aggregate(User, :count, :account) == 2
-
       assert Repo.aggregate(Community, :count, :symbol) == 1
-
       assert Repo.aggregate(Objective, :count, :id) == 1
-
       assert Repo.aggregate(Action, :count, :id) == 1 + @num + @num
 
       query = """
@@ -192,9 +176,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
 
     test "collects all uncompleted actions", %{conn: conn} do
       assert Repo.aggregate(Community, :count, :symbol) == 0
-
       assert Repo.aggregate(Objective, :count, :id) == 0
-
       assert Repo.aggregate(Action, :count, :id) == 0
 
       comm = insert(:community)
@@ -205,9 +187,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       insert_list(@num, :action, %{is_completed: true, objective: objective})
 
       assert Repo.aggregate(Community, :count, :symbol) == 1
-
       assert Repo.aggregate(Objective, :count, :id) == 1
-
       assert Repo.aggregate(Action, :count, :id) == 1 + @num + @num
 
       query = """
@@ -241,9 +221,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
 
     test "collects all automatic actions", %{conn: conn} do
       assert Repo.aggregate(Community, :count, :symbol) == 0
-
       assert Repo.aggregate(Objective, :count, :id) == 0
-
       assert Repo.aggregate(Action, :count, :id) == 0
 
       comm = insert(:community)
@@ -254,9 +232,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       insert_list(@num, :action, %{verification_type: "claimable", objective: objective})
 
       assert Repo.aggregate(Community, :count, :symbol) == 1
-
       assert Repo.aggregate(Objective, :count, :id) == 1
-
       assert Repo.aggregate(Action, :count, :id) == 1 + @num + @num
 
       query = """
@@ -290,9 +266,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
 
     test "collects all claimable actions", %{conn: conn} do
       assert Repo.aggregate(Community, :count, :symbol) == 0
-
       assert Repo.aggregate(Objective, :count, :id) == 0
-
       assert Repo.aggregate(Action, :count, :id) == 0
 
       comm = insert(:community)
@@ -387,10 +361,8 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
         insert_list(@num, :action, %{objective: obj})
       end)
 
-      assert(Repo.aggregate(Community, :count, :symbol) == 1)
-
+      assert Repo.aggregate(Community, :count, :symbol) == 1
       assert Repo.aggregate(Objective, :count, :id) == @num
-
       assert Repo.aggregate(Action, :count, :id) == @num * @num
 
       query = """
@@ -421,6 +393,35 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
                Enum.reduce(objectives, 0, fn obj, acc ->
                  Enum.count(obj["actions"]) + acc
                end)
+    end
+
+    test "collects all objectives in a community sorted by date", %{conn: conn} do
+      assert(Repo.aggregate(Community, :count, :symbol) == 0)
+      cmm = insert(:community)
+
+      _objectives = insert_list(@num, :objective, %{community: cmm})
+
+      assert Repo.aggregate(Objective, :count, :id) == @num
+
+      query = """
+      query {
+        community(symbol: "#{cmm.symbol}") {
+          objectives {
+            createdAt
+          }
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query)
+
+      %{
+        "data" => %{
+          "community" => %{"objectives" => objectives}
+        }
+      } = json_response(res, 200)
+
+      assert List.first(objectives)["createdAt"] > List.last(objectives)["createdAt"]
     end
 
     test "collects all communities", %{conn: conn} do
@@ -938,7 +939,7 @@ defmodule BeSpiralWeb.Schema.Resolvers.CommuneTest do
       # Ensure all claims except the one voted for by v2
       assert Enum.count(cs) == @num - 1
 
-      # since act2 was validated by a different user  we should not have it in the list
+      # since act2 was validated by a different user we should not have it in the list
       refute Enum.member?(claim_action_ids, act2.id)
     end
 

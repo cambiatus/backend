@@ -24,7 +24,7 @@ defmodule BeSpiral.Commune.Validator do
     field(:created_at, :utc_datetime)
   end
 
-  @required_fields ~w(action_id, validator_id, created_block, created_tx, created_eos_account, created_at)a
+  @required_fields ~w(action_id validator_id created_block created_tx created_eos_account created_at)a
 
   @spec changeset(Validator.t(), map()) :: Ecto.Changeset.t()
   def changeset(%Validator{} = validator, attrs) do

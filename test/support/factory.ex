@@ -7,6 +7,7 @@ defmodule BeSpiral.Factory do
 
   alias BeSpiral.{
     Accounts.User,
+    Auth.Invitation,
     Commune.Action,
     Commune.AvailableSale,
     Commune.Check,
@@ -135,7 +136,7 @@ defmodule BeSpiral.Factory do
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
-      created_at: NaiveDateTime.utc_now()
+      created_at: NaiveDateTime.add(NaiveDateTime.utc_now(), sequence(:numeric, & &1))
     }
   end
 
@@ -213,6 +214,13 @@ defmodule BeSpiral.Factory do
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
       created_at: NaiveDateTime.utc_now()
+    }
+  end
+
+  def invitation_factory do
+    %Invitation{
+      community: build(:community),
+      creator: build(:user)
     }
   end
 end
