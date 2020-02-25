@@ -16,7 +16,7 @@ config :cambiatus, Cambiatus.Chat.ApiHttp,
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: "default",
   cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
-  cambiatus_account: "cambiatus",
+  cambiatus_account: "bespiral",
   mcc_contract: "bes.cmm",
   cambiatus_cmm: "BES"
 
@@ -50,7 +50,7 @@ config :eosrpc, EOSRPC.Wallet, url: "http://localhost:8888/v1/wallet"
 
 config :eosrpc, EOSRPC.Chain, url: "http://eosio.cambiatus.local/v1/chain"
 
-# Configure Notifications Adapter 
+# Configure Notifications Adapter
 config :cambiatus, Cambiatus.Notifications, adapter: Cambiatus.Notifications.HttpAdapter
 
 ## configure push notifs

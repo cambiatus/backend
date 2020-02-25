@@ -33,8 +33,8 @@ config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: "default",
   cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
-  cambiatus_account: "cambiatus",
-  mcc_contract: "cambiatus",
+  cambiatus_account: "bespiral",
+  mcc_contract: "bespiral",
   cambiatus_cmm: "BES"
 
 config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")

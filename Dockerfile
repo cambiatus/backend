@@ -7,7 +7,7 @@ ARG ALPINE_VERSION=3.8
 FROM elixir:1.7.2-alpine AS builder
 
 # The name of your application/release (required)
-ARG APP_NAME=bespiral
+ARG APP_NAME=cambiatus
 # The version of the application we are building (required)
 ARG APP_VSN
 # The environment to build with

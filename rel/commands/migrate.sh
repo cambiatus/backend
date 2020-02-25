@@ -1,3 +1,3 @@
 #!/bin/sh
 
-release_ctl eval --mfa "BeSpiral.ReleaseTasks.migrate/1" --argv -- "$@"
+release_ctl eval --mfa "Cambiatus.ReleaseTasks.migrate/1" --argv -- "$@"

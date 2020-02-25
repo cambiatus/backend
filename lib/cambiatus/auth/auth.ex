@@ -9,8 +9,6 @@ defmodule Cambiatus.Auth do
     Auth,
     Auth.Invitation,
     Chat,
-    Commune,
-    Mails.UserMail,
     Repo
   }
 
