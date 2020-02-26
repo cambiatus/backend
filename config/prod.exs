@@ -37,6 +37,8 @@ config :cambiatus, Cambiatus.Eos,
   mcc_contract: "bespiral",
   cambiatus_cmm: "BES"
 
+config :cambiatus, Cambiatus.Auth.InvitationId, salt: System.get_env("INVITATION_SALT")
+
 config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
 
 config :eosrpc, EOSRPC.Chain, url: System.get_env("EOSIO_URL")

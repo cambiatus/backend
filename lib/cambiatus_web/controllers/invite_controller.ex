@@ -7,7 +7,7 @@ defmodule CambiatusWeb.InviteController do
   action_fallback(CambiatusWeb.FallbackController)
 
   def invite(conn, params) do
-    with result <- Auth.create_invite(params) do
+    with result <- Auth.create_invitation(params) do
       render(conn, %{result: result})
     end
   end

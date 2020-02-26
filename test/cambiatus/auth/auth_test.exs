@@ -1,7 +1,10 @@
 defmodule Cambiatus.AuthTest do
   use Cambiatus.DataCase
 
-  alias Cambiatus.Auth
+  alias Cambiatus.{
+    Auth,
+    Auth.InvitationId
+  }
 
   describe "authentication Sign in" do
     setup :valid_community_and_user
@@ -60,7 +63,7 @@ defmodule Cambiatus.AuthTest do
         "account" => user.account,
         "name" => "name",
         "email" => "something@email.com",
-        "invitation_id" => 0
+        "invitation_id" => ""
       }
 
       assert Auth.sign_up(auth_params) == {:error, :not_found}
@@ -76,7 +79,7 @@ defmodule Cambiatus.AuthTest do
           "account" => new_user_account_name,
           "name" => "name",
           "email" => new_user_email,
-          "invitation_id" => invitation.id
+          "invitation_id" => InvitationId.encode(invitation.id)
         })
 
       assert(new_user.email == new_user_email)
@@ -103,7 +106,8 @@ defmodule Cambiatus.AuthTest do
 
     test "get_invitation!/1 returns the invitation with given id" do
       invitation = insert(:invitation)
-      found_invitation = Auth.get_invitation!(invitation.id)
+      public_invitation_id = InvitationId.encode(invitation.id)
+      found_invitation = Auth.get_invitation!(public_invitation_id)
 
       assert found_invitation.id == invitation.id
       assert found_invitation.creator_id == invitation.creator_id
@@ -119,6 +123,15 @@ defmodule Cambiatus.AuthTest do
 
       assert invitation.community_id == community.symbol
       assert invitation.creator_id == user.account
+    end
+
+    test "get_invitation accepts strings and returns the correct invitation" do
+      invitation = insert(:invitation)
+
+      found_invitation =
+        Auth.get_invitation!(invitation.id |> Cambiatus.Auth.InvitationId.encode())
+
+      assert invitation.id == found_invitation.id
     end
 
     test "create_invitation/1 with invalid data returns error changeset" do

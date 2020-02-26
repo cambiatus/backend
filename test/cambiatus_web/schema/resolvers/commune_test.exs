@@ -18,7 +18,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
   }
 
   @num 3
-  describe "Commnune Resolver" do
+  describe "Commune Resolver" do
     test "collects claimable actions with their validators", %{conn: conn} do
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       comm = insert(:community)

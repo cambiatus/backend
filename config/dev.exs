@@ -27,6 +27,9 @@ config :cambiatus, Cambiatus.Repo,
   hostname: "localhost",
   port: "5432"
 
+config :cambiatus, Cambiatus.Auth.InvitationId,
+  salt: "y74669wSOtvUKv4niBSXfWbo/h90nV9Rpm9JfYCeD/cN/UbB3lPUxPtcmz/i+jpk"
+
 config :tesla, adapter: Tesla.Adapter.Hackney
 
 config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.LocalAdapter

@@ -8,6 +8,7 @@ defmodule Cambiatus.Auth do
     Accounts.User,
     Auth,
     Auth.Invitation,
+    Auth.InvitationId,
     Chat,
     Repo
   }
@@ -126,7 +127,9 @@ defmodule Cambiatus.Auth do
       ** (Ecto.NoResultsError)
 
   """
-  def get_invitation!(id) do
+  def get_invitation!(code) do
+    {:ok, id} = InvitationId.decode(code)
+
     Invitation
     |> Repo.get!(id)
     |> Repo.preload(:community)
@@ -147,7 +150,9 @@ defmodule Cambiatus.Auth do
   nil
 
   """
-  def get_invitation(id) do
+  def get_invitation(code) do
+    {:ok, id} = InvitationId.decode(code)
+
     Invitation
     |> Repo.get(id)
     |> Repo.preload(:community)
