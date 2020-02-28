@@ -50,6 +50,7 @@ defmodule Cambiatus.Mixfile do
       {:ipfs, "~> 0.1.0"},
       {:eosrpc, "~> 0.5.0"},
       {:sentry, "~> 6.4"},
+      {:hashids, "~> 2.0"},
 
       # web_push
       {:web_push_encryption,

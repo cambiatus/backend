@@ -103,14 +103,12 @@ defmodule Cambiatus.CommuneTest do
 
     test "list_network/0 returns all network", %{
       community: community,
-      user: user,
       another_user: another_user
     } do
       network =
         insert(:network, %{
           account: another_user,
-          community: community,
-          invited_by: user
+          community: community
         })
 
       assert [net] = Commune.list_network()

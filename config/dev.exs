@@ -7,12 +7,6 @@ config :cambiatus, CambiatusWeb.Endpoint,
   check_origin: false,
   watchers: []
 
-config :cambiatus, Cambiatus.Chat.ApiHttp,
-  chat_base_url: "http://chat-server.cambiatus.local:3002",
-  chat_token: "kwt-XUNLrGm1cglSqUm4EjZavtsaZCypTXZY-xS4j83",
-  chat_user_id: "Wc46q2sNqcE4ZhMKt",
-  chat_user_role: "community-user"
-
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: "default",
   cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
@@ -26,6 +20,9 @@ config :cambiatus, Cambiatus.Repo,
   password: "",
   hostname: "localhost",
   port: "5432"
+
+config :cambiatus, Cambiatus.Auth.InvitationId,
+  salt: "y74669wSOtvUKv4niBSXfWbo/h90nV9Rpm9JfYCeD/cN/UbB3lPUxPtcmz/i+jpk"
 
 config :tesla, adapter: Tesla.Adapter.Hackney
 
