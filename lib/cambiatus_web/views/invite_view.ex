@@ -1,25 +1,33 @@
 defmodule CambiatusWeb.InviteView do
   use CambiatusWeb, :view
 
+  alias Cambiatus.Auth.InvitationId
+
   def render("invite.json", %{result: result}) do
     %{
-      invites: Enum.map(result, &invite/1)
+      data: %{
+        id: result.id |> InvitationId.encode(),
+        status: "ok",
+        message: "Successfully invited"
+      }
     }
   end
 
-  def invite({:error, changeset}) do
+  def render("error.json", %{error: %Ecto.Changeset{} = _changeset}) do
     %{
-      invitee: changeset.changes.invitee_email,
-      status: "failed",
-      message: "Invitation failed"
+      data: %{
+        status: "failed",
+        message: "Create invitation failed"
+      }
     }
   end
 
-  def invite({:ok, invitation}) do
+  def render("error.json", %{error: value}) when is_binary(value) do
     %{
-      invitee: invitation.invitee_email,
-      status: "ok",
-      message: "Successfully invited"
+      data: %{
+        status: "failed",
+        message: value
+      }
     }
   end
 end

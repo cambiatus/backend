@@ -36,10 +36,14 @@ defmodule CambiatusWeb.AuthControllerTest do
       assert json_response(conn, 200)["data"]["user"]["account"] == "totallynew"
     end
 
-    test "sign up with invitation", %{conn: conn, user: user, community: community} do
+    test "sign up with invitation", %{conn: conn} do
+      community = insert(:community)
+      user = insert(:user)
+      insert(:network, %{account: user, community: community})
+
       invite_params = %{
-        community_id: community.symbol,
-        creator_id: user.account
+        "community_id" => community.symbol,
+        "creator_id" => user.account
       }
 
       assert {:ok, invitation} = Auth.create_invitation(invite_params)

@@ -7,12 +7,6 @@ config :cambiatus, CambiatusWeb.Endpoint,
   check_origin: false,
   watchers: []
 
-config :cambiatus, Cambiatus.Chat.ApiHttp,
-  chat_base_url: "http://chat-server.cambiatus.local:3002",
-  chat_token: "kwt-XUNLrGm1cglSqUm4EjZavtsaZCypTXZY-xS4j83",
-  chat_user_id: "Wc46q2sNqcE4ZhMKt",
-  chat_user_role: "community-user"
-
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: "default",
   cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),

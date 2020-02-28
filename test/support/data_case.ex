@@ -68,69 +68,30 @@ defmodule Cambiatus.DataCase do
 
     {:ok, community} = Cambiatus.Commune.create_community(community_params)
 
-    root_params = %{
-      account: "cambiatustest"
-    }
+    {:ok, root} =
+      Cambiatus.Accounts.create_user(%{
+        account: "cambiatustest"
+      })
 
-    {:ok, root} = Cambiatus.Accounts.create_user(root_params)
+    {:ok, user} =
+      Cambiatus.Accounts.create_user(%{
+        account: "testtesttest",
+        name: "Test User 1",
+        email: "test_user_1@email.com"
+      })
 
-    user_params = %{
-      account: "testtesttest",
-      name: "Test User 1",
-      email: "test_user_1@email.com"
-    }
-
-    {:ok, user} = Cambiatus.Accounts.create_user(user_params)
-
-    another_user_params = %{
-      account: "anothertest1",
-      name: "Test User 2",
-      email: "test_user_2@email.com"
-    }
-
-    {:ok, another_user} = Cambiatus.Accounts.create_user(another_user_params)
-
-    user_chat_success_params = %{
-      user_id: "user_id",
-      account: "success",
-      email: "",
-      token: "success",
-      language: "pt-BR"
-    }
-
-    user_chat_bad_request_params = %{
-      user_id: "user_id",
-      account: "bad_request",
-      email: "",
-      token: "bad_request",
-      language: "bad_request"
-    }
-
-    user_chat_unauthorized_params = %{
-      user_id: "user_id",
-      account: "unauthorized",
-      email: "",
-      token: "unauthorized",
-      language: "unauthorized"
-    }
-
-    user_chat_unknown_params = %{
-      user_id: "unknown",
-      account: "",
-      email: "",
-      token: "",
-      language: ""
-    }
+    {:ok, another_user} =
+      Cambiatus.Accounts.create_user(%{
+        account: "anothertest1",
+        name: "Test User 2",
+        email: "test_user_2@email.com"
+      })
 
     %{
       community: community,
       user: user,
       another_user: another_user,
-      cambiatus_account: root,
-      user_chat_success: user_chat_success_params,
-      user_chat_bad_request: user_chat_bad_request_params,
-      user_chat_unauthorized: user_chat_unauthorized_params,
-      user_chat_unknown: user_chat_unknown_params
+      cambiatus_account: root
     }
   end
 

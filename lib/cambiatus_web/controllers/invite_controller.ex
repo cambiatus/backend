@@ -7,8 +7,16 @@ defmodule CambiatusWeb.InviteController do
   action_fallback(CambiatusWeb.FallbackController)
 
   def invite(conn, params) do
-    with result <- Auth.create_invitation(params) do
-      render(conn, %{result: result})
+    with {:ok, result} <- Auth.create_invitation(params) do
+      render(conn, "invite.json", %{result: result})
+    else
+      {:error, "User don't belong to the community" = reason} ->
+        conn
+        |> put_status(422)
+        |> render("error.json", %{error: reason})
+
+      {:error, reason} ->
+        render(conn, "error.json", %{error: reason})
     end
   end
 end

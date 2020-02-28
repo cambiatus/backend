@@ -97,8 +97,6 @@ defmodule Cambiatus.AuthTest do
   describe "invitations" do
     setup :valid_community_and_user
 
-    @invalid_attrs %{community: nil, creator: nil}
-
     test "list_invitations/0 returns all invitations" do
       invitation = insert(:invitation)
       assert Auth.list_invitations() == [invitation]
@@ -135,7 +133,7 @@ defmodule Cambiatus.AuthTest do
     end
 
     test "create_invitation/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Auth.create_invitation(@invalid_attrs)
+      assert {:error, "Can't parse arguments"} = Auth.create_invitation(%{})
     end
 
     test "change_invitation/1 returns a invitation changeset" do

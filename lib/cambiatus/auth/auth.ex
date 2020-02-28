@@ -10,6 +10,7 @@ defmodule Cambiatus.Auth do
     Auth.Invitation,
     Auth.InvitationId,
     Chat,
+    Commune.Network,
     Repo
   }
 
@@ -175,10 +176,28 @@ defmodule Cambiatus.Auth do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_invitation(attrs \\ %{}) do
-    %Invitation{}
-    |> Invitation.changeset(attrs)
-    |> Repo.insert()
+  def create_invitation(attrs \\ %{})
+
+  def create_invitation(%{"community_id" => cmm_id, "creator_id" => c_id} = attrs) do
+    # Check if creator belongs to the community
+    if Repo.get_by(Network, account_id: c_id, community_id: cmm_id) == nil do
+      {:error, "User don't belong to the community"}
+    else
+      # Check if there are existing invitations already
+      with %Invitation{} = invitation <-
+             Repo.get_by(Invitation, community_id: cmm_id, creator_id: c_id) do
+        {:ok, invitation}
+      else
+        nil ->
+          %Invitation{}
+          |> Invitation.changeset(attrs)
+          |> Repo.insert()
+      end
+    end
+  end
+
+  def create_invitation(attrs) do
+    {:error, "Can't parse arguments"}
   end
 
   @doc """

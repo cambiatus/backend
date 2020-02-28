@@ -20,5 +20,6 @@ defmodule Cambiatus.Auth.Invitation do
     invitation
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
+    |> unique_constraint(:creator_id, name: :invitations_creator_community_index)
   end
 end
