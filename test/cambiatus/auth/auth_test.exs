@@ -69,10 +69,13 @@ defmodule Cambiatus.AuthTest do
       assert Auth.sign_up(auth_params) == {:error, :not_found}
     end
 
-    test "sign up with invitation", %{community: community, user: user} do
+    test "sign up with invitation" do
+      community = insert(:community)
+      user = insert(:user)
+      invitation = insert(:invitation, %{community: community, creator: user})
+
       new_user_email = "t@test.local"
       new_user_account_name = "tnewuser"
-      invitation = insert(:invitation, %{community: community, creator: user})
 
       {:ok, new_user} =
         Auth.sign_up(%{

@@ -63,32 +63,14 @@ defmodule Cambiatus.Eos do
     |> create_account()
   end
 
-  def netlink(new_user, inviter, community \\ cambiatus_community())
-
-  def netlink(new_user, inviter, community) do
-    netlink(%{"new_user" => new_user, "inviter" => inviter, "community" => community})
-  end
-
-  @doc """
-  This function should be called after signup with eos account link, to insert the user immediately
-  under Cambiatus Global community
-  """
-  @deprecated "Use netlink/3 instead"
-  def netlink_cambiatus(new_user),
-    do:
-      netlink(%{
-        "new_user" => new_user,
-        "inviter" => cambiatus_acc(),
-        "community" => cambiatus_cmm()
-      })
-
   @doc """
   Netlink function should be called for signup on Global Cambiatus community or for each
   community invitation, after the signup process
   """
-  @deprecated "Use netlink/3 instead"
-  def netlink(%{"new_user" => new_user, "inviter" => inviter, "community" => community} = m)
-      when is_map(m) do
+
+  def netlink(new_user, inviter, community \\ cambiatus_community())
+
+  def netlink(new_user, inviter, community) do
     unlock_wallet()
 
     response =
@@ -107,7 +89,7 @@ defmodule Cambiatus.Eos do
 
     case response do
       {:ok, %{body: %{"transaction_id" => trx_id}}} ->
-        %{transaction_id: trx_id}
+        {:ok, %{transaction_id: trx_id}}
 
       {:error, %{body: %{"error" => error}}} ->
         {:error, error}
