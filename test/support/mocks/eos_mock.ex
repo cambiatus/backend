@@ -15,7 +15,7 @@ defmodule Cambiatus.EosMock do
         invited_by_id: inviter
       })
 
-    %{transaction_id: "mockedtransactionid"}
+    {:ok, %{transaction_id: "mockedtransactionid"}}
   end
 
   def cambiatus_community, do: @cambiatus_community

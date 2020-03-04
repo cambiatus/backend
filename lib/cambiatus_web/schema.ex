@@ -25,20 +25,17 @@ defmodule CambiatusWeb.Schema do
   import_types(Absinthe.Type.Custom)
   import_types(__MODULE__.AccountTypes)
   import_types(__MODULE__.CommuneTypes)
-  import_types(__MODULE__.ChatTypes)
   import_types(__MODULE__.NotificationTypes)
   import_types(__MODULE__.RelayTypes)
 
   query do
     import_fields(:account_queries)
     import_fields(:community_queries)
-    import_fields(:chat_queries)
     import_fields(:notification_queries)
   end
 
   mutation do
     import_fields(:account_mutations)
-    import_fields(:chat_mutations)
     import_fields(:notification_mutations)
   end
 

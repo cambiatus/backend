@@ -9,7 +9,6 @@ defmodule Cambiatus.Auth do
     Auth,
     Auth.Invitation,
     Auth.InvitationId,
-    Chat,
     Commune.Network,
     Repo
   }
@@ -39,17 +38,10 @@ defmodule Cambiatus.Auth do
         |> case do
           false ->
             # Add to cambiatus
-            @contract.netlink(user.account, @contract.cambiatus_account())
+            {:ok, _} = @contract.netlink(user.account, @contract.cambiatus_account())
+            {:ok, user}
 
           _ ->
-            :ok
-        end
-
-        try do
-          {:ok, _user} = Chat.sign_in_or_up(user)
-        rescue
-          my_exception ->
-            Sentry.capture_exception(my_exception, stacktrace: System.stacktrace())
             {:ok, user}
         end
     end
@@ -72,7 +64,7 @@ defmodule Cambiatus.Auth do
     with %Invitation{} = invitation <- Auth.get_invitation(invitation_id),
          nil <- Accounts.get_user(account),
          {:ok, user} <- Accounts.create_user(%{name: name, account: account, email: email}),
-         %{transaction_id: _txid} <-
+         {:ok, %{transaction_id: _txid}} <-
            @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
       user = user |> Repo.preload(:communities)
       {:ok, user}
@@ -196,7 +188,7 @@ defmodule Cambiatus.Auth do
     end
   end
 
-  def create_invitation(attrs) do
+  def create_invitation(_attrs) do
     {:error, "Can't parse arguments"}
   end
 
