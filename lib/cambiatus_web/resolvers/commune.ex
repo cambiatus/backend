@@ -5,6 +5,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
   """
   alias Cambiatus.{
     Accounts,
+    Auth,
     Commune
   }
 
@@ -135,5 +136,11 @@ defmodule CambiatusWeb.Resolvers.Commune do
 
   def get_members_count(%Community{} = community, _, _) do
     Commune.get_members_count(community)
+  end
+
+  @doc "Collect an invite"
+  @spec get_invitation(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
+  def get_invitation(_, %{input: %{id: id}}, _) do
+    {:ok, Auth.get_invitation(id)}
   end
 end
