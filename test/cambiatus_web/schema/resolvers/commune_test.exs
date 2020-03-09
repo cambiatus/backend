@@ -7,6 +7,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
   alias Cambiatus.{
     Accounts.User,
+    Auth.Invitation,
+    Auth.InvitationId,
     Commune.Action,
     Commune.AvailableSale,
     Commune.Check,
@@ -1006,6 +1008,31 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       # Ensure we only get 3 claims for 3 actions for 3 objectives in the community
       assert Enum.count(cs) == @num * @num * @num
+    end
+
+    test "collect a single invitation", %{conn: conn} do
+      assert(Repo.aggregate(Invitation, :count, :id) == 0)
+      invite = insert(:invitation)
+      invite_id = InvitationId.encode(invite.id)
+
+      query = """
+        query {
+          invite(input: {id: "#{invite_id}"}) {
+            creator {
+              account
+            }
+            community {
+              symbol
+            }
+          }
+        }
+      """
+
+      res = conn |> get("/api/graph", query: query)
+      %{"data" => %{"invite" => found_invite}} = json_response(res, 200)
+
+      assert(invite.creator_id == found_invite["creator"]["account"])
+      assert(invite.community_id == found_invite["community"]["symbol"])
     end
   end
 end

@@ -61,6 +61,12 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       arg(:input, non_null(:transfer_input))
       resolve(&Commune.get_transfer/3)
     end
+
+    @desc "An invite"
+    field :invite, :invite do
+      arg(:input, non_null(:invite_input))
+      resolve(&Commune.get_invitation/3)
+    end
   end
 
   @desc "Community Subscriptions on Cambiatus"
@@ -164,6 +170,11 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:validator, :string)
   end
 
+  @desc "Input to collect an invite"
+  input_object :invite_input do
+    field(:id, :string)
+  end
+
   @desc "A mint object in Cambiatus"
   object :mint do
     field(:memo, :string)
@@ -247,7 +258,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     field(:objective, non_null(:objective), resolve: dataloader(Cambiatus.Commune))
 
-    field(:validators, non_null(list_of(non_null(:profile))), resolve: dataloader(Cambiatus.Commune))
+    field(:validators, non_null(list_of(non_null(:profile))),
+      resolve: dataloader(Cambiatus.Commune)
+    )
 
     field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(Cambiatus.Commune))
     field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
@@ -353,6 +366,12 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
+  end
+
+  @desc "A community invite"
+  object :invite do
+    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
+    field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
   end
 
   @desc "Action verification types"
