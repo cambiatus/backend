@@ -18,11 +18,12 @@ defmodule Cambiatus.Auth do
   @doc """
   Login logic for Cambiatus when signing in with an invitationId
   """
-  def sign_in(%{"account" => account, "invitation_id" => invitation_id}) do
+  def sign_in(%{"account" => account}, invitation_id) do
     with %Invitation{} = invitation <- Auth.get_invitation(invitation_id),
          %User{} = user <- Accounts.get_user(account),
          {:ok, %{transaction_id: _}} <-
-           @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
+           @contract.netlink(user.account, invitation.creator_id, invitation.community_id),
+         user <- Repo.preload(user, :communities) do
       {:ok, user}
     end
   end

@@ -23,13 +23,13 @@ defmodule Cambiatus.AuthTest do
       user = insert(:user)
       another_user = insert(:user)
       invitation = insert(:invitation, %{community: community, creator: user})
+      invitation_id = invitation.id |> Cambiatus.Auth.InvitationId.encode()
 
       body = %{
-        "account" => another_user.account,
-        "invitation_id" => invitation.id |> Cambiatus.Auth.InvitationId.encode()
+        "account" => another_user.account
       }
 
-      assert {:ok, u} = Auth.sign_in(body)
+      assert {:ok, u} = Auth.sign_in(body, invitation_id)
       assert u.account == another_user.account
     end
   end

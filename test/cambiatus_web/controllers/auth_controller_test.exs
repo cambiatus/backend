@@ -24,6 +24,14 @@ defmodule CambiatusWeb.AuthControllerTest do
         post(conn, auth_path(conn, :sign_in), %{account: 1})
       end)
     end
+
+    test "sign in with invitation", %{conn: conn, user: user} do
+      invite = insert(:invitation, %{creator: user})
+      invite_id = invite.id |> Cambiatus.Auth.InvitationId.encode()
+      body = %{user: %{account: user.account}, invitation_id: invite_id}
+      conn = post(conn, auth_path(conn, :sign_in), body)
+      assert json_response(conn, 200)["data"]["user"]["account"] == user.account
+    end
   end
 
   describe "sign up" do
