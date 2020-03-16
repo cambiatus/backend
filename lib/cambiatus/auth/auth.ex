@@ -16,6 +16,18 @@ defmodule Cambiatus.Auth do
   @contract Application.get_env(:cambiatus, :contract)
 
   @doc """
+  Login logic for Cambiatus when signing in with an invitationId
+  """
+  def sign_in(%{"account" => account, "invitation_id" => invitation_id}) do
+    with %Invitation{} = invitation <- Auth.get_invitation(invitation_id),
+         %User{} = user <- Accounts.get_user(account),
+         {:ok, %{transaction_id: _}} <-
+           @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
+      {:ok, user}
+    end
+  end
+
+  @doc """
   Login logic for Cambiatus.
 
   We check our demux/postgres database to see if have a entry for this user.
