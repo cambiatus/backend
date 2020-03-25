@@ -27,34 +27,6 @@ defmodule CambiatusWeb.FallbackController do
     |> render("unauthorized.json")
   end
 
-  def call(conn, {:error, :chat_signin_bad_request} = error) do
-    call_chat_render(conn, :bad_request, error)
-  end
-
-  def call(conn, {:error, :chat_signin_unauthorized} = error) do
-    call_chat_render(conn, :unauthorized, error)
-  end
-
-  def call(conn, {:error, :chat_signin_unknown_error} = error) do
-    call_chat_render(conn, :internal_server_error, error)
-  end
-
-  def call(conn, {:error, :chat_signup_bad_request} = error) do
-    call_chat_render(conn, :bad_request, error)
-  end
-
-  def call(conn, {:error, :chat_signup_unauthorized} = error) do
-    call_chat_render(conn, :unauthorized, error)
-  end
-
-  def call(conn, {:error, :chat_signup_unknown_error} = error) do
-    call_chat_render(conn, :internal_server_error, error)
-  end
-
-  def call(conn, {:error, :chat_unknown_error} = error) do
-    call_chat_render(conn, :internal_server_error, error)
-  end
-
   def call(conn, generic_error) do
     conn
     |> put_status(:internal_server_error)
