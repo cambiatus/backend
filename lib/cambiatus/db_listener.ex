@@ -86,9 +86,13 @@ defmodule Cambiatus.DbListener do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          {:ok, record} <- format_record(Transfer, record),
          {:ok, account} <- Accounts.get_account_profile(record.to_id),
-         {:ok, user_subs} <- Notifications.get_subscriptions(account) do
+         {:ok, user_subs} <- Notifications.get_subscriptions(account),
+         :ok <-
+           Absinthe.Subscription.publish(Endpoint, record,
+             transfersucceed: "#{record.community_id}-#{record.from_id}-#{record.to_id}"
+           ) do
       message =
-        "Transfer of #{record.amount}#{record.community_id} from #{record.from_id} received"
+        "Transfer of #{record.amount} #{record.community_id} from #{record.from_id} received"
 
       notification = %{type: :transfer, title: "Transfer from #{record.from_id}", body: message}
       # Analyse responses from sending push subs

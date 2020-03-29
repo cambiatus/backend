@@ -110,6 +110,24 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
         {:ok, community}
       end)
     end
+
+    field :transfersucceed, non_null(:transfer) do
+      arg(:input, non_null(:transfer_succeed_input))
+
+      config(fn %{input: %{from: from, to: to, symbol: s}}, _ ->
+        {:ok, topic: "#{s}-#{from}-#{to}"}
+      end)
+
+      resolve(fn transfer, _, _ ->
+        {:ok, transfer}
+      end)
+    end
+  end
+
+  input_object :transfer_succeed_input do
+    field(:from, non_null(:string))
+    field(:to, non_null(:string))
+    field(:symbol, non_null(:string))
   end
 
   @desc "Input to subscribe for a new community creation"
