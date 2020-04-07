@@ -218,38 +218,21 @@ defmodule Cambiatus.Commune do
   @spec get_validator_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
   def get_validator_claims(account) do
     query_action =
-      from(a in Action,
-        # where validator can vote
+      from(c in Claim,
+        join: a in Action,
+        on: a.id == c.action_id,
         join: v in Validator,
-        on: v.action_id == a.id and v.validator_id == ^account,
-        # select claims
-        join: c in Claim,
-        on: c.action_id == a.id and c.is_verified == ^false,
-        distinct: c,
-        order_by: c.created_at,
-        select: c
+        on: v.action_id == c.action_id,
+        left_join: ch in Check,
+        on: ch.claim_id == c.id,
+        where: c.is_verified == ^false,
+        where: is_nil(ch.claim_id),
+        where: v.validator_id == ^account
       )
 
     available_claims = Repo.all(query_action)
 
-    query_check =
-      from(c in Check,
-        where: c.validator_id == ^account,
-        join: cl in Claim,
-        on: cl.id == c.claim_id,
-        select: cl
-      )
-
-    voted_claims = Repo.all(query_check)
-
-    validator_claims =
-      (available_claims ++ voted_claims)
-      |> Enum.uniq_by(fn c -> c.id end)
-      |> Enum.sort(fn x, y ->
-        Calendar.Date.after?(x.created_at, y.created_at)
-      end)
-
-    {:ok, validator_claims}
+    {:ok, available_claims}
   end
 
   @doc """

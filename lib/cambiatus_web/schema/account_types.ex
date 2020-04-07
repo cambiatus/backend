@@ -57,7 +57,11 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_at, :string)
     field(:created_eos_account, :string)
     field(:network, list_of(:network))
-    field(:communities, list_of(non_null(:community)), resolve: dataloader(Cambiatus.Commune))
+
+    field(:communities, non_null(list_of(non_null(:community))),
+      resolve: dataloader(Cambiatus.Commune)
+    )
+
     field(:invitations, list_of(:string))
 
     connection field(:transfers, node_type: :transfer) do
