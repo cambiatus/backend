@@ -236,6 +236,37 @@ defmodule Cambiatus.Commune do
   end
 
   @doc """
+  Fetch a validators claims
+
+  ## Paramters
+  * account: the validator in question's account name
+  * community_id: Community ID, to get only claims from a given community
+  """
+  @spec get_validator_claims_on_community(String.t(), String.t()) ::
+          {:ok, list(Claim.t())} | {:error, term}
+  def get_validator_claims_on_community(account, community_id) do
+    query_action =
+      from(c in Claim,
+        join: a in Action,
+        on: a.id == c.action_id,
+        join: o in Objective,
+        on: o.id == a.objective_id,
+        join: v in Validator,
+        on: v.action_id == c.action_id,
+        left_join: ch in Check,
+        on: ch.claim_id == c.id,
+        where: c.is_verified == ^false,
+        where: is_nil(ch.claim_id),
+        where: v.validator_id == ^account,
+        where: o.community_id == ^community_id
+      )
+
+    available_claims = Repo.all(query_action)
+
+    {:ok, available_claims}
+  end
+
+  @doc """
   Fetch sale
 
   ## Parameters

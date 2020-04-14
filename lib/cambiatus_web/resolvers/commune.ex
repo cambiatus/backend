@@ -37,6 +37,11 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_actor_claims(c)
   end
 
+  @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_claims(_, %{input: %{symbol: s, validator: v}}, _) do
+    Commune.get_validator_claims_on_community(v, s)
+  end
+
   @doc """
   Fetches all the claims for a validator
   """
