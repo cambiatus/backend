@@ -33,11 +33,4 @@ defmodule CambiatusWeb.FallbackController do
     |> put_view(CambiatusWeb.ErrorView)
     |> render("500.json", generic_error)
   end
-
-  defp call_chat_render(conn, status, error) do
-    conn
-    |> put_status(status)
-    |> put_view(CambiatusWeb.AuthView)
-    |> render("chat_error.json", %{error: error})
-  end
 end

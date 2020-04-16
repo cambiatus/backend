@@ -143,6 +143,18 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_members_count(community)
   end
 
+  def get_transfer_count(%Community{} = community, _, _) do
+    Commune.get_transfer_count(community)
+  end
+
+  def get_action_count(%Community{} = community, _, _) do
+    Commune.get_action_count(community)
+  end
+
+  def get_sale_count(%Community{} = community, _, _) do
+    Commune.get_sale_count(community)
+  end
+
   @doc "Collect an invite"
   @spec get_invitation(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_invitation(_, %{input: %{id: id}}, _) do

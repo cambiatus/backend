@@ -614,4 +614,60 @@ defmodule Cambiatus.Commune do
   def get_members_count(symbol) when is_binary(symbol) do
     get_members_count(%Community{symbol: symbol})
   end
+
+  def get_transfer_count(%Community{symbol: id}) do
+    query =
+      from(t in Cambiatus.Commune.Transfer,
+        where: t.community_id == ^id,
+        select: count(t.id)
+      )
+
+    query
+    |> Repo.one()
+    |> case do
+      nil ->
+        {:ok, 0}
+
+      results ->
+        {:ok, results}
+    end
+  end
+
+  def get_sale_count(%Community{symbol: id}) do
+    query =
+      from(s in Cambiatus.Commune.Sale,
+        where: s.community_id == ^id,
+        select: count(s.id)
+      )
+
+    query
+    |> Repo.one()
+    |> case do
+      nil ->
+        {:ok, 0}
+
+      results ->
+        {:ok, results}
+    end
+  end
+
+  def get_action_count(%Community{symbol: id}) do
+    query =
+      from(a in Cambiatus.Commune.Action,
+        join: o in Cambiatus.Commune.Objective,
+        on: a.objective_id == o.id,
+        where: o.community_id == ^id,
+        select: count(a.id)
+      )
+
+    query
+    |> Repo.one()
+    |> case do
+      nil ->
+        {:ok, 0}
+
+      results ->
+        {:ok, results}
+    end
+  end
 end
