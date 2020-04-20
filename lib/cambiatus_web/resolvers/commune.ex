@@ -96,6 +96,12 @@ defmodule CambiatusWeb.Resolvers.Commune do
   @spec get_sales(map(), map(), map()) :: {:ok, list(map())} | {:error, :string}
   def get_sales(parent, params, resolution)
 
+  def get_sales(_, %{input: %{community_id: symbol, account: account}}, _) do
+    with {:ok, sales} <- Commune.get_community_sales(symbol, account) do
+      {:ok, sales}
+    end
+  end
+
   def get_sales(_, %{input: %{account: acct}}, _) do
     with {:ok, profile} <- Accounts.get_account_profile(acct),
          {:ok, sales} <- Commune.get_user_sales(profile) do

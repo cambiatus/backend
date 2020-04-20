@@ -160,6 +160,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "Input to collect sales"
   input_object :sales_input do
     field(:account, :string)
+    field(:community_id, :string)
     field(:communities, :string)
     field(:all, :string)
   end

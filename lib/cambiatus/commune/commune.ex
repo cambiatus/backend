@@ -339,6 +339,20 @@ defmodule Cambiatus.Commune do
     {:ok, sales}
   end
 
+  @spec get_community_sales(Int.t(), String.t()) ::
+          {:ok, list(AvailableSale.t())} | {:error, term()}
+  def get_community_sales(community_id, acc) do
+    query =
+      AvailableSale
+      |> where([s], s.community_id == ^community_id)
+      |> where([s], s.creator_id != ^acc)
+      |> order_by([s], desc: s.created_at)
+
+    sales = Repo.all(query)
+
+    {:ok, sales}
+  end
+
   @spec get_sales_history :: {:ok, list(map())} | {:error, term}
   def get_sales_history() do
     {:ok, Repo.all(SaleHistory)}
