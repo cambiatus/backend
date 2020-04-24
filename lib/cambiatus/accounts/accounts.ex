@@ -52,6 +52,25 @@ defmodule Cambiatus.Accounts do
   def get_user(id), do: Repo.get(User, id)
 
   @doc """
+  Returns the number of analysis the user already did
+  """
+  def get_analysis_count(user) do
+    query =
+      from(c in Cambiatus.Commune.Check,
+        where: c.validator_id == ^user.account,
+        select: count(c.validator_id)
+      )
+
+    case Repo.one(query) do
+      nil ->
+        {:ok, 0}
+
+      results ->
+        {:ok, results}
+    end
+  end
+
+  @doc """
   Creates a user.
   """
   def create_user(attrs \\ %{}) do

@@ -64,6 +64,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:invitations, list_of(:string))
 
+    field(:analysis_count, non_null(:integer), resolve: &Accounts.get_analysis_count/3)
+
     connection field(:transfers, node_type: :transfer) do
       resolve(&Accounts.get_transfers/3)
     end

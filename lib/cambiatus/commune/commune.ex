@@ -255,7 +255,6 @@ defmodule Cambiatus.Commune do
         on: v.action_id == c.action_id,
         left_join: ch in Check,
         on: ch.claim_id == c.id,
-        where: c.is_verified == ^false,
         where: is_nil(ch.claim_id),
         where: v.validator_id == ^account,
         where: o.community_id == ^community_id

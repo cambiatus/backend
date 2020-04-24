@@ -41,4 +41,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
 
     {:ok, result}
   end
+
+  def get_analysis_count(%User{} = user, _, _) do
+    Accounts.get_analysis_count(user)
+  end
 end
