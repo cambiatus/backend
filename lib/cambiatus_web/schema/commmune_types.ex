@@ -145,6 +145,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:validator, :string)
     field(:claimer, :string)
     field(:symbol, :string)
+    field(:all, :boolean)
   end
 
   @desc "Input to collect a sale"

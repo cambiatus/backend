@@ -242,23 +242,39 @@ defmodule Cambiatus.Commune do
   * account: the validator in question's account name
   * community_id: Community ID, to get only claims from a given community
   """
-  @spec get_validator_claims_on_community(String.t(), String.t()) ::
+  @spec get_validator_claims_on_community(String.t(), String.t(), Bool.t()) ::
           {:ok, list(Claim.t())} | {:error, term}
-  def get_validator_claims_on_community(account, community_id) do
+  def get_validator_claims_on_community(account, community_id, all) do
     query_action =
-      from(c in Claim,
-        join: a in Action,
-        on: a.id == c.action_id,
-        join: o in Objective,
-        on: o.id == a.objective_id,
-        join: v in Validator,
-        on: v.action_id == c.action_id,
-        left_join: ch in Check,
-        on: ch.claim_id == c.id,
-        where: is_nil(ch.claim_id),
-        where: v.validator_id == ^account,
-        where: o.community_id == ^community_id
-      )
+      if all do
+        from(c in Claim,
+          join: a in Action,
+          on: a.id == c.action_id,
+          join: o in Objective,
+          on: o.id == a.objective_id,
+          join: v in Validator,
+          on: v.action_id == c.action_id,
+          left_join: ch in Check,
+          on: ch.claim_id == c.id,
+          # where: is_nil(ch.claim_id),
+          where: v.validator_id == ^account,
+          where: o.community_id == ^community_id
+        )
+      else
+        from(c in Claim,
+          join: a in Action,
+          on: a.id == c.action_id,
+          join: o in Objective,
+          on: o.id == a.objective_id,
+          join: v in Validator,
+          on: v.action_id == c.action_id,
+          left_join: ch in Check,
+          on: ch.claim_id == c.id,
+          where: is_nil(ch.claim_id),
+          where: v.validator_id == ^account,
+          where: o.community_id == ^community_id
+        )
+      end
 
     available_claims = Repo.all(query_action)
 
