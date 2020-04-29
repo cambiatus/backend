@@ -271,7 +271,7 @@ defmodule Cambiatus.Commune do
           left_join: ch in Check,
           on: ch.claim_id == c.id,
           where: c.is_verified == false,
-          where: fragment("checks.claim_id is NULL or checks.validator_id != ?", ^account),
+          where: fragment("?.claim_id is NULL or ?.validator_id != ?", ch, ch, ^account),
           where: v.validator_id == ^account,
           where: o.community_id == ^community_id,
           order_by: [desc: c.created_at]
