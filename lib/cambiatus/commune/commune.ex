@@ -256,7 +256,6 @@ defmodule Cambiatus.Commune do
           on: v.action_id == c.action_id,
           left_join: ch in Check,
           on: ch.claim_id == c.id,
-          # where: is_nil(ch.claim_id),
           where: v.validator_id == ^account,
           where: o.community_id == ^community_id,
           order_by: [desc: c.created_at]
@@ -271,8 +270,9 @@ defmodule Cambiatus.Commune do
           on: v.action_id == c.action_id,
           left_join: ch in Check,
           on: ch.claim_id == c.id,
-          where: is_nil(ch.claim_id),
+          # where: is_nil(ch.claim_id),
           where: v.validator_id == ^account,
+          where: ch.validator_id != ^account
           where: o.community_id == ^community_id,
           order_by: [desc: c.created_at]
         )
