@@ -258,7 +258,8 @@ defmodule Cambiatus.Commune do
           on: ch.claim_id == c.id,
           # where: is_nil(ch.claim_id),
           where: v.validator_id == ^account,
-          where: o.community_id == ^community_id
+          where: o.community_id == ^community_id,
+          order_by: [desc: c.created_at]
         )
       else
         from(c in Claim,
@@ -272,7 +273,8 @@ defmodule Cambiatus.Commune do
           on: ch.claim_id == c.id,
           where: is_nil(ch.claim_id),
           where: v.validator_id == ^account,
-          where: o.community_id == ^community_id
+          where: o.community_id == ^community_id,
+          order_by: [desc: c.created_at]
         )
       end
 
