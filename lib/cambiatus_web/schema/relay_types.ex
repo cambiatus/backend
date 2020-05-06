@@ -19,4 +19,9 @@ defmodule CambiatusWeb.Schema.RelayTypes do
     edge do
     end
   end
+
+  connection node_type: :claim do
+    edge do
+    end
+  end
 end

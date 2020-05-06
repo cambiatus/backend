@@ -38,8 +38,8 @@ defmodule CambiatusWeb.Resolvers.Commune do
   end
 
   @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
-  def get_claims(_, %{input: %{symbol: s, validator: v, all: b}}, _) do
-    Commune.get_validator_claims_on_community(v, s, b)
+  def get_claims(_, %{input: %{symbol: _, validator: _, all: _}} = args, _) do
+    Commune.get_validator_claims_on_community(args)
   end
 
   @doc """

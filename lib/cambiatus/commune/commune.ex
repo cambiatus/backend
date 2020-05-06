@@ -242,9 +242,10 @@ defmodule Cambiatus.Commune do
   * account: the validator in question's account name
   * community_id: Community ID, to get only claims from a given community
   """
-  @spec get_validator_claims_on_community(String.t(), String.t(), Bool.t()) ::
-          {:ok, list(Claim.t())} | {:error, term}
-  def get_validator_claims_on_community(account, community_id, all) do
+  @spec get_validator_claims_on_community(map()) :: {:ok, list(Claim.t())} | {:error, term}
+  def get_validator_claims_on_community(
+        %{input: %{symbol: community_id, validator: account, all: all}} = args
+      ) do
     query_action =
       if all do
         from(c in Claim,
@@ -278,9 +279,8 @@ defmodule Cambiatus.Commune do
         )
       end
 
-    available_claims = Repo.all(query_action)
-
-    {:ok, available_claims}
+    query_action
+    |> Connection.from_query(&Repo.all/1, args |> Map.drop([:input]))
   end
 
   @doc """
