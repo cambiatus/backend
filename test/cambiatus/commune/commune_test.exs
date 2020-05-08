@@ -157,5 +157,14 @@ defmodule Cambiatus.CommuneTest do
     test "create_network/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Commune.create_network(@invalid_attrs)
     end
+
+    test "get_features/1 returns a community's features", %{
+      community: community
+    } do
+      features = Commune.get_features(community.symbol)
+      assert features.community_id == community.symbol
+      assert features.shop == true
+      assert features.actions == true
+    end
   end
 end
