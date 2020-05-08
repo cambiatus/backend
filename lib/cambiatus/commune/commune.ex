@@ -501,6 +501,15 @@ defmodule Cambiatus.Commune do
   end
 
   @doc """
+  Updates a community's features
+  """
+  def update_features(%Community{} = community, attrs) do
+    community
+    |> Community.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a Community.
 
   ## Examples
@@ -594,8 +603,17 @@ defmodule Cambiatus.Commune do
   end
 
   def get_features(id) do
-    Features
-    |> Repo.get_by(community_id: id)
+    features =
+      Features
+      |> Repo.get_by(community_id: id)
+
+    case features do
+      nil ->
+        {:ok, nil}
+
+      results ->
+        {:ok, results}
+    end
   end
 
   @doc """

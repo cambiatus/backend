@@ -161,7 +161,7 @@ defmodule Cambiatus.CommuneTest do
     test "get_features/1 returns a community's features", %{
       community: community
     } do
-      features = Commune.get_features(community.symbol)
+      {:ok, features} = Commune.get_features(community.symbol)
       assert features.community_id == community.symbol
       assert features.shop == true
       assert features.actions == true
