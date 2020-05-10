@@ -475,10 +475,7 @@ defmodule Cambiatus.Commune do
   def create_community(attrs \\ %{}) do
     %Community{}
     |> Community.changeset(attrs)
-    |> Ecto.Changeset.put_assoc(:features, %{
-      actions: true,
-      shop: true
-    })
+    |> Ecto.Changeset.put_assoc(:features, %{})
     |> Repo.insert()
   end
 
