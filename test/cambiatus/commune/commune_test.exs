@@ -4,7 +4,8 @@ defmodule Cambiatus.CommuneTest do
   alias Cambiatus.{
     Commune,
     Commune.Community,
-    Commune.Action
+    Commune.Action,
+    Commune.Features
   }
 
   describe "communities" do
@@ -165,6 +166,20 @@ defmodule Cambiatus.CommuneTest do
       assert features.community_id == community.symbol
       assert features.shop == true
       assert features.actions == true
+    end
+
+    test "update_features/1 updates a community's features", %{
+      community: community
+    } do
+      {:ok, features} =
+        Commune.update_features(community.symbol, %{
+          actions: false,
+          shop: false
+        })
+
+      assert features.community_id == community.symbol
+      assert features.shop == false
+      assert features.actions == false
     end
   end
 end

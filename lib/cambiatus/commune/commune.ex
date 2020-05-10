@@ -503,9 +503,10 @@ defmodule Cambiatus.Commune do
   @doc """
   Updates a community's features
   """
-  def update_features(%Community{} = community, attrs) do
-    community
-    |> Community.changeset(attrs)
+  def update_features(community_id, attrs) do
+    Features
+    |> Repo.get_by(community_id: community_id)
+    |> Features.changeset(attrs)
     |> Repo.update()
   end
 

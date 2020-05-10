@@ -70,6 +70,22 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     end
   end
 
+  @desc "Community mutations on Cambiatus"
+  object :community_mutations do
+    @desc "A mutation to update a community's enabled features"
+    field :update_features, :features do
+      arg(:input, non_null(:features_update_input))
+      resolve(&Commune.update_features/3)
+    end
+  end
+
+  @desc "Input object for updating a community's enabled features"
+  input_object :features_update_input do
+    field(:community, non_null(:string))
+    field(:actions, :boolean)
+    field(:shop, :boolean)
+  end
+
   @desc "Community Subscriptions on Cambiatus"
   object :community_subscriptions do
     @desc "A subscription to resolve operations on the sales table"
@@ -244,6 +260,13 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
     field(:sale_count, non_null(:integer), resolve: &Commune.get_sale_count/3)
     field(:action_count, non_null(:integer), resolve: &Commune.get_action_count/3)
+    field(:features, non_null(:features), resolve: &Commune.get_features/3)
+  end
+
+  @desc "The community's enabled features"
+  object :features do
+    field(:actions, non_null(:boolean))
+    field(:shop, non_null(:boolean))
   end
 
   @desc "A community objective"

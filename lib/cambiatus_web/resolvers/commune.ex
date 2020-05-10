@@ -22,6 +22,14 @@ defmodule CambiatusWeb.Resolvers.Commune do
   end
 
   @doc """
+  Updates a community's enabled features
+  """
+  @spec update_features(map(), map(), map()) :: {:ok, Features.t()} | {:error, term()}
+  def update_features(_, %{input: params}, _) do
+    Commune.update_features(params.community, params)
+  end
+
+  @doc """
   Fetches a claim
   """
   @spec get_claim(map(), map(), map()) :: {:ok, Claim.t()} | {:error, term}
@@ -139,6 +147,14 @@ defmodule CambiatusWeb.Resolvers.Commune do
       |> Map.put(:parent, community)
 
     {:ok, result}
+  end
+
+  @doc """
+  Collects a community's enabled features
+  """
+  @spec get_features(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
+  def get_features(%Community{} = community, args, _) do
+    Commune.get_features(community.symbol)
   end
 
   def get_network(%Community{} = community, _, _) do
