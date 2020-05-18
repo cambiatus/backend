@@ -36,7 +36,6 @@ defmodule CambiatusWeb.Schema do
 
   mutation do
     import_fields(:account_mutations)
-    import_fields(:community_mutations)
     import_fields(:notification_mutations)
   end
 

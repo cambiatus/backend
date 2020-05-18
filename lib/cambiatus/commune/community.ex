@@ -7,8 +7,7 @@ defmodule Cambiatus.Commune.Community do
     Commune.Mint,
     Commune.Objective,
     Commune.Sale,
-    Commune.Transfer,
-    Commune.Features
+    Commune.Transfer
   }
 
   use Ecto.Schema
@@ -35,13 +34,16 @@ defmodule Cambiatus.Commune.Community do
     field(:created_eos_account, :string)
     field(:created_at, :utc_datetime)
 
+    # Features
+    field(:actions, :boolean, default: true)
+    field(:shop, :boolean, default: true)
+
     has_many(:sales, Sale, foreign_key: :community_id)
     has_many(:transfers, Transfer, foreign_key: :community_id)
     has_many(:network, Network, foreign_key: :community_id)
     has_many(:members, through: [:network, :account])
     has_many(:objectives, Objective, foreign_key: :community_id)
     has_many(:mints, Mint, foreign_key: :community_id)
-    has_one(:features, Features, foreign_key: :community_id)
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a

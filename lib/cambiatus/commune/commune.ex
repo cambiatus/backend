@@ -18,7 +18,6 @@ defmodule Cambiatus.Commune do
     Commune.SaleHistory,
     Commune.Transfer,
     Commune.Validator,
-    Commune.Features,
     Repo
   }
 
@@ -475,7 +474,6 @@ defmodule Cambiatus.Commune do
   def create_community(attrs \\ %{}) do
     %Community{}
     |> Community.changeset(attrs)
-    |> Ecto.Changeset.put_assoc(:features, %{})
     |> Repo.insert()
   end
 
@@ -494,16 +492,6 @@ defmodule Cambiatus.Commune do
   def update_community(%Community{} = community, attrs) do
     community
     |> Community.changeset(attrs)
-    |> Repo.update()
-  end
-
-  @doc """
-  Updates a community's features
-  """
-  def update_features(community_id, attrs) do
-    Features
-    |> Repo.get_by(community_id: community_id)
-    |> Features.changeset(attrs)
     |> Repo.update()
   end
 
@@ -598,20 +586,6 @@ defmodule Cambiatus.Commune do
   """
   def change_network(%Network{} = network) do
     Network.changeset(network, %{})
-  end
-
-  def get_features(id) do
-    features =
-      Features
-      |> Repo.get_by(community_id: id)
-
-    case features do
-      nil ->
-        {:ok, nil}
-
-      results ->
-        {:ok, results}
-    end
   end
 
   @doc """

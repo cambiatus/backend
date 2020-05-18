@@ -2,16 +2,16 @@ defmodule Cambiatus.Repo.Migrations.AddFeaturesTable do
   use Ecto.Migration
 
   def up do
-    create table("features") do
+    alter table("communities") do
       add(:actions, :boolean, default: true)
       add(:shop, :boolean, default: true)
-      add(:community_id, :string)
-
-      timestamps()
     end
   end
 
   def down do
-    drop(table("features"))
+    alter table("communities") do
+      remove(:actions)
+      remove(:shop)
+    end
   end
 end
