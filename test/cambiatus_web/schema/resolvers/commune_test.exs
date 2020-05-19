@@ -734,6 +734,37 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Repo.aggregate(Transfer, :count, :id) == @num * 3
     end
 
+    test "collects a community s features", %{conn: conn} do
+      community = insert(:community)
+
+      variables = %{
+        "symbol" => community.symbol
+      }
+
+      query = """
+      query($symbol: String!) {
+        community(symbol: $symbol) {
+          actions,
+          shop
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "community" => %{
+            "actions" => actions,
+            "shop" => shop
+          }
+        }
+      } = json_response(res, 200)
+
+      assert actions == true
+      assert shop == true
+    end
+
     test "collects a community's transfers", %{conn: conn} do
       assert Repo.aggregate(Transfer, :count, :id) == 0
       community = insert(:community)
