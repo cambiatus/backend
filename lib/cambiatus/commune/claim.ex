@@ -16,6 +16,7 @@ defmodule Cambiatus.Commune.Claim do
 
   schema "claims" do
     field(:is_verified, :boolean)
+    field(:status, :string)
     belongs_to(:action, Action)
     belongs_to(:claimer, User, references: :account, type: :string)
     has_many(:checks, Check)
