@@ -4,8 +4,7 @@ defmodule Cambiatus.CommuneTest do
   alias Cambiatus.{
     Commune,
     Commune.Community,
-    Commune.Action,
-    Commune.Features
+    Commune.Action
   }
 
   describe "communities" do
@@ -157,29 +156,6 @@ defmodule Cambiatus.CommuneTest do
 
     test "create_network/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Commune.create_network(@invalid_attrs)
-    end
-
-    test "get_features/1 returns a community's features", %{
-      community: community
-    } do
-      {:ok, features} = Commune.get_features(community.symbol)
-      assert features.community_id == community.symbol
-      assert features.shop == true
-      assert features.actions == true
-    end
-
-    test "update_features/1 updates a community's features", %{
-      community: community
-    } do
-      {:ok, features} =
-        Commune.update_features(community.symbol, %{
-          actions: false,
-          shop: false
-        })
-
-      assert features.community_id == community.symbol
-      assert features.shop == false
-      assert features.actions == false
     end
   end
 end
