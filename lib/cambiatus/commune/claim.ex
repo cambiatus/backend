@@ -15,8 +15,6 @@ defmodule Cambiatus.Commune.Claim do
   }
 
   schema "claims" do
-    # TODO: Remove is_verified after migration
-    field(:is_verified, :boolean)
     field(:status, :string)
     belongs_to(:action, Action)
     belongs_to(:claimer, User, references: :account, type: :string)

@@ -172,7 +172,7 @@ defmodule Cambiatus.Factory do
 
   def claim_factory do
     %Claim{
-      is_verified: false,
+      status: "pending",
       action: build(:action),
       claimer: build(:user),
       created_block: sequence(:created_block, &"#{&1}"),

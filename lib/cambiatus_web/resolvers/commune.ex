@@ -3,6 +3,8 @@ defmodule CambiatusWeb.Resolvers.Commune do
   This module holds the implementation of the resolver for the commune context
   use this to resolve any queries and mutations for the Commune context
   """
+  alias Absinthe.Relay.Connection
+
   alias Cambiatus.{
     Accounts,
     Auth,
@@ -29,33 +31,14 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_claim(id)
   end
 
-  @doc """
-  Fetches all the claims for a claimer
-  """
-  @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
-  def get_claims(_, %{input: %{claimer: c}}, _) do
-    Commune.get_actor_claims(c)
+  def get_claims_analysis_history(_, %{input: %{symbol: id, account: account}} = args, _) do
+    query = Commune.claim_analysis_history_query(id, account)
+    Connection.from_query(query, &Cambiatus.Repo.all/1, args)
   end
 
-  @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
-  def get_claims(_, %{input: %{symbol: _, validator: _, all: _}} = args, _) do
-    Commune.get_validator_claims_on_community(args)
-  end
-
-  @doc """
-  Fetches all the claims for a validator
-  """
-  @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
-  def get_claims(_, %{input: %{validator: v}}, _) do
-    Commune.get_validator_claims(v)
-  end
-
-  @doc """
-  Fetches all the claims in a community
-  """
-  @spec get_claims(map(), map(), map()) :: {:ok, list(Claim.t())} | {:error, term}
-  def get_claims(_, %{input: %{symbol: s}}, _) do
-    Commune.get_community_claims(s)
+  def get_claims_analysis(_, %{input: %{symbol: id, account: account}} = args, _) do
+    query = Commune.claim_analysis_query(id, account)
+    Connection.from_query(query, &Cambiatus.Repo.all/1, args)
   end
 
   @doc """
