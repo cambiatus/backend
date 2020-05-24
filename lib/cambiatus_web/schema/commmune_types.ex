@@ -46,7 +46,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     end
 
     connection field(:claims_analysis_history, node_type: :claim) do
-      arg(:input, non_null(:claims_analysis_input))
+      arg(:input, non_null(:claim_analysis_history_input))
       resolve(&Commune.get_claims_analysis_history/3)
     end
 
@@ -147,8 +147,19 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   end
 
   input_object(:claims_analysis_input) do
-    field(:account, :string)
-    field(:symbol, :string)
+    field(:account, non_null(:string))
+    field(:symbol, non_null(:string))
+  end
+
+  input_object(:claim_analysis_history_input) do
+    field(:account, non_null(:string))
+    field(:symbol, non_null(:string))
+    field(:filter, :claim_analysis_history_filter)
+  end
+
+  input_object(:claim_analysis_history_filter) do
+    field(:claimer, :string)
+    field(:status, :string)
   end
 
   @desc "Input to collect a sale"

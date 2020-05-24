@@ -31,8 +31,37 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_claim(id)
   end
 
-  def get_claims_analysis_history(_, %{input: %{symbol: id, account: account}} = args, _) do
+  def get_claims_analysis_history(
+        _,
+        %{input: %{symbol: id, account: account}} = args,
+        _
+      ) do
     query = Commune.claim_analysis_history_query(id, account)
+
+    query =
+      case Map.get(args[:input], :filter) do
+        nil ->
+          query
+
+        filter ->
+          case filter do
+            %{claimer: claimer, status: status} when claimer != "" and status != "claimer" ->
+              # add necessary where
+              query
+              |> Commune.claim_filter_claimer(claimer)
+              |> Commune.claim_filter_status(status)
+
+            %{claimer: claimer} ->
+              query |> Commune.claim_filter_claimer(claimer)
+
+            %{status: status} ->
+              query |> Commune.claim_filter_status(status)
+
+            _ ->
+              query
+          end
+      end
+
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
   end
 

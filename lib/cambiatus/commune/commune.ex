@@ -263,6 +263,14 @@ defmodule Cambiatus.Commune do
     )
   end
 
+  def claim_filter_status(query, status) do
+    query |> where(status: ^status)
+  end
+
+  def claim_filter_claimer(query, claimer) do
+    query |> where(claimer_id: ^claimer)
+  end
+
   @doc """
   Fetch sale
 
