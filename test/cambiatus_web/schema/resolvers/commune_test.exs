@@ -11,7 +11,6 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
     Auth.InvitationId,
     Commune.Action,
     Commune.AvailableSale,
-    Commune.Check,
     Commune.Community,
     Commune.Claim,
     Commune.Objective,
@@ -816,181 +815,57 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert fetched_claim["id"] == claim.id
     end
 
-    test "collect a actor's claims", %{conn: conn} do
-      assert Repo.aggregate(Claim, :count, :id) == 0
-      assert Repo.aggregate(User, :count, :account) == 0
-
-      actor = insert(:user)
-
-      # make claims with our actor
-      ids =
-        @num
-        |> insert_list(:claim, %{claimer: actor})
-        |> Enum.map(fn c -> c.id end)
-
-      assert Repo.aggregate(Claim, :count, :id) == @num
-
-      variables = %{
-        "input" => %{
-          "claimer" => actor.account
-        }
-      }
-
-      query = """
-      query($input: ClaimsInput!) {
-        claims(input: $input) {
-          id
-        }
-      }
-      """
-
-      res = conn |> get("/api/graph", query: query, variables: variables)
-
-      %{
-        "data" => %{
-          "claims" => cs
-        }
-      } = json_response(res, 200)
-
-      assert Enum.count(cs) == Enum.count(ids)
-
-      fetched_ids = cs |> Enum.map(fn c -> c["id"] end)
-
-      # Check that the ids are the same
-      assert ids -- fetched_ids == []
-    end
-
-    test "collect a validator's claims", %{conn: conn} do
+    test "claims analysis pages" do
       assert Repo.aggregate(Claim, :count, :id) == 0
       assert Repo.aggregate(Action, :count, :id) == 0
-      assert Repo.aggregate(Validator, :count, :validator_id) == 0
-      v1 = insert(:user)
-      v2 = insert(:user)
+      assert Repo.aggregate(Validator, :count, :created_tx) == 0
+
+      creator = insert(:user)
+      community = insert(:community)
+      objective = insert(:objective, %{community: community, creator: creator})
+
+      # Create related users
       claimer = insert(:user)
+      verifier1 = insert(:user)
+      verifier2 = insert(:user)
+      verifier3 = insert(:user)
 
-      actions =
-        insert_list(@num, :action, %{verification_type: "claimable", usages: 2, usages_left: 2})
+      # Create action
+      action1 = insert(:action, %{verification_type: "claimable", objective: objective})
+      insert(:validator, %{action: action1, validator: verifier1})
+      insert(:validator, %{action: action1, validator: verifier2})
+      insert(:validator, %{action: action1, validator: verifier3})
 
-      _ =
-        actions
-        |> Enum.map(fn action ->
-          insert(:validator, %{action: action, validator: v1})
-          insert(:validator, %{action: action, validator: v2})
-        end)
+      action2 = insert(:action, %{verification_type: "claimable", objective: objective})
+      insert(:validator, %{action: action2, validator: verifier1})
+      insert(:validator, %{action: action2, validator: verifier2})
+      insert(:validator, %{action: action2, validator: verifier3})
 
-      insert_list(@num, :action, %{verification_type: "claimable"})
-      assert Repo.aggregate(Action, :count, :id) == @num * 2
+      # Claim 1 with two validations
+      claim1 = insert(:claim, %{claimer: claimer, action: action1})
+      insert(:check, %{claim: claim1, validator: verifier1, is_verified: true})
+      insert(:check, %{claim: claim1, validator: verifier2, is_verified: true})
 
-      # Claim all actions
-      _ =
-        Action
-        |> Repo.all()
-        |> Enum.map(fn action ->
-          insert(:claim, %{claimer: claimer, action: action})
-        end)
+      # Claim 2 with no validations
+      _claim2 = insert(:claim, %{claimer: claimer, action: action1})
 
-      assert Repo.aggregate(Claim, :count, :id) == @num * 2
-
-      # vote for claims
-      act1 = hd(actions)
-      claim1 = Repo.get_by!(Claim, action_id: act1.id)
-      insert(:check, %{claim: claim1, validator: v1, is_verified: true})
-
-      claim1
-      |> Claim.changeset(%{is_verified: true})
-      |> Repo.update!()
-
-      act2 = actions |> tl |> hd
-      claim2 = Repo.get_by!(Claim, action_id: act2.id)
-      insert(:check, %{claim: claim2, validator: v2, is_verified: true})
-
-      claim2
-      |> Claim.changeset(%{is_verified: true})
-      |> Repo.update!()
-
-      assert Repo.aggregate(Check, :count, :is_verified) == 2
-
-      variables = %{
+      # Collect all validator's claims for analysis
+      params = %{
         "input" => %{
-          "validator" => v1.account
-        }
+          "account" => verifier1.account,
+          "symbol" => community.symbol
+        },
+        "first" => @num
       }
 
-      query = """
-      query($input: ClaimsInput) {
-        claims(input: $input) {
-          created_at
-          id
-          action {
-            id
-          }
-        }
-      }
-      """
-
-      res = conn |> get("/api/graph", query: query, variables: variables)
-
-      %{
-        "data" => %{
-          "claims" => cs
-        }
-      } = json_response(res, 200)
-
-      claim_action_ids = Enum.map(cs, & &1["action"]["id"])
-
-      # Ensure all claims except the one voted for by v2
-      assert Enum.count(cs) == @num - 1
-
-      # since act2 was validated by a different user we should not have it in the list
-      refute Enum.member?(claim_action_ids, act2.id)
-    end
-
-    @tag :claimsy
-    test "collects all claims in a community", %{conn: conn} do
-      assert Repo.aggregate(Claim, :count, :id) == 0
-      assert Repo.aggregate(Community, :count, :symbol) == 0
-      assert Repo.aggregate(Objective, :count, :id) == 0
-
-      communities = insert_list(@num, :community)
-
-      communities
-      |> Enum.map(fn c ->
-        insert_list(@num, :objective, %{community: c})
-      end)
-
-      Objective
-      |> Repo.all()
-      |> Enum.map(fn o ->
-        insert_list(@num, :action, %{objective: o})
-      end)
-
-      assert Repo.aggregate(Action, :count, :id) == @num * @num * @num
-
-      Action
-      |> Repo.all()
-      |> Enum.map(fn a ->
-        insert_list(@num, :claim, %{action: a})
-      end)
-
-      assert Repo.aggregate(Claim, :count, :id) == @num * @num * @num * @num
-
-      c1 = hd(communities)
-
-      variables = %{
-        "input" => %{
-          "symbol" => c1.symbol
-        }
-      }
-
-      query = """
-      query($input: ClaimsInput) {
-        claims(input: $input) {
-          created_at
-          id
-          action {
-            objective {
-              community {
-                symbol
+      queryAnalysis = """
+      query($first: Int!, $input: ClaimsAnalysisInput) {
+        claimsAnalysis(first: $first, input: $input) {
+          edges {
+            node {
+              id
+              action {
+                id
               }
             }
           }
@@ -998,16 +873,34 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn |> get("/api/graph", query: query, variables: variables)
+      res = build_conn() |> get("/api/graph", query: queryAnalysis, variables: params)
+      %{"data" => %{"claimsAnalysis" => cs}} = json_response(res, 200)
+      claim_action_ids = cs["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
-      %{
-        "data" => %{
-          "claims" => cs
+      # Make sure pending is only one
+      assert Enum.count(claim_action_ids) == 1
+
+      queryHistory = """
+      query($first: Int!, $input: ClaimsAnalysisInput) {
+        claimsAnalysisHistory(first: $first, input: $input) {
+          edges {
+            node {
+              id
+              action {
+                id
+              }
+            }
+          }
         }
-      } = json_response(res, 200)
+      }
+      """
 
-      # Ensure we only get 3 claims for 3 actions for 3 objectives in the community
-      assert Enum.count(cs) == @num * @num * @num
+      res = conn() |> get("/api/graph", query: queryHistory, variables: params)
+      %{"data" => %{"claimsAnalysisHistory" => ch}} = json_response(res, 200)
+      claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
+
+      # but we should have both claims on the history
+      assert Enum.count(claim_history_ids) == 2
     end
 
     test "collect a single invitation", %{conn: conn} do

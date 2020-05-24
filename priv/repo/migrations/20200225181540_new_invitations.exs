@@ -1,7 +1,7 @@
 defmodule Cambiatus.Repo.Migrations.NewInvitations do
   use Ecto.Migration
 
-  def change do
+  def up do
     # Remove old invitations table
     drop(table(:invitations))
 
@@ -12,5 +12,8 @@ defmodule Cambiatus.Repo.Migrations.NewInvitations do
 
       timestamps()
     end
+  end
+
+  def down do
   end
 end

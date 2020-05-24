@@ -32,7 +32,6 @@ defmodule Cambiatus.Validator do
   iex> is_email?("user@email")
   false
   """
-  @spec is_email?(String.t()) :: Boolean.t()
   def is_email?(email) when is_binary(email) do
     pattern = ~r/^[A-Za-z0-9._%+-+']+@[A-Za-z0-9.-]+\.[A-Za-z]+$/
     Regex.match?(pattern, email)

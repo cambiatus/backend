@@ -4,6 +4,7 @@ defmodule Cambiatus.Commune do
   """
 
   import Ecto.Query
+
   alias Absinthe.Relay.Connection
 
   alias Cambiatus.{
@@ -210,77 +211,64 @@ defmodule Cambiatus.Commune do
   end
 
   @doc """
-  Fetch a validators claims
+  Fetch pending claims that the specified `account` is an analyser.
+  That is, claims that have their status as `pending` and the `account` haven't voted on it yet.
 
-  ## Paramters
-  * account: the validator in question's account name
+  ## Params
+  * community_id: String with the community symbol
+  * account: String. User account
   """
-  @spec get_validator_claims(String.t()) :: {:ok, list(Claim.t())} | {:error, term}
-  def get_validator_claims(account) do
-    query_action =
-      from(c in Claim,
-        join: a in Action,
-        on: a.id == c.action_id,
-        join: v in Validator,
-        on: v.action_id == c.action_id,
-        left_join: ch in Check,
-        on: ch.claim_id == c.id,
-        where: c.is_verified == ^false,
-        where: is_nil(ch.claim_id),
-        where: v.validator_id == ^account
-      )
-
-    available_claims = Repo.all(query_action)
-
-    {:ok, available_claims}
+  @spec claim_analysis_query(term, term) :: Ecto.Query.t()
+  def claim_analysis_query(community_id, account) do
+    from(c in Claim,
+      join: a in Action,
+      on: a.id == c.action_id,
+      join: o in Objective,
+      on: o.id == a.objective_id,
+      join: v in Validator,
+      on: v.action_id == c.action_id,
+      left_join: ch in Check,
+      on: ch.claim_id == c.id,
+      where: c.status == "pending",
+      where: o.community_id == ^community_id,
+      where: v.validator_id == ^account,
+      where: fragment("?.claim_id IS NULL", ch),
+      order_by: [desc: c.created_at]
+    )
   end
 
   @doc """
-  Fetch a validators claims
+  Fetch all claims that the specified `account` is an analyser.
+  It includes the claims that the user still have to give a vote
 
-  ## Paramters
-  * account: the validator in question's account name
-  * community_id: Community ID, to get only claims from a given community
+  ## Params
+  * community_id: String with the community symbol
+  * account: String. User account
   """
-  @spec get_validator_claims_on_community(map()) :: {:ok, list(Claim.t())} | {:error, term}
-  def get_validator_claims_on_community(
-        %{input: %{symbol: community_id, validator: account, all: all}} = args
-      ) do
-    query_action =
-      if all do
-        from(c in Claim,
-          join: a in Action,
-          on: a.id == c.action_id,
-          join: o in Objective,
-          on: o.id == a.objective_id,
-          join: v in Validator,
-          on: v.action_id == c.action_id,
-          left_join: ch in Check,
-          on: ch.claim_id == c.id,
-          where: v.validator_id == ^account,
-          where: o.community_id == ^community_id,
-          order_by: [desc: c.created_at]
-        )
-      else
-        from(c in Claim,
-          join: a in Action,
-          on: a.id == c.action_id,
-          join: o in Objective,
-          on: o.id == a.objective_id,
-          join: v in Validator,
-          on: v.action_id == c.action_id,
-          left_join: ch in Check,
-          on: ch.claim_id == c.id,
-          where: c.is_verified == false,
-          where: fragment("?.claim_id is NULL or ?.validator_id != ?", ch, ch, ^account),
-          where: v.validator_id == ^account,
-          where: o.community_id == ^community_id,
-          order_by: [desc: c.created_at]
-        )
-      end
+  @spec claim_analysis_history_query(term, term) :: Ecto.Query.t()
+  def claim_analysis_history_query(community_id, account) do
+    from(c in Claim,
+      join: a in Action,
+      on: a.id == c.action_id,
+      join: o in Objective,
+      on: o.id == a.objective_id,
+      join: v in Validator,
+      on: v.action_id == c.action_id,
+      left_join: ch in Check,
+      on: ch.claim_id == c.id,
+      where: o.community_id == ^community_id,
+      where: v.validator_id == ^account,
+      where: fragment("?.validator_id = ? OR ?.claim_id IS NULL", ch, ^account, ch),
+      order_by: [desc: c.created_at]
+    )
+  end
 
-    query_action
-    |> Connection.from_query(&Repo.all/1, args |> Map.drop([:input]))
+  def claim_filter_status(query, status) do
+    query |> where(status: ^status)
+  end
+
+  def claim_filter_claimer(query, claimer) do
+    query |> where(claimer_id: ^claimer)
   end
 
   @doc """

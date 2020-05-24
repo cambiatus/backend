@@ -40,9 +40,14 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "A list of claims"
 
-    connection field(:claims, node_type: :claim) do
-      arg(:input, non_null(:claims_input))
-      resolve(&Commune.get_claims/3)
+    connection field(:claims_analysis, node_type: :claim) do
+      arg(:input, non_null(:claims_analysis_input))
+      resolve(&Commune.get_claims_analysis/3)
+    end
+
+    connection field(:claims_analysis_history, node_type: :claim) do
+      arg(:input, non_null(:claim_analysis_history_input))
+      resolve(&Commune.get_claims_analysis_history/3)
     end
 
     @desc "A single claim"
@@ -141,12 +146,20 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:id, non_null(:integer))
   end
 
-  @desc "Input to collect claims"
-  input_object :claims_input do
-    field(:validator, :string)
+  input_object(:claims_analysis_input) do
+    field(:account, non_null(:string))
+    field(:symbol, non_null(:string))
+  end
+
+  input_object(:claim_analysis_history_input) do
+    field(:account, non_null(:string))
+    field(:symbol, non_null(:string))
+    field(:filter, :claim_analysis_history_filter)
+  end
+
+  input_object(:claim_analysis_history_filter) do
     field(:claimer, :string)
-    field(:symbol, :string)
-    field(:all, :boolean)
+    field(:status, :string)
   end
 
   @desc "Input to collect a sale"
@@ -299,7 +312,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:id, non_null(:integer))
     field(:action, non_null(:action), resolve: dataloader(Cambiatus.Commune))
     field(:claimer, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
-    field(:is_verified, non_null(:boolean))
+    field(:status, non_null(:string))
 
     field(:checks, non_null(list_of(non_null(:check)))) do
       arg(:input, :checks_input)
