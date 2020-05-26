@@ -33,6 +33,7 @@ defmodule Cambiatus.Commune.Claim do
     claim
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
+    |> validate_inclusion(:status, ["approved", "rejected", "pending"])
   end
 
   def create_changeset(attrs) do

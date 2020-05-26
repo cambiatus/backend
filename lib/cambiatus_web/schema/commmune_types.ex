@@ -312,7 +312,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:id, non_null(:integer))
     field(:action, non_null(:action), resolve: dataloader(Cambiatus.Commune))
     field(:claimer, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
-    field(:status, non_null(:string))
+    # field(:status, non_null(:string))
+    field(:status, non_null(:claim_status))
 
     field(:checks, non_null(list_of(non_null(:check)))) do
       arg(:input, :checks_input)
@@ -323,6 +324,24 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
+  end
+
+  enum(:claim_status, values: [:approved, :rejected, :pending])
+
+  scalar :claim_status do
+    parse(fn
+      :approved -> "approved"
+      :rejected -> "rejected"
+      :pending -> "pending"
+      _ -> :error
+    end)
+
+    serialize(fn
+      "approved" -> :approved
+      "rejected" -> :rejected
+      "pending" -> :pending
+      _ -> :error
+    end)
   end
 
   @desc "A check for a given claim"
