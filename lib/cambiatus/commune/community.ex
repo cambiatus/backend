@@ -35,8 +35,8 @@ defmodule Cambiatus.Commune.Community do
     field(:created_at, :utc_datetime)
 
     # Features
-    field(:actions, :boolean, default: true)
-    field(:shop, :boolean, default: true)
+    field(:has_actions, :boolean, default: true)
+    field(:has_shop, :boolean, default: true)
 
     has_many(:sales, Sale, foreign_key: :community_id)
     has_many(:transfers, Transfer, foreign_key: :community_id)

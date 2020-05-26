@@ -230,8 +230,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
 
-    field(:actions, non_null(:boolean))
-    field(:shop, non_null(:boolean))
+    field(:has_actions, non_null(:boolean))
+    field(:has_shop, non_null(:boolean))
 
     connection field(:transfers, node_type: :transfer) do
       resolve(&Commune.get_transfers/3)

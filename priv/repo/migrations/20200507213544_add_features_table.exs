@@ -3,15 +3,15 @@ defmodule Cambiatus.Repo.Migrations.AddFeaturesTable do
 
   def up do
     alter table("communities") do
-      add(:actions, :boolean, default: true)
-      add(:shop, :boolean, default: true)
+      add(:has_actions, :boolean, default: true)
+      add(:has_shop, :boolean, default: true)
     end
   end
 
   def down do
     alter table("communities") do
-      remove(:actions)
-      remove(:shop)
+      remove(:has_actions)
+      remove(:has_shop)
     end
   end
 end

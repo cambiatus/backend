@@ -744,8 +744,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       query = """
       query($symbol: String!) {
         community(symbol: $symbol) {
-          actions,
-          shop
+          has_actions,
+          has_shop
         }
       }
       """
@@ -755,8 +755,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       %{
         "data" => %{
           "community" => %{
-            "actions" => actions,
-            "shop" => shop
+            "has_actions" => actions,
+            "has_shop" => shop
           }
         }
       } = json_response(res, 200)
