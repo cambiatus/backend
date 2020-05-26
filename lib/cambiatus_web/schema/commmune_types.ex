@@ -312,7 +312,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:id, non_null(:integer))
     field(:action, non_null(:action), resolve: dataloader(Cambiatus.Commune))
     field(:claimer, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
-    # field(:status, non_null(:string))
     field(:status, non_null(:claim_status))
 
     field(:checks, non_null(list_of(non_null(:check)))) do
