@@ -325,22 +325,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_at, non_null(:datetime))
   end
 
-  enum(:claim_status, values: [:approved, :rejected, :pending])
-
-  scalar :claim_status do
-    parse(fn
-      :approved -> "approved"
-      :rejected -> "rejected"
-      :pending -> "pending"
-      _ -> :error
-    end)
-
-    serialize(fn
-      "approved" -> :approved
-      "rejected" -> :rejected
-      "pending" -> :pending
-      _ -> :error
-    end)
+  enum :claim_status do
+    value(:approved, as: "approved")
+    value(:rejected, as: "rejected")
+    value(:pending, as: "pending")
   end
 
   @desc "A check for a given claim"
