@@ -9,6 +9,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
     Accounts.User,
     Auth.Invitation,
     Auth.InvitationId,
+    Commune,
     Commune.Action,
     Commune.AvailableSale,
     Commune.Community,
@@ -730,6 +731,37 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert total_count == @num * 2
       assert fetched_count == fetch
       assert Repo.aggregate(Transfer, :count, :id) == @num * 3
+    end
+
+    test "collects a community s features", %{conn: conn} do
+      community = insert(:community)
+
+      variables = %{
+        "symbol" => community.symbol
+      }
+
+      query = """
+      query($symbol: String!) {
+        community(symbol: $symbol) {
+          has_actions,
+          has_shop
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "community" => %{
+            "has_actions" => actions,
+            "has_shop" => shop
+          }
+        }
+      } = json_response(res, 200)
+
+      assert actions == true
+      assert shop == true
     end
 
     test "collects a community's transfers", %{conn: conn} do
