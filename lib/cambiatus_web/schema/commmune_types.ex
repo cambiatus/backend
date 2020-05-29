@@ -68,6 +68,11 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(&Commune.get_transfer/3)
     end
 
+    connection field(:payment_history, node_type: :transfer) do
+      arg(:input, non_null(:payment_history_input))
+      resolve(&Commune.get_payment_history/3)
+    end
+
     @desc "An invite"
     field :invite, :invite do
       arg(:input, non_null(:invite_input))
@@ -160,6 +165,13 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   input_object(:claim_analysis_history_filter) do
     field(:claimer, :string)
     field(:status, :string)
+  end
+
+  @desc "Input object for fetching the Payment History: payments from various payer/payers to the recipient."
+  input_object(:payment_history_input) do
+    field(:recipient, non_null(:string))
+    field(:payer, :string)
+    field(:date, :date)
   end
 
   @desc "Input to collect a sale"

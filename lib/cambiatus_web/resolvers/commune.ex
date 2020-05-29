@@ -65,6 +65,15 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
   end
 
+  @doc """
+  Fetch transfers from the payers to the recipient.
+  """
+  @spec get_payment_history(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
+  def get_payment_history(_, args, _) do
+    {:ok, transfers} = Commune.get_payment_history(args)
+    {:ok, transfers}
+  end
+
   def get_claims_analysis(_, %{input: %{symbol: id, account: account}} = args, _) do
     query = Commune.claim_analysis_query(id, account)
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
