@@ -24,21 +24,22 @@ defmodule Cambiatus.Accounts do
     end
   end
 
-  @doc "Fetch the list of account names of the payers to the given user filtered by the given account name"
+  @doc "Fetch the list of payers filtered by the given account name"
   @spec filter_payers_by_account(String.t(), String.t()) :: {:ok, list(string)}
   def filter_payers_by_account(recipient, payer) do
-    filtered_account_names =
-      Transfer
-      |> distinct(true)
-      |> where(
-           [t],
-           t.to_id == ^recipient and like(t.from_id, ^("%#{payer}%"))
-         )
-      |> order_by([t], asc: t.from_id)
-      |> select([t], t.from_id)
-      |> Repo.all()
+    profiles =
+      from t in Transfer,
+           where: t.to_id == ^recipient and (like(t.from_id, ^("%#{payer}%"))),
+           join: u in User,
+           on: u.account == t.from_id,
+           distinct: true,
+           select: u
 
-    {:ok, filtered_account_names}
+    {
+      :ok,
+      profiles
+      |> Repo.all()
+    }
   end
 
   @doc "Fetch transfers from various payers to the recipient (may be filtered by the payer or by the date)."

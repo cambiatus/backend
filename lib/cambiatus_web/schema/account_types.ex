@@ -16,7 +16,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&Accounts.get_profile/3)
     end
 
-    field :get_payers, list_of(:string) do
+    @desc "List of payers to the given recipient filtered by the part of the account name."
+    field :get_payers, list_of(:profile) do
       arg(:recipient, non_null(:string))
       arg(:payer, non_null(:string))
       resolve(&Accounts.filter_payers_by_account/2)
