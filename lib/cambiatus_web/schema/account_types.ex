@@ -15,6 +15,24 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:input, non_null(:profile_input))
       resolve(&Accounts.get_profile/3)
     end
+
+    field :get_payers, list_of(:string) do
+      arg(:recipient, non_null(:string))
+      arg(:payer, non_null(:string))
+      resolve(&Accounts.filter_payers_by_account/2)
+    end
+
+    connection field(:payment_history, node_type: :transfer) do
+      arg(:input, non_null(:payment_history_input))
+      resolve(&Accounts.get_payment_history/3)
+    end
+  end
+
+  @desc "Input object for fetching the Payment History: payments from various payer/payers to the recipient."
+  input_object(:payment_history_input) do
+    field(:recipient, non_null(:string))
+    field(:payer, :string)
+    field(:date, :date)
   end
 
   @desc "Account Mutations"

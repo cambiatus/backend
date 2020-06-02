@@ -17,6 +17,19 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     Accounts.get_account_profile(params.account)
   end
 
+  @doc "Resolve fetched list of filtered account names of payers"
+  @spec filter_payers_by_account(map(), map()) :: {:ok, list(string)}
+  def filter_payers_by_account(%{recipient: recipient, payer: payer}, _) do
+    Accounts.filter_payers_by_account(recipient, payer)
+  end
+
+  @doc "Resolve fetched transfers to the given user"
+  @spec get_payment_history(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
+  def get_payment_history(_, args, _) do
+    {:ok, transfers} = Accounts.get_payment_history(args)
+    {:ok, transfers}
+  end
+
   @doc """
   Updates an a user account profile info
   """

@@ -392,65 +392,6 @@ defmodule Cambiatus.Commune do
   end
 
   @doc """
-  Payment History: Transfers from various payers to the recipient which may be filtered by the payer or by the date.
-  """
-  @spec get_payment_history(map()) :: {:ok, list(map())} | {:error, String.t()}
-  def get_payment_history(%{input: %{recipient: recipient, payer: payer, date: date}} = args) do
-    {:ok, day_boundary_start, 0} = DateTime.from_iso8601(Date.to_string(date) <> "T00:00:00Z")
-    day_boundary_end = DateTime.add(day_boundary_start, 24 * 60 * 60, :seconds)
-
-    Transfer
-    |> where(
-        [t],
-        t.to_id == ^recipient and
-        t.from_id == ^payer and
-        (t.created_at >= ^day_boundary_start) and
-        (t.created_at < ^day_boundary_end)
-      )
-    |> order_by([t], desc: t.created_at)
-    |> get_transfers_from(args)
-  end
-
-  @spec get_payment_history(map()) :: {:ok, list(map())} | {:error, String.t()}
-  def get_payment_history(%{input: %{recipient: recipient, payer: payer}} = args) do
-    Transfer
-    |> where(
-         [t],
-         t.to_id == ^recipient and
-         t.from_id == ^payer
-       )
-    |> order_by([t], desc: t.created_at)
-    |> get_transfers_from(args)
-  end
-
-  @spec get_payment_history(map()) :: {:ok, list(map())} | {:error, String.t()}
-  def get_payment_history(%{input: %{recipient: recipient, date: date}} = args) do
-    {:ok, day_boundary_start, 0} = DateTime.from_iso8601(Date.to_string(date) <> "T00:00:00Z")
-    day_boundary_end = DateTime.add(day_boundary_start, 24 * 60 * 60, :seconds)
-
-    Transfer
-    |> where(
-         [t],
-         t.to_id == ^recipient and
-         (t.created_at >= ^day_boundary_start) and
-         (t.created_at < ^day_boundary_end)
-       )
-    |> order_by([t], desc: t.created_at)
-    |> get_transfers_from(args)
-  end
-
-  @spec get_payment_history(map()) :: {:ok, list(map())} | {:error, String.t()}
-  def get_payment_history(%{input: %{recipient: recipient}} = args) do
-    Transfer
-    |> where(
-         [t],
-         t.to_id == ^recipient
-       )
-    |> order_by([t], desc: t.created_at)
-    |> get_transfers_from(args)
-  end
-
-  @doc """
   Returns the list of communities.
 
   ## Examples

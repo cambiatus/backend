@@ -6,6 +6,8 @@ defmodule Cambiatus.Accounts do
   import Ecto.Query, warn: false
 
   alias Cambiatus.Accounts.User
+  alias Cambiatus.Commune
+  alias Cambiatus.Commune.Transfer
   alias Cambiatus.Repo
 
   @doc """
@@ -21,6 +23,71 @@ defmodule Cambiatus.Accounts do
         {:ok, val}
     end
   end
+
+  @doc "Fetch the list of account names of the payers to the given user filtered by the given account name"
+  @spec filter_payers_by_account(String.t(), String.t()) :: {:ok, list(string)}
+  def filter_payers_by_account(recipient, payer) do
+    filtered_account_names =
+      Transfer
+      |> distinct(true)
+      |> where(
+           [t],
+           t.to_id == ^recipient and like(t.from_id, ^("%#{payer}%"))
+         )
+      |> order_by([t], asc: t.from_id)
+      |> select([t], t.from_id)
+      |> Repo.all()
+
+    {:ok, filtered_account_names}
+  end
+
+  @doc "Fetch transfers from various payers to the recipient (may be filtered by the payer or by the date)."
+  @spec get_payment_history(map()) :: {:ok, list(map())} | {:error, String.t()}
+  def get_payment_history(%{input: %{recipient: recipient, payer: payer, date: date}} = args) do
+    {:ok, day_boundary_start, 0} = DateTime.from_iso8601(Date.to_string(date) <> "T00:00:00Z")
+    day_boundary_end = DateTime.add(day_boundary_start, 24 * 60 * 60, :seconds)
+
+    Transfer
+    |> where(
+         [t],
+         t.to_id == ^recipient and t.from_id == ^payer and
+         (t.created_at >= ^day_boundary_start) and (t.created_at < ^day_boundary_end)
+       )
+    |> order_by([t], desc: t.created_at)
+    |> Commune.get_transfers_from(args)
+  end
+
+  @spec get_payment_history(map()) :: {:ok, list(map())} | {:error, String.t()}
+  def get_payment_history(%{input: %{recipient: recipient, payer: payer}} = args) do
+    Transfer
+    |> where([t], t.to_id == ^recipient and t.from_id == ^payer)
+    |> order_by([t], desc: t.created_at)
+    |> Commune.get_transfers_from(args)
+  end
+
+  @spec get_payment_history(map()) :: {:ok, list(map())} | {:error, String.t()}
+  def get_payment_history(%{input: %{recipient: recipient, date: date}} = args) do
+    {:ok, day_boundary_start, 0} = DateTime.from_iso8601(Date.to_string(date) <> "T00:00:00Z")
+    day_boundary_end = DateTime.add(day_boundary_start, 24 * 60 * 60, :seconds)
+
+    Transfer
+    |> where(
+         [t],
+         t.to_id == ^recipient and
+         (t.created_at >= ^day_boundary_start) and (t.created_at < ^day_boundary_end)
+       )
+    |> order_by([t], desc: t.created_at)
+    |> Commune.get_transfers_from(args)
+  end
+
+  @spec get_payment_history(map()) :: {:ok, list(map())} | {:error, String.t()}
+  def get_payment_history(%{input: %{recipient: recipient}} = args) do
+    Transfer
+    |> where([t], t.to_id == ^recipient)
+    |> order_by([t], desc: t.created_at)
+    |> Commune.get_transfers_from(args)
+  end
+
 
   @doc """
   Returns the list of users
