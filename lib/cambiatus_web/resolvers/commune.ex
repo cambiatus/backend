@@ -128,9 +128,12 @@ defmodule CambiatusWeb.Resolvers.Commune do
     end
   end
 
-  def get_sales(_, %{input: %{all: acct}}, _) do
-    with {:ok, profile} <- Accounts.get_account_profile(acct),
-         {:ok, sales} <- Commune.all_sales_for(profile) do
+  def get_sales(_, %{input: %{all: account, community_id: community_id}}, _) do
+    require IEx
+    IEx.pry()
+
+    with {:ok, profile} <- Accounts.get_account_profile(account),
+         {:ok, sales} <- Commune.all_sales_for(profile, community_id) do
       {:ok, sales}
     end
   end
