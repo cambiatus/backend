@@ -232,7 +232,7 @@ defmodule Cambiatus.Commune do
       where: c.status == "pending",
       where: o.community_id == ^community_id,
       where: v.validator_id == ^account,
-      where: fragment("?.claim_id IS NULL", ch),
+      where: fragment("?.validator_id != ? OR ?.claim_id IS NULL", ch, ^account, ch),
       order_by: [desc: c.created_at]
     )
   end
@@ -348,10 +348,12 @@ defmodule Cambiatus.Commune do
           {:ok, list(AvailableSale.t())} | {:error, term()}
   def get_community_sales(community_id, acc) do
     query =
-      AvailableSale
-      |> where([s], s.community_id == ^community_id)
-      |> where([s], s.creator_id != ^acc)
-      |> order_by([s], desc: s.created_at)
+      from(s in Cambiatus.Commune.Sale,
+        where: s.community_id == ^community_id,
+        where: s.creator_id == ^acc,
+        where: s.is_deleted == false,
+        order_by: [desc: s.created_at]
+      )
 
     sales = Repo.all(query)
 
