@@ -5,8 +5,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   """
   alias Cambiatus.{
     Accounts,
-    Accounts.User,
-    Commune
+    Accounts.User
   }
 
   @doc """
@@ -18,15 +17,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   @spec get_payers_by_account(map(), map(), map()) :: {:ok, list()}
-  def get_payers_by_account(%User{} = recipient, %{account: account} = payer, _) do
+  def get_payers_by_account(%User{} = recipient, %{account: _} = payer, _) do
     Accounts.get_payers_by_account(recipient.account, payer.account)
-  end
-
-  @doc "Resolve fetched transfers to the given user"
-  @spec get_payment_history(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
-  def get_payment_history(_, args, _) do
-    {:ok, transfers} = Accounts.get_payment_history(args)
-    {:ok, transfers}
   end
 
   @doc """
@@ -41,11 +33,11 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   @doc """
-  Collects all transfers from a given user
+  Collects transfers belonging to the given user according various criteria, provided in `args`.
   """
   @spec get_transfers(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, args, _) do
-    {:ok, transfers} = Commune.get_transfers(user, args)
+    {:ok, transfers} = Accounts.Transfers.get_transfers(user, args)
 
     result =
       transfers

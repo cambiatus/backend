@@ -15,18 +15,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:input, non_null(:profile_input))
       resolve(&Accounts.get_profile/3)
     end
-
-    connection field(:payment_history, node_type: :transfer) do
-      arg(:input, non_null(:payment_history_input))
-      resolve(&Accounts.get_payment_history/3)
-    end
-  end
-
-  @desc "Input object for fetching the Payment History: payments from various payer/payers to the recipient."
-  input_object(:payment_history_input) do
-    field(:recipient, non_null(:string))
-    field(:payer, :string)
-    field(:date, :date)
   end
 
   @desc "Account Mutations"
@@ -52,6 +40,12 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   @desc "Input Object for fetching a User Profile"
   input_object :profile_input do
     field(:account, :string)
+  end
+
+  @desc "The direction of the transfer"
+  enum :transfer_direction do
+    value :incoming, description: "User's incoming transfers."
+    value :outgoing, description: "User's outgoing transfers."
   end
 
   @desc "A users profile on the system"
@@ -85,6 +79,9 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     connection field(:transfers, node_type: :transfer) do
+      arg(:direction, :transfer_direction)
+      arg(:second_party_account, :string, description: "Account name of the other participant of the transfer.")
+      arg(:date, :date, description: "The date of the transfer in `yyyy-mm-dd` format.")
       resolve(&Accounts.get_transfers/3)
     end
   end
