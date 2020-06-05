@@ -297,7 +297,7 @@ defmodule Cambiatus.Commune do
         where: s.community_id == ^community_id,
         where: s.creator_id != ^acc,
         where: s.is_deleted == false,
-        where: s.units > 0,
+        where: (s.units > 0 and s.track_stock == true) or s.track_stock == false,
         order_by: [desc: s.created_at]
       )
 
