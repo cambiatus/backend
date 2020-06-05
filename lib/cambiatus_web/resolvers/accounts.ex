@@ -17,8 +17,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   @spec get_payers_by_account(map(), map(), map()) :: {:ok, list()}
-  def get_payers_by_account(%User{} = recipient, %{account: _} = payer, _) do
-    Accounts.get_payers_by_account(recipient.account, payer.account)
+  def get_payers_by_account(%User{} = user, %{account: _} = payer, _) do
+    Accounts.get_payers_by_account(user, payer)
   end
 
   @doc """
