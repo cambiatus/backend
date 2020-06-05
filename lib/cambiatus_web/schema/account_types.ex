@@ -16,13 +16,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&Accounts.get_profile/3)
     end
 
-    @desc "List of payers to the given recipient filtered by the part of the account name."
-    field :get_payers, list_of(:profile) do
-      arg(:recipient, non_null(:string))
-      arg(:payer, non_null(:string))
-      resolve(&Accounts.filter_payers_by_account/2)
-    end
-
     connection field(:payment_history, node_type: :transfer) do
       arg(:input, non_null(:payment_history_input))
       resolve(&Accounts.get_payment_history/3)
@@ -84,6 +77,12 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:invitations, list_of(:string))
 
     field(:analysis_count, non_null(:integer), resolve: &Accounts.get_analysis_count/3)
+
+    @desc "List of payers to the given recipient fetched by the part of the account name."
+    field(:get_payers_by_account, list_of(:profile)) do
+      arg(:account, non_null(:string))
+      resolve(&Accounts.get_payers_by_account/3)
+    end
 
     connection field(:transfers, node_type: :transfer) do
       resolve(&Accounts.get_transfers/3)

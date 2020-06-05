@@ -24,12 +24,15 @@ defmodule Cambiatus.Accounts do
     end
   end
 
-  @doc "Fetch the list of payers filtered by the given account name"
-  @spec filter_payers_by_account(String.t(), String.t()) :: {:ok, list(string)}
-  def filter_payers_by_account(recipient, payer) do
+  @doc """
+  Returns a list of distinct profiles of the users who have made transfers to the given recipient (payers)
+  and whose account name contains the given part (e.g. with `bes` it will return `bespiral`).
+  """
+  @spec get_payers_by_account(String.t(), String.t()) :: {:ok, list()}
+  def get_payers_by_account(recipient, payer_account_part) do
     profiles =
       from t in Transfer,
-           where: t.to_id == ^recipient and (like(t.from_id, ^("%#{payer}%"))),
+           where: t.to_id == ^recipient and (like(t.from_id, ^("#{payer_account_part}%"))),
            join: u in User,
            on: u.account == t.from_id,
            distinct: true,

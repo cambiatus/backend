@@ -17,10 +17,9 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     Accounts.get_account_profile(params.account)
   end
 
-  @doc "Resolve fetched list of filtered account names of payers"
-  @spec filter_payers_by_account(map(), map()) :: {:ok, list(string)}
-  def filter_payers_by_account(%{recipient: recipient, payer: payer}, _) do
-    Accounts.filter_payers_by_account(recipient, payer)
+  @spec get_payers_by_account(map(), map(), map()) :: {:ok, list()}
+  def get_payers_by_account(%User{} = recipient, %{account: account} = payer, _) do
+    Accounts.get_payers_by_account(recipient.account, payer.account)
   end
 
   @doc "Resolve fetched transfers to the given user"
