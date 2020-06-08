@@ -232,7 +232,7 @@ defmodule Cambiatus.Commune do
       where: c.status == "pending",
       where: o.community_id == ^community_id,
       where: v.validator_id == ^account,
-      where: fragment("?.claim_id IS NULL", ch),
+      where: fragment("?.validator_id != ? OR ?.claim_id IS NULL", ch, ^account, ch),
       order_by: [desc: c.created_at]
     )
   end
@@ -291,16 +291,17 @@ defmodule Cambiatus.Commune do
   @doc """
   Gets all sales for a user
   """
-  @spec all_sales_for(map()) :: {:ok, list(AvailableSale.t())} | {:error, term}
-  def all_sales_for(%User{account: acc}) do
+  def all_sales_for(%User{account: acc}, community_id) do
     query =
-      AvailableSale
-      |> where([s], s.creator_id != ^acc)
-      |> order_by([s], desc: s.created_at)
+      from(s in Cambiatus.Commune.Sale,
+        where: s.community_id == ^community_id,
+        where: s.creator_id != ^acc,
+        where: s.is_deleted == false,
+        where: (s.units > 0 and s.track_stock == true) or s.track_stock == false,
+        order_by: [desc: s.created_at]
+      )
 
-    sales =
-      query
-      |> Repo.all()
+    sales = Repo.all(query)
 
     {:ok, sales}
   end
@@ -348,10 +349,12 @@ defmodule Cambiatus.Commune do
           {:ok, list(AvailableSale.t())} | {:error, term()}
   def get_community_sales(community_id, acc) do
     query =
-      AvailableSale
-      |> where([s], s.community_id == ^community_id)
-      |> where([s], s.creator_id != ^acc)
-      |> order_by([s], desc: s.created_at)
+      from(s in Cambiatus.Commune.Sale,
+        where: s.community_id == ^community_id,
+        where: s.creator_id == ^acc,
+        where: s.is_deleted == false,
+        order_by: [desc: s.created_at]
+      )
 
     sales = Repo.all(query)
 
@@ -366,7 +369,6 @@ defmodule Cambiatus.Commune do
   @doc """
   Provided with a profile this collects all transfers belong to the user
   """
-  @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{account: account}, pagination_args) do
     Transfer
     |> where([t], t.from_id == ^account or t.to_id == ^account)
