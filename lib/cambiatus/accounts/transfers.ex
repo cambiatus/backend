@@ -162,7 +162,7 @@ defmodule Cambiatus.Accounts.Transfers do
       DateTime.from_iso8601(Date.to_string(date) <> "T00:00:00Z")
 
     day_boundary_end =
-      DateTime.add(day_boundary_start, 24 * 60 * 60, :seconds)
+      DateTime.add(day_boundary_start, 24 * 60 * 60, :second)
 
     query
     |> where(
