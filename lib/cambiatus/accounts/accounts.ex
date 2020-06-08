@@ -24,8 +24,8 @@ defmodule Cambiatus.Accounts do
   end
 
   @doc """
-  Returns a list of user profiles, who made transfers to the given user (payers) and whose account includes the string,
-  given as a second argument (`bes` <- `bespiral`).
+  Returns a list of payers (users, who made transfers to the given user) whose account includes the string,
+  given as the second argument (e.g. `bes` <- `bespiral`).
   """
   @spec get_payers_by_account(map(), map()) :: {:ok, list(User.t())}
   def get_payers_by_account(%User{} = user, %{account: _} = payer) do

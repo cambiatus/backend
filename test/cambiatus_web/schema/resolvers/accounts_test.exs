@@ -130,13 +130,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "profile" => %{
             "transfers" => %{
-              "fetchedCount" => user1_incoming_transfers
+              "fetchedCount" => user1_incoming_transfers_count
             }
           }
         }
       } = json_response(res, 200)
 
-      assert user1_incoming_transfers == 1
+      assert user1_incoming_transfers_count == 1
     end
 
     test "outgoing transfers", %{conn: conn, variables: variables} do
@@ -156,13 +156,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "profile" => %{
             "transfers" => %{
-              "fetchedCount" => user1_outgoing_transfers
+              "fetchedCount" => user1_outgoing_transfers_count
             }
           }
         }
       } = json_response(res, 200)
 
-      assert user1_outgoing_transfers == 3
+      assert user1_outgoing_transfers_count == 3
     end
 
     test "transfers for the date", %{conn: conn, variables: variables} do
@@ -184,13 +184,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "profile" => %{
             "transfers" => %{
-              "fetchedCount" => user1_today_transfers
+              "fetchedCount" => user1_today_transfers_count
             }
           }
         }
       } = json_response(res, 200)
 
-      assert user1_today_transfers == 3
+      assert user1_today_transfers_count == 3
     end
 
     test "incoming transfers for the date", %{conn: conn, variables: variables} do
@@ -212,13 +212,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "profile" => %{
             "transfers" => %{
-              "fetchedCount" => user1_today_incoming_transfers
+              "fetchedCount" => user1_today_incoming_transfers_count
             }
           }
         }
       } = json_response(res, 200)
 
-      assert user1_today_incoming_transfers == 1
+      assert user1_today_incoming_transfers_count == 1
     end
 
     test "outgoing transfers for the date", %{conn: conn, variables: variables} do
@@ -240,13 +240,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "profile" => %{
             "transfers" => %{
-              "fetchedCount" => user1_today_outgoing_transfers
+              "fetchedCount" => user1_today_outgoing_transfers_count
             }
           }
         }
       } = json_response(res, 200)
 
-      assert user1_today_outgoing_transfers == 2
+      assert user1_today_outgoing_transfers_count == 2
     end
 
     test "incoming transfers for the date from user2 to user1", %{conn: conn, users: users, variables: variables} do
