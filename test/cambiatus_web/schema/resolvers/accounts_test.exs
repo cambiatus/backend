@@ -350,5 +350,38 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       assert transfers_from_user1_to_user2_for_today_count == 2
     end
+
+    test "list of payers to `user1`", %{conn: conn, users: users, variables: variables} do
+      [_, user2] = users
+      account_part = String.slice(user2.account, 0, 3)
+
+      query = """
+      query ($input: ProfileInput!) {
+        profile(input: $input) {
+          getPayersByAccount(account: "#{account_part}") {
+            account
+            name
+            avatar
+          }
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, users: users, variables: variables)
+
+      %{
+        "data" => %{
+           "profile" => %{
+              "getPayersByAccount" => payers
+           }
+        }
+      } = json_response(res, 200)
+
+      %{"account" => account, "avatar" => avatar, "name" => name} = hd(payers)
+
+      assert account == user2.account
+      assert avatar == user2.avatar
+      assert name == user2.name
+    end
   end
 end
