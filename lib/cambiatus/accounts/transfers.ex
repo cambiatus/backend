@@ -158,11 +158,16 @@ defmodule Cambiatus.Accounts.Transfers do
 
   @spec query_transfers_by_date(Ecto.Queryable.t(), String.t()) :: Ecto.Queryable.t()
   def query_transfers_by_date(query, date) do
-    {:ok, day_boundary_start, 0} =
-      DateTime.from_iso8601(Date.to_string(date) <> "T00:00:00Z")
+    to_datetime =
+      fn d ->
+        {:ok, datetime, _} =
+          Date.to_iso8601(d) <> "T00:00:00Z"
+          |> DateTime.from_iso8601
+        datetime
+      end
 
-    day_boundary_end =
-      DateTime.add(day_boundary_start, 24 * 60 * 60, :second)
+    day_boundary_start = to_datetime.(date)
+    day_boundary_end = to_datetime.(Date.add(date, 1))
 
     query
     |> where(
