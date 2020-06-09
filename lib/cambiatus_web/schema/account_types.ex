@@ -42,6 +42,12 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:account, :string)
   end
 
+  @desc "The direction of the transfer"
+  enum :transfer_direction do
+    value :incoming, description: "User's incoming transfers."
+    value :outgoing, description: "User's outgoing transfers."
+  end
+
   @desc "A users profile on the system"
   object :profile do
     field(:account, non_null(:string))
@@ -66,7 +72,16 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:analysis_count, non_null(:integer), resolve: &Accounts.get_analysis_count/3)
 
+    @desc "List of payers to the given recipient fetched by the part of the account name."
+    field(:get_payers_by_account, list_of(:profile)) do
+      arg(:account, non_null(:string))
+      resolve(&Accounts.get_payers_by_account/3)
+    end
+
     connection field(:transfers, node_type: :transfer) do
+      arg(:direction, :transfer_direction)
+      arg(:second_party_account, :string, description: "Account name of the other participant of the transfer.")
+      arg(:date, :date, description: "The date of the transfer in `yyyy-mm-dd` format.")
       resolve(&Accounts.get_transfers/3)
     end
   end
