@@ -474,14 +474,16 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
       usr = insert(:user)
+      community = insert(:community)
 
-      insert_list(@num, :sale, %{creator: usr})
-      insert_list(2, :sale)
-      %{title: f_title} = insert(:sale, %{created_at: latest})
+      insert_list(@num, :sale, %{community: community, creator: usr})
+      insert_list(2, :sale, %{community: community})
+      %{title: f_title} = insert(:sale, %{community: community, created_at: latest})
 
       variables = %{
         "input" => %{
-          "all" => usr.account
+          "all" => usr.account,
+          "community_id" => community.symbol
         }
       }
 
