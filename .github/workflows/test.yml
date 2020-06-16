@@ -6,7 +6,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: actions/cache@v2
+      - name: Setup cache
+        uses: actions/cache@v2
         with:
           path: |
             deps
@@ -15,7 +16,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-mix-
 
-      - uses: actions/setup-elixir@v1
+      - name: Setup Elixir
+        uses: actions/setup-elixir@v1
         with:
           otp-version: '22.2'
           elixir-version: '1.9.4'
@@ -44,7 +46,8 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - uses: harmon758/postgresql-action@v1
+      - name: Setup postgres database
+        uses: harmon758/postgresql-action@v1
         with:
           postgresql db: 'cambiatus_test'
           postgresql user: 'postgres'
@@ -60,7 +63,8 @@ jobs:
         with:
           name: deps
 
-      - uses: actions/setup-elixir@v1
+      - name: Setup Elixir
+        uses: actions/setup-elixir@v1
         with:
           otp-version: '22.2'
           elixir-version: '1.9.4'
@@ -83,7 +87,8 @@ jobs:
         with:
           name: deps
 
-      - uses: actions/setup-elixir@v1
+      - name: Setup Elixir
+        uses: actions/setup-elixir@v1
         with:
           otp-version: '22.2'
           elixir-version: '1.9.4'
