@@ -21,6 +21,7 @@ jobs:
           elixir-version: '1.9.4'
 
       - name: Download dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
         run: mix deps.get
 
       - name: Compile project
