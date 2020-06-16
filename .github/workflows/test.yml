@@ -119,10 +119,6 @@ jobs:
         run: |
           echo ::set-env name=BUILD::$(git rev-parse --short HEAD)
 
-      - name: Set IMAGE_NAME
-        run: |
-          echo ::set-env name=IMAGE_NAME::bespiral/backend
-
       ‐ name: build-push
         uses: docker/build-push-action@v1
         with:
