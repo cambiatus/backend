@@ -642,13 +642,15 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Repo.aggregate(AvailableSale, :count, :id) == 0
 
       usr = insert(:user)
+      community = insert(:community)
 
-      insert_list(@num, :sale, %{is_deleted: true})
-      %{title: title} = insert(:sale)
+      insert_list(@num, :sale, %{community: community, is_deleted: true})
+      %{title: title} = insert(:sale, %{community: community})
 
       variables = %{
         "input" => %{
-          "all" => usr.account
+          "all" => usr.account,
+          "community_id" => community.symbol
         }
       }
 
