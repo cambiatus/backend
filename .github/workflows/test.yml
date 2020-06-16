@@ -29,6 +29,12 @@ jobs:
         with:
           name: _build
           path: _build/
+
+      - name: Upload dependencies
+        uses: actions/upload-artifact@v1
+        with:
+          name: deps
+          path: deps
   test:
     runs-on: ubuntu-latest
     needs: build
@@ -45,6 +51,11 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: _build
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v1
+        with:
+          name: deps
 
       - uses: actions/setup-elixir@v1
         with:
@@ -63,6 +74,11 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: _build
+
+      - name: Download dependencies
+        uses: actions/download-artifact@v1
+        with:
+          name: deps
 
       - uses: actions/setup-elixir@v1
         with:
