@@ -31,6 +31,7 @@ jobs:
           path: _build/
   test:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v2
 
@@ -54,6 +55,7 @@ jobs:
         run: mix test
   lint:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - uses: actions/checkout@v2
 
