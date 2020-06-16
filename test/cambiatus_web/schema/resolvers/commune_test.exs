@@ -878,7 +878,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       insert(:validator, %{action: action2, validator: verifier3})
 
       # Claim 1 with two validations
-      claim1 = insert(:claim, %{claimer: claimer, action: action1})
+      claim1 = insert(:claim, %{claimer: claimer, action: action1, status: "approved"})
       insert(:check, %{claim: claim1, validator: verifier1, is_verified: true})
       insert(:check, %{claim: claim1, validator: verifier2, is_verified: true})
 
