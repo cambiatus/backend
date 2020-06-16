@@ -98,7 +98,7 @@ jobs:
   publishImage:
     runs-on: ubuntu latest
     if: github.ref == 'refs/heads/master'
-    needs: build
+    needs: [build, test, lint]
     steps:
       - uses: actions/checkout@v2
 
