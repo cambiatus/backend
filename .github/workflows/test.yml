@@ -119,7 +119,7 @@ jobs:
         run: |
           echo ::set-env name=BUILD::$(git rev-parse --short HEAD)
 
-      ‐ name: build-push
+      - name: build-push
         uses: docker/build-push-action@v1
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -127,3 +127,4 @@ jobs:
           repository: bespiral/backend
           build_args: APP_NAME=${{ env.APP_NAME }},APP_VSN=${{ env.APP_VSN }}
           tags: ${{ env.APP_VSN }}-${{ env.BUILD }},latest
+        
