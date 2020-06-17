@@ -32,7 +32,7 @@ config :cambiatus, Cambiatus.Auth.InvitationId,
 config :cambiatus, Cambiatus.Repo,
   database: "cambiatus_test",
   username: "postgres",
-  password: "",
+  password: "123123123",
   hostname: "localhost",
   port: "5432",
   pool: Ecto.Adapters.SQL.Sandbox

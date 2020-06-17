@@ -474,14 +474,16 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
       usr = insert(:user)
+      community = insert(:community)
 
-      insert_list(@num, :sale, %{creator: usr})
-      insert_list(2, :sale)
-      %{title: f_title} = insert(:sale, %{created_at: latest})
+      insert_list(@num, :sale, %{community: community, creator: usr})
+      insert_list(2, :sale, %{community: community})
+      %{title: f_title} = insert(:sale, %{community: community, created_at: latest})
 
       variables = %{
         "input" => %{
-          "all" => usr.account
+          "all" => usr.account,
+          "community_id" => community.symbol
         }
       }
 
@@ -640,13 +642,15 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Repo.aggregate(AvailableSale, :count, :id) == 0
 
       usr = insert(:user)
+      community = insert(:community)
 
-      insert_list(@num, :sale, %{is_deleted: true})
-      %{title: title} = insert(:sale)
+      insert_list(@num, :sale, %{community: community, is_deleted: true})
+      %{title: title} = insert(:sale, %{community: community})
 
       variables = %{
         "input" => %{
-          "all" => usr.account
+          "all" => usr.account,
+          "community_id" => community.symbol
         }
       }
 
@@ -874,7 +878,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       insert(:validator, %{action: action2, validator: verifier3})
 
       # Claim 1 with two validations
-      claim1 = insert(:claim, %{claimer: claimer, action: action1})
+      claim1 = insert(:claim, %{claimer: claimer, action: action1, status: "approved"})
       insert(:check, %{claim: claim1, validator: verifier1, is_verified: true})
       insert(:check, %{claim: claim1, validator: verifier2, is_verified: true})
 
@@ -890,7 +894,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
         "first" => @num
       }
 
-      queryAnalysis = """
+      query_analysis = """
       query($first: Int!, $input: ClaimsAnalysisInput) {
         claimsAnalysis(first: $first, input: $input) {
           edges {
@@ -905,14 +909,14 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = build_conn() |> get("/api/graph", query: queryAnalysis, variables: params)
+      res = build_conn() |> get("/api/graph", query: query_analysis, variables: params)
       %{"data" => %{"claimsAnalysis" => cs}} = json_response(res, 200)
       claim_action_ids = cs["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
       # Make sure pending is only one
       assert Enum.count(claim_action_ids) == 1
 
-      queryHistory = """
+      query_history = """
       query($first: Int!, $input: ClaimsAnalysisInput) {
         claimsAnalysisHistory(first: $first, input: $input) {
           edges {
@@ -927,7 +931,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn() |> get("/api/graph", query: queryHistory, variables: params)
+      res = conn() |> get("/api/graph", query: query_history, variables: params)
       %{"data" => %{"claimsAnalysisHistory" => ch}} = json_response(res, 200)
       claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
