@@ -220,21 +220,20 @@ defmodule Cambiatus.Commune do
   """
   @spec claim_analysis_query(term, term) :: Ecto.Query.t()
   def claim_analysis_query(community_id, account) do
-    from(c in Claim,
-      join: a in Action,
-      on: a.id == c.action_id,
-      join: o in Objective,
-      on: o.id == a.objective_id,
-      join: v in Validator,
-      on: v.action_id == c.action_id,
-      left_join: ch in Check,
-      on: ch.claim_id == c.id,
-      where: c.status == "pending",
-      where: o.community_id == ^community_id,
-      where: v.validator_id == ^account,
-      where: fragment("?.validator_id != ? OR ?.claim_id IS NULL", ch, ^account, ch),
-      order_by: [desc: c.created_at]
+    Claim
+    |> join(:left, [c], a in assoc(c, :action))
+    |> join(:left, [c, a], o in assoc(a, :objective))
+    |> join(:left, [c, a], v in Validator, on: v.action_id == c.action_id)
+    |> where(
+      [c, a, o, v],
+      o.community_id == ^community_id and v.validator_id == ^account and c.status == "pending" and
+        fragment(
+          "select count(*) from checks b where b.claim_id = ?.id and b.validator_id = ?",
+          c,
+          ^account
+        ) == 0
     )
+    |> order_by([c], desc: c.id)
   end
 
   @doc """
