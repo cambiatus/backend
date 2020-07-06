@@ -10,7 +10,12 @@ defmodule Cambiatus.Mixfile do
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: [
+        prod: [
+          steps: [:assemble, :tar]
+        ]
+      ]
     ]
   end
 
