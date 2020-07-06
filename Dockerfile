@@ -2,9 +2,9 @@
 # Build Stage
 #===========
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION=3.8
+ARG ALPINE_VERSION=3.9
 
-FROM elixir:1.7.2-alpine AS builder
+FROM elixir:1.9.4-alpine AS builder
 
 # The name of your application/release (required)
 ARG APP_NAME=cambiatus
@@ -34,11 +34,11 @@ RUN mix do deps.get --only prod, deps.compile, compile
 
 RUN \
   mkdir -p /opt/built && \
-  mix release --verbose && \
-  cp _build/${MIX_ENV}/rel/${APP_NAME}/releases/${APP_VSN}/${APP_NAME}.tar.gz /opt/built && \
+  mix release && \
+  cp _build/${MIX_ENV}/prod-${APP_VSN}.tar.gz /opt/built && \
   cd /opt/built && \
-  tar -xzf ${APP_NAME}.tar.gz && \
-  rm ${APP_NAME}.tar.gz
+  tar -xzf prod-${APP_VSN}.tar.gz && \
+  rm prod-${APP_VSN}.tar.gz
 
 #================
 # Deployment Stage
@@ -51,7 +51,7 @@ ARG APP_NAME
 RUN apk update && \
     apk add --no-cache \
       bash \
-      openssl-dev
+      libssl1.1
 
 ENV REPLACE_OS_VARS=true \
     APP_NAME=${APP_NAME}
@@ -60,4 +60,6 @@ WORKDIR /opt/app
 
 COPY --from=builder /opt/built .
 
-CMD trap 'exit' INT; /opt/app/bin/${APP_NAME} foreground
+RUN mv /opt/app/bin/prod /opt/app/bin/${APP_NAME}
+
+CMD trap 'exit' INT; /opt/app/bin/${APP_NAME} start
