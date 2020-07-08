@@ -43,6 +43,15 @@ config :phoenix, :stacktrace_depth, 25
 
 config :cambiatus, :ipfs, conn: {}
 
+config :ex_aws,
+  access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
+  secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY"),
+  s3: [
+    scheme: "https://",
+    host: "cambiatus-uploads.s3.amazonaws.com",
+    region: "us-east-1"
+  ]
+
 config :eosrpc, EOSRPC.Wallet, url: "http://localhost:8888/v1/wallet"
 
 config :eosrpc, EOSRPC.Chain, url: "http://eosio.cambiatus.local/v1/chain"
