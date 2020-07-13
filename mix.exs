@@ -51,11 +51,6 @@ defmodule Cambiatus.Mixfile do
       {:eosrpc, "~> 0.5.0"},
       {:sentry, "~> 6.4"},
       {:hashids, "~> 2.0"},
-      {:ex_aws, "~> 2.1"},
-      {:ex_aws_s3, "~> 2.0"},
-      {:poison, "~> 3.0"},
-      {:hackney, github: "benoitc/hackney", override: true},
-      {:uuid, "~> 1.1" },
 
       # web_push
       {:web_push_encryption,
