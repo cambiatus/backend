@@ -6,7 +6,7 @@ defmodule CambiatusWeb.S3Controller do
     file_uuid = UUID.uuid4(:hex)
     image_filename = filename
     unique_filename = "#{file_uuid}-#{image_filename}"
-    {:ok, image_binary} = File.read(file_path)
+    image_binary = File.read!(file_path)
 
     operation = ExAws.S3.put_object(bucket_name, "/#{unique_filename}", image_binary)
 
