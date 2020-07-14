@@ -17,7 +17,7 @@ defmodule Cambiatus.Mixfile do
   def application do
     [
       mod: {Cambiatus.Application, []},
-      extra_applications: [:sentry, :logger, :runtime_tools, :bamboo, :plug]
+      extra_applications: [:sentry, :logger, :runtime_tools, :bamboo, :plug, :magic_number]
     ]
   end
 
@@ -55,7 +55,8 @@ defmodule Cambiatus.Mixfile do
       {:ex_aws_s3, "~> 2.0"},
       {:poison, "~> 3.0"},
       {:hackney, github: "benoitc/hackney", override: true},
-      {:uuid, "~> 1.1" },
+      {:uuid, "~> 1.1"},
+      {:magic_number, "~> 0.0.4"},
 
       # web_push
       {:web_push_encryption,

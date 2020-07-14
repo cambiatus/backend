@@ -39,6 +39,7 @@
   "jason": {:hex, :jason, "1.0.1", "ef108e64c6e086364b9f15b0073cf794061670af8f331d545d7308c0ba2e67f9", [:mix], [{:decimal, "~> 1.0", [hex: :decimal, repo: "hexpm", optional: true]}], "hexpm", "51f68891a38d5186ba6a4c0c148f59b33d20b068168976fd25bdfc0f57347f0b"},
   "jose": {:hex, :jose, "1.9.0", "4167c5f6d06ffaebffd15cdb8da61a108445ef5e85ab8f5a7ad926fdf3ada154", [:mix, :rebar3], [{:base64url, "~> 0.0.1", [hex: :base64url, repo: "hexpm", optional: false]}], "hexpm", "6429c4fee52b2dda7861ee19a4f09c8c1ffa213bee3a1ec187828fde95d447ed"},
   "libring": {:hex, :libring, "1.4.0", "41246ba2f3fbc76b3971f6bce83119dfec1eee17e977a48d8a9cfaaf58c2a8d6", [:mix], [], "hexpm"},
+  "magic_number": {:hex, :magic_number, "0.0.4", "5d04b74064a886d8dc7f5868cf26cc28052d098bf2a38b85faa2d053bf2f2418", [:mix], [], "hexpm", "5b6fa41f5d24c3fd2f3cf9a96fefcf762c98bdd301158a95ab5355fe4f9eb61a"},
   "metrics": {:hex, :metrics, "1.0.1", "25f094dea2cda98213cecc3aeff09e940299d950904393b2a29d191c346a8486", [:rebar3], [], "hexpm", "69b09adddc4f74a40716ae54d140f93beb0fb8978d8636eaded0c31b6f099f16"},
   "mime": {:hex, :mime, "1.3.1", "30ce04ab3175b6ad0bdce0035cba77bba68b813d523d1aac73d9781b4d193cf8", [:mix], [], "hexpm", "6cbe761d6a0ca5a31a0931bf4c63204bceb64538e664a8ecf784a9a6f3b875f1"},
   "mimerl": {:hex, :mimerl, "1.2.0", "67e2d3f571088d5cfd3e550c383094b47159f3eee8ffa08e64106cdf5e981be3", [:rebar3], [], "hexpm", "f278585650aa581986264638ebf698f8bb19df297f66ad91b18910dfc6e19323"},
