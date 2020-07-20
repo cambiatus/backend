@@ -15,7 +15,7 @@ defmodule Cambiatus.Upload do
         {:ok, "https://#{bucket_name}.s3.amazonaws.com/#{bucket_name}/#{unique_filename}"}
 
       _ ->
-        {:error}
+        :error
     end
   end
 
