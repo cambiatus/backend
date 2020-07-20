@@ -54,7 +54,8 @@ defmodule Cambiatus.Mixfile do
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
       {:poison, "~> 3.0"},
-      {:hackney, github: "benoitc/hackney", override: true},
+      {:hackney,
+       github: "benoitc/hackney", override: true, ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"},
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
 

@@ -31,7 +31,7 @@
   "gen_stage": {:hex, :gen_stage, "0.14.1", "9d46723fda072d4f4bb31a102560013f7960f5d80ea44dcb96fd6304ed61e7a4", [:mix], [], "hexpm"},
   "gen_state_machine": {:hex, :gen_state_machine, "2.0.5", "9ac15ec6e66acac994cc442dcc2c6f9796cf380ec4b08267223014be1c728a95", [:mix], [], "hexpm"},
   "gettext": {:hex, :gettext, "0.16.1", "e2130b25eebcbe02bb343b119a07ae2c7e28bd4b146c4a154da2ffb2b3507af2", [:mix], [], "hexpm", "dd3a7ea5e3e87ee9df29452dd9560709b4c7cc8141537d0b070155038d92bdf1"},
-  "hackney": {:git, "https://github.com/benoitc/hackney.git", "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33", []},
+  "hackney": {:git, "https://github.com/benoitc/hackney.git", "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33", [ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"]},
   "hashids": {:hex, :hashids, "2.0.4", "ea47a2c2018b7ffb4f5ac9b0f8ea0af6d6159b9e190c5ed09f0ea83276968e0f", [:mix], [], "hexpm", "812e2c7ae763609a47acdd4c64d58c72f63bcfd741e6c605127e43af1507e019"},
   "httpoison": {:hex, :httpoison, "1.5.1", "0f55b5b673b03c5c327dac7015a67cb571b99b631acc0bc1b0b98dcd6b9f2104", [:mix], [{:hackney, "~> 1.8", [hex: :hackney, repo: "hexpm", optional: false]}], "hexpm", "191a3b6329c917de4e7ca68431919a59bf19e60694b313a69bc1f56a4cb160bf"},
   "idna": {:hex, :idna, "6.0.1", "1d038fb2e7668ce41fbf681d2c45902e52b3cb9e9c77b55334353b222c2ee50c", [:rebar3], [{:unicode_util_compat, "0.5.0", [hex: :unicode_util_compat, repo: "hexpm", optional: false]}], "hexpm", "a02c8a1c4fd601215bb0b0324c8a6986749f807ce35f25449ec9e69758708122"},
