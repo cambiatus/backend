@@ -40,6 +40,8 @@ config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
 
 config :eosrpc, EOSRPC.Chain, url: System.get_env("EOSIO_URL")
 
+config :eosrpc, EOSRPC.Helper, symbol: System.get_env("EOSIO_SYMBOL") || "EOS"
+
 config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
 
 config :sentry,
