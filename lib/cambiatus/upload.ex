@@ -4,7 +4,7 @@ defmodule Cambiatus.Upload do
   @doc """
   Saves a file on the configured Amazon S3 bucket
   """
-  @spec save_file(String.t(), String.t()) :: {:ok, String.t()} | :error
+  @spec save_file(String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def save_file(file_path, filename) do
     bucket_name = System.get_env("BUCKET_NAME")
     file_uuid = UUID.uuid4(:hex)
@@ -18,8 +18,8 @@ defmodule Cambiatus.Upload do
       {:ok, _} ->
         {:ok, "https://#{bucket_name}.s3.amazonaws.com/#{bucket_name}/#{unique_filename}"}
 
-      _ ->
-        :error
+      {:error, err} ->
+        {:error, err}
     end
   end
 
@@ -49,7 +49,7 @@ defmodule Cambiatus.Upload do
       {:ok, {:image, _}} ->
         :ok
 
-      _ ->
+      :error ->
         {:error, "Mime type not detected"}
     end
   end
