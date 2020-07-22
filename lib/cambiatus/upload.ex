@@ -26,31 +26,31 @@ defmodule Cambiatus.Upload do
   @doc """
   Verifies if the size of the file in the given path is less than 2 megabytes
   """
-  @spec validate_file_size(String.t()) :: :ok | {:error, String.t()}
-  def validate_file_size(file_path) do
+  @spec is_filesize_valid(String.t()) :: boolean()
+  def is_filesize_valid(file_path) do
     info = File.lstat!(file_path)
 
     # 2 megabytes
     if info.size > 2_097_152 do
-      {:error, "File exceeds 2 megabytes"}
+      false
     end
 
-    :ok
+    true
   end
 
   @doc """
   Verifies if the file in the given path is an image by checking it's magic number
   """
-  @spec validate_file_type(String.t()) :: :ok | {:error, String.t()}
-  def validate_file_type(file_path) do
+  @spec is_type_valid(String.t()) :: boolean()
+  def is_type_valid(file_path) do
     contents = File.read!(file_path)
 
     case MagicNumber.detect(contents) do
       {:ok, {:image, _}} ->
-        :ok
+        true
 
       :error ->
-        {:error, "Mime type not detected"}
+        false
     end
   end
 end

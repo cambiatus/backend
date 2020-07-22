@@ -5,8 +5,8 @@ defmodule CambiatusWeb.S3Controller do
 
   def save(conn, params) do
     with %{path: file_path, filename: filename} <- Map.get(params, "file"),
-         :ok <- Upload.validate_file_size(file_path),
-         :ok <- Upload.validate_file_type(file_path),
+         true <- Upload.is_filesize_valid(file_path),
+         true <- Upload.is_type_valid(file_path),
          {:ok, url} <- Upload.save_file(file_path, filename) do
       conn
       |> put_status(200)
