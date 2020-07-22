@@ -1,6 +1,10 @@
 defmodule Cambiatus.Upload do
   @moduledoc "Handles file uploading"
 
+  @doc """
+  Saves a file on the configured Amazon S3 bucket
+  """
+  @spec save_file(String.t(), String.t()) :: {:ok, String.t()} | :error
   def save_file(file_path, filename) do
     bucket_name = System.get_env("BUCKET_NAME")
     file_uuid = UUID.uuid4(:hex)
@@ -19,6 +23,10 @@ defmodule Cambiatus.Upload do
     end
   end
 
+  @doc """
+  Verifies if the size of the file in the given path is less than 2 megabytes
+  """
+  @spec validate_file_size(String.t()) :: :ok | {:error, String.t()}
   def validate_file_size(file_path) do
     info = File.lstat!(file_path)
 
@@ -30,6 +38,10 @@ defmodule Cambiatus.Upload do
     :ok
   end
 
+  @doc """
+  Verifies if the file in the given path is an image by checking it's magic number
+  """
+  @spec validate_file_type(String.t()) :: :ok | {:error, String.t()}
   def validate_file_type(file_path) do
     contents = File.read!(file_path)
 
