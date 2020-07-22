@@ -4,10 +4,8 @@ defmodule CambiatusWeb.S3Controller do
   alias Cambiatus.Upload
 
   def save(conn, params) do
-    with %{path: file_path, filename: filename} <- Map.get(params, "file"),
-         true <- Upload.is_filesize_valid(file_path),
-         true <- Upload.is_type_valid(file_path),
-         {:ok, url} <- Upload.save_file(file_path, filename) do
+    with %{path: file_path} <- Map.get(params, "file"),
+         {:ok, url} <- Upload.save(file_path) do
       conn
       |> put_status(200)
       |> json(%{
@@ -19,10 +17,10 @@ defmodule CambiatusWeb.S3Controller do
         |> put_status(422)
         |> json(%{error: "File is required"})
 
-      _ ->
+      {:error, err} ->
         conn
         |> put_status(500)
-        |> json(%{error: "Something went wrong while uploading your image"})
+        |> json(%{error: err})
     end
   end
 end
