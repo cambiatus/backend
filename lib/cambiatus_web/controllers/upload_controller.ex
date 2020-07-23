@@ -1,4 +1,4 @@
-defmodule CambiatusWeb.S3Controller do
+defmodule CambiatusWeb.UploadController do
   use CambiatusWeb, :controller
 
   alias Cambiatus.Upload

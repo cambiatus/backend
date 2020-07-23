@@ -49,7 +49,7 @@ defmodule CambiatusWeb.Router do
     post("/auth/sign_up", AuthController, :sign_up)
 
     post("/ipfs", IPFSController, :save)
-    post("/upload", S3Controller, :save)
+    post("/upload", UploadController, :save)
 
     get("/chain/info", ChainController, :info)
     post("/chain/account", ChainController, :create_account)
