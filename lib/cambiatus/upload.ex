@@ -56,12 +56,12 @@ defmodule Cambiatus.Upload do
   def save(file_info, file_contents) do
     if not is_filesize_valid(file_info) do
       {:error, "File exceeds 2MB"}
+    else
+      if not is_type_valid(file_contents) do
+        {:error, "File is not an image"}
+      else
+        upload_file(file_contents)
+      end
     end
-
-    if not is_type_valid(file_contents) do
-      {:error, "File is not an image"}
-    end
-
-    upload_file(file_contents)
   end
 end
