@@ -5,7 +5,9 @@ defmodule CambiatusWeb.S3Controller do
 
   def save(conn, params) do
     with %{path: file_path} <- Map.get(params, "file"),
-         {:ok, url} <- Upload.save(file_path) do
+         file_info <- File.lstat!(file_path),
+         file_contents <- File.read!(file_path),
+         {:ok, url} <- Upload.save(file_info, file_contents) do
       conn
       |> put_status(200)
       |> json(%{
