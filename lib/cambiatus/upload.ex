@@ -3,9 +3,6 @@ defmodule Cambiatus.Upload do
 
   @s3_client Application.get_env(:cambiatus, :s3_client, ExAws)
 
-  @doc """
-  Saves a file on the configured Amazon S3 bucket
-  """
   @spec upload_file(String.t()) :: {:ok, String.t()} | {:error, String.t()}
   defp upload_file(file_contents) do
     bucket_name = System.get_env("BUCKET_NAME")
@@ -22,9 +19,6 @@ defmodule Cambiatus.Upload do
     end
   end
 
-  @doc """
-  Verifies if the size of the file in the given path is less than 2 megabytes
-  """
   @spec validate_filesize(File.Stat.t()) :: :ok | {:error, String.t()}
   defp validate_filesize(file_info) do
     # 2 megabytes
@@ -35,9 +29,6 @@ defmodule Cambiatus.Upload do
     end
   end
 
-  @doc """
-  Verifies if the file in the given path is an image by checking it's magic number
-  """
   @spec validate_filetype(String.t()) :: :ok | {:error, String.t()}
   defp validate_filetype(contents) do
     case MagicNumber.detect(contents) do
