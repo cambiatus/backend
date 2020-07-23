@@ -44,7 +44,7 @@ defmodule Cambiatus.Upload do
       {:ok, {:image, _}} ->
         true
 
-      :error ->
+      _ ->
         false
     end
   end
