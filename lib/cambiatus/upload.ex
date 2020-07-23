@@ -25,27 +25,27 @@ defmodule Cambiatus.Upload do
   @doc """
   Verifies if the size of the file in the given path is less than 2 megabytes
   """
-  @spec is_filesize_valid(File.Stat.t()) :: boolean()
-  defp is_filesize_valid(file_info) do
+  @spec validate_filesize(File.Stat.t()) :: :ok | {:error, String.t()}
+  defp validate_filesize(file_info) do
     # 2 megabytes
     if file_info.size > 2_097_152 do
-      false
+      {:error, "File exceeds 2MB"}
+    else
+      :ok
     end
-
-    true
   end
 
   @doc """
   Verifies if the file in the given path is an image by checking it's magic number
   """
-  @spec is_type_valid(String.t()) :: boolean()
-  defp is_type_valid(contents) do
+  @spec validate_filetype(String.t()) :: :ok | {:error, String.t()}
+  defp validate_filetype(contents) do
     case MagicNumber.detect(contents) do
       {:ok, {:image, _}} ->
-        true
+        :ok
 
       _ ->
-        false
+        {:error, "File is not an image"}
     end
   end
 
@@ -54,14 +54,8 @@ defmodule Cambiatus.Upload do
   """
   @spec save(File.Stat.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
   def save(file_info, file_contents) do
-    if not is_filesize_valid(file_info) do
-      {:error, "File exceeds 2MB"}
-    else
-      if not is_type_valid(file_contents) do
-        {:error, "File is not an image"}
-      else
-        upload_file(file_contents)
-      end
-    end
+    with :ok <- validate_filesize(file_info),
+         :ok <- validate_filetype(file_contents),
+         do: upload_file(file_contents)
   end
 end
