@@ -11,7 +11,9 @@ defmodule Cambiatus.Accounts.User do
     Commune.Network,
     Commune.Sale,
     Commune.Transfer,
-    Notifications.PushSubscription
+    Notifications.PushSubscription,
+    Kyc,
+    Kyc.Address
   }
 
   @primary_key {:account, :string, autogenerate: false}
@@ -38,6 +40,9 @@ defmodule Cambiatus.Accounts.User do
     has_many(:network, Network, foreign_key: :account_id)
     has_many(:communities, through: [:network, :community])
     has_many(:invitations, Invitation, foreign_key: :creator_id)
+
+    has_one(:address, Address, foreign_key: :account_id)
+    has_one(:kyc, Kyc, foreign_key: :account_id)
   end
 
   @required_fields ~w(account)a

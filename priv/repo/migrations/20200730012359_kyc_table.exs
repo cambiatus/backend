@@ -1,4 +1,4 @@
-defmodule Elixir.Cambiatus.Repo.Migrations.KycTable do
+defmodule Cambiatus.Repo.Migrations.KycTable do
   use Ecto.Migration
 
   def up do
@@ -11,6 +11,7 @@ defmodule Elixir.Cambiatus.Repo.Migrations.KycTable do
     execute("CREATE TYPE country As ENUM ('costarica')")
 
     create table(:addresses) do
+      add(:account_id, references(:users, column: :account, type: :string))
       add(:country, :country, null: true)
       add(:street, :string, null: true)
       add(:neighborhood, :string, null: true)
@@ -28,7 +29,6 @@ defmodule Elixir.Cambiatus.Repo.Migrations.KycTable do
       add(:document, :string, null: false)
       add(:document_type, :document_type, null: false)
       add(:phone, :string, null: false)
-      add(:address_id, references(:addresses), null: false)
       add(:country, :country, null: false)
       add(:is_verified, :boolean, null: false, default: false)
     end
