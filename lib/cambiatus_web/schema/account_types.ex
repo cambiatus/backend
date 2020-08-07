@@ -24,6 +24,20 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:input, non_null(:profile_update_input))
       resolve(&Accounts.update_profile/3)
     end
+
+    @desc "Creates a new user account"
+    field :create_user, :profile do
+      arg(:input, non_null(:account_create_input))
+      resolve(&Accounts.create_user/3)
+    end
+  end
+
+  @desc "Input object for creating a new user account"
+  input_object :account_create_input do
+    field(:name, non_null(:string))
+    field(:account, non_null(:string))
+    field(:email, non_null(:string))
+    field(:invitation_id, non_null(:string))
   end
 
   @desc "An input object for updating a user Profile"
@@ -44,8 +58,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
   @desc "The direction of the transfer"
   enum :transfer_direction do
-    value :incoming, description: "User's incoming transfers."
-    value :outgoing, description: "User's outgoing transfers."
+    value(:incoming, description: "User's incoming transfers.")
+    value(:outgoing, description: "User's outgoing transfers.")
   end
 
   @desc "A users profile on the system"
@@ -80,7 +94,11 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     connection field(:transfers, node_type: :transfer) do
       arg(:direction, :transfer_direction)
-      arg(:second_party_account, :string, description: "Account name of the other participant of the transfer.")
+
+      arg(:second_party_account, :string,
+        description: "Account name of the other participant of the transfer."
+      )
+
       arg(:date, :date, description: "The date of the transfer in `yyyy-mm-dd` format.")
       resolve(&Accounts.get_transfers/3)
     end

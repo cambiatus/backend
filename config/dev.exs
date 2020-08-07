@@ -17,7 +17,7 @@ config :cambiatus, Cambiatus.Eos,
 config :cambiatus, Cambiatus.Repo,
   database: "cambiatus_dev",
   username: "postgres",
-  password: "",
+  password: "123123123",
   hostname: "localhost",
   port: "5432"
 
