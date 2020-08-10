@@ -6,9 +6,15 @@ defmodule Cambiatus.Kyc.City do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Cambiatus.Kyc.{
+    State,
+    Neighborhood
+  }
+
   schema "cities" do
     field(:name, :string)
-    belongs_to(:state, Cambiatus.Kyc.State)
+    belongs_to(:state, State)
+    has_many(:neighborhoods, Neighborhood)
 
     timestamps()
   end
@@ -19,5 +25,6 @@ defmodule Cambiatus.Kyc.City do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> cast_assoc(:neighborhoods)
   end
 end

@@ -64,9 +64,10 @@ defmodule Cambiatus.Repo.Migrations.KycTable do
   def down do
     drop(table(:kyc))
     drop(table(:addresses))
-    drop(table(:states))
-    drop(table(:cities))
     drop(table(:neighborhoods))
+    drop(table(:cities))
+    drop(table(:states))
+    drop(table(:countries))
 
     execute("DROP TYPE user_type")
     execute("DROP TYPE document_type")
