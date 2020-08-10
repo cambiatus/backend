@@ -18,6 +18,7 @@ config :cambiatus, :eosrpc_wallet, EOSRPC.WalletMock
 config :cambiatus, :eosrpc_helper, EOSRPC.HelperMock
 config :cambiatus, :contract, Cambiatus.EosMock
 config :cambiatus, :chat_api, Cambiatus.Chat.ApiMock
+config :cambiatus, :s3_client, Cambiatus.ExAwsMock
 
 # Print only warnings and errors during test
 config :logger, level: :warn

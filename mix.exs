@@ -17,7 +17,7 @@ defmodule Cambiatus.Mixfile do
   def application do
     [
       mod: {Cambiatus.Application, []},
-      extra_applications: [:sentry, :logger, :runtime_tools, :bamboo, :plug]
+      extra_applications: [:sentry, :logger, :runtime_tools, :bamboo, :plug, :magic_number]
     ]
   end
 
@@ -51,6 +51,13 @@ defmodule Cambiatus.Mixfile do
       {:eosrpc, "~> 0.6.0"},
       {:sentry, "~> 6.4"},
       {:hashids, "~> 2.0"},
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+      {:poison, "~> 3.0"},
+      {:hackney,
+       github: "benoitc/hackney", override: true, ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"},
+      {:uuid, "~> 1.1"},
+      {:magic_number, "~> 0.0.4"},
 
       # web_push
       {:web_push_encryption,

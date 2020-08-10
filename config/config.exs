@@ -12,7 +12,14 @@ config :logger, :console,
 
 config :phoenix, :json_library, Jason
 
-config :cambiatus, env: Mix.env
+config :cambiatus, env: Mix.env()
+
+config :ex_aws,
+  s3: [
+    scheme: "https://",
+    host: "cambiatus-uploads.s3.amazonaws.com",
+    region: "us-east-1"
+  ]
 
 # Configures the endpoint
 config :cambiatus, CambiatusWeb.Endpoint,
