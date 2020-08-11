@@ -26,7 +26,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
 
       query = """
-      mutation($input: AccountCreateInput!){
+      mutation($input: CreateUserInput!){
         createUser(input: $input) {
           account
           email
@@ -55,7 +55,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
 
       query = """
-      mutation($input: AccountCreateInput!){
+      mutation($input: CreateUserInput!){
         createUser(input: $input) {
           account
         }
