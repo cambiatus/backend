@@ -44,31 +44,6 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert response["data"]["createUser"]["name"] == variables["input"]["name"]
     end
 
-    test "creates a user with minimal parameters", %{conn: conn} do
-      user = insert(:user, %{account: "cambiatustest"})
-      community = insert(:community, %{symbol: "BES"})
-
-      variables = %{
-        "input" => %{
-          "account" => "someuser"
-        }
-      }
-
-      query = """
-      mutation($input: CreateUserInput!){
-        createUser(input: $input) {
-          account
-        }
-      }
-      """
-
-      res = conn |> post("/api/graph", query: query, variables: variables)
-
-      response = json_response(res, 200)
-
-      assert response["data"]["createUser"]["account"] == variables["input"]["account"]
-    end
-
     test "collects a user account given the account name", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       usr = insert(:user)
