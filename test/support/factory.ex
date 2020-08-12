@@ -5,6 +5,8 @@ defmodule Cambiatus.Factory do
 
   use ExMachina.Ecto, repo: Cambiatus.Repo
 
+  import Ecto.Query
+
   alias Cambiatus.{
     Accounts.User,
     Auth.Invitation,
@@ -14,11 +16,17 @@ defmodule Cambiatus.Factory do
     Commune.Community,
     Commune.Claim,
     Commune.Network,
+    Repo,
     Commune.Mint,
     Commune.Objective,
     Commune.Sale,
     Commune.Transfer,
     Commune.Validator,
+    Kyc.Address,
+    Kyc.Country,
+    Kyc.State,
+    Kyc.City,
+    Kyc.Neighborhood,
     Notifications.NotificationHistory,
     Notifications.PushSubscription
   }
@@ -222,5 +230,53 @@ defmodule Cambiatus.Factory do
       community: build(:community),
       creator: build(:user)
     }
+  end
+
+  def address_factory() do
+    country = Repo.one(Country)
+    province = build(:state, %{country: country})
+    canton = build(:city, %{state: province})
+    district = build(:neighborhood, %{city: canton})
+
+    %Address{
+      account: build(:user),
+      street: "Lorem Srt",
+      neighborhood_id: district.id,
+      city_id: canton.id,
+      state_id: province.id,
+      country_id: country.id,
+      zip: Enum.random(Address.costa_rica_zip_codes()),
+      number: ""
+    }
+  end
+
+  def country_factory() do
+    %Country{
+      name: sequence(:country, &"Country number #{&1}")
+    }
+  end
+
+  def state_factory(%{country: country}) do
+    query = from(s in State, where: s.country_id == ^country.id)
+
+    query
+    |> Repo.all()
+    |> Enum.random()
+  end
+
+  def city_factory(%{state: s}) do
+    query = from(c in City, where: c.state_id == ^s.id)
+
+    query
+    |> Repo.all()
+    |> Enum.random()
+  end
+
+  def neighborhood_factory(%{city: city}) do
+    query = from(n in Neighborhood, where: n.city_id == ^city.id)
+
+    query
+    |> Repo.all()
+    |> Enum.random()
   end
 end

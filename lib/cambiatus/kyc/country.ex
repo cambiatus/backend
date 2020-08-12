@@ -18,5 +18,6 @@ defmodule Cambiatus.Kyc.Country do
   def changeset(model, params \\ :empty) do
     model
     |> cast(params, @required_fields, @optional_fields)
+    |> unique_constraint(:name)
   end
 end
