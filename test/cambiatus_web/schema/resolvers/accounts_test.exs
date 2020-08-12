@@ -21,7 +21,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
           "account" => "someuser",
           "email" => "some@user.com",
           "invitation_id" => invitation_id,
-          "name" => "Some User"
+          "name" => "Some User",
+          "public_key" => "mypublickey"
         }
       }
 

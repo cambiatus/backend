@@ -38,6 +38,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:account, non_null(:string))
     field(:email, non_null(:string))
     field(:invitation_id, non_null(:string))
+    field(:public_key, non_null(:string))
   end
 
   @desc "An input object for updating a user Profile"
