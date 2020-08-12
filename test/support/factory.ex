@@ -234,13 +234,13 @@ defmodule Cambiatus.Factory do
 
   def address_factory() do
     country = Repo.one(Country)
-    province = build(:state, %{country: country})
-    canton = build(:city, %{state: province})
-    district = build(:neighborhood, %{city: canton})
+    province = build(:existing_state, %{country: country})
+    canton = build(:existing_city, %{state: province})
+    district = build(:existing_neighborhood, %{city: canton})
 
     %Address{
       account: build(:user),
-      street: "Lorem Srt",
+      street: sequence(:street, &"#{&1}th Lorem Srt"),
       neighborhood_id: district.id,
       city_id: canton.id,
       state_id: province.id,
@@ -256,7 +256,23 @@ defmodule Cambiatus.Factory do
     }
   end
 
-  def state_factory(%{country: country}) do
+  def state_factory() do
+    %State{
+      name: sequence(:name, &"State #{&1}")
+    }
+  end
+
+  def city_factory() do
+    %City{
+      name: sequence(:name, &"City #{&1}")
+    }
+  end
+
+  def neighborhood_factory() do
+    %Neighborhood{name: sequence(:name, &"Nice Neighborhood #{&1}")}
+  end
+
+  def existing_state_factory(%{country: country}) do
     query = from(s in State, where: s.country_id == ^country.id)
 
     query
@@ -264,7 +280,7 @@ defmodule Cambiatus.Factory do
     |> Enum.random()
   end
 
-  def city_factory(%{state: s}) do
+  def existing_city_factory(%{state: s}) do
     query = from(c in City, where: c.state_id == ^s.id)
 
     query
@@ -272,7 +288,7 @@ defmodule Cambiatus.Factory do
     |> Enum.random()
   end
 
-  def neighborhood_factory(%{city: city}) do
+  def existing_neighborhood_factory(%{city: city}) do
     query = from(n in Neighborhood, where: n.city_id == ^city.id)
 
     query

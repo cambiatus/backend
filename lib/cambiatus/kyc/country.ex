@@ -6,8 +6,12 @@ defmodule Cambiatus.Kyc.Country do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Cambiatus.Kyc.State
+
   schema "countries" do
     field(:name, :string)
+
+    has_many(:states, State)
 
     timestamps()
   end

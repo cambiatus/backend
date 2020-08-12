@@ -39,7 +39,9 @@ defmodule Cambiatus.Kyc.Address do
     |> foreign_key_constraint(:country_id)
     |> foreign_key_constraint(:state_id)
     |> validate_country()
-    # |> validate_state()
+    |> validate_state()
+    |> validate_city()
+    |> validate_neighborhood()
     |> validate_zip()
   end
 
@@ -77,10 +79,71 @@ defmodule Cambiatus.Kyc.Address do
         |> add_error(:state_id, "is invalid")
 
       _state ->
-        changeset
-    end
+        country_id = get_field(changeset, :country_id)
 
-    # TODO: Validate if the state is on the database
+        case Repo.get(Country, country_id) do
+          nil ->
+            add_error(changeset, :country_id, "country not found during state validation")
+
+          country ->
+            if Enum.any?(Repo.preload(country, :states).states, &(&1.id == state_id)) do
+              changeset
+            else
+              add_error(changeset, :state_id, "don't belong to country")
+            end
+        end
+    end
+  end
+
+  def validate_city(changeset) do
+    city_id = get_field(changeset, :city_id)
+
+    case Repo.get(City, city_id) do
+      nil ->
+        add_error(changeset, :city_id, "is invalid")
+
+      _city ->
+        state_id = get_field(changeset, :state_id)
+
+        case Repo.get(State, state_id) do
+          nil ->
+            add_error(changeset, :state_id, "state not found during city validation")
+
+          state ->
+            if Enum.any?(Repo.preload(state, :cities).cities, &(&1.id == city_id)) do
+              changeset
+            else
+              add_error(changeset, :city_id, "don't belong to state")
+            end
+        end
+    end
+  end
+
+  def validate_neighborhood(changeset) do
+    neighborhood_id = get_field(changeset, :neighborhood_id)
+
+    case Repo.get(Neighborhood, neighborhood_id) do
+      nil ->
+        add_error(changeset, :neighborhood_id, "is invalid")
+
+      _neighborhood ->
+        city_id = get_field(changeset, :city_id)
+
+        case Repo.get(City, city_id) do
+          nil ->
+            add_error(changeset, :city_id, "city not found during neighborhood validation")
+
+          city ->
+            if Enum.any?(
+                 Repo.preload(city, :neighborhoods).neighborhoods,
+                 &(&1.id == neighborhood_id)
+               ) do
+              changeset
+            else
+              add_error(changeset, :neighborhood_id, "don't belong to city")
+            end
+        end
+    end
   end
 
   def costa_rica_zip_codes() do
