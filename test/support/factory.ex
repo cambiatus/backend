@@ -22,6 +22,7 @@ defmodule Cambiatus.Factory do
     Commune.Sale,
     Commune.Transfer,
     Commune.Validator,
+    Kyc,
     Kyc.Address,
     Kyc.Country,
     Kyc.State,
@@ -229,6 +230,24 @@ defmodule Cambiatus.Factory do
     %Invitation{
       community: build(:community),
       creator: build(:user)
+    }
+  end
+
+  def kyc_factory() do
+    %Kyc{
+      account: build(:user),
+      user_type: sequence(:user_type, ["juridical", "natural"]),
+      country: build(:country),
+      document: "",
+      document_type:
+        sequence(:document_type, [
+          "mipyme",
+          "gran_empresa",
+          "cedula_de_identidad",
+          "dimex",
+          "nite"
+        ]),
+      phone: ""
     }
   end
 

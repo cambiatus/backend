@@ -20,7 +20,7 @@ defmodule Cambiatus.Kyc.Address do
     field(:zip, :string)
     field(:number, :string)
 
-    belongs_to(:country, Country, on_replace: :update)
+    belongs_to(:country, Country)
     belongs_to(:state, State)
     belongs_to(:city, City)
     belongs_to(:neighborhood, Neighborhood)
