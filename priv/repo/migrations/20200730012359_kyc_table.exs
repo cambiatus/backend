@@ -14,6 +14,8 @@ defmodule Cambiatus.Repo.Migrations.KycTable do
       timestamps()
     end
 
+    create(unique_index(:countries, [:name]))
+
     create table(:states) do
       add(:name, :string)
       add(:country_id, references(:countries))

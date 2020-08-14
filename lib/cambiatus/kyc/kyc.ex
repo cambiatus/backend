@@ -11,7 +11,6 @@ defmodule Cambiatus.Kyc do
   schema "kyc" do
     field(:user_type, :string)
     field(:document, :string)
-    # TODO: validate documents
     field(:document_type)
     field(:phone, :string)
     field(:is_verified, :boolean)
@@ -30,9 +29,11 @@ defmodule Cambiatus.Kyc do
     |> Repo.preload(:country)
     |> Repo.preload(:account)
     |> cast(params, @required_fields, @optional_fields)
+    |> validate_required(@required_fields)
     |> validate_user_type()
     |> validate_document_type()
-    |> validate_format(:phone, ~r/\[1-9]{1}[0-9]{3,14}/)
+    |> validate_format(:phone, ~r/[1-9]{1}\d{3}-?\d{4}/)
+    |> validate_document()
   end
 
   def validate_user_type(changeset) do
@@ -52,5 +53,65 @@ defmodule Cambiatus.Kyc do
     else
       changeset
     end
+  end
+
+  @doc """
+  This function validates documents that follow the Costa Rica's standard
+
+  Reference: https://help.hulipractice.com/es/articles/1348413-ingresar-informacion-de-emisores-solo-para-costa-rica
+  """
+  def validate_document(%{valid?: false} = changeset), do: changeset
+
+  def validate_document(changeset) do
+    user_type = get_field(changeset, :user_type)
+    document_type = get_field(changeset, :document_type)
+    document = get_field(changeset, :document)
+
+    natural_documents = ["cedula_de_identidad", "dimex", "nite"]
+    juridical_documents = ["mipyme", "gran_empresa"]
+
+    regex =
+      case document_type do
+        "cedula_de_identidad" ->
+          ~r/^[1-9]-?\d{4}-?\d{4}$/
+
+        "dimex" ->
+          ~r/[1-9]{1}\d{10-11}/
+
+        "nite" ->
+          ~r/[1-9]{1}\d{9}/
+
+        "mipyme" ->
+          ~r/\d-?\d{3}-?\d{6}/
+
+        "gran_empresa" ->
+          ~r/\d-?\d{3}-?\d{6}/
+      end
+
+    changeset =
+      case user_type do
+        "natural" ->
+          unless Enum.any?(natural_documents, &(&1 == document_type)) do
+            add_error(changeset, :document_type, "is not valid for 'natural' user_type")
+          else
+            changeset
+          end
+
+        "juridical" ->
+          unless Enum.any?(juridical_documents, &(&1 == document_type)) do
+            add_error(changeset, :document_type, "is not valid for 'juridical' user_type")
+          else
+            changeset
+          end
+      end
+
+    changeset =
+      unless String.match?(document, regex) do
+        add_error(changeset, :document, "is invalid for #{document_type}")
+      else
+        changeset
+      end
+
+    changeset
   end
 end

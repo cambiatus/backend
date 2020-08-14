@@ -234,20 +234,50 @@ defmodule Cambiatus.Factory do
   end
 
   def kyc_factory() do
+    user_type = sequence(:user_type, ["juridical", "natural"])
+
+    {document_type, document} =
+      case user_type do
+        "natural" ->
+          document_type =
+            sequence(:natural_document_type, ["cedula_de_identidad", "dimex", "nite"])
+
+          document =
+            case document_type do
+              "cedula_de_identidad" ->
+                "912345678"
+
+              "dimex" ->
+                "91234567890"
+
+              "nite" ->
+                "8123456789"
+            end
+
+          {document_type, document}
+
+        "juridical" ->
+          document_type = sequence(:juridical_document_type, ["gran_empresa", "mipyme"])
+
+          document =
+            case document_type do
+              "gran_empresa" ->
+                "1-111-111111"
+
+              "mipyme" ->
+                "1-111-111111"
+            end
+
+          {document_type, document}
+      end
+
     %Kyc{
       account: build(:user),
-      user_type: sequence(:user_type, ["juridical", "natural"]),
+      user_type: user_type,
       country: build(:country),
-      document: "",
-      document_type:
-        sequence(:document_type, [
-          "mipyme",
-          "gran_empresa",
-          "cedula_de_identidad",
-          "dimex",
-          "nite"
-        ]),
-      phone: ""
+      document: document,
+      document_type: document_type,
+      phone: "8601-2101"
     }
   end
 
