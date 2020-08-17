@@ -35,7 +35,7 @@ defmodule Cambiatus.Eos do
         "ownerKey" => owner_key,
         "activeKey" => active_key
       }) do
-    case EOSRPC.Chain.get_account(account_name) do
+    case @eosrpc_helper.get_account(account_name) do
       {:ok, _} ->
         {:error, "Account already exists"}
 

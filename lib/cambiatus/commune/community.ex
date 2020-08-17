@@ -37,6 +37,7 @@ defmodule Cambiatus.Commune.Community do
     # Features
     field(:has_objectives, :boolean, default: true)
     field(:has_shop, :boolean, default: true)
+    field(:has_kyc, :boolean, default: false)
 
     has_many(:sales, Sale, foreign_key: :community_id)
     has_many(:transfers, Transfer, foreign_key: :community_id)

@@ -10,6 +10,41 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   }
 
   describe "Accounts Resolver" do
+    test "creates a user with all parameters", %{conn: conn} do
+      community = insert(:community, %{symbol: "BES"})
+      invitation = insert(:invitation, %{community: community})
+
+      invitation_id = invitation.id |> Cambiatus.Auth.InvitationId.encode()
+
+      variables = %{
+        "input" => %{
+          "account" => "someuser",
+          "email" => "some@user.com",
+          "invitation_id" => invitation_id,
+          "name" => "Some User",
+          "public_key" => "mypublickey"
+        }
+      }
+
+      query = """
+      mutation($input: CreateUserInput!){
+        createUser(input: $input) {
+          account
+          email
+          name
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      response = json_response(res, 200)
+
+      assert response["data"]["createUser"]["account"] == variables["input"]["account"]
+      assert response["data"]["createUser"]["email"] == variables["input"]["email"]
+      assert response["data"]["createUser"]["name"] == variables["input"]["name"]
+    end
+
     test "collects a user account given the account name", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       usr = insert(:user)
