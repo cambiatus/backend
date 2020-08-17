@@ -39,7 +39,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     end
 
     @desc "A list of claims"
-
     connection field(:claims_analysis, node_type: :claim) do
       arg(:input, non_null(:claims_analysis_input))
       resolve(&Commune.get_claims_analysis/3)

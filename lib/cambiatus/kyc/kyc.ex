@@ -2,7 +2,13 @@ defmodule Cambiatus.Kyc do
   @moduledoc """
   Context for all KYC related entities
   """
-  alias Cambiatus.{Kyc.Country, Repo, Kyc.State}
+
+  alias Cambiatus.{Kyc.Country, Repo}
+
+  @spec data :: Dataloader.Ecto.t()
+  def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+
+  def query(queryable, _params), do: queryable
 
   @spec get_country(integer()) :: {:ok, Country.t()} | {:error, term()}
   def get_country(name) do
@@ -12,17 +18,6 @@ defmodule Cambiatus.Kyc do
 
       country ->
         {:ok, country}
-    end
-  end
-
-  @spec get_state(integer()) :: {:ok, State.t()} | {:error, term()}
-  def get_state(id) do
-    case(Repo.get(State, id)) do
-      nil ->
-        {:error, "No state found"}
-
-      state ->
-        {:ok, state}
     end
   end
 end

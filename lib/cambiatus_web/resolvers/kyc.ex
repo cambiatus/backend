@@ -10,9 +10,4 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   def get_country(_, %{input: params}, _) do
     Kyc.get_country(params.name)
   end
-
-  @spec get_state(map(), map(), map()) :: {:ok, State.t()} | {:error, term()}
-  def get_state(_, p, _) do
-    Kyc.get_state(1)
-  end
 end
