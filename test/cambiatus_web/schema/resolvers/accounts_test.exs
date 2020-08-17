@@ -252,7 +252,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
     test "incoming transfers for the date from user2 to user1", %{
       conn: conn,
-      users: users,
+      users: _users,
       variables: variables
     } do
       today_date = Date.utc_today() |> Date.to_string()

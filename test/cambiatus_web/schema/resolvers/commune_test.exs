@@ -9,7 +9,6 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
     Accounts.User,
     Auth.Invitation,
     Auth.InvitationId,
-    Commune,
     Commune.Action,
     Commune.AvailableSale,
     Commune.Community,
