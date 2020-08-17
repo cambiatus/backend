@@ -747,7 +747,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       query($symbol: String!) {
         community(symbol: $symbol) {
           has_objectives,
-          has_shop
+          has_shop,
+          has_kyc
         }
       }
       """
@@ -758,13 +759,15 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
         "data" => %{
           "community" => %{
             "has_objectives" => actions,
-            "has_shop" => shop
+            "has_shop" => shop,
+            "has_kyc" => kyc
           }
         }
       } = json_response(res, 200)
 
       assert actions == true
       assert shop == true
+      assert kyc == false
     end
 
     test "collects a community's transfers", %{conn: conn} do

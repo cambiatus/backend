@@ -19,15 +19,6 @@ config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.SendGridAdapter
 
 config :cambiatus, :ipfs, conn: %{host: System.get_env("IPFS_URL"), port: 5001}
 
-config :ex_aws,
-  access_key_id: System.get_env("AWS_ACCESS_KEY_ID"),
-  secret_access_key: System.get_env("AWS_SECRET_ACCESS_KEY"),
-  s3: [
-    scheme: "https://",
-    host: "cambiatus-uploads.s3.amazonaws.com",
-    region: "us-east-1"
-  ]
-
 config :cambiatus, Cambiatus.Chat.ApiHttp,
   chat_base_url: System.get_env("CHAT_BASE_URL"),
   chat_token: System.get_env("CHAT_TOKEN"),

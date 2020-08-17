@@ -9,4 +9,8 @@ defmodule EOSRPC.HelperMock do
   def auto_push(_) do
     {:ok, %{body: %{"transaction_id" => "txidmock"}}}
   end
+
+  def get_account(_) do
+    {:error, %{body: %{"transaction_id" => "txidmock"}}}
+  end
 end
