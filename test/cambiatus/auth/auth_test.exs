@@ -78,7 +78,8 @@ defmodule Cambiatus.AuthTest do
         "account" => user.account,
         "name" => "name",
         "email" => "something@email.com",
-        "invitation_id" => ""
+        "invitation_id" => "",
+        "public_key" => "mykey"
       }
 
       assert Auth.sign_up(auth_params) == {:error, :not_found}
@@ -97,7 +98,8 @@ defmodule Cambiatus.AuthTest do
           "account" => new_user_account_name,
           "name" => "name",
           "email" => new_user_email,
-          "invitation_id" => InvitationId.encode(invitation.id)
+          "invitation_id" => InvitationId.encode(invitation.id),
+          "public_key" => "mykey"
         })
 
       assert(new_user.email == new_user_email)

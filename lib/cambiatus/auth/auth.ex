@@ -72,11 +72,18 @@ defmodule Cambiatus.Auth do
         "name" => name,
         "account" => account,
         "email" => email,
-        "invitation_id" => invitation_id
+        "invitation_id" => invitation_id,
+        "public_key" => public_key
       }) do
     with %Invitation{} = invitation <- Auth.get_invitation(invitation_id),
          nil <- Accounts.get_user(account),
          {:ok, user} <- Accounts.create_user(%{name: name, account: account, email: email}),
+         {:ok, _} <-
+           Cambiatus.Eos.create_account(%{
+             "account" => account,
+             "ownerKey" => public_key,
+             "activeKey" => public_key
+           }),
          {:ok, %{transaction_id: _txid}} <-
            @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
       user = user |> Repo.preload(:communities)

@@ -10,6 +10,41 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   }
 
   describe "Accounts Resolver" do
+    test "creates a user with all parameters", %{conn: conn} do
+      community = insert(:community, %{symbol: "BES"})
+      invitation = insert(:invitation, %{community: community})
+
+      invitation_id = invitation.id |> Cambiatus.Auth.InvitationId.encode()
+
+      variables = %{
+        "input" => %{
+          "account" => "someuser",
+          "email" => "some@user.com",
+          "invitation_id" => invitation_id,
+          "name" => "Some User",
+          "public_key" => "mypublickey"
+        }
+      }
+
+      query = """
+      mutation($input: CreateUserInput!){
+        createUser(input: $input) {
+          account
+          email
+          name
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      response = json_response(res, 200)
+
+      assert response["data"]["createUser"]["account"] == variables["input"]["account"]
+      assert response["data"]["createUser"]["email"] == variables["input"]["email"]
+      assert response["data"]["createUser"]["name"] == variables["input"]["name"]
+    end
+
     test "collects a user account given the account name", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       usr = insert(:user)
@@ -106,7 +141,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         :transfers => transfers,
         :variables => %{
           "input" => %{
-            "account" => user1.account # tests are based on the `user1` profile
+            # tests are based on the `user1` profile
+            "account" => user1.account
           },
           "first" => Enum.count(transfers)
         }
@@ -166,7 +202,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "transfers for the date", %{conn: conn, variables: variables} do
-      today_date = Date.to_string(Date.utc_today)
+      today_date = Date.to_string(Date.utc_today())
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -194,7 +230,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "incoming transfers for the date", %{conn: conn, variables: variables} do
-      today_date = Date.to_string(Date.utc_today)
+      today_date = Date.to_string(Date.utc_today())
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -222,7 +258,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "outgoing transfers for the date", %{conn: conn, variables: variables} do
-      today_date = Date.to_string(Date.utc_today)
+      today_date = Date.to_string(Date.utc_today())
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -249,8 +285,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user1_today_outgoing_transfers_count == 2
     end
 
-    test "incoming transfers for the date from user2 to user1", %{conn: conn, users: users, variables: variables} do
-      today_date = Date.utc_today |> Date.to_string
+    test "incoming transfers for the date from user2 to user1", %{
+      conn: conn,
+      users: users,
+      variables: variables
+    } do
+      today_date = Date.utc_today() |> Date.to_string()
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -290,7 +330,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         }
       } = json_response(res, 200)
 
-      get_account = &(&1["node"][&2]["account"])
+      get_account = & &1["node"][&2]["account"]
 
       assert Enum.all?(
                collected_transfers,
@@ -300,8 +340,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert transfers_from_user2_to_user1_for_today_count == 1
     end
 
-    test "outgoing transfers for the date from user1 to user2", %{conn: conn, users: users, variables: variables} do
-      today_date = Date.utc_today |> Date.to_string
+    test "outgoing transfers for the date from user1 to user2", %{
+      conn: conn,
+      users: users,
+      variables: variables
+    } do
+      today_date = Date.utc_today() |> Date.to_string()
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -341,7 +385,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         }
       } = json_response(res, 200)
 
-      get_account = &(&1["node"][&2]["account"])
+      get_account = & &1["node"][&2]["account"]
 
       assert Enum.all?(
                collected_transfers,
@@ -371,9 +415,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-           "profile" => %{
-              "getPayersByAccount" => payers
-           }
+          "profile" => %{
+            "getPayersByAccount" => payers
+          }
         }
       } = json_response(res, 200)
 
