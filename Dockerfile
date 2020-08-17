@@ -4,7 +4,7 @@
 # The version of Alpine to use for the final image
 ARG ALPINE_VERSION=3.8
 
-FROM elixir:1.7.2-alpine AS builder
+FROM elixir:1.8.2-alpine AS builder
 
 # The name of your application/release (required)
 ARG APP_NAME=cambiatus
@@ -14,16 +14,16 @@ ARG APP_VSN
 ARG MIX_ENV=prod
 
 ENV APP_NAME=${APP_NAME} \
-    APP_VSN=${APP_VSN} \
-    MIX_ENV=${MIX_ENV}
+  APP_VSN=${APP_VSN} \
+  MIX_ENV=${MIX_ENV}
 
 WORKDIR /opt/app
 
 RUN apk update && \
   apk upgrade --no-cache && \
   apk add --no-cache \
-    git \
-    build-base && \
+  git \
+  build-base && \
   mix local.rebar --force && \
   mix local.hex --force
 
@@ -49,12 +49,12 @@ FROM alpine:${ALPINE_VERSION}
 ARG APP_NAME
 
 RUN apk update && \
-    apk add --no-cache \
-      bash \
-      openssl-dev
+  apk add --no-cache \
+  bash \
+  openssl-dev
 
 ENV REPLACE_OS_VARS=true \
-    APP_NAME=${APP_NAME}
+  APP_NAME=${APP_NAME}
 
 WORKDIR /opt/app
 
