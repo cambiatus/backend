@@ -46,10 +46,10 @@ defmodule Cambiatus.Kyc.Address do
   end
 
   def validate_zip(changeset) do
-    unless Enum.any?(costa_rica_zip_codes(), &(&1 == get_field(changeset, :zip))) do
-      add_error(changeset, :zip, "Invalid Zip Code")
-    else
+    if Enum.any?(costa_rica_zip_codes(), &(&1 == get_field(changeset, :zip))) do
       changeset
+    else
+      add_error(changeset, :zip, "Invalid Zip Code")
     end
   end
 
@@ -62,87 +62,62 @@ defmodule Cambiatus.Kyc.Address do
         |> add_error(:country_id, "Country not found")
 
       country ->
-        unless country.name == "Costa Rica" do
-          add_error(changeset, :country_id, "We only support 'Costa Rica'")
-        else
+        if country.name == "Costa Rica" do
           changeset
+        else
+          add_error(changeset, :country_id, "We only support 'Costa Rica'")
         end
     end
   end
 
   def validate_state(changeset) do
-    state_id = get_field(changeset, :state_id)
+    id = get_field(changeset, :state_id)
 
-    case Repo.get(State, state_id) do
-      nil ->
+    with state when not is_nil(state) <- Repo.get(State, id),
+         country when not is_nil(country) <- Repo.get(Country, get_field(changeset, :country_id)) do
+      if Enum.any?(Repo.preload(country, :states).states, &(&1.id == id)) do
         changeset
-        |> add_error(:state_id, "is invalid")
-
-      _state ->
-        country_id = get_field(changeset, :country_id)
-
-        case Repo.get(Country, country_id) do
-          nil ->
-            add_error(changeset, :country_id, "country not found during state validation")
-
-          country ->
-            if Enum.any?(Repo.preload(country, :states).states, &(&1.id == state_id)) do
-              changeset
-            else
-              add_error(changeset, :state_id, "don't belong to country")
-            end
-        end
+      else
+        add_error(changeset, :state_id, "don't belong to country")
+      end
+    else
+      nil ->
+        add_error(changeset, :state_id, "is invalid")
     end
   end
 
   def validate_city(changeset) do
-    city_id = get_field(changeset, :city_id)
+    id = get_field(changeset, :city_id)
 
-    case Repo.get(City, city_id) do
+    with city when not is_nil(city) <- Repo.get(City, id),
+         state when not is_nil(state) <- Repo.get(State, get_field(changeset, :state_id)) do
+      if Enum.any?(Repo.preload(state, :cities).cities, &(&1.id == id)) do
+        changeset
+      else
+        add_error(changeset, :city_id, "don't belong to state")
+      end
+    else
       nil ->
         add_error(changeset, :city_id, "is invalid")
-
-      _city ->
-        state_id = get_field(changeset, :state_id)
-
-        case Repo.get(State, state_id) do
-          nil ->
-            add_error(changeset, :state_id, "state not found during city validation")
-
-          state ->
-            if Enum.any?(Repo.preload(state, :cities).cities, &(&1.id == city_id)) do
-              changeset
-            else
-              add_error(changeset, :city_id, "don't belong to state")
-            end
-        end
     end
   end
 
   def validate_neighborhood(changeset) do
-    neighborhood_id = get_field(changeset, :neighborhood_id)
+    id = get_field(changeset, :neighborhood_id)
 
-    case Repo.get(Neighborhood, neighborhood_id) do
+    with neighborhood when not is_nil(neighborhood) <- Repo.get(Neighborhood, id),
+         city when not is_nil(city) <- Repo.get(City, get_field(changeset, :city_id)) do
+      if Enum.any?(
+           Repo.preload(city, :neighborhoods).neighborhoods,
+           &(&1.id == id)
+         ) do
+        changeset
+      else
+        add_error(changeset, :neighborhood_id, "don't belong to city")
+      end
+    else
       nil ->
         add_error(changeset, :neighborhood_id, "is invalid")
-
-      _neighborhood ->
-        city_id = get_field(changeset, :city_id)
-
-        case Repo.get(City, city_id) do
-          nil ->
-            add_error(changeset, :city_id, "city not found during neighborhood validation")
-
-          city ->
-            if Enum.any?(
-                 Repo.preload(city, :neighborhoods).neighborhoods,
-                 &(&1.id == neighborhood_id)
-               ) do
-              changeset
-            else
-              add_error(changeset, :neighborhood_id, "don't belong to city")
-            end
-        end
     end
   end
 

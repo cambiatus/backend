@@ -16,7 +16,7 @@ defmodule Cambiatus.Kyc.AddressTest do
     assert(
       Map.get(changeset, :errors) ==
         [
-          country_id: {"country not found during state validation", []},
+          state_id: {"is invalid", []},
           country_id: {"Country not found", []}
         ]
     )

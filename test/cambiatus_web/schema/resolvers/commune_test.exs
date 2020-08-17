@@ -930,7 +930,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn() |> get("/api/graph", query: query_history, variables: params)
+      res = build_conn() |> get("/api/graph", query: query_history, variables: params)
       %{"data" => %{"claimsAnalysisHistory" => ch}} = json_response(res, 200)
       claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 

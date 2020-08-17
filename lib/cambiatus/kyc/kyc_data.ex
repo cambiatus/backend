@@ -37,21 +37,21 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   def validate_user_type(changeset) do
-    unless Enum.any?(["natural", "juridical"], &(&1 == get_field(changeset, :user_type))) do
-      add_error(changeset, :user_type, "is invalid")
-    else
+    if Enum.any?(["natural", "juridical"], &(&1 == get_field(changeset, :user_type))) do
       changeset
+    else
+      add_error(changeset, :user_type, "is invalid")
     end
   end
 
   def validate_document_type(changeset) do
-    unless Enum.any?(
-             ["mipyme", "gran_empresa", "cedula_de_identidad", "dimex", "nite"],
-             &(&1 == get_field(changeset, :document_type))
-           ) do
-      add_error(changeset, :document_type, "is invalid")
-    else
+    if Enum.any?(
+         ["mipyme", "gran_empresa", "cedula_de_identidad", "dimex", "nite"],
+         &(&1 == get_field(changeset, :document_type))
+       ) do
       changeset
+    else
+      add_error(changeset, :document_type, "is invalid")
     end
   end
 
@@ -64,54 +64,62 @@ defmodule Cambiatus.Kyc.KycData do
 
   def validate_document(changeset) do
     user_type = get_field(changeset, :user_type)
-    document_type = get_field(changeset, :document_type)
-    document = get_field(changeset, :document)
-
-    natural_documents = ["cedula_de_identidad", "dimex", "nite"]
-    juridical_documents = ["mipyme", "gran_empresa"]
-
-    regex =
-      case document_type do
-        "cedula_de_identidad" ->
-          ~r/^[1-9]-?\d{4}-?\d{4}$/
-
-        "dimex" ->
-          ~r/[1-9]{1}\d{10-11}/
-
-        "nite" ->
-          ~r/[1-9]{1}\d{9}/
-
-        "mipyme" ->
-          ~r/\d-?\d{3}-?\d{6}/
-
-        "gran_empresa" ->
-          ~r/\d-?\d{3}-?\d{6}/
-      end
-
-    changeset =
-      case user_type do
-        "natural" ->
-          unless Enum.any?(natural_documents, &(&1 == document_type)) do
-            add_error(changeset, :document_type, "is not valid for 'natural' user_type")
-          else
-            changeset
-          end
-
-        "juridical" ->
-          unless Enum.any?(juridical_documents, &(&1 == document_type)) do
-            add_error(changeset, :document_type, "is not valid for 'juridical' user_type")
-          else
-            changeset
-          end
-      end
-
-    changeset =
-      unless String.match?(document, regex) do
-        add_error(changeset, :document, "is invalid for #{document_type}")
-      else
-        changeset
-      end
 
     changeset
+    |> validate_document_by_user_type(user_type)
+    |> validate_document_by_document_type()
+  end
+
+  defp validate_document_by_user_type(changeset, "natural") do
+    document_type = get_field(changeset, :document_type)
+    natural_documents = ["cedula_de_identidad", "dimex", "nite"]
+
+    if Enum.any?(natural_documents, &(&1 == document_type)) do
+      changeset
+    else
+      add_error(changeset, :document_type, "is not valid for 'natural' user_type")
+    end
+  end
+
+  defp validate_document_by_user_type(changeset, "juridical") do
+    document_type = get_field(changeset, :document_type)
+    juridical_documents = ["mipyme", "gran_empresa"]
+
+    if Enum.any?(juridical_documents, &(&1 == document_type)) do
+      changeset
+    else
+      add_error(changeset, :document_type, "is not valid for 'juridical' user_type")
+    end
+  end
+
+  def validate_document_by_document_type(changeset) do
+    document_type = get_field(changeset, :document_type)
+    document = get_field(changeset, :document)
+    regex = get_document_type_regex(document_type)
+
+    if String.match?(document, regex) do
+      changeset
+    else
+      add_error(changeset, :document, "is invalid for #{document_type}")
+    end
+  end
+
+  defp get_document_type_regex(document_type) do
+    case document_type do
+      "cedula_de_identidad" ->
+        ~r/^[1-9]-?\d{4}-?\d{4}$/
+
+      "dimex" ->
+        ~r/[1-9]{1}\d{10-11}/
+
+      "nite" ->
+        ~r/[1-9]{1}\d{9}/
+
+      "mipyme" ->
+        ~r/\d-?\d{3}-?\d{6}/
+
+      "gran_empresa" ->
+        ~r/\d-?\d{3}-?\d{6}/
+    end
   end
 end
