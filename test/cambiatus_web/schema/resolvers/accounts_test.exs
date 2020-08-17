@@ -21,11 +21,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
 
       query = """
-      query($input: ProfileInput!){ 
+      query($input: ProfileInput!){
         profile(input: $input) {
         account
         avatar
-        bio 
+        bio
         }
       }
       """
@@ -57,7 +57,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query = """
       mutation($input: ProfileUpdateInput!){
         updateProfile(input: $input) {
-          account 
+          account
           bio
         }
       }
@@ -106,7 +106,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         :transfers => transfers,
         :variables => %{
           "input" => %{
-            "account" => user1.account # tests are based on the `user1` profile
+            # tests are based on the `user1` profile
+            "account" => user1.account
           },
           "first" => Enum.count(transfers)
         }
@@ -166,7 +167,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "transfers for the date", %{conn: conn, variables: variables} do
-      today_date = Date.to_string(Date.utc_today)
+      today_date = Date.to_string(Date.utc_today())
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -194,7 +195,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "incoming transfers for the date", %{conn: conn, variables: variables} do
-      today_date = Date.to_string(Date.utc_today)
+      today_date = Date.to_string(Date.utc_today())
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -222,7 +223,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "outgoing transfers for the date", %{conn: conn, variables: variables} do
-      today_date = Date.to_string(Date.utc_today)
+      today_date = Date.to_string(Date.utc_today())
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -249,8 +250,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user1_today_outgoing_transfers_count == 2
     end
 
-    test "incoming transfers for the date from user2 to user1", %{conn: conn, users: users, variables: variables} do
-      today_date = Date.utc_today |> Date.to_string
+    test "incoming transfers for the date from user2 to user1", %{
+      conn: conn,
+      users: users,
+      variables: variables
+    } do
+      today_date = Date.utc_today() |> Date.to_string()
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -290,7 +295,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         }
       } = json_response(res, 200)
 
-      get_account = &(&1["node"][&2]["account"])
+      get_account = & &1["node"][&2]["account"]
 
       assert Enum.all?(
                collected_transfers,
@@ -300,8 +305,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert transfers_from_user2_to_user1_for_today_count == 1
     end
 
-    test "outgoing transfers for the date from user1 to user2", %{conn: conn, users: users, variables: variables} do
-      today_date = Date.utc_today |> Date.to_string
+    test "outgoing transfers for the date from user1 to user2", %{
+      conn: conn,
+      users: _users,
+      variables: variables
+    } do
+      today_date = Date.utc_today() |> Date.to_string()
 
       query = """
         query ($input: ProfileInput!, $first: Int!) {
@@ -341,7 +350,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         }
       } = json_response(res, 200)
 
-      get_account = &(&1["node"][&2]["account"])
+      get_account = & &1["node"][&2]["account"]
 
       assert Enum.all?(
                collected_transfers,
@@ -371,9 +380,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-           "profile" => %{
-              "getPayersByAccount" => payers
-           }
+          "profile" => %{
+            "getPayersByAccount" => payers
+          }
         }
       } = json_response(res, 200)
 

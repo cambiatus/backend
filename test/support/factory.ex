@@ -22,7 +22,7 @@ defmodule Cambiatus.Factory do
     Commune.Sale,
     Commune.Transfer,
     Commune.Validator,
-    Kyc,
+    Kyc.KycData,
     Kyc.Address,
     Kyc.Country,
     Kyc.State,
@@ -233,7 +233,7 @@ defmodule Cambiatus.Factory do
     }
   end
 
-  def kyc_factory() do
+  def kyc_data_factory() do
     user_type = sequence(:user_type, ["juridical", "natural"])
 
     {document_type, document} =
@@ -271,7 +271,7 @@ defmodule Cambiatus.Factory do
           {document_type, document}
       end
 
-    %Kyc{
+    %KycData{
       account: build(:user),
       user_type: user_type,
       country: build(:country),

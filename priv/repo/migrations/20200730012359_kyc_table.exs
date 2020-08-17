@@ -50,7 +50,7 @@ defmodule Cambiatus.Repo.Migrations.KycTable do
       timestamps()
     end
 
-    create table(:kyc) do
+    create table(:kyc_data) do
       add(:account_id, references(:users, column: :account, type: :string))
       add(:user_type, :user_type, default: "natural")
       add(:document, :string, null: false)
@@ -64,7 +64,7 @@ defmodule Cambiatus.Repo.Migrations.KycTable do
   end
 
   def down do
-    drop(table(:kyc))
+    drop(table(:kyc_data))
     drop(table(:addresses))
     drop(table(:neighborhoods))
     drop(table(:cities))

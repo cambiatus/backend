@@ -27,11 +27,13 @@ defmodule CambiatusWeb.Schema do
   import_types(__MODULE__.CommuneTypes)
   import_types(__MODULE__.NotificationTypes)
   import_types(__MODULE__.RelayTypes)
+  import_types(__MODULE__.KycTypes)
 
   query do
     import_fields(:account_queries)
     import_fields(:community_queries)
     import_fields(:notification_queries)
+    import_fields(:address_queries)
   end
 
   mutation do

@@ -1,10 +1,7 @@
 defmodule Cambiatus.Kyc.AddressTest do
   use Cambiatus.DataCase
 
-  alias Cambiatus.Kyc.{
-    Address,
-    State
-  }
+  alias Cambiatus.Kyc.Address
 
   test "changeset is fine with correct data" do
     address = insert(:address) |> Cambiatus.Repo.preload(:country)

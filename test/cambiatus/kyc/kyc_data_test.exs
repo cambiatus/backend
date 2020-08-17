@@ -1,11 +1,11 @@
-defmodule Cambiatus.KycTest do
+defmodule Cambiatus.KycDataTest do
   use Cambiatus.DataCase
 
-  alias Cambiatus.Kyc
+  alias Cambiatus.Kyc.KycData
 
   test "changeset is fine with valid kyc data" do
-    kyc = insert(:kyc)
-    changeset = Kyc.changeset(kyc, %{})
+    kyc = insert(:kyc_data)
+    changeset = KycData.changeset(kyc, %{})
     assert(Map.get(changeset, :errors) == [])
     assert(changeset.valid?)
   end
@@ -14,12 +14,12 @@ defmodule Cambiatus.KycTest do
     user = insert(:user)
     data = %{account_id: user.account, document: ""}
 
-    changeset = Kyc.changeset(%Kyc{}, data)
+    changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
   end
 
   test "changeset is invalid with wrong user_type" do
-    kyc = insert(:kyc)
+    kyc = insert(:kyc_data)
 
     data = %{
       account_id: kyc.account_id,
@@ -30,7 +30,7 @@ defmodule Cambiatus.KycTest do
       country_id: kyc.country_id
     }
 
-    changeset = Kyc.changeset(%Kyc{}, data)
+    changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
 
     assert(
@@ -41,7 +41,7 @@ defmodule Cambiatus.KycTest do
   end
 
   test "changeset is invalid with wrong document_type" do
-    kyc = insert(:kyc)
+    kyc = insert(:kyc_data)
 
     data = %{
       account_id: kyc.account_id,
@@ -52,13 +52,13 @@ defmodule Cambiatus.KycTest do
       country_id: kyc.country_id
     }
 
-    changeset = Kyc.changeset(%Kyc{}, data)
+    changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
     assert(Map.get(changeset, :errors) == [document_type: {"is invalid", []}])
   end
 
   test "changeset is invalid with regular user, using `cedula de identidade`, with invalid document" do
-    kyc = insert(:kyc)
+    kyc = insert(:kyc_data)
 
     data = %{
       account_id: kyc.account_id,
@@ -69,13 +69,13 @@ defmodule Cambiatus.KycTest do
       country_id: kyc.country_id
     }
 
-    changeset = Kyc.changeset(%Kyc{}, data)
+    changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
     assert(Map.get(changeset, :errors) == [document: {"is invalid for cedula_de_identidad", []}])
   end
 
   test "changeset is invalid with regular user, using `dimex`, with invalid document" do
-    kyc = insert(:kyc)
+    kyc = insert(:kyc_data)
 
     data = %{
       account_id: kyc.account_id,
@@ -86,13 +86,13 @@ defmodule Cambiatus.KycTest do
       country_id: kyc.country_id
     }
 
-    changeset = Kyc.changeset(%Kyc{}, data)
+    changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
     assert(Map.get(changeset, :errors) == [document: {"is invalid for dimex", []}])
   end
 
   test "changeset is invalid with regular user, using `nite`, with invalid document" do
-    kyc = insert(:kyc)
+    kyc = insert(:kyc_data)
 
     data = %{
       account_id: kyc.account_id,
@@ -103,13 +103,13 @@ defmodule Cambiatus.KycTest do
       country_id: kyc.country_id
     }
 
-    changeset = Kyc.changeset(%Kyc{}, data)
+    changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
     assert(Map.get(changeset, :errors) == [document: {"is invalid for nite", []}])
   end
 
   test "changeset is invalid with company user, using `mipyme`, with invalid document" do
-    kyc = insert(:kyc)
+    kyc = insert(:kyc_data)
 
     data = %{
       account_id: kyc.account_id,
@@ -120,13 +120,13 @@ defmodule Cambiatus.KycTest do
       country_id: kyc.country_id
     }
 
-    changeset = Kyc.changeset(%Kyc{}, data)
+    changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
     assert(Map.get(changeset, :errors) == [document: {"is invalid for mipyme", []}])
   end
 
   test "changeset is invalid with company user, using `gran empresa`, with invalid document" do
-    kyc = insert(:kyc)
+    kyc = insert(:kyc_data)
 
     data = %{
       account_id: kyc.account_id,
@@ -137,7 +137,7 @@ defmodule Cambiatus.KycTest do
       country_id: kyc.country_id
     }
 
-    changeset = Kyc.changeset(%Kyc{}, data)
+    changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
     assert(Map.get(changeset, :errors) == [document: {"is invalid for gran_empresa", []}])
   end
