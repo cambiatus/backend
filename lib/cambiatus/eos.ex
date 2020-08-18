@@ -67,7 +67,6 @@ defmodule Cambiatus.Eos do
   Netlink function should be called for signup on Global Cambiatus community or for each
   community invitation, after the signup process
   """
-
   def netlink(new_user, inviter, community \\ cambiatus_community())
 
   def netlink(new_user, inviter, community) do

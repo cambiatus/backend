@@ -274,7 +274,7 @@ defmodule Cambiatus.Factory do
     %KycData{
       account: build(:user),
       user_type: user_type,
-      country: build(:country),
+      country: Repo.one(Country),
       document: document,
       document_type: document_type,
       phone: "8601-2101"

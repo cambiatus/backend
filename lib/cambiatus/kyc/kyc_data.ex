@@ -93,6 +93,13 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   def validate_document_by_document_type(changeset) do
+    country_id = get_field(changeset, :country_id)
+    country = Repo.get(Country, country_id)
+
+    validate_document_by_document_type(changeset, country.name)
+  end
+
+  def validate_document_by_document_type(changeset, "Costa Rica") do
     document_type = get_field(changeset, :document_type)
     document = get_field(changeset, :document)
     regex = get_document_type_regex(document_type)
@@ -102,6 +109,10 @@ defmodule Cambiatus.Kyc.KycData do
     else
       add_error(changeset, :document, "is invalid for #{document_type}")
     end
+  end
+
+  def validate_document_by_document_type(changeset, _) do
+    add_error(changeset, :country_id, "is invalid")
   end
 
   defp get_document_type_regex(document_type) do
