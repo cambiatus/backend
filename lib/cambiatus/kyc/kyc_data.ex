@@ -37,7 +37,9 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   def validate_user_type(changeset) do
-    if Enum.any?(["natural", "juridical"], &(&1 == get_field(changeset, :user_type))) do
+    user_type = get_field(changeset, :user_type)
+
+    if user_type in ["natural", "juridical"] do
       changeset
     else
       add_error(changeset, :user_type, "is invalid")
@@ -45,10 +47,9 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   def validate_document_type(changeset) do
-    if Enum.any?(
-         ["mipyme", "gran_empresa", "cedula_de_identidad", "dimex", "nite"],
-         &(&1 == get_field(changeset, :document_type))
-       ) do
+    document_type = get_field(changeset, :document_type)
+
+    if document_type in ["mipyme", "gran_empresa", "cedula_de_identidad", "dimex", "nite"] do
       changeset
     else
       add_error(changeset, :document_type, "is invalid")
@@ -74,7 +75,7 @@ defmodule Cambiatus.Kyc.KycData do
     document_type = get_field(changeset, :document_type)
     natural_documents = ["cedula_de_identidad", "dimex", "nite"]
 
-    if Enum.any?(natural_documents, &(&1 == document_type)) do
+    if document_type in natural_documents do
       changeset
     else
       add_error(changeset, :document_type, "is not valid for 'natural' user_type")
@@ -85,7 +86,7 @@ defmodule Cambiatus.Kyc.KycData do
     document_type = get_field(changeset, :document_type)
     juridical_documents = ["mipyme", "gran_empresa"]
 
-    if Enum.any?(juridical_documents, &(&1 == document_type)) do
+    if document_type in juridical_documents do
       changeset
     else
       add_error(changeset, :document_type, "is not valid for 'juridical' user_type")
