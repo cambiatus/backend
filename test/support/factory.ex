@@ -5,6 +5,8 @@ defmodule Cambiatus.Factory do
 
   use ExMachina.Ecto, repo: Cambiatus.Repo
 
+  import Ecto.Query
+
   alias Cambiatus.{
     Accounts.User,
     Auth.Invitation,
@@ -14,11 +16,18 @@ defmodule Cambiatus.Factory do
     Commune.Community,
     Commune.Claim,
     Commune.Network,
+    Repo,
     Commune.Mint,
     Commune.Objective,
     Commune.Sale,
     Commune.Transfer,
     Commune.Validator,
+    Kyc.KycData,
+    Kyc.Address,
+    Kyc.Country,
+    Kyc.State,
+    Kyc.City,
+    Kyc.Neighborhood,
     Notifications.NotificationHistory,
     Notifications.PushSubscription
   }
@@ -222,5 +231,117 @@ defmodule Cambiatus.Factory do
       community: build(:community),
       creator: build(:user)
     }
+  end
+
+  def kyc_data_factory() do
+    user_type = sequence(:user_type, ["juridical", "natural"])
+
+    {document_type, document} =
+      case user_type do
+        "natural" ->
+          document_type =
+            sequence(:natural_document_type, ["cedula_de_identidad", "dimex", "nite"])
+
+          document =
+            case document_type do
+              "cedula_de_identidad" ->
+                "912345678"
+
+              "dimex" ->
+                "91234567890"
+
+              "nite" ->
+                "8123456789"
+            end
+
+          {document_type, document}
+
+        "juridical" ->
+          document_type = sequence(:juridical_document_type, ["gran_empresa", "mipyme"])
+
+          document =
+            case document_type do
+              "gran_empresa" ->
+                "1-111-111111"
+
+              "mipyme" ->
+                "1-111-111111"
+            end
+
+          {document_type, document}
+      end
+
+    %KycData{
+      account: build(:user),
+      user_type: user_type,
+      country: Repo.one(Country),
+      document: document,
+      document_type: document_type,
+      phone: "8601-2101"
+    }
+  end
+
+  def address_factory() do
+    country = Repo.one(Country)
+    province = build(:existing_state, %{country: country})
+    canton = build(:existing_city, %{state: province})
+    district = build(:existing_neighborhood, %{city: canton})
+
+    %Address{
+      account: build(:user),
+      street: sequence(:street, &"#{&1}th Lorem Srt"),
+      neighborhood_id: district.id,
+      city_id: canton.id,
+      state_id: province.id,
+      country_id: country.id,
+      zip: Enum.random(Address.costa_rica_zip_codes()),
+      number: ""
+    }
+  end
+
+  def country_factory() do
+    %Country{
+      name: sequence(:country, &"Country number #{&1}")
+    }
+  end
+
+  def state_factory() do
+    %State{
+      name: sequence(:name, &"State #{&1}")
+    }
+  end
+
+  def city_factory() do
+    %City{
+      name: sequence(:name, &"City #{&1}")
+    }
+  end
+
+  def neighborhood_factory() do
+    %Neighborhood{name: sequence(:name, &"Nice Neighborhood #{&1}")}
+  end
+
+  def existing_state_factory(%{country: country}) do
+    query = from(s in State, where: s.country_id == ^country.id)
+
+    query
+    |> Repo.all()
+    |> Enum.random()
+  end
+
+  def existing_city_factory(%{state: s}) do
+    query = from(c in City, where: c.state_id == ^s.id)
+
+    query
+    |> Repo.all()
+    |> Enum.random()
+  end
+
+  def existing_neighborhood_factory(%{city: city}) do
+    query = from(n in Neighborhood, where: n.city_id == ^city.id)
+
+    query
+    |> Repo.all()
+    |> Enum.random()
   end
 end

@@ -32,7 +32,6 @@ defmodule Cambiatus.UploadTest do
       test "The header #{input} should result in #{exp}" do
         result = Cambiatus.Upload.save(%File.Stat{size: 1_000_000}, unquote(input))
 
-        IO.puts(unquote(exp))
         assert {unquote(exp), _} = result
       end
     end)

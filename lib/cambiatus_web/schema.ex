@@ -7,13 +7,15 @@ defmodule CambiatusWeb.Schema do
   use Absinthe.Relay.Schema, :classic
 
   alias Cambiatus.{
-    Commune
+    Commune,
+    Kyc
   }
 
   def context(ctx) do
     loader =
       Dataloader.new()
       |> Dataloader.add_source(Commune, Commune.data())
+      |> Dataloader.add_source(Kyc, Kyc.data())
 
     Map.put(ctx, :loader, loader)
   end
@@ -27,11 +29,13 @@ defmodule CambiatusWeb.Schema do
   import_types(__MODULE__.CommuneTypes)
   import_types(__MODULE__.NotificationTypes)
   import_types(__MODULE__.RelayTypes)
+  import_types(__MODULE__.KycTypes)
 
   query do
     import_fields(:account_queries)
     import_fields(:community_queries)
     import_fields(:notification_queries)
+    import_fields(:address_queries)
   end
 
   mutation do

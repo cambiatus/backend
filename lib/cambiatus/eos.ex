@@ -35,7 +35,7 @@ defmodule Cambiatus.Eos do
         "ownerKey" => owner_key,
         "activeKey" => active_key
       }) do
-    case @eosrpc_helper.get_account(account_name) do
+    case EOSRPC.Chain.get_account(account_name) do
       {:ok, _} ->
         {:error, "Account already exists"}
 
@@ -67,7 +67,6 @@ defmodule Cambiatus.Eos do
   Netlink function should be called for signup on Global Cambiatus community or for each
   community invitation, after the signup process
   """
-
   def netlink(new_user, inviter, community \\ cambiatus_community())
 
   def netlink(new_user, inviter, community) do
