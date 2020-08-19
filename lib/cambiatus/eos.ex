@@ -9,6 +9,7 @@ defmodule Cambiatus.Eos do
 
   @eosrpc_wallet Application.get_env(:cambiatus, :eosrpc_wallet)
   @eosrpc_helper Application.get_env(:cambiatus, :eosrpc_helper)
+  @eosrpc_chain Application.get_env(:cambiatus, :eosrpc_chain)
 
   require Logger
 
@@ -35,7 +36,7 @@ defmodule Cambiatus.Eos do
         "ownerKey" => owner_key,
         "activeKey" => active_key
       }) do
-    case EOSRPC.Chain.get_account(account_name) do
+    case @eosrpc_chain.get_account(account_name) do
       {:ok, _} ->
         {:error, "Account already exists"}
 
