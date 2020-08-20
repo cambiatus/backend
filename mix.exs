@@ -48,7 +48,7 @@ defmodule Cambiatus.Mixfile do
       {:absinthe_relay, "~> 1.4.6"},
       {:dataloader, "~> 1.0.0"},
       {:ipfs, "~> 0.1.0"},
-      {:eosrpc, "~> 0.6.0"},
+      {:eosrpc, "~> 0.6.1"},
       {:sentry, "~> 6.4"},
       {:hashids, "~> 2.0"},
       {:ex_aws, "~> 2.1"},

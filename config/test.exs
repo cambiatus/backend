@@ -16,6 +16,7 @@ config :cambiatus, Cambiatus.Eos, url: "http://eosnode.test:8888"
 
 config :cambiatus, :eosrpc_wallet, EOSRPC.WalletMock
 config :cambiatus, :eosrpc_helper, EOSRPC.HelperMock
+config :cambiatus, :eosrpc_chain, EOSRPC.ChainMock
 config :cambiatus, :contract, Cambiatus.EosMock
 config :cambiatus, :chat_api, Cambiatus.Chat.ApiMock
 config :cambiatus, :s3_client, Cambiatus.ExAwsMock

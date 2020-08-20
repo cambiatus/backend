@@ -2,7 +2,7 @@
 # Build Stage
 #===========
 # The version of Alpine to use for the final image
-ARG ALPINE_VERSION=3.8
+ARG ALPINE_VERSION=3.9.5
 
 FROM elixir:1.8.2-alpine AS builder
 

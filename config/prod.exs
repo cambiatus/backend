@@ -27,6 +27,7 @@ config :cambiatus, Cambiatus.Chat.ApiHttp,
 
 config :cambiatus, :eosrpc_wallet, EOSRPC.Wallet
 config :cambiatus, :eosrpc_helper, EOSRPC.Helper
+config :cambiatus, :eosrpc_chain, EOSRPC.Chain
 config :cambiatus, :contract, Cambiatus.Eos
 config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
 
