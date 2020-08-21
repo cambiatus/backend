@@ -122,7 +122,7 @@ defmodule Cambiatus.Kyc.KycData do
         ~r/^[1-9]-?\d{4}-?\d{4}$/
 
       "dimex" ->
-        ~r/[1-9]{1}\d{10-11}/
+        ~r/[1-9]{1}\d{10,11}/
 
       "nite" ->
         ~r/[1-9]{1}\d{9}/
