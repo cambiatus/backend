@@ -9,7 +9,7 @@ config :cambiatus, CambiatusWeb.Endpoint,
 
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: "default",
-  cambiatus_wallet_pass: "PW5Jtxqh8wqjZpHvcEFoFjUiUiYAzXWyiLLD23wqTmvEHe4Ga9tuG",
+  cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
   cambiatus_account: "bespiral",
   mcc_contract: "bes.cmm",
   cambiatus_cmm: "BES"
@@ -21,9 +21,7 @@ config :cambiatus, Cambiatus.Repo,
   hostname: "localhost",
   port: "5432"
 
-config :cambiatus, Cambiatus.Auth.InvitationId,
-  # salt: "y74669wSOtvUKv4niBSXfWbo/h90nV9Rpm9JfYCeD/cN/UbB3lPUxPtcmz/i+jpk"
-  salt: "default-salt"
+config :cambiatus, Cambiatus.Auth.InvitationId, salt: "default-salt"
 
 config :tesla, adapter: Tesla.Adapter.Hackney
 
