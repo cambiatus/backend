@@ -13,22 +13,25 @@ defmodule Cambiatus.Eos do
 
   require Logger
 
-  @spec unlock_wallet :: true
+  @spec unlock_wallet() :: :ok | :error
   def unlock_wallet do
     cambiatus_wallet()
     |> @eosrpc_wallet.unlock(cambiatus_wallet_password())
     |> case do
       {:ok, _res} ->
-        true
+        :ok
 
       # wallet already unlocked
       {:error, %{body: %{"error" => %{"code" => 3_120_007}}}} ->
-        true
+        :ok
 
-      {:error, error} ->
-        Logger.error(error)
-        false
+      {:error, _error} ->
+        :error
     end
+  end
+
+  def create_account(account, key) do
+    create_account(%{"account" => account, "ownerKey" => key, "activeKey" => key})
   end
 
   def create_account(%{
@@ -40,20 +43,27 @@ defmodule Cambiatus.Eos do
       {:ok, _} ->
         {:error, "Account already exists"}
 
+      {:error, :nxdomain} ->
+        {:error, "Blockchain unacessible"}
+
       {:error, _} ->
-        unlock_wallet()
+        case unlock_wallet() do
+          :ok ->
+            cambiatus_acc()
+            |> @eosrpc_helper.new_account(account_name, owner_key, active_key)
+            |> case do
+              {:ok, %{body: %{"transaction_id" => trx_id}}} ->
+                {:ok, %{transaction_id: trx_id, account: account_name}}
 
-        cambiatus_acc()
-        |> @eosrpc_helper.new_account(account_name, owner_key, active_key)
-        |> case do
-          {:ok, %{body: %{"transaction_id" => trx_id}}} ->
-            {:ok, %{transaction_id: trx_id, account: account_name}}
+              {:error, %{body: %{"error" => error}}} ->
+                {:error, error}
 
-          {:error, %{body: %{"error" => error}}} ->
-            {:error, error}
+              unhandled_reply ->
+                {:error, unhandled_reply}
+            end
 
-          unhandled_reply ->
-            {:error, unhandled_reply}
+          :error ->
+            {:errror, "Wallet error"}
         end
     end
   end

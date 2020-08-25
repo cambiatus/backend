@@ -75,15 +75,26 @@ defmodule Cambiatus.Auth do
         "invitation_id" => invitation_id,
         "public_key" => public_key
       }) do
-    with %Invitation{} = invitation <- Auth.get_invitation(invitation_id),
+    sign_up(%{
+      name: name,
+      account: account,
+      email: email,
+      invitation_id: invitation_id,
+      public_key: public_key
+    })
+  end
+
+  def sign_up(%{
+        name: name,
+        account: account,
+        email: email,
+        invitation_id: invitation_id,
+        public_key: public_key
+      }) do
+    with {:ok, %Invitation{} = invitation} <- Auth.get_invitation(invitation_id),
          nil <- Accounts.get_user(account),
+         {:ok, _} <- Cambiatus.Eos.create_account(account, public_key),
          {:ok, user} <- Accounts.create_user(%{name: name, account: account, email: email}),
-         {:ok, _} <-
-           Cambiatus.Eos.create_account(%{
-             "account" => account,
-             "ownerKey" => public_key,
-             "activeKey" => public_key
-           }),
          {:ok, %{transaction_id: _txid}} <-
            @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
       user = user |> Repo.preload(:communities)
@@ -92,8 +103,16 @@ defmodule Cambiatus.Auth do
       %User{} ->
         {:error, :user_already_registered}
 
-      _ ->
-        {:error, :not_found}
+      {:error, :invitation_not_found} ->
+        {:error, :invitation_not_found}
+
+      {:error, :decode_failed} ->
+        {:error, :invalid_invitation_id}
+
+      error ->
+        # Unhandled error, log to Sentry
+        Sentry.capture_message("Error during sign_up", extra: error)
+        {:error, :failed}
     end
   end
 
@@ -123,53 +142,46 @@ defmodule Cambiatus.Auth do
       [%Invitation{}, ...]
 
   """
-  def list_invitations,
-    do: Invitation |> Repo.all() |> Repo.preload(:community) |> Repo.preload(:creator)
-
-  @doc """
-  Gets a single invitation.
-
-  Raises `Ecto.NoResultsError` if the Invitation does not exist.
-
-  ## Examples
-
-      iex> get_invitation!(123)
-      %Invitation{}
-
-      iex> get_invitation!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_invitation!(code) do
-    {:ok, id} = InvitationId.decode(code)
-
-    Invitation
-    |> Repo.get!(id)
-    |> Repo.preload(:community)
-    |> Repo.preload(:creator)
+  def list_invitations do
+    Invitation |> Repo.all() |> Repo.preload(:community) |> Repo.preload(:creator)
   end
 
   @doc """
-  Gets a single invitation.
+  Gets a single invitation. You need to send an invitation code
 
-  Returns `nil` if the Invitation does not exist.
+  Returns `{:error, :invitation_not_found}` if the Invitation does not exist.
 
   ## Examples
 
-  iex> get_invitation!(123)
-  %Invitation{}
+  iex> get_invitation("aALJc")
+  {:ok, %Invitation{}}
 
-  iex> get_invitation!(456)
-  nil
+  iex> get_invitation("aa")
+  {:error, :invitation_not_found}
 
+  iex> get_invitation("not valid invitation code")
+  {:error, :decode_failed}
   """
+  @spec get_invitation(binary) ::
+          {:ok, %Invitation{}} | {:error, :invitation_not_found} | {:error, :decode_failed}
   def get_invitation(code) do
-    {:ok, id} = InvitationId.decode(code)
+    case InvitationId.decode(code) do
+      {:ok, id} ->
+        Invitation
+        |> Repo.get(id)
+        |> Repo.preload(:community)
+        |> Repo.preload(:creator)
+        |> case do
+          %Invitation{} = invitation ->
+            {:ok, invitation}
 
-    Invitation
-    |> Repo.get(id)
-    |> Repo.preload(:community)
-    |> Repo.preload(:creator)
+          nil ->
+            {:error, :invitation_not_found}
+        end
+
+      _ ->
+        {:error, :decode_failed}
+    end
   end
 
   def user_invitations(%User{account: account}) do

@@ -9,7 +9,7 @@ config :cambiatus, CambiatusWeb.Endpoint,
 
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: "default",
-  cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
+  cambiatus_wallet_pass: "PW5Jtxqh8wqjZpHvcEFoFjUiUiYAzXWyiLLD23wqTmvEHe4Ga9tuG",
   cambiatus_account: "bespiral",
   mcc_contract: "bes.cmm",
   cambiatus_cmm: "BES"
@@ -22,7 +22,8 @@ config :cambiatus, Cambiatus.Repo,
   port: "5432"
 
 config :cambiatus, Cambiatus.Auth.InvitationId,
-  salt: "y74669wSOtvUKv4niBSXfWbo/h90nV9Rpm9JfYCeD/cN/UbB3lPUxPtcmz/i+jpk"
+  # salt: "y74669wSOtvUKv4niBSXfWbo/h90nV9Rpm9JfYCeD/cN/UbB3lPUxPtcmz/i+jpk"
+  salt: "default-salt"
 
 config :tesla, adapter: Tesla.Adapter.Hackney
 
@@ -45,8 +46,8 @@ config :phoenix, :stacktrace_depth, 25
 config :cambiatus, :ipfs, conn: {}
 
 config :eosrpc, EOSRPC.Wallet, url: "http://localhost:8888/v1/wallet"
-
-config :eosrpc, EOSRPC.Chain, url: "http://eosio.cambiatus.local/v1/chain"
+config :eosrpc, EOSRPC.Chain, url: "https://eosio.cambiatus.io/v1/chain"
+config :eosrpc, EOSRPC.Helper, symbol: "EOS"
 
 # Configure Notifications Adapter
 config :cambiatus, Cambiatus.Notifications, adapter: Cambiatus.Notifications.HttpAdapter

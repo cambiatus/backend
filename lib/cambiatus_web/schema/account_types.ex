@@ -26,7 +26,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Creates a new user account"
-    field :create_user, :profile do
+    field :sign_up, :x do
       arg(:input, non_null(:create_user_input))
       resolve(&Accounts.create_user/3)
     end
@@ -61,6 +61,16 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   enum :transfer_direction do
     value(:incoming, description: "User's incoming transfers.")
     value(:outgoing, description: "User's outgoing transfers.")
+  end
+
+  object :x do
+    field(:status, :sign_up_status)
+    field(:reason, :string)
+  end
+
+  enum :sign_up_status do
+    value(:ok, description: "Sign up succeed")
+    value(:error, description: "Sign up failed")
   end
 
   @desc "A users profile on the system"

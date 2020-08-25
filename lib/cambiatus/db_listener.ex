@@ -52,7 +52,7 @@ defmodule Cambiatus.DbListener do
       {:ok, opts}
     else
       error ->
-        Sentry.capture_message("Error Starting Cambiatus.DbListener", %{extra: error})
+        Sentry.capture_message("Error Starting Cambiatus.DbListener", extra: error)
 
         {:stop, error}
     end
