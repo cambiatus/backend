@@ -38,7 +38,6 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   @spec create_user(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
   def create_user(_, %{input: params}, _) do
     params
-    |> Map.new(fn {k, v} -> {Atom.to_string(k), v} end)
     |> Cambiatus.Auth.sign_up()
     |> case do
       {:error, reason} ->
