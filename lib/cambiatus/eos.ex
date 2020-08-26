@@ -83,19 +83,18 @@ defmodule Cambiatus.Eos do
   def netlink(new_user, inviter, community) do
     unlock_wallet()
 
-    response =
-      @eosrpc_helper.auto_push([
-        %{
-          account: mcc_contract(),
-          authorization: [%{actor: cambiatus_acc(), permission: "active"}],
-          data: %{
-            cmm_asset: "0 #{community}",
-            new_user: new_user,
-            inviter: inviter
-          },
-          name: "netlink"
-        }
-      ])
+    action = %{
+      account: mcc_contract(),
+      authorization: [%{actor: cambiatus_acc(), permission: "active"}],
+      data: %{
+        cmm_asset: "0 #{community}",
+        new_user: new_user,
+        inviter: inviter
+      },
+      name: "netlink"
+    }
+
+    response = @eosrpc_helper.auto_push([action])
 
     case response do
       {:ok, %{body: %{"transaction_id" => trx_id}}} ->

@@ -45,7 +45,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
         {:ok, %{status: :error, reason: reason}}
 
       _ ->
-        {:ok, %{status: :ok, reason: ""}}
+        {:ok, %{status: :success, reason: ""}}
     end
   end
 
