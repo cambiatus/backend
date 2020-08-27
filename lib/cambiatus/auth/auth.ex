@@ -91,10 +91,13 @@ defmodule Cambiatus.Auth do
         invitation_id: invitation_id,
         public_key: public_key
       }) do
-    with {:ok, %Invitation{} = invitation} <- Auth.get_invitation(invitation_id),
+    params = %{name: name, account: account, email: email}
+
+    with {:ok, %Invitation{} = invitation} <- Auth.find_invitation(invitation_id),
          nil <- Accounts.get_user(account),
+         true <- Accounts.change_user(params).valid?,
          {:ok, _} <- Cambiatus.Eos.create_account(account, public_key),
-         {:ok, user} <- Accounts.create_user(%{name: name, account: account, email: email}),
+         {:ok, user} <- Accounts.create_user(params),
          {:ok, %{transaction_id: _txid}} <-
            @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
       user = user |> Repo.preload(:communities)
@@ -103,11 +106,46 @@ defmodule Cambiatus.Auth do
       %User{} ->
         {:error, :user_already_registered}
 
+      false ->
+        {:error, :invalid_account}
+
       {:error, :invitation_not_found} ->
         {:error, :invitation_not_found}
 
       {:error, :decode_failed} ->
         {:error, :invalid_invitation_id}
+
+      {:error, "Account already exists"} ->
+        {:error, :user_already_registered}
+
+      error ->
+        # Unhandled error, log to Sentry
+        Sentry.capture_message("Error during sign_up", extra: %{details: error})
+        {:error, :failed}
+    end
+  end
+
+  def sign_up(%{
+        name: name,
+        account: account,
+        email: email,
+        public_key: public_key
+      }) do
+    params = %{name: name, account: account, email: email}
+
+    with nil <- Accounts.get_user(account),
+         true <- Accounts.change_user(params).valid?,
+         {:ok, _} <- Cambiatus.Eos.create_account(account, public_key),
+         {:ok, user} <- Accounts.create_user(params),
+         {:ok, %{transaction_id: _txid}} <-
+           @contract.netlink(user.account, @contract.cambiatus_account()) do
+      {:ok, user}
+    else
+      %User{} ->
+        {:error, :user_already_registered}
+
+      false ->
+        {:error, :invalid_account}
 
       error ->
         # Unhandled error, log to Sentry
@@ -147,6 +185,37 @@ defmodule Cambiatus.Auth do
   end
 
   @doc """
+  Gets a single invitation.
+
+  Raises `Ecto.NoResultsError` if the Invitation does not exist.
+
+  ## Examples
+
+      iex> get_invitation!(123)
+      %Invitation{}
+
+      iex> get_invitation!(456)
+      ** (Ecto.NoResultsError)
+  """
+  def get_invitation!(code) do
+    {:ok, id} = InvitationId.decode(code)
+
+    Invitation
+    |> Repo.get!(id)
+    |> Repo.preload(:community)
+    |> Repo.preload(:creator)
+  end
+
+  def get_invitation(code) do
+    {:ok, id} = InvitationId.decode(code)
+
+    Invitation
+    |> Repo.get(id)
+    |> Repo.preload(:community)
+    |> Repo.preload(:creator)
+  end
+
+  @doc """
   Gets a single invitation. You need to send an invitation code
 
   Returns `{:error, :invitation_not_found}` if the Invitation does not exist.
@@ -162,9 +231,9 @@ defmodule Cambiatus.Auth do
   iex> get_invitation("not valid invitation code")
   {:error, :decode_failed}
   """
-  @spec get_invitation(binary) ::
+  @spec find_invitation(binary) ::
           {:ok, %Invitation{}} | {:error, :invitation_not_found} | {:error, :decode_failed}
-  def get_invitation(code) do
+  def find_invitation(code) do
     case InvitationId.decode(code) do
       {:ok, id} ->
         Invitation

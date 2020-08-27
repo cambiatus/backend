@@ -46,6 +46,9 @@ defmodule Cambiatus.Eos do
       {:error, :nxdomain} ->
         {:error, "Blockchain unacessible"}
 
+      {:error, :econnrefused} ->
+        {:error, "Blockchain unacessible"}
+
       {:error, _} ->
         case unlock_wallet() do
           :ok ->
