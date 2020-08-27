@@ -5,7 +5,7 @@ defmodule Cambiatus.EosMock do
   alias Cambiatus.Commune
 
   @cambiatus_community "BES"
-  @cambiatus_account "cambiatustest"
+  @cambiatus_account "cambiatustes"
 
   def netlink(new_user, inviter, community \\ @cambiatus_community) do
     {:ok, _network} =

@@ -40,13 +40,13 @@ defmodule Cambiatus.AuthTest do
     alias Cambiatus.Commune
 
     test "successful sign up with minimum params" do
-      account = "testesttes2"
+      account = "testtesttest"
       assert {:ok, user} = Auth.sign_up(%{"account" => account})
       assert user.account == account
     end
 
     test "successful sign up with all params" do
-      account = "testesttes3"
+      account = "testesttest"
 
       assert {:ok, user} =
                Auth.sign_up(%{"account" => account, "name" => "name", "email" => "name@email"})
@@ -82,7 +82,7 @@ defmodule Cambiatus.AuthTest do
         "public_key" => "mykey"
       }
 
-      assert Auth.sign_up(auth_params) == {:error, :not_found}
+      assert Auth.sign_up(auth_params) == {:error, :invitation_not_found}
     end
 
     test "sign up with invitation" do

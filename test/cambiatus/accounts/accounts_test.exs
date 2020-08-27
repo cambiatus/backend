@@ -68,8 +68,7 @@ defmodule Cambiatus.AccountsTest do
     end
 
     test "change_user/1 returns a user changeset" do
-      user = user_fixture()
-      assert %Ecto.Changeset{} = Accounts.change_user(user)
+      assert %Ecto.Changeset{} = Accounts.change_user(@valid_attrs)
     end
   end
 end

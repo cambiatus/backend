@@ -71,6 +71,7 @@ defmodule Cambiatus.Mixfile do
 
       # test
       {:ex_machina, "~> 2.3", only: :test},
+      {:faker, "~> 0.14", only: :test},
       {:mox, "~> 0.5.0", only: :test}
     ]
   end
