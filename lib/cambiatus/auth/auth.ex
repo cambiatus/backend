@@ -154,19 +154,6 @@ defmodule Cambiatus.Auth do
     end
   end
 
-  def sign_up(%{"account" => account} = params) do
-    with nil <- Accounts.get_user(account),
-         {:ok, %User{} = user} <- Accounts.create_user(params) do
-      sign_in(%{"account" => user.account})
-    else
-      %User{} ->
-        {:error, :user_already_registered}
-
-      {:error, _} = error ->
-        error
-    end
-  end
-
   def sign_up(_) do
     {:error, "Error parsing params"}
   end
