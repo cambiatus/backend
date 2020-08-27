@@ -216,19 +216,19 @@ defmodule Cambiatus.Auth do
   end
 
   @doc """
-  Gets a single invitation. You need to send an invitation code
+  Finds a single invitation. You need to send an invitation code
 
   Returns `{:error, :invitation_not_found}` if the Invitation does not exist.
 
   ## Examples
 
-  iex> get_invitation("aALJc")
+  iex> find_invitation("aALJc")
   {:ok, %Invitation{}}
 
-  iex> get_invitation("aa")
+  iex> find_invitation("aa")
   {:error, :invitation_not_found}
 
-  iex> get_invitation("not valid invitation code")
+  iex> find_invitation("not valid invitation code")
   {:error, :decode_failed}
   """
   @spec find_invitation(binary) ::
