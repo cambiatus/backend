@@ -41,7 +41,7 @@ defmodule Cambiatus.AuthTest do
 
     test "successful sign up with minimum params" do
       account = "loremlorem15"
-      params = %{account: account, name: "somename", email: "someemail", public_key: "anykey"}
+      params = %{account: account, name: "somename", email: "some@email", public_key: "anykey"}
       assert {:ok, user} = Auth.sign_up(params)
       assert user.account == account
     end

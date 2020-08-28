@@ -145,7 +145,7 @@ defmodule Cambiatus.Auth do
         {:error, :user_already_registered}
 
       false ->
-        {:error, :invalid_account}
+        {:error, :invalid_params}
 
       error ->
         # Unhandled error, log to Sentry
