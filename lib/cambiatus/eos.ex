@@ -52,18 +52,7 @@ defmodule Cambiatus.Eos do
       {:error, _} ->
         case unlock_wallet() do
           :ok ->
-            cambiatus_acc()
-            |> @eosrpc_helper.new_account(account_name, owner_key, active_key)
-            |> case do
-              {:ok, %{body: %{"transaction_id" => trx_id}}} ->
-                {:ok, %{transaction_id: trx_id, account: account_name}}
-
-              {:error, %{body: %{"error" => error}}} ->
-                {:error, error}
-
-              unhandled_reply ->
-                {:error, unhandled_reply}
-            end
+            push_create_account_transaction(account_name, owner_key, active_key)
 
           :error ->
             {:errror, "Wallet error"}
@@ -75,6 +64,21 @@ defmodule Cambiatus.Eos do
     params
     |> Map.merge(%{"account" => random_eos_account()})
     |> create_account()
+  end
+
+  def push_create_account_transaction(account_name, owner_key, active_key) do
+    cambiatus_acc()
+    |> @eosrpc_helper.new_account(account_name, owner_key, active_key)
+    |> case do
+      {:ok, %{body: %{"transaction_id" => trx_id}}} ->
+        {:ok, %{transaction_id: trx_id, account: account_name}}
+
+      {:error, %{body: %{"error" => error}}} ->
+        {:error, error}
+
+      unhandled_reply ->
+        {:error, unhandled_reply}
+    end
   end
 
   @doc """
