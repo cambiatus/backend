@@ -53,7 +53,7 @@ defmodule Cambiatus.DataCase do
   def valid_community_and_user(_context) do
     community_params = %{
       symbol: "BES",
-      issuer: "cambiatustest",
+      issuer: "cambiatustes",
       creator: "testtesttest",
       name: "Cambiatus",
       description: "Default test community",
@@ -70,7 +70,7 @@ defmodule Cambiatus.DataCase do
 
     {:ok, root} =
       Cambiatus.Accounts.create_user(%{
-        account: "cambiatustest"
+        account: "cambiatustes"
       })
 
     {:ok, user} =

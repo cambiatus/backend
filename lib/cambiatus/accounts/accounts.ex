@@ -30,12 +30,13 @@ defmodule Cambiatus.Accounts do
   @spec get_payers_by_account(map(), map()) :: {:ok, list(User.t())}
   def get_payers_by_account(%User{} = user, %{account: _} = payer) do
     profiles =
-      from t in Transfer,
-           where: t.to_id == ^user.account and (like(t.from_id, ^("#{payer.account}%"))),
-           join: u in User,
-           on: u.account == t.from_id,
-           distinct: true,
-           select: u
+      from(t in Transfer,
+        where: t.to_id == ^user.account and like(t.from_id, ^"#{payer.account}%"),
+        join: u in User,
+        on: u.account == t.from_id,
+        distinct: true,
+        select: u
+      )
 
     {
       :ok,
@@ -144,7 +145,7 @@ defmodule Cambiatus.Accounts do
   %Ecto.Changeset{source: %User{}}
 
   """
-  def change_user(%User{} = user) do
-    User.changeset(user, %{})
+  def change_user(params) do
+    User.changeset(%User{}, params)
   end
 end

@@ -18,7 +18,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       variables = %{
         "input" => %{
-          "account" => "someuser",
+          "account" => "loremlorem12",
           "email" => "some@user.com",
           "invitation_id" => invitation_id,
           "name" => "Some User",
@@ -27,11 +27,10 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
 
       query = """
-      mutation($input: CreateUserInput!){
-        createUser(input: $input) {
-          account
-          email
-          name
+      mutation($input: SignUpInput!){
+        signUp(input: $input) {
+          status
+          reason
         }
       }
       """
@@ -40,9 +39,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       response = json_response(res, 200)
 
-      assert response["data"]["createUser"]["account"] == variables["input"]["account"]
-      assert response["data"]["createUser"]["email"] == variables["input"]["email"]
-      assert response["data"]["createUser"]["name"] == variables["input"]["name"]
+      assert response["data"]["signUp"]["status"] == "SUCCESS"
+      assert response["data"]["signUp"]["reason"] == ""
     end
 
     test "collects a user account given the account name", %{conn: conn} do

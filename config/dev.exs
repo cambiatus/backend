@@ -21,8 +21,7 @@ config :cambiatus, Cambiatus.Repo,
   hostname: "localhost",
   port: "5432"
 
-config :cambiatus, Cambiatus.Auth.InvitationId,
-  salt: "y74669wSOtvUKv4niBSXfWbo/h90nV9Rpm9JfYCeD/cN/UbB3lPUxPtcmz/i+jpk"
+config :cambiatus, Cambiatus.Auth.InvitationId, salt: "default-salt"
 
 config :tesla, adapter: Tesla.Adapter.Hackney
 
@@ -45,8 +44,8 @@ config :phoenix, :stacktrace_depth, 25
 config :cambiatus, :ipfs, conn: {}
 
 config :eosrpc, EOSRPC.Wallet, url: "http://localhost:8888/v1/wallet"
-
-config :eosrpc, EOSRPC.Chain, url: "http://eosio.cambiatus.local/v1/chain"
+config :eosrpc, EOSRPC.Chain, url: "https://eosio.cambiatus.io/v1/chain"
+config :eosrpc, EOSRPC.Helper, symbol: "EOS"
 
 # Configure Notifications Adapter
 config :cambiatus, Cambiatus.Notifications, adapter: Cambiatus.Notifications.HttpAdapter

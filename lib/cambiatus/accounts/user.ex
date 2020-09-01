@@ -55,5 +55,6 @@ defmodule Cambiatus.Accounts.User do
     |> validate_required(@required_fields)
     |> unique_constraint(:account)
     |> validate_format(:email, ~r/@/)
+    |> validate_format(:account, ~r/^[a-z1-5]{12}$/)
   end
 end

@@ -13,22 +13,25 @@ defmodule Cambiatus.Eos do
 
   require Logger
 
-  @spec unlock_wallet :: true
+  @spec unlock_wallet() :: :ok | :error
   def unlock_wallet do
     cambiatus_wallet()
     |> @eosrpc_wallet.unlock(cambiatus_wallet_password())
     |> case do
       {:ok, _res} ->
-        true
+        :ok
 
       # wallet already unlocked
       {:error, %{body: %{"error" => %{"code" => 3_120_007}}}} ->
-        true
+        :ok
 
-      {:error, error} ->
-        Logger.error(error)
-        false
+      {:error, _error} ->
+        :error
     end
+  end
+
+  def create_account(account, key) do
+    create_account(%{"account" => account, "ownerKey" => key, "activeKey" => key})
   end
 
   def create_account(%{
@@ -40,20 +43,19 @@ defmodule Cambiatus.Eos do
       {:ok, _} ->
         {:error, "Account already exists"}
 
+      {:error, :nxdomain} ->
+        {:error, "Blockchain unacessible"}
+
+      {:error, :econnrefused} ->
+        {:error, "Blockchain unacessible"}
+
       {:error, _} ->
-        unlock_wallet()
+        case unlock_wallet() do
+          :ok ->
+            push_create_account_transaction(account_name, owner_key, active_key)
 
-        cambiatus_acc()
-        |> @eosrpc_helper.new_account(account_name, owner_key, active_key)
-        |> case do
-          {:ok, %{body: %{"transaction_id" => trx_id}}} ->
-            {:ok, %{transaction_id: trx_id, account: account_name}}
-
-          {:error, %{body: %{"error" => error}}} ->
-            {:error, error}
-
-          unhandled_reply ->
-            {:error, unhandled_reply}
+          :error ->
+            {:errror, "Wallet error"}
         end
     end
   end
@@ -62,6 +64,21 @@ defmodule Cambiatus.Eos do
     params
     |> Map.merge(%{"account" => random_eos_account()})
     |> create_account()
+  end
+
+  def push_create_account_transaction(account_name, owner_key, active_key) do
+    cambiatus_acc()
+    |> @eosrpc_helper.new_account(account_name, owner_key, active_key)
+    |> case do
+      {:ok, %{body: %{"transaction_id" => trx_id}}} ->
+        {:ok, %{transaction_id: trx_id, account: account_name}}
+
+      {:error, %{body: %{"error" => error}}} ->
+        {:error, error}
+
+      unhandled_reply ->
+        {:error, unhandled_reply}
+    end
   end
 
   @doc """
@@ -73,19 +90,18 @@ defmodule Cambiatus.Eos do
   def netlink(new_user, inviter, community) do
     unlock_wallet()
 
-    response =
-      @eosrpc_helper.auto_push([
-        %{
-          account: mcc_contract(),
-          authorization: [%{actor: cambiatus_acc(), permission: "active"}],
-          data: %{
-            cmm_asset: "0 #{community}",
-            new_user: new_user,
-            inviter: inviter
-          },
-          name: "netlink"
-        }
-      ])
+    action = %{
+      account: mcc_contract(),
+      authorization: [%{actor: cambiatus_acc(), permission: "active"}],
+      data: %{
+        cmm_asset: "0 #{community}",
+        new_user: new_user,
+        inviter: inviter
+      },
+      name: "netlink"
+    }
+
+    response = @eosrpc_helper.auto_push([action])
 
     case response do
       {:ok, %{body: %{"transaction_id" => trx_id}}} ->

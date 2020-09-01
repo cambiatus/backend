@@ -415,11 +415,11 @@ defmodule Cambiatus.Commune do
 
   ## Examples
 
-  iex> get_community(123)
-  %Community{}
+    iex> get_community(123)
+    %Community{}
 
-  iex> get_community(456)
-  {:error, "No community exists with the symbol: 456"}
+    iex> get_community(456)
+    {:error, "No community exists with the symbol: 456"}
 
   """
   @spec get_community(String.t()) :: {:ok, term()} | {:error, term()}

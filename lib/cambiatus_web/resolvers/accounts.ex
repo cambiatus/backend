@@ -38,8 +38,15 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   @spec create_user(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
   def create_user(_, %{input: params}, _) do
     params
-    |> Map.new(fn {k, v} -> {Atom.to_string(k), v} end)
     |> Cambiatus.Auth.sign_up()
+    |> case do
+      {:error, reason} ->
+        Sentry.capture_message("Sign up failed", extra: %{error: reason})
+        {:ok, %{status: :error, reason: reason}}
+
+      _ ->
+        {:ok, %{status: :success, reason: ""}}
+    end
   end
 
   @doc """
@@ -47,13 +54,17 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   """
   @spec get_transfers(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, args, _) do
-    {:ok, transfers} = Accounts.Transfers.get_transfers(user, args)
+    case Accounts.Transfers.get_transfers(user, args) do
+      {:ok, transfers} ->
+        result =
+          transfers
+          |> Map.put(:parent, user)
 
-    result =
-      transfers
-      |> Map.put(:parent, user)
+        {:ok, result}
 
-    {:ok, result}
+      {:error, reason} ->
+        {:error, reason}
+    end
   end
 
   def get_analysis_count(%User{} = user, _, _) do
