@@ -43,6 +43,40 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert response["data"]["signUp"]["reason"] == ""
     end
 
+    test "fails to create a user when it already exists", %{conn: conn} do
+      user = insert(:user)
+      community = insert(:community, %{symbol: "BES"})
+      invitation = insert(:invitation, %{community: community})
+
+      invitation_id = invitation.id |> Cambiatus.Auth.InvitationId.encode()
+
+      variables = %{
+        "input" => %{
+          "account" => user.account,
+          "email" => "some@user.com",
+          "invitation_id" => invitation_id,
+          "name" => "Some User",
+          "public_key" => "mypublickey"
+        }
+      }
+
+      query = """
+      mutation($input: SignUpInput!){
+        signUp(input: $input) {
+          status
+          reason
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      response = json_response(res, 200)
+
+      assert response["data"]["signUp"]["status"] == "ERROR"
+      assert response["data"]["signUp"]["reason"] == "user_already_registered"
+    end
+
     test "collects a user account given the account name", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       usr = insert(:user)
