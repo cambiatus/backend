@@ -75,6 +75,10 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
   @desc "User's address"
   object :address do
+    field(:country, :country, resolve: dataloader(Cambiatus.Kyc))
+    field(:state, :state, resolve: dataloader(Cambiatus.Kyc))
+    field(:city, :city, resolve: dataloader(Cambiatus.Kyc))
+    field(:neighborhood, :neighborhood, resolve: dataloader(Cambiatus.Kyc))
     field(:street, non_null(:string))
     field(:number, non_null(:string))
     field(:zip, :string)
@@ -86,6 +90,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:document_type, non_null(:string))
     field(:document, non_null(:string))
     field(:phone, non_null(:string))
+    field(:is_verified, non_null(:boolean))
+    field(:country, :country, resolve: dataloader(Cambiatus.Kyc))
   end
 
   @desc "A users profile on the system"
