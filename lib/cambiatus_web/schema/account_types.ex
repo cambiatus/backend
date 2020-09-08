@@ -75,10 +75,10 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
   @desc "User's address"
   object :address do
-    field(:country, :country, resolve: dataloader(Cambiatus.Kyc))
-    field(:state, :state, resolve: dataloader(Cambiatus.Kyc))
-    field(:city, :city, resolve: dataloader(Cambiatus.Kyc))
-    field(:neighborhood, :neighborhood, resolve: dataloader(Cambiatus.Kyc))
+    field(:country, non_null(:country), resolve: dataloader(Cambiatus.Kyc))
+    field(:state, non_null(:state), resolve: dataloader(Cambiatus.Kyc))
+    field(:city, non_null(:city), resolve: dataloader(Cambiatus.Kyc))
+    field(:neighborhood, non_null(:neighborhood), resolve: dataloader(Cambiatus.Kyc))
     field(:street, non_null(:string))
     field(:number, :string)
     field(:zip, non_null(:string))
