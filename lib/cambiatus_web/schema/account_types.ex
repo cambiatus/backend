@@ -80,8 +80,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:city, :city, resolve: dataloader(Cambiatus.Kyc))
     field(:neighborhood, :neighborhood, resolve: dataloader(Cambiatus.Kyc))
     field(:street, non_null(:string))
-    field(:number, non_null(:string))
-    field(:zip, :string)
+    field(:number, :string)
+    field(:zip, non_null(:string))
   end
 
   @desc "User's KYC fields"
