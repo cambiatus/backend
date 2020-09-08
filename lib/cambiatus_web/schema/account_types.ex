@@ -73,6 +73,27 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:reason, non_null(:string))
   end
 
+  @desc "User's address"
+  object :address do
+    field(:country, non_null(:country), resolve: dataloader(Cambiatus.Kyc))
+    field(:state, non_null(:state), resolve: dataloader(Cambiatus.Kyc))
+    field(:city, non_null(:city), resolve: dataloader(Cambiatus.Kyc))
+    field(:neighborhood, non_null(:neighborhood), resolve: dataloader(Cambiatus.Kyc))
+    field(:street, non_null(:string))
+    field(:number, :string)
+    field(:zip, non_null(:string))
+  end
+
+  @desc "User's KYC fields"
+  object :kyc_data do
+    field(:user_type, non_null(:string))
+    field(:document_type, non_null(:string))
+    field(:document, non_null(:string))
+    field(:phone, non_null(:string))
+    field(:is_verified, non_null(:boolean))
+    field(:country, :country, resolve: dataloader(Cambiatus.Kyc))
+  end
+
   @desc "A users profile on the system"
   object :profile do
     field(:account, non_null(:string))
@@ -88,6 +109,9 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_at, :string)
     field(:created_eos_account, :string)
     field(:network, list_of(:network))
+
+    field(:address, :address, resolve: dataloader(Cambiatus.Kyc))
+    field(:kyc, :kyc_data, resolve: dataloader(Cambiatus.Kyc))
 
     field(:communities, non_null(list_of(non_null(:community))),
       resolve: dataloader(Cambiatus.Commune)

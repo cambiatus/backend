@@ -75,6 +75,76 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert profile["account"] == usr.account
     end
 
+    test "fetches user address", %{conn: conn} do
+      assert Repo.aggregate(User, :count, :account) == 0
+      address = insert(:address)
+      usr = address.account
+
+      variables = %{
+        "input" => %{
+          "account" => usr.account
+        }
+      }
+
+      query = """
+      query($input: ProfileInput!){
+        profile(input: $input) {
+        account
+        address {
+          zip
+        }
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "profile" => profile
+        }
+      } = json_response(res, 200)
+
+      assert Repo.aggregate(User, :count, :account) == 1
+      assert profile["account"] == usr.account
+      assert profile["address"]["zip"] == address.zip
+    end
+
+    test "fetches user KYC data", %{conn: conn} do
+      assert Repo.aggregate(User, :count, :account) == 0
+      kyc = insert(:kyc_data)
+      usr = kyc.account
+
+      variables = %{
+        "input" => %{
+          "account" => usr.account
+        }
+      }
+
+      query = """
+      query($input: ProfileInput!){
+        profile(input: $input) {
+        account
+        kyc {
+          userType
+        }
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "profile" => profile
+        }
+      } = json_response(res, 200)
+
+      assert Repo.aggregate(User, :count, :account) == 1
+      assert profile["account"] == usr.account
+      assert profile["kyc"]["userType"] == kyc.user_type
+    end
+
     @bio "new bio"
     test "updates a user account details given the account name", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
