@@ -4,10 +4,15 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   use this to resolve any queries and mutations for Kyc and Address
   """
 
-  alias Cambiatus.{Kyc, Kyc.Country}
+  alias Cambiatus.{Kyc, Kyc.KycData, Kyc.Country}
 
   @spec get_country(map(), map(), map()) :: {:ok, Country.t()} | {:error, term()}
   def get_country(_, %{input: params}, _) do
     Kyc.get_country(params.name)
+  end
+
+  @spec update_or_create_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
+  def update_or_create_kyc(_, %{input: params}, _) do
+    Kyc.update_or_create_kyc(params)
   end
 end

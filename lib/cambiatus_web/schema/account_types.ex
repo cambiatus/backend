@@ -84,16 +84,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:zip, non_null(:string))
   end
 
-  @desc "User's KYC fields"
-  object :kyc_data do
-    field(:user_type, non_null(:string))
-    field(:document_type, non_null(:string))
-    field(:document, non_null(:string))
-    field(:phone, non_null(:string))
-    field(:is_verified, non_null(:boolean))
-    field(:country, :country, resolve: dataloader(Cambiatus.Kyc))
-  end
-
   @desc "A users profile on the system"
   object :profile do
     field(:account, non_null(:string))
