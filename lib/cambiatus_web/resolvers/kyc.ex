@@ -15,4 +15,9 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   def update_or_create_kyc(_, %{input: params}, _) do
     Kyc.update_or_create_kyc(params)
   end
+
+  @spec update_or_create_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}
+  def update_or_create_address(_, %{input: params}, _) do
+    Kyc.update_or_create_address(params)
+  end
 end
