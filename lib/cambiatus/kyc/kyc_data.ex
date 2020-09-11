@@ -28,7 +28,7 @@ defmodule Cambiatus.Kyc.KycData do
     model
     |> Repo.preload(:country)
     |> Repo.preload(:account)
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_user_type()
     |> validate_document_type()

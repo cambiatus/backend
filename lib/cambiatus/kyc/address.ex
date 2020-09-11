@@ -35,7 +35,7 @@ defmodule Cambiatus.Kyc.Address do
   def changeset(model, params \\ :empty) do
     model
     |> Repo.preload(:country)
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
     |> foreign_key_constraint(:country_id)
     |> foreign_key_constraint(:state_id)
     |> validate_country()
