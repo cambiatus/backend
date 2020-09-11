@@ -39,13 +39,13 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       %{
         "data" => %{
-          "updateOrCreateKyc" => updatedKyc
+          "updateOrCreateKyc" => updated_kyc
         }
       } = json_response(res, 200)
 
-      assert updatedKyc["document"] == new_kyc.document
-      assert updatedKyc["document_type"] == new_kyc.document_type
-      assert updatedKyc["phone"] == new_kyc.phone
+      assert updated_kyc["document"] == new_kyc.document
+      assert updated_kyc["document_type"] == new_kyc.document_type
+      assert updated_kyc["phone"] == new_kyc.phone
     end
 
     test "updates address for the given account", %{conn: conn} do
