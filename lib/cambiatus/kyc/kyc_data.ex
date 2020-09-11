@@ -22,7 +22,7 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   @required_fields ~w(account_id user_type document document_type phone country_id)a
-  @optional_fields ~w(is_verified)
+  @optional_fields ~w(is_verified)a
 
   def changeset(model, params \\ :empty) do
     model
