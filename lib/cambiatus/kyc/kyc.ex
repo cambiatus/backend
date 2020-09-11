@@ -26,17 +26,20 @@ defmodule Cambiatus.Kyc do
   or creates a new KYC data record if user hasn't it yet.
   """
   def update_or_create_kyc(params) do
-    result =
+    kyc_entry =
       case Repo.get_by(KycData, account_id: params.account_id) do
         nil -> %KycData{}
         kyc -> kyc
       end
+
+    result =
+      kyc_entry
       |> KycData.changeset(params)
       |> Repo.insert_or_update()
 
     case result do
       {:ok, kyc} -> {:ok, Repo.get(KycData, kyc.id)}
-      {:error, %{errors: errors_list}} -> {:error, "#{inspect errors_list}"}
+      {:error, %{errors: errors_list}} -> {:error, "#{inspect(errors_list)}"}
     end
   end
 end
