@@ -16,12 +16,12 @@ defmodule Cambiatus.Kyc.Country do
     timestamps()
   end
 
-  @required_fields ~w(name)
-  @optional_fields ~w()
+  @required_fields ~w(name)a
+  @optional_fields ~w()a
 
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
     |> unique_constraint(:name)
   end
 end
