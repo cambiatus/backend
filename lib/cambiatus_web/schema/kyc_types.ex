@@ -58,16 +58,6 @@ defmodule CambiatusWeb.Schema.KycTypes do
     field(:country, :country, resolve: dataloader(Cambiatus.Kyc))
   end
 
-  @desc "Input for user's KYC data deletion"
-  input_object :kyc_deletion_input do
-    field(:user_type, non_null(:string))
-    field(:document_type, non_null(:string))
-    field(:document, non_null(:string))
-    field(:phone, non_null(:string))
-    field(:is_verified, non_null(:boolean))
-    field(:country, :country, resolve: dataloader(Cambiatus.Kyc))
-  end
-
   @desc "Input for creating/updating KYC fields"
   input_object :kyc_data_update_input do
     field(:account_id, non_null(:string))
@@ -90,16 +80,14 @@ defmodule CambiatusWeb.Schema.KycTypes do
     field(:zip, non_null(:string))
   end
 
+  @desc "Input for deleting KYC fields"
+  input_object :kyc_deletion_input do
+    field(:account_id, non_null(:string))
+  end
+
   @desc "Input for deleting address fields"
   input_object :address_deletion_input do
     field(:account_id, non_null(:string))
-    field(:country_id, non_null(:string))
-    field(:state_id, non_null(:string))
-    field(:city_id, non_null(:string))
-    field(:neighborhood_id, non_null(:string))
-    field(:street, non_null(:string))
-    field(:number, :string)
-    field(:zip, non_null(:string))
   end
 
   @desc "Kyc data mutations"
