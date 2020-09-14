@@ -19,11 +19,11 @@ defmodule Cambiatus.Kyc.State do
     timestamps()
   end
 
-  @required_fields ~w(name country_id)
-  @optional_fields ~w()
+  @required_fields ~w(name country_id)a
+  @optional_fields ~w()a
 
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
   end
 end
