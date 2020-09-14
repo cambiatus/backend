@@ -47,4 +47,50 @@ defmodule CambiatusWeb.Schema.KycTypes do
   object :neighborhood do
     field(:name, non_null(:string))
   end
+
+  @desc "User's KYC fields"
+  object :kyc_data do
+    field(:user_type, non_null(:string))
+    field(:document_type, non_null(:string))
+    field(:document, non_null(:string))
+    field(:phone, non_null(:string))
+    field(:is_verified, non_null(:boolean))
+    field(:country, :country, resolve: dataloader(Cambiatus.Kyc))
+  end
+
+  @desc "Input for creating/updating KYC fields"
+  input_object :kyc_data_update_input do
+    field(:account_id, non_null(:string))
+    field(:country_id, non_null(:string))
+    field(:user_type, non_null(:string))
+    field(:document_type, non_null(:string))
+    field(:document, non_null(:string))
+    field(:phone, non_null(:string))
+  end
+
+  @desc "Input for creating/updating address fields"
+  input_object :address_update_input do
+    field(:account_id, non_null(:string))
+    field(:country_id, non_null(:string))
+    field(:state_id, non_null(:string))
+    field(:city_id, non_null(:string))
+    field(:neighborhood_id, non_null(:string))
+    field(:street, non_null(:string))
+    field(:number, :string)
+    field(:zip, non_null(:string))
+  end
+
+  object :kyc_mutations do
+    @desc "Updates user's KYC info if it already exists or inserts a new one if user hasn't it yet."
+    field :upsert_kyc, :kyc_data do
+      arg(:input, non_null(:kyc_data_update_input))
+      resolve(&Kyc.upsert_kyc/3)
+    end
+
+    @desc "Updates user's address if it already exists or inserts a new one if user hasn't it yet."
+    field :upsert_address, :address do
+      arg(:input, non_null(:address_update_input))
+      resolve(&Kyc.upsert_address/3)
+    end
+  end
 end
