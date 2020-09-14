@@ -11,13 +11,13 @@ defmodule CambiatusWeb.Resolvers.Kyc do
     Kyc.get_country(params.name)
   end
 
-  @spec update_or_create_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
-  def update_or_create_kyc(_, %{input: params}, _) do
-    Kyc.update_or_create_kyc(params)
+  @spec upsert_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
+  def upsert_kyc(_, %{input: params}, _) do
+    Kyc.upsert_kyc(params)
   end
 
-  @spec update_or_create_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}
-  def update_or_create_address(_, %{input: params}, _) do
-    Kyc.update_or_create_address(params)
+  @spec upsert_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}
+  def upsert_address(_, %{input: params}, _) do
+    Kyc.upsert_address(params)
   end
 end

@@ -27,7 +27,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       query = """
       mutation ($input: KycDataUpdateInput!) {
-        updateOrCreateKyc(input: $input) {
+        upsertKyc(input: $input) {
           document
           document_type
           phone
@@ -39,7 +39,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       %{
         "data" => %{
-          "updateOrCreateKyc" => updated_kyc
+          "upsertKyc" => updated_kyc
         }
       } = json_response(res, 200)
 
@@ -67,7 +67,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       query = """
       mutation ($input: AddressUpdateInput!) {
-        updateOrCreateAddress(input: $input) {
+        upsertAddress(input: $input) {
           zip
           street
         }
@@ -78,7 +78,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       %{
         "data" => %{
-          "updateOrCreateAddress" => updated_address
+          "upsertAddress" => updated_address
         }
       } = json_response(res, 200)
 
@@ -113,12 +113,12 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       query = """
       mutation ($inputKyc: KycDataUpdateInput!, $inputAddress: AddressUpdateInput!) {
-        updateOrCreateKyc(input: $inputKyc) {
+        upsertKyc(input: $inputKyc) {
           document
           document_type
           user_type
         }
-        updateOrCreateAddress(input: $inputAddress) {
+        upsertAddress(input: $inputAddress) {
           zip
           street
         }
@@ -129,8 +129,8 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       %{
         "data" => %{
-          "updateOrCreateAddress" => updated_address,
-          "updateOrCreateKyc" => updated_kyc
+          "upsertAddress" => updated_address,
+          "upsertKyc" => updated_kyc
         }
       } = json_response(res, 200)
 
