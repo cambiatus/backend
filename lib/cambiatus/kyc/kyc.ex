@@ -27,14 +27,6 @@ defmodule Cambiatus.Kyc do
   end
 
   @doc """
-  Deletes the kyc_data
-  """
-  def kyc_data_deletion(params) do
-    Repo.get_by(KycData, params.account_id)
-    Repo.delete(params)
-  end
-
-  @doc """
   Updates the KYC data record for the given user if it already exists
   or inserts a new one if the user hasn't it yet.
   """
@@ -78,5 +70,21 @@ defmodule Cambiatus.Kyc do
       {:ok, address} -> {:ok, address}
       {:error, %{errors: errors_list}} -> {:error, "#{inspect(errors_list)}"}
     end
+  end
+
+  @doc """
+  Deletes the kyc_data
+  """
+  def delete_kyc(params) do
+    kyc = Repo.get_by(KycData, params.account_id)
+    Repo.delete(kyc)
+  end
+
+  @doc """
+  Deletes the address data
+  """
+  def delete_address(params) do
+    address = Repo.get_by(Address, params.account_id)
+    Repo.delete(address)
   end
 end

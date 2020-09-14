@@ -15,11 +15,6 @@ defmodule CambiatusWeb.Resolvers.Kyc do
     Kyc.get_country(params.name)
   end
 
-  @spec kyc_data_deletion(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
-  def kyc_data_deletion(_, %{input: params}, _) do
-    Kyc.kyc_data_deletion(params)
-  end
-
   @spec upsert_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
   def upsert_kyc(_, %{input: params}, _) do
     Kyc.upsert_kyc(params)
@@ -28,5 +23,15 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   @spec upsert_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}
   def upsert_address(_, %{input: params}, _) do
     Kyc.upsert_address(params)
+  end
+
+  @spec delete_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
+  def delete_kyc(_, %{input: params}, _) do
+    Kyc.delete_kyc(params)
+  end
+
+  @spec delete_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}
+  def delete_address(_, %{input: params}, _) do
+    Kyc.delete_address(params)
   end
 end
