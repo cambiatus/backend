@@ -24,21 +24,21 @@ defmodule CambiatusWeb.Schema.KycTypes do
 
   @desc "KYC supported countries"
   object :country do
-    field(:id, non_null(:string))
+    field(:id, non_null(:id))
     field(:name, non_null(:string))
     field(:states, non_null(list_of(non_null(:state))), resolve: dataloader(Cambiatus.Kyc))
   end
 
   @desc "KYC supported states"
   object :state do
-    field(:id, non_null(:string))
+    field(:id, non_null(:id))
     field(:name, non_null(:string))
     field(:cities, non_null(list_of(non_null(:city))), resolve: dataloader(Cambiatus.Kyc))
   end
 
   @desc "KYC supported cities"
   object :city do
-    field(:id, non_null(:string))
+    field(:id, non_null(:id))
     field(:name, non_null(:string))
 
     field(:neighborhoods, non_null(list_of(non_null(:neighborhood))),
@@ -48,7 +48,7 @@ defmodule CambiatusWeb.Schema.KycTypes do
 
   @desc "KYC supported neighborhoods"
   object :neighborhood do
-    field(:id, non_null(:string))
+    field(:id, non_null(:id))
     field(:name, non_null(:string))
   end
 
