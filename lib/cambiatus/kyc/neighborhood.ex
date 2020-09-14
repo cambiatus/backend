@@ -13,11 +13,11 @@ defmodule Cambiatus.Kyc.Neighborhood do
     timestamps()
   end
 
-  @required_fields ~w(name city_id)
-  @optional_fields ~w()
+  @required_fields ~w(name city_id)a
+  @optional_fields ~w()a
 
   def changeset(model, params \\ :empty) do
     model
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
   end
 end

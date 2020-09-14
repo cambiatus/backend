@@ -22,13 +22,13 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   @required_fields ~w(account_id user_type document document_type phone country_id)a
-  @optional_fields ~w(is_verified)
+  @optional_fields ~w(is_verified)a
 
   def changeset(model, params \\ :empty) do
     model
     |> Repo.preload(:country)
     |> Repo.preload(:account)
-    |> cast(params, @required_fields, @optional_fields)
+    |> cast(params, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_user_type()
     |> validate_document_type()
