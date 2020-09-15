@@ -27,11 +27,29 @@ defmodule CambiatusWeb.Resolvers.Kyc do
 
   @spec delete_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
   def delete_kyc(_, %{input: params}, _) do
-    Kyc.delete_kyc(params)
+    params
+    |> Kyc.delete_kyc()
+    |> case  do
+      {:error, reason} ->
+        Sentry.capture_message("KYC deletion failed", extra: %{error: reason})
+        {:ok, %{status: :error, reason: reason}}
+
+      _ ->
+        {:ok, %{status: :success, reason: ""}}
+    end
   end
 
   @spec delete_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}
   def delete_address(_, %{input: params}, _) do
-    Kyc.delete_address(params)
+    params
+    |> Kyc.delete_address()
+    |> case  do
+      {:error, reason} ->
+        Sentry.capture_message("Address deletion failed", extra: %{error: reason})
+        {:ok, %{status: :success, reason: reason}}
+
+      _ ->
+        {:ok, %{status: :success, reason: ""}}
+    end
   end
 end

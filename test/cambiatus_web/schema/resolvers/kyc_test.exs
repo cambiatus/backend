@@ -154,24 +154,18 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       query = """
       mutation ($input: KycDeletionInput!) {
         deleteKyc(input: $input) {
-          user_type
-          document
-          document_type
+          status
+          reason
         }
       }
       """
 
       res = conn |> post("/api/graph", query: query, variables: variables)
 
-      %{
-        "data" => %{
-          "deleteKyc" => deleted_kyc
-        }
-      } = json_response(res, 200)
+      response = json_response(res, 200)
 
-      assert deleted_kyc["user_type"] == kyc.user_type
-      assert deleted_kyc["document"] == kyc.document
-      assert deleted_kyc["document_type"] == kyc.document_type
+      assert response["data"]["deleteKyc"]["status"] == "SUCCESS"
+      assert response["data"]["deleteKyc"]["reason"] == ""
     end
 
     test "deletes address for the given account", %{conn: conn} do
@@ -187,24 +181,18 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       query = """
       mutation ($input: KycDeletionInput!) {
         deleteAddress(input: $input) {
-          number
-          street
-          zip
+          status
+          reason
         }
       }
       """
 
       res = conn |> post("/api/graph", query: query, variables: variables)
 
-      %{
-        "data" => %{
-          "deleteAddress" => deleted_address
-        }
-      } = json_response(res, 200)
+      response = json_response(res, 200)
 
-      assert deleted_address["number"] == address.number
-      assert deleted_address["street"] == address.street
-      assert deleted_address["zip"] == address.zip
+      assert response["data"]["deleteAddress"]["status"] == "SUCCESS"
+      assert response["data"]["deleteAddress"]["reason"] == ""
     end
   end
 end
