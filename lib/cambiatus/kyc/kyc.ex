@@ -76,7 +76,7 @@ defmodule Cambiatus.Kyc do
   Deletes the kyc_data
   """
   def delete_kyc(params) do
-    kyc = Repo.get_by(KycData, params.account_id)
+    kyc = Repo.get_by(KycData, account_id: params.account_id)
     Repo.delete(kyc)
   end
 
@@ -84,7 +84,7 @@ defmodule Cambiatus.Kyc do
   Deletes the address data
   """
   def delete_address(params) do
-    address = Repo.get_by(Address, params.account_id)
+    address = Repo.get_by(Address, account_id: params.account_id)
     Repo.delete(address)
   end
 end

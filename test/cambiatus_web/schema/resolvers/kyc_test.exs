@@ -145,8 +145,6 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       kyc = insert(:kyc_data)
       user = kyc.account
 
-      new_kyc = delete(:kyc_data, %Plug.Conn{})
-
       variables = %{
         "input" => %{
           "account_id" => user.account
@@ -154,14 +152,11 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       }
 
       query = """
-      mutation ($input: KycDeleteInput!) {
-        deleteKyc(input: $inputKyc) {
+      mutation ($input: KycDeletionInput!) {
+        deleteKyc(input: $input) {
           user_type
           document
           document_type
-          phone
-          country_id
-          is_verified
         }
       }
       """
@@ -174,19 +169,14 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
         }
       } = json_response(res, 200)
 
-      assert deleted_kyc["user_type"] == new_kyc.user_type
-      assert deleted_kyc["document"] == new_kyc.document
-      assert deleted_kyc["document_type"] == new_kyc.document_type
-      assert deleted_kyc["phone"] == new_kyc.phone
-      assert deleted_kyc["country_id"] == new_kyc.country_id
-      assert deleted_kyc["is_verified"] == new_kyc.is_verified
+      assert deleted_kyc["user_type"] == kyc.user_type
+      assert deleted_kyc["document"] == kyc.document
+      assert deleted_kyc["document_type"] == kyc.document_type
     end
 
     test "deletes address for the given account", %{conn: conn} do
       address = insert(:address)
       user = address.account
-
-      new_address = delete(:address, %{account: nil})
 
       variables = %{
         "input" => %{
@@ -195,15 +185,11 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       }
 
       query = """
-      mutation ($input: AddressDeleteInput!) {
-        deleteAddress(input: $inputAddress) {
+      mutation ($input: KycDeletionInput!) {
+        deleteAddress(input: $input) {
           number
           street
           zip
-          neighborhood_id
-          city_id
-          state_id
-          country_id
         }
       }
       """
@@ -216,13 +202,9 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
         }
       } = json_response(res, 200)
 
-      assert deleted_address["number"] == new_address.number
-      assert deleted_address["street"] == new_address.street
-      assert deleted_address["zip"] == new_address.zip
-      assert deleted_address["neighborhood_id"] == new_address.neighborhood_id
-      assert deleted_address["city_id"] == new_address.city_id
-      assert deleted_address["state_id"] == new_address.state_id
-      assert deleted_address["country_id"] == new_address.country_id
+      assert deleted_address["number"] == address.number
+      assert deleted_address["street"] == address.street
+      assert deleted_address["zip"] == address.zip
     end
   end
 end

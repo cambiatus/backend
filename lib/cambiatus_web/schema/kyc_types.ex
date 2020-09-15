@@ -85,11 +85,6 @@ defmodule CambiatusWeb.Schema.KycTypes do
     field(:account_id, non_null(:string))
   end
 
-  @desc "Input for deleting address fields"
-  input_object :address_deletion_input do
-    field(:account_id, non_null(:string))
-  end
-
   @desc "Kyc data mutations"
   object :kyc_mutations do
     @desc "Updates user's KYC info if it already exists or inserts a new one if user hasn't it yet."
@@ -112,7 +107,7 @@ defmodule CambiatusWeb.Schema.KycTypes do
 
     @desc "A mutation to delete user's address data"
     field :delete_address, :address do
-      arg(:input, non_null(:address_deletion_input))
+      arg(:input, non_null(:kyc_deletion_input))
       resolve(&Kyc.delete_address/3)
     end
   end
