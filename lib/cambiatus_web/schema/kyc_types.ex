@@ -65,7 +65,7 @@ defmodule CambiatusWeb.Schema.KycTypes do
   @desc "Input for creating/updating KYC fields"
   input_object :kyc_data_update_input do
     field(:account_id, non_null(:string))
-    field(:country_id, non_null(:string))
+    field(:country_id, non_null(:id))
     field(:user_type, non_null(:string))
     field(:document_type, non_null(:string))
     field(:document, non_null(:string))
@@ -75,10 +75,10 @@ defmodule CambiatusWeb.Schema.KycTypes do
   @desc "Input for creating/updating address fields"
   input_object :address_update_input do
     field(:account_id, non_null(:string))
-    field(:country_id, non_null(:string))
-    field(:state_id, non_null(:string))
-    field(:city_id, non_null(:string))
-    field(:neighborhood_id, non_null(:string))
+    field(:country_id, non_null(:id))
+    field(:state_id, non_null(:id))
+    field(:city_id, non_null(:id))
+    field(:neighborhood_id, non_null(:id))
     field(:street, non_null(:string))
     field(:number, :string)
     field(:zip, non_null(:string))
