@@ -147,7 +147,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       variables = %{
         "input" => %{
-          "account_id" => user.account
+          "account" => user.account
         }
       }
 
@@ -180,7 +180,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       variables = %{
         "input" => %{
-          "account_id" => user.account
+          "account" => user.account
         }
       }
 
