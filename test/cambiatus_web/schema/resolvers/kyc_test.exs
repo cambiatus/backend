@@ -165,7 +165,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       response = json_response(res, 200)
 
       assert response["data"]["deleteKyc"]["status"] == "SUCCESS"
-      assert response["data"]["deleteKyc"]["reason"] == ""
+      assert response["data"]["deleteKyc"]["reason"] == "KYC data deleted successfully"
     end
 
     test "deletes address for the given account", %{conn: conn} do
@@ -192,7 +192,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       response = json_response(res, 200)
 
       assert response["data"]["deleteAddress"]["status"] == "SUCCESS"
-      assert response["data"]["deleteAddress"]["reason"] == ""
+      assert response["data"]["deleteAddress"]["reason"] == "Address data deleted successfully"
     end
   end
 end

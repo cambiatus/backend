@@ -40,8 +40,8 @@ defmodule Cambiatus.Kyc do
 
     result =
       kyc_entry
-      |> KycData.changeset(params)
-      |> Repo.insert_or_update()
+        |> KycData.changeset(params)
+        |> Repo.insert_or_update()
 
     case result do
       {:ok, kyc} -> {:ok, kyc}
@@ -76,15 +76,19 @@ defmodule Cambiatus.Kyc do
   Deletes the kyc_data
   """
   def delete_kyc(params) do
-    kyc = Repo.get_by(KycData, account_id: params.account)
-    Repo.delete(kyc)
+    case Repo.get_by(KycData, account_id: params.account) do
+      nil -> {%KycData{is_verified: false}}
+      kyc -> Repo.delete(kyc)
+    end
   end
 
   @doc """
   Deletes the address data
   """
   def delete_address(params) do
-    address = Repo.get_by(Address, account_id: params.account)
-    Repo.delete(address)
+    case Repo.get_by(Address, account_id: params.account) do
+      nil -> %Address{}
+      address -> Repo.delete(address)
+    end
   end
 end
