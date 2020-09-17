@@ -3,7 +3,12 @@ defmodule Cambiatus.Kyc do
   Context for all KYC related entities
   """
 
-  alias Cambiatus.{Kyc.Country, Kyc.Address, Kyc.KycData, Repo}
+  alias Cambiatus.{
+    Kyc.Country,
+    Kyc.Address,
+    Kyc.KycData,
+    Repo
+  }
 
   @spec data :: Dataloader.Ecto.t()
   def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
@@ -64,6 +69,34 @@ defmodule Cambiatus.Kyc do
     case result do
       {:ok, address} -> {:ok, address}
       {:error, %{errors: errors_list}} -> {:error, "#{inspect(errors_list)}"}
+    end
+  end
+
+  @doc """
+  Deletes the kyc_data
+  """
+  def delete_kyc(params) do
+    case Repo.get_by(KycData, account_id: params.account) do
+      nil -> {:error, :kyc_data_not_found}
+      kyc ->
+        case Repo.delete(kyc) do
+          {:ok, _} -> {:ok, :success}
+          {:error, _} -> {:error, :deletion_failed}
+        end
+    end
+  end
+
+  @doc """
+  Deletes the address data
+  """
+  def delete_address(params) do
+    case Repo.get_by(Address, account_id: params.account) do
+      nil -> {:error, :address_data_not_found}
+      address ->
+        case Repo.delete(address) do
+          {:ok, _} -> {:ok, :success}
+          {:error, _} -> {:error, :deletion_failed}
+        end
     end
   end
 end

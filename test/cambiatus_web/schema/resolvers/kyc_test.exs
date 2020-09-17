@@ -140,5 +140,59 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert updated_kyc["document_type"] == new_kyc.document_type
       assert updated_kyc["user_type"] == new_kyc.user_type
     end
+
+    test "deletes kyc for the given account", %{conn: conn} do
+      kyc = insert(:kyc_data)
+      user = kyc.account
+
+      variables = %{
+        "input" => %{
+          "account" => user.account
+        }
+      }
+
+      query = """
+      mutation ($input: KycDeletionInput!) {
+        deleteKyc(input: $input) {
+          status
+          reason
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      response = json_response(res, 200)
+
+      assert response["data"]["deleteKyc"]["status"] == "SUCCESS"
+      assert response["data"]["deleteKyc"]["reason"] == "KYC data deleted successfully"
+    end
+
+    test "deletes address for the given account", %{conn: conn} do
+      address = insert(:address)
+      user = address.account
+
+      variables = %{
+        "input" => %{
+          "account" => user.account
+        }
+      }
+
+      query = """
+      mutation ($input: KycDeletionInput!) {
+        deleteAddress(input: $input) {
+          status
+          reason
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      response = json_response(res, 200)
+
+      assert response["data"]["deleteAddress"]["status"] == "SUCCESS"
+      assert response["data"]["deleteAddress"]["reason"] == "Address data deleted successfully"
+    end
   end
 end
