@@ -77,8 +77,12 @@ defmodule Cambiatus.Kyc do
   """
   def delete_kyc(params) do
     case Repo.get_by(KycData, account_id: params.account) do
-      nil -> {%KycData{is_verified: false}}
-      kyc -> Repo.delete(kyc)
+      nil -> {:error, :kyc_data_not_found}
+      kyc ->
+        case Repo.delete(kyc) do
+          {:ok, _} -> {:ok, :success}
+          {:error, _} -> {:error, :deletion_failed}
+        end
     end
   end
 
@@ -87,8 +91,12 @@ defmodule Cambiatus.Kyc do
   """
   def delete_address(params) do
     case Repo.get_by(Address, account_id: params.account) do
-      nil -> %Address{}
-      address -> Repo.delete(address)
+      nil -> {:error, :address_data_not_found}
+      address ->
+        case Repo.delete(address) do
+          {:ok, _} -> {:ok, :success}
+          {:error, _} -> {:error, :deletion_failed}
+        end
     end
   end
 end
