@@ -40,8 +40,8 @@ defmodule Cambiatus.Kyc do
 
     result =
       kyc_entry
-        |> KycData.changeset(params)
-        |> Repo.insert_or_update()
+      |> KycData.changeset(params)
+      |> Repo.insert_or_update()
 
     case result do
       {:ok, kyc} -> {:ok, kyc}
