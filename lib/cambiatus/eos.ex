@@ -96,7 +96,8 @@ defmodule Cambiatus.Eos do
       data: %{
         cmm_asset: "0 #{community}",
         new_user: new_user,
-        inviter: inviter
+        inviter: inviter,
+        user_type: "natural"
       },
       name: "netlink"
     }
