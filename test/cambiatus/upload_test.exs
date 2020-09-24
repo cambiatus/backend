@@ -17,7 +17,7 @@ defmodule Cambiatus.UploadTest do
     }
     |> Enum.each(fn {input, exp} ->
       test "Uploading #{input / 1_000_000}MB should result in #{exp}" do
-        result = Cambiatus.Upload.save(%File.Stat{size: unquote(input)}, @gif_header)
+        result = Cambiatus.Upload.save(%File.Stat{size: unquote(input)}, "image/gif", @gif_header)
 
         assert {unquote(exp), _} = result
       end
@@ -30,7 +30,7 @@ defmodule Cambiatus.UploadTest do
     }
     |> Enum.each(fn {input, exp} ->
       test "The header #{input} should result in #{exp}" do
-        result = Cambiatus.Upload.save(%File.Stat{size: 1_000_000}, unquote(input))
+        result = Cambiatus.Upload.save(%File.Stat{size: 1_000_000}, "image/gif", unquote(input))
 
         assert {unquote(exp), _} = result
       end

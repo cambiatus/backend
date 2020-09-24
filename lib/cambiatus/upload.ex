@@ -3,12 +3,15 @@ defmodule Cambiatus.Upload do
 
   @s3_client Application.get_env(:cambiatus, :s3_client, ExAws)
 
-  @spec upload_file(String.t()) :: {:ok, String.t()} | {:error, String.t()}
-  defp upload_file(file_contents) do
+  @spec upload_file(String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  defp upload_file(file_contents, content_type) do
     bucket_name = System.get_env("BUCKET_NAME")
     file_uuid = UUID.uuid4(:hex)
 
-    operation = @s3_client.S3.put_object(bucket_name, "/#{file_uuid}", file_contents)
+    operation =
+      @s3_client.S3.put_object(bucket_name, "/#{file_uuid}", file_contents, %{
+        content_type: content_type
+      })
 
     case @s3_client.request(operation) do
       {:ok, _} ->
@@ -43,10 +46,10 @@ defmodule Cambiatus.Upload do
   @doc """
   Saves a file
   """
-  @spec save(File.Stat.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
-  def save(file_info, file_contents) do
+  @spec save(File.Stat.t(), String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
+  def save(file_info, content_type, file_contents) do
     with :ok <- validate_filesize(file_info),
          :ok <- validate_filetype(file_contents),
-         do: upload_file(file_contents)
+         do: upload_file(file_contents, content_type)
   end
 end

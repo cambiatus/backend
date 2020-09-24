@@ -9,9 +9,10 @@ defmodule Cambiatus.ExAwsMock do
   defmodule S3 do
     @moduledoc "Mocked implementation of ExAws S3"
 
-    @spec put_object(String.t(), String.t(), String.t()) :: ExAws.Operation.S3.t()
-    def put_object(bucket_name, path, content) do
-      ExAws.S3.put_object(bucket_name, path, content)
+    @spec put_object(binary(), binary(), binary(), ExAws.S3.put_object_opts()) ::
+            ExAws.Operation.S3.t()
+    def put_object(bucket_name, path, content, opts \\ []) do
+      ExAws.S3.put_object(bucket_name, path, content, opts)
     end
   end
 end
