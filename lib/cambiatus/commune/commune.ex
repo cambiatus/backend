@@ -226,7 +226,8 @@ defmodule Cambiatus.Commune do
     |> join(:left, [c, a], v in Validator, on: v.action_id == c.action_id)
     |> where(
       [c, a, o, v],
-      o.community_id == ^community_id and v.validator_id == ^account and c.status == "pending" and
+      o.community_id == ^community_id and v.validator_id == ^account and a.is_completed == false and
+        c.status == "pending" and
         fragment(
           "select count(*) from checks b where b.claim_id = ?.id and b.validator_id = ?",
           c,
