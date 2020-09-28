@@ -28,6 +28,7 @@ defmodule Cambiatus.Commune.Community do
     field(:max_supply, :float)
     field(:min_balance, :float)
     field(:issuer, :string)
+    field(:precision, :integer)
 
     field(:created_block, :integer)
     field(:created_tx, :string)
@@ -48,7 +49,7 @@ defmodule Cambiatus.Commune.Community do
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
-  @optional_fields ~w(logo type supply max_supply min_balance issuer created_block
+  @optional_fields ~w(logo type supply max_supply min_balance issuer precision created_block
   created_tx created_at created_eos_account)a
 
   @doc false

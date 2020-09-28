@@ -85,16 +85,18 @@ defmodule Cambiatus.Eos do
   Netlink function should be called for signup on Global Cambiatus community or for each
   community invitation, after the signup process
   """
-  def netlink(new_user, inviter, community \\ cambiatus_community())
+  def netlink(new_user, inviter, community \\ cambiatus_community(), precision \\ 0)
 
-  def netlink(new_user, inviter, community) do
+  def netlink(new_user, inviter, community, precision) do
     unlock_wallet()
+
+    asset = build_asset(community, precision)
 
     action = %{
       account: mcc_contract(),
       authorization: [%{actor: cambiatus_acc(), permission: "active"}],
       data: %{
-        cmm_asset: "0 #{community}",
+        cmm_asset: asset,
         new_user: new_user,
         inviter: inviter,
         user_type: "natural"
@@ -163,6 +165,14 @@ defmodule Cambiatus.Eos do
 
       {:error, _} ->
         new_account
+    end
+  end
+
+  def build_asset(symbol, precision) do
+    if precision == 0 do
+      "0 #{symbol}"
+    else
+      (["0."] ++ Enum.map(1..precision, fn _ -> "0" end) ++ [" #{symbol}"]) |> Enum.join()
     end
   end
 

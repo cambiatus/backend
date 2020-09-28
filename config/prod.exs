@@ -42,7 +42,6 @@ config :cambiatus, Cambiatus.Auth.InvitationId,
   salt: System.get_env("INVITATION_SALT") || "default-salt"
 
 config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
-
 config :eosrpc, EOSRPC.Chain, url: System.get_env("EOSIO_URL")
 
 config :sentry,

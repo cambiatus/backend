@@ -98,9 +98,14 @@ defmodule Cambiatus.Auth do
          true <- Accounts.change_user(params).valid?,
          {:ok, _} <- Cambiatus.Eos.create_account(account, public_key),
          {:ok, user} <- Accounts.create_user(params),
+         user <- Repo.preload(user, :communities),
          {:ok, %{transaction_id: _txid}} <-
-           @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
-      user = user |> Repo.preload(:communities)
+           @contract.netlink(
+             user.account,
+             invitation.creator_id,
+             invitation.community_id,
+             user.community.precision
+           ) do
       {:ok, user}
     else
       %User{} ->
