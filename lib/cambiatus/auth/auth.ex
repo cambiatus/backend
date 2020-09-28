@@ -104,7 +104,7 @@ defmodule Cambiatus.Auth do
              user.account,
              invitation.creator_id,
              invitation.community_id,
-             user.community.precision
+             invitation.community.precision
            ) do
       {:ok, user}
     else
