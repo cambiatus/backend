@@ -236,7 +236,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:supply, :float)
     field(:max_supply, :float)
     field(:min_balance, :float)
-    field(:precision, :integer)
+    field(:precision, non_null(:integer))
 
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
