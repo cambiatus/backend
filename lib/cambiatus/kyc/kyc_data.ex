@@ -34,7 +34,11 @@ defmodule Cambiatus.Kyc.KycData do
     |> validate_document_type()
     |> validate_format(:phone, ~r/[1-9]{1}\d{3}-?\d{4}/)
     |> validate_document()
+    |> foreign_key_constraint(:account_id)
+    |> foreign_key_constraint(:country_id)
   end
+
+
 
   def validate_user_type(changeset) do
     user_type = get_field(changeset, :user_type)
@@ -46,6 +50,7 @@ defmodule Cambiatus.Kyc.KycData do
     end
   end
 
+  @spec validate_document_type(Ecto.Changeset.t()) :: Ecto.Changeset.t()
   def validate_document_type(changeset) do
     document_type = get_field(changeset, :document_type)
 
