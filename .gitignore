@@ -3,7 +3,8 @@
 /db
 /deps
 /*.ez
-
+/dev.exs
+/test.exs
 # Generated on crash by the VM
 erl_crash.dump
 

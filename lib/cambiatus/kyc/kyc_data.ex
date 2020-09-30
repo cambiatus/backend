@@ -29,16 +29,14 @@ defmodule Cambiatus.Kyc.KycData do
     |> Repo.preload(:country)
     |> Repo.preload(:account)
     |> cast(params, @required_fields ++ @optional_fields)
+    |> foreign_key_constraint(:account_id)
+    |> foreign_key_constraint(:country_id)
     |> validate_required(@required_fields)
     |> validate_user_type()
     |> validate_document_type()
     |> validate_format(:phone, ~r/[1-9]{1}\d{3}-?\d{4}/)
     |> validate_document()
-    |> foreign_key_constraint(:account_id)
-    |> foreign_key_constraint(:country_id)
   end
-
-
 
   def validate_user_type(changeset) do
     user_type = get_field(changeset, :user_type)
