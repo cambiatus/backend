@@ -38,6 +38,7 @@ defmodule Cambiatus.Kyc.Address do
     |> cast(params, @required_fields ++ @optional_fields)
     |> foreign_key_constraint(:country_id)
     |> foreign_key_constraint(:state_id)
+    |> foreign_key_constraint(:account_id)
     |> validate_country()
     |> validate_state()
     |> validate_city()
