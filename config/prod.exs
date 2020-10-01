@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :cambiatus, CambiatusWeb.Endpoint,
-  http: [port: 8025],
+  http: [port: 8025, protocol_options: [idle_timeout: 30_000]],
   url: [host: System.get_env("HOSTNAME"), port: 80],
   server: true,
   code_reloader: false
