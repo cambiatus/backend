@@ -175,7 +175,7 @@ defmodule Cambiatus.Eos do
     if precision == 0 do
       "0 #{symbolCode}"
     else
-      (["0."] ++ Enum.map(1..precision, fn _ -> "0" end) ++ [" #{symbol}"]) |> Enum.join()
+      (["0."] ++ Enum.map(1..precision, fn _ -> "0" end) ++ [" #{symbolCode}"]) |> Enum.join()
     end
   end
 
