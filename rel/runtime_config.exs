@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :cambiatus, Cambiatus.Eos,
-  cambiatus_wallet: "default",
+  cambiatus_wallet: System.get_env("EOSIO_WALLET_NAME") || "default",
   cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
   cambiatus_account: System.get_env("BESPIRAL_ACCOUNT"),
   mcc_contract: System.get_env("BESPIRAL_CONTRACT"),
