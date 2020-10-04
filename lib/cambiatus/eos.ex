@@ -85,12 +85,12 @@ defmodule Cambiatus.Eos do
   Netlink function should be called for signup on Global Cambiatus community or for each
   community invitation, after the signup process
   """
-  def netlink(new_user, inviter, community \\ cambiatus_community(), precision \\ 0)
+  def netlink(new_user, inviter, community_id \\ cambiatus_community())
 
-  def netlink(new_user, inviter, community, precision) do
+  def netlink(new_user, inviter, community_id) do
     unlock_wallet()
 
-    asset = build_asset(community, precision)
+    asset = build_asset(community_id)
 
     action = %{
       account: mcc_contract(),
@@ -168,8 +168,8 @@ defmodule Cambiatus.Eos do
     end
   end
 
-  def build_asset(symbol, precision) do
-    symbolCode = symbol |> String.split(",") |> List.last()
+  def build_asset(symbol) do
+    [precision, symbolCode] = symbol |> String.split(",")
 
     if precision == 0 do
       "0 #{symbolCode}"
