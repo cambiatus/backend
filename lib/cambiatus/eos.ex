@@ -169,7 +169,8 @@ defmodule Cambiatus.Eos do
   end
 
   def build_asset(symbol) do
-    [precision, symbolCode] = symbol |> String.split(",")
+    [precisionString, symbolCode] = symbol |> String.split(",")
+    precision = String.to_integer(precisionString)
 
     if precision == 0 do
       "0 #{symbolCode}"
