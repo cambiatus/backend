@@ -103,8 +103,7 @@ defmodule Cambiatus.Auth do
            @contract.netlink(
              user.account,
              invitation.creator_id,
-             invitation.community_id,
-             invitation.community.precision
+             invitation.community_id
            ) do
       {:ok, user}
     else
