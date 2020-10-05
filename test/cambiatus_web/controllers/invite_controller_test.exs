@@ -22,7 +22,8 @@ defmodule CambiatusWeb.InviteControllerTest do
       assert %{"id" => id} = json_response(conn, 200)["data"]
 
       # find invite and validate its information
-      invitation = Auth.get_invitation(id)
+      {:ok, invitation} = Auth.get_invitation(id)
+
       assert invitation.community_id == community.symbol
       assert invitation.creator_id == user.account
     end
