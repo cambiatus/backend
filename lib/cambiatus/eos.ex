@@ -3,7 +3,12 @@ defmodule Cambiatus.Eos do
   EOS Wallet and Chain Handler
   """
 
-  @callback netlink(new_user :: binary, inviter :: binary, community :: binary) :: any
+  @callback netlink(
+              new_user :: binary,
+              inviter :: binary,
+              community :: binary,
+              user_type :: binary
+            ) :: any
   @callback cambiatus_community() :: binary
   @callback cambiatus_account() :: binary
 
@@ -85,9 +90,9 @@ defmodule Cambiatus.Eos do
   Netlink function should be called for signup on Global Cambiatus community or for each
   community invitation, after the signup process
   """
-  def netlink(new_user, inviter, community_id \\ cambiatus_community())
+  def netlink(new_user, inviter, community_id \\ cambiatus_community(), user_type \\ "natural")
 
-  def netlink(new_user, inviter, community_id) do
+  def netlink(new_user, inviter, community_id, user_type) do
     unlock_wallet()
 
     asset = build_asset(community_id)
@@ -99,7 +104,7 @@ defmodule Cambiatus.Eos do
         cmm_asset: asset,
         new_user: new_user,
         inviter: inviter,
-        user_type: "natural"
+        user_type: user_type
       },
       name: "netlink"
     }

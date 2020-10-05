@@ -73,14 +73,16 @@ defmodule Cambiatus.Auth do
         "account" => account,
         "email" => email,
         "invitation_id" => invitation_id,
-        "public_key" => public_key
+        "public_key" => public_key,
+        "user_type" => user_type
       }) do
     sign_up(%{
       name: name,
       account: account,
       email: email,
       invitation_id: invitation_id,
-      public_key: public_key
+      public_key: public_key,
+      user_type: user_type
     })
   end
 
@@ -89,7 +91,8 @@ defmodule Cambiatus.Auth do
         account: account,
         email: email,
         invitation_id: invitation_id,
-        public_key: public_key
+        public_key: public_key,
+        user_type: user_type
       }) do
     params = %{name: name, account: account, email: email}
 
@@ -103,7 +106,8 @@ defmodule Cambiatus.Auth do
            @contract.netlink(
              user.account,
              invitation.creator_id,
-             invitation.community_id
+             invitation.community_id,
+             user_type
            ) do
       {:ok, user}
     else
