@@ -208,8 +208,8 @@ defmodule Cambiatus.Auth do
           {:error, "Invitation not found"}
         end
 
-      {:error, reason} ->
-        {:error, reason}
+      {:error, _} ->
+        {:error, "Invitation not found"}
     end
   end
 
