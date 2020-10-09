@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :cambiatus, CambiatusWeb.Endpoint,
-  http: [port: 4000, protocol_options: [idle_timeout: 30000]],
+  http: [port: 4000, protocol_options: [idle_timeout: 30_000]],
   debug_errors: false,
   code_reloader: true,
   check_origin: false,
