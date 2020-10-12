@@ -174,13 +174,13 @@ defmodule Cambiatus.Eos do
   end
 
   def build_asset(symbol) do
-    [precisionString, symbolCode] = symbol |> String.split(",")
-    precision = String.to_integer(precisionString)
+    [precision_string, symbol_code] = symbol |> String.split(",")
+    precision = String.to_integer(precision_string)
 
     if precision == 0 do
-      "0 #{symbolCode}"
+      "0 #{symbol_code}"
     else
-      (["0."] ++ Enum.map(1..precision, fn _ -> "0" end) ++ [" #{symbolCode}"]) |> Enum.join()
+      (["0."] ++ Enum.map(1..precision, fn _ -> "0" end) ++ [" #{symbol_code}"]) |> Enum.join()
     end
   end
 
