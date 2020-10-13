@@ -73,8 +73,7 @@ defmodule Cambiatus.Kyc do
     end
   end
 
-  @spec delete_kyc(atom | %{account: any}) ::
-          {:error, <<_::64, _::_*8>>} | {:ok, <<_::64, _::_*8>>}
+  @spec delete_kyc(atom | %{account: any}) :: {:error, <<_::64, _::_*8>>} | {:ok, <<_::64, _::_*8>>}
   @doc """
   Deletes the kyc_data
   """
