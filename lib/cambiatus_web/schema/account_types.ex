@@ -26,7 +26,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Creates a new user account"
-    field :sign_up, :sign_up do
+    field :sign_up, non_null(:sign_up) do
       arg(:input, non_null(:sign_up_input))
       resolve(&Accounts.create_user/3)
     end
@@ -39,6 +39,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:email, non_null(:string))
     field(:invitation_id, :string)
     field(:public_key, non_null(:string))
+    field(:user_type, :string)
   end
 
   @desc "An input object for updating a user Profile"

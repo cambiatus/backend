@@ -19,11 +19,10 @@ defmodule CambiatusWeb.AuthController do
     end
   end
 
-  @spec sign_up(Plug.Conn.t(), map) ::
-          {:error, any} | {:ok, nil | [%{optional(atom) => any}] | map} | Plug.Conn.t()
-  def sign_up(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Auth.sign_up(user_params) do
-      render(conn, "auth.json", user: user)
-    end
+  @spec sign_up(Plug.Conn.t(), map) :: Plug.Conn.t()
+  def sign_up(conn, _params) do
+    conn
+    |> put_status(:moved_permanently)
+    |> redirect(to: "/api/graph")
   end
 end

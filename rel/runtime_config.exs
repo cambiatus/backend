@@ -1,7 +1,7 @@
 use Mix.Config
 
 config :cambiatus, Cambiatus.Eos,
-  cambiatus_wallet: "default",
+  cambiatus_wallet: System.get_env("EOSIO_WALLET_NAME") || "default",
   cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
   cambiatus_account: System.get_env("BESPIRAL_ACCOUNT"),
   mcc_contract: System.get_env("BESPIRAL_CONTRACT"),
@@ -37,9 +37,7 @@ config :cambiatus, Cambiatus.Repo,
   pool_size: 15
 
 config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
-
 config :eosrpc, EOSRPC.Chain, url: System.get_env("EOSIO_URL")
-
 config :eosrpc, EOSRPC.Helper, symbol: System.get_env("EOSIO_SYMBOL") || "EOS"
 
 config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
