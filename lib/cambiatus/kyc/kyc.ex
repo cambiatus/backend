@@ -7,7 +7,8 @@ defmodule Cambiatus.Kyc do
     Kyc.Country,
     Kyc.Address,
     Kyc.KycData,
-    Repo
+    Repo,
+    Accounts.User
   }
 
   @spec data :: Dataloader.Ecto.t()
@@ -72,17 +73,23 @@ defmodule Cambiatus.Kyc do
     end
   end
 
+  @spec delete_kyc(atom | %{account: any}) ::
+          {:error, <<_::64, _::_*8>>} | {:ok, <<_::64, _::_*8>>}
   @doc """
   Deletes the kyc_data
   """
   def delete_kyc(params) do
-    case Repo.get_by(KycData, account_id: params.account) do
-      nil -> {:error, :kyc_data_not_found}
-      kyc ->
-        case Repo.delete(kyc) do
-          {:ok, _} -> {:ok, :success}
-          {:error, _} -> {:error, :deletion_failed}
-        end
+    case Repo.get_by(User, account: params.account) do
+      nil -> {:error, "Account does not exist."}
+      _ ->
+      case Repo.get_by(KycData, account_id: params.account) do
+        nil -> {:error, "Account does not have KYC data to be deleted."}
+        kyc ->
+          case Repo.delete(kyc) do
+            {:ok, _} -> {:ok, "KYC data deletion succeeded."}
+            {:error, _} -> {:ok, "KYC data deletion failed."}
+          end
+      end
     end
   end
 
@@ -90,13 +97,17 @@ defmodule Cambiatus.Kyc do
   Deletes the address data
   """
   def delete_address(params) do
-    case Repo.get_by(Address, account_id: params.account) do
-      nil -> {:error, :address_data_not_found}
-      address ->
-        case Repo.delete(address) do
-          {:ok, _} -> {:ok, :success}
-          {:error, _} -> {:error, :deletion_failed}
-        end
+    case Repo.get_by(User, account: params.account) do
+      nil -> {:error, "Account does not exist."}
+      _ ->
+      case Repo.get_by(Address, account_id: params.account) do
+        nil -> {:error, "Account does not have Address data to be deleted."}
+        address ->
+          case Repo.delete(address) do
+            {:ok, _} -> {:ok, "Address data deletion succeeded."}
+            {:error, _} -> {:ok, "Address data deletion failed."}
+          end
+      end
     end
   end
 end

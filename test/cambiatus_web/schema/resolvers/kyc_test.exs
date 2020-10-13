@@ -152,7 +152,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       }
 
       query = """
-      mutation ($input: KycDeletionInput!) {
+      mutation ($input: KycAddressDeletionInput!) {
         deleteKyc(input: $input) {
           status
           reason
@@ -164,8 +164,8 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       response = json_response(res, 200)
 
-      assert response["data"]["deleteKyc"]["status"] == "SUCCESS"
-      assert response["data"]["deleteKyc"]["reason"] == "KYC data deleted successfully"
+      assert response["data"]["deleteKyc"]["status"] == "success"
+      assert response["data"]["deleteKyc"]["reason"] == "KYC data deletion succeeded."
     end
 
     test "deletes address for the given account", %{conn: conn} do
@@ -179,7 +179,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       }
 
       query = """
-      mutation ($input: KycDeletionInput!) {
+      mutation ($input: KycAddressDeletionInput!) {
         deleteAddress(input: $input) {
           status
           reason
@@ -191,8 +191,8 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       response = json_response(res, 200)
 
-      assert response["data"]["deleteAddress"]["status"] == "SUCCESS"
-      assert response["data"]["deleteAddress"]["reason"] == "Address data deleted successfully"
+      assert response["data"]["deleteAddress"]["status"] == "success"
+      assert response["data"]["deleteAddress"]["reason"] == "Address data deletion succeeded."
     end
   end
 end

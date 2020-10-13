@@ -34,8 +34,8 @@ defmodule CambiatusWeb.Resolvers.Kyc do
         Sentry.capture_message("KYC deletion failed", extra: %{error: reason})
         {:ok, %{status: :error, reason: reason}}
 
-      {:ok, _} ->
-        {:ok, %{status: :success, reason: "KYC data deleted successfully"}}
+      {:ok, reason} ->
+        {:ok, %{status: :success, reason: reason}}
     end
   end
 
@@ -48,8 +48,8 @@ defmodule CambiatusWeb.Resolvers.Kyc do
         Sentry.capture_message("Address deletion failed", extra: %{error: reason})
         {:ok, %{status: :error, reason: reason}}
 
-      {:ok, _} ->
-        {:ok, %{status: :success, reason: "Address data deleted successfully"}}
+      {:ok, reason} ->
+        {:ok, %{status: :success, reason: reason}}
     end
   end
 end
