@@ -3,7 +3,12 @@ defmodule Cambiatus.Eos do
   EOS Wallet and Chain Handler
   """
 
-  @callback netlink(new_user :: binary, inviter :: binary, community :: binary) :: any
+  @callback netlink(
+              new_user :: binary,
+              inviter :: binary,
+              community :: binary,
+              user_type :: binary
+            ) :: any
   @callback cambiatus_community() :: binary
   @callback cambiatus_account() :: binary
 
@@ -85,18 +90,21 @@ defmodule Cambiatus.Eos do
   Netlink function should be called for signup on Global Cambiatus community or for each
   community invitation, after the signup process
   """
-  def netlink(new_user, inviter, community \\ cambiatus_community())
+  def netlink(new_user, inviter, community_id \\ cambiatus_community(), user_type \\ "natural")
 
-  def netlink(new_user, inviter, community) do
+  def netlink(new_user, inviter, community_id, user_type) do
     unlock_wallet()
+
+    asset = build_asset(community_id)
 
     action = %{
       account: mcc_contract(),
       authorization: [%{actor: cambiatus_acc(), permission: "active"}],
       data: %{
-        cmm_asset: "0 #{community}",
+        cmm_asset: asset,
         new_user: new_user,
-        inviter: inviter
+        inviter: inviter,
+        user_type: user_type
       },
       name: "netlink"
     }
@@ -162,6 +170,17 @@ defmodule Cambiatus.Eos do
 
       {:error, _} ->
         new_account
+    end
+  end
+
+  def build_asset(symbol) do
+    [precision_string, symbol_code] = symbol |> String.split(",")
+    precision = String.to_integer(precision_string)
+
+    if precision == 0 do
+      "0 #{symbol_code}"
+    else
+      (["0."] ++ Enum.map(1..precision, fn _ -> "0" end) ++ [" #{symbol_code}"]) |> Enum.join()
     end
   end
 

@@ -32,7 +32,7 @@ config :cambiatus, :contract, Cambiatus.Eos
 config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
 
 config :cambiatus, Cambiatus.Eos,
-  cambiatus_wallet: "default",
+  cambiatus_wallet: System.get_env("EOSIO_WALLET_NAME") || "default",
   cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
   cambiatus_account: "bespiral",
   mcc_contract: "bespiral",
@@ -42,7 +42,6 @@ config :cambiatus, Cambiatus.Auth.InvitationId,
   salt: System.get_env("INVITATION_SALT") || "default-salt"
 
 config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
-
 config :eosrpc, EOSRPC.Chain, url: System.get_env("EOSIO_URL")
 
 config :sentry,

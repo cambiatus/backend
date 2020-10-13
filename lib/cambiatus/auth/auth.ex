@@ -73,14 +73,16 @@ defmodule Cambiatus.Auth do
         "account" => account,
         "email" => email,
         "invitation_id" => invitation_id,
-        "public_key" => public_key
+        "public_key" => public_key,
+        "user_type" => user_type
       }) do
     sign_up(%{
       name: name,
       account: account,
       email: email,
       invitation_id: invitation_id,
-      public_key: public_key
+      public_key: public_key,
+      user_type: user_type
     })
   end
 
@@ -89,7 +91,8 @@ defmodule Cambiatus.Auth do
         account: account,
         email: email,
         invitation_id: invitation_id,
-        public_key: public_key
+        public_key: public_key,
+        user_type: user_type
       }) do
     params = %{name: name, account: account, email: email}
 
@@ -98,9 +101,14 @@ defmodule Cambiatus.Auth do
          true <- Accounts.change_user(params).valid?,
          {:ok, _} <- Cambiatus.Eos.create_account(account, public_key),
          {:ok, user} <- Accounts.create_user(params),
+         user <- Repo.preload(user, :communities),
          {:ok, %{transaction_id: _txid}} <-
-           @contract.netlink(user.account, invitation.creator_id, invitation.community_id) do
-      user = user |> Repo.preload(:communities)
+           @contract.netlink(
+             user.account,
+             invitation.creator_id,
+             invitation.community_id,
+             user_type
+           ) do
       {:ok, user}
     else
       %User{} ->

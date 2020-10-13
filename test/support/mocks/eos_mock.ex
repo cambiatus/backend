@@ -7,12 +7,13 @@ defmodule Cambiatus.EosMock do
   @cambiatus_community "BES"
   @cambiatus_account "cambiatustes"
 
-  def netlink(new_user, inviter, community \\ @cambiatus_community) do
+  def netlink(new_user, inviter, community \\ @cambiatus_community, user_type \\ "natural") do
     {:ok, _network} =
       Commune.create_network(%{
         account_id: new_user,
         community_id: community,
-        invited_by_id: inviter
+        invited_by_id: inviter,
+        user_type: user_type
       })
 
     {:ok, %{transaction_id: "mockedtransactionid"}}
