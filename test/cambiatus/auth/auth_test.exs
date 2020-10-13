@@ -174,7 +174,7 @@ defmodule Cambiatus.AuthTest do
     test "get_invitation returns appropriate error message with invalid invitation" do
       res = Auth.get_invitation("someincorrectid")
 
-      assert res == {:error, "Something went wrong while decoding the hashid"}
+      assert res == {:error, "Invitation not found"}
     end
 
     test "create_invitation/1 with invalid data returns error changeset" do
