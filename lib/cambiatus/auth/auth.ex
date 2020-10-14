@@ -19,7 +19,7 @@ defmodule Cambiatus.Auth do
   Login logic for Cambiatus when signing in with an invitationId
   """
   def sign_in(%{"account" => account}, invitation_id) do
-    with %Invitation{} = invitation <- Auth.get_invitation(invitation_id),
+    with {:ok, invitation} <- Auth.get_invitation(invitation_id),
          %User{} = user <- Accounts.get_user(account),
          {:ok, %{transaction_id: _}} <-
            @contract.netlink(user.account, invitation.creator_id, invitation.community_id),
@@ -202,12 +202,23 @@ defmodule Cambiatus.Auth do
   end
 
   def get_invitation(code) do
-    {:ok, id} = InvitationId.decode(code)
+    case InvitationId.decode(code) do
+      {:ok, id} ->
+        invite =
+          Invitation
+          |> Repo.get(id)
+          |> Repo.preload(:community)
+          |> Repo.preload(:creator)
 
-    Invitation
-    |> Repo.get(id)
-    |> Repo.preload(:community)
-    |> Repo.preload(:creator)
+        if invite do
+          {:ok, invite}
+        else
+          {:error, "Invitation not found"}
+        end
+
+      {:error, _} ->
+        {:error, "Invitation not found"}
+    end
   end
 
   @doc """

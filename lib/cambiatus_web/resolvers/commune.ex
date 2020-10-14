@@ -176,6 +176,6 @@ defmodule CambiatusWeb.Resolvers.Commune do
   @doc "Collect an invite"
   @spec get_invitation(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_invitation(_, %{input: %{id: id}}, _) do
-    {:ok, Auth.get_invitation(id)}
+    Auth.get_invitation(id)
   end
 end
