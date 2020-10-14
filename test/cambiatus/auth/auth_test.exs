@@ -153,13 +153,28 @@ defmodule Cambiatus.AuthTest do
       assert invitation.creator_id == user.account
     end
 
-    test "get_invitation accepts strings and returns the correct invitation" do
+    test "get_invitation! accepts strings and returns the correct invitation" do
       invitation = insert(:invitation)
 
       found_invitation =
         Auth.get_invitation!(invitation.id |> Cambiatus.Auth.InvitationId.encode())
 
       assert invitation.id == found_invitation.id
+    end
+
+    test "get_invitation accepts strings and returns the correct invitation" do
+      invitation = insert(:invitation)
+
+      {:ok, found_invitation} =
+        Auth.get_invitation(invitation.id |> Cambiatus.Auth.InvitationId.encode())
+
+      assert invitation.id == found_invitation.id
+    end
+
+    test "get_invitation returns appropriate error message with invalid invitation" do
+      res = Auth.get_invitation("someincorrectid")
+
+      assert res == {:error, "Invitation not found"}
     end
 
     test "create_invitation/1 with invalid data returns error changeset" do
