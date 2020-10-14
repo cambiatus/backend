@@ -91,11 +91,11 @@ defmodule Cambiatus.Kyc do
   """
   def delete_address(params) do
     case Repo.get_by(Address, account_id: params.account) do
-      nil -> {:error, "No Address data to be deleted."}
+      nil -> {:error, "No Address data to be deleted"}
       address ->
         case Repo.delete(address) do
-          {:ok, _} -> {:ok, "Address data deletion succeeded."}
-          {:error, _} -> {:ok, "Address data deletion failed."}
+          {:ok, _} -> {:ok, "Address data deletion succeeded"}
+          {:error, _} -> {:ok, "Address data deletion failed"}
         end
     end
   end
