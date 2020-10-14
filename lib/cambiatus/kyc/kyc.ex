@@ -7,7 +7,8 @@ defmodule Cambiatus.Kyc do
     Kyc.Country,
     Kyc.Address,
     Kyc.KycData,
-    Repo
+    Repo,
+    Accounts.User
   }
 
   @spec data :: Dataloader.Ecto.t()
@@ -76,13 +77,15 @@ defmodule Cambiatus.Kyc do
   Deletes the kyc_data
   """
   def delete_kyc(params) do
-    case Repo.get_by(KycData, account_id: params.account) do
-      nil -> {:error, "No KYC data to be deleted"}
-      kyc ->
-        case Repo.delete(kyc) do
-          {:ok, _} -> {:ok, "KYC data deletion succeeded"}
-          {:error, _} -> {:ok, "KYC data deletion failed"}
-        end
+    with {:user, %User{}} <- {:user, Repo.get_by(User, account: params.account)},
+         {:kyc, %KycData{} = kyc} <-
+           {:kyc, Repo.get_by(KycData, account_id: params.account)},
+         {:deletion, {:ok, _}} <- {:deletion, Repo.delete(kyc)} do
+      {:ok, "KYC data deletion succeeded"}
+    else
+      {:user, _} -> {:error, "User account doesn't exist"}
+      {:kyc, _} -> {:error, "Account does not have KYC data to be deleted."}
+      {:deletion, _} -> {:error, "KYC data deletion failed"}
     end
   end
 
@@ -90,13 +93,15 @@ defmodule Cambiatus.Kyc do
   Deletes the address data
   """
   def delete_address(params) do
-    case Repo.get_by(Address, account_id: params.account) do
-      nil -> {:error, "No Address data to be deleted"}
-      address ->
-        case Repo.delete(address) do
-          {:ok, _} -> {:ok, "Address data deletion succeeded"}
-          {:error, _} -> {:ok, "Address data deletion failed"}
-        end
+    with {:user, %User{}} <- {:user, Repo.get_by(User, account: params.account)},
+         {:address, %Address{} = address} <-
+           {:address, Repo.get_by(Address, account_id: params.account)},
+         {:deletion, {:ok, _}} <- {:deletion, Repo.delete(address)} do
+      {:ok, "Address data deletion succeeded"}
+    else
+      {:user, _} -> {:error, "User account doesn't exist"}
+      {:address, _} -> {:error, "Account does not have Address data to be deleted."}
+      {:deletion, _} -> {:error, "Address data deletion failed"}
     end
   end
 end
