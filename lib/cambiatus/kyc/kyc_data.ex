@@ -44,7 +44,7 @@ defmodule Cambiatus.Kyc.KycData do
     if user_type in ["natural", "juridical"] do
       changeset
     else
-      add_error(changeset, :user_type, "is invalid")
+      add_error(changeset, :user_type, "User type entry is not valid")
     end
   end
 
@@ -54,7 +54,7 @@ defmodule Cambiatus.Kyc.KycData do
     if document_type in ["mipyme", "gran_empresa", "cedula_de_identidad", "dimex", "nite"] do
       changeset
     else
-      add_error(changeset, :document_type, "is invalid")
+      add_error(changeset, :document_type, "Document type entry is not valid")
     end
   end
 
@@ -80,7 +80,7 @@ defmodule Cambiatus.Kyc.KycData do
     if document_type in natural_documents do
       changeset
     else
-      add_error(changeset, :document_type, "is not valid for 'natural' user_type")
+      add_error(changeset, :document_type, "Document type entry is not valid for 'natural' user_type")
     end
   end
 
@@ -91,7 +91,7 @@ defmodule Cambiatus.Kyc.KycData do
     if document_type in juridical_documents do
       changeset
     else
-      add_error(changeset, :document_type, "is not valid for 'juridical' user_type")
+      add_error(changeset, :document_type, "Document type entry is not valid for 'juridical' user_type")
     end
   end
 
@@ -110,7 +110,7 @@ defmodule Cambiatus.Kyc.KycData do
     if String.match?(document, regex) do
       changeset
     else
-      add_error(changeset, :document, "is invalid for #{document_type}")
+      add_error(changeset, :document, "Document entry is not valid for #{document_type}")
     end
   end
 
