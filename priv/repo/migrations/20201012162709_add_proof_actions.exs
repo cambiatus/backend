@@ -1,4 +1,4 @@
-defmodule Cambiatus.Repo.Migrations.AddKycFeatureCommunities do
+defmodule Cambiatus.Repo.Migrations.AddProofActions do
   use Ecto.Migration
 
   def change do

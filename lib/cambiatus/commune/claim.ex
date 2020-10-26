@@ -16,6 +16,9 @@ defmodule Cambiatus.Commune.Claim do
 
   schema "claims" do
     field(:status, :string)
+    field(:proof_photo, :string)
+    field(:proof_code, :string)
+
     belongs_to(:action, Action)
     belongs_to(:claimer, User, references: :account, type: :string)
     has_many(:checks, Check)
@@ -27,11 +30,12 @@ defmodule Cambiatus.Commune.Claim do
   end
 
   @required_fields ~w(is_verified action_id claimer_id created_block created_tx created_eos_account created_at)a
+  @optional_fields ~w(proof_photo proof_code)a
 
   @spec changeset(Claim.t(), map()) :: Ecto.Changeset.t()
   def changeset(%Claim{} = claim, attrs) do
     claim
-    |> cast(attrs, @required_fields)
+    |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> validate_inclusion(:status, ["approved", "rejected", "pending"])
   end
