@@ -64,12 +64,17 @@ The intention down the line is to make this database a write only database in an
       - Here is [our documentation](eos.md) on how we use blockchain
 
 ## Building and running the application locally
+
 To build this backend follow the following
+
 1. Clone this repository by running `git clone git@github.com:cambiatus/backend.git`
-2. Change directory into the new repository by `cd backend`
+2. Change into the new repository directory by running `cd backend`
 3. Install dependencies by running `mix deps.get`
-4. Run tests by running the test command as `mix test`
-5. Run the server using `mix phx.server`
+4. Create a database by running `mix ecto.create` you may need to change the database user and password variables values in the config/test.exs and config/dev.exs for this to work.
+5. Run the current database migrations using `mix ecto.migrate`
+6. Run tests by running the test command as `mix test` ideally this should exit with a status of 0
+7. Run the server using `mix phx.server`
+#Boom! and you can now hack away!
 
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
