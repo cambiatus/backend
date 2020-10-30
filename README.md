@@ -70,7 +70,7 @@ To build this backend follow the following
 1. Clone this repository by running `git clone git@github.com:cambiatus/backend.git`
 2. Change into the new repository directory by running `cd backend`
 3. Install dependencies by running `mix deps.get`
-4. Create a database by running `mix ecto.create` you may need to change the database user and password variables values in the config/test.exs and config/dev.exs for this to work.
+4. Create a database by running `mix ecto.create` you may need to change the database user and password variables values in the `config/test.exs` and `config/dev.exs` for this to work.
 5. Run the current database migrations using `mix ecto.migrate`
 6. Run tests by running the test command as `mix test` ideally this should exit with a status of 0
 7. Run the server using `mix phx.server`
@@ -88,21 +88,23 @@ Once done with the contributing guide, here are some developing tips to help you
 		
    - Formatting 
    
-      - To ensure code consistency we use [linter](https://en.wikipedia.org/wiki/Lint_(software)) testing, static code analysis for the approval of our Pull Requests. Always run `mix credo` before pushing your commits
+      - To ensure code consistency we use [linter](https://en.wikipedia.org/wiki/Lint_(software)) testing, static code analysis for the approval of our Pull Requests. Always run `mix credo` before pushing your commits.
 
 	   - Another critical formatting command is `mix format`, which formats a specific file according to the Elixir language formatting rules command. There are IDE specific extensions and settings that you could use to have automated formatting. Here is one [Elixir vscode](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls) example for this.
 	
-   - Local variables (difference between dev.exs and config.exs)**(TO DO)**
+   - Local variables (difference between `dev.exs` and `config.exs`)**(TO DO)**
 	
    - How to dump and restore data for local development **(TO DO)**
 	
-   - Instructions to don't commit certain files changes (dev.exs and text.exs) **(TO DO)**
+   - Instructions to don't commit certain files changes (`dev.exs` and `text.exs`) **(TO DO)**
 
 ## Additional Resources **(TO DO)**
 
-- Here is our [Frontend](https://github.com/cambiatus/frontend) repo. We use Elm which is an awesome functional language to play with!
+- Here is our [Frontend (Elm)](https://github.com/cambiatus/frontend) repo. We use Elm which is an awesome functional language to play with!
 
-- Our [wiki](https://cambiatus.github.io/) page has several development resources to help and guide you during your collaboration
+- Here is our [Smart Contract (EOS)](https://github.com/cambiatus/frontend) repo. We use EOS which is an awesome blockchain and uses C++ as language to play with!
+
+- Our [wiki](https://cambiatus.github.io/) page has several development resources to help and guide you during your collaboration.
 
 ## License
 
