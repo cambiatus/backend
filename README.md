@@ -12,7 +12,7 @@
 - [Communities](https://www.cambiatus.com/pilots)
 - [FAQs](https://www.cambiatus.com/faq2)
 
-## Table of Contents
+## **Table of Contents**
 
 - **[General Information](#general-information)**
 - **[Technologies](#technologies)**
