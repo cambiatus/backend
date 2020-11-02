@@ -53,7 +53,7 @@ Here we have information on the type of technologies we use on our project, enjo
    
 - [Absinthe package](https://hexdocs.pm/absinthe/overview.html) GraphQL toolkit for Elixir
 
-- For more information on our GraphQL here is our [GraphQL wiki](https://cambiatus.github.io/) page
+- For more information on our GraphQL here is our [GraphQL wiki](https://cambiatus.github.io/onboarding.md) page
 
 **Databases**
 
