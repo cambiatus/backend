@@ -36,69 +36,139 @@ CRUD actions however creation and updating happens as a result of events that tr
 
 The intention down the line is to make this database a write only database in an Event Sourced structure which will enable us to replay events and give us much more observability.
 
-## Technologies
+## **Technologies**
 
-- Language & Framework
-   - [Elixir](https://elixir-lang.org/docs.html) language main documentation page 
-   - [Phoenix](https://hexdocs.pm/phoenix/Phoenix.html) framework main documentation page 
+Here we have information on the type of technologies we use on our project, enjoy!
 
-- Query language
+**Language & Framework**
+
+- [Elixir](https://elixir-lang.org/docs.html) language main documentation page 
+- [Phoenix](https://hexdocs.pm/phoenix/Phoenix.html) framework main documentation page 
+
+**Query language**
    
-	- Intro to [GraphQL](https://graphql.org/learn/)
+- Intro to [GraphQL](https://graphql.org/learn/)
 
-   - [Ecto](https://hexdocs.pm/ecto/Ecto.html) is Elixir's database wrapper that works around GraphQL
+- [Ecto](https://hexdocs.pm/ecto/Ecto.html) is Elixir's database wrapper that works around GraphQL
    
-   - [Absinthe package](https://hexdocs.pm/absinthe/overview.html) GraphQL toolkit for Elixir
+- [Absinthe package](https://hexdocs.pm/absinthe/overview.html) GraphQL toolkit for Elixir
 
-   - Sample Queries & Mutations **(TO DO)**
+- Sample Queries & Mutations **(TO DO)**
 
+**Databases**
 
-- Databases
-
-   - [Postgres](https://www.postgresql.org/docs/)
+- Postgres main [documentation](https://www.postgresql.org/docs/) page
    
-   - EOS Blockchain
-      
-      - Main [documentation](https://developers.eos.io/welcome/latest/overview/index) page
-      
-      - Here is [our documentation](eos.md) on how we use blockchain
+- EOS Blockchain main [documentation](https://developers.eos.io/welcome/latest/overview/index) page
+   - Here is [our documentation](eos.md) on how we use EOS blockchain
 
-## Building and running the application locally
+## **Building and running the application locally**
 
 To build this backend follow the following
 
-1. Clone this repository by running `git clone git@github.com:cambiatus/backend.git`
-2. Change into the new repository directory by running `cd backend`
-3. Install dependencies by running `mix deps.get`
-4. Create a database by running `mix ecto.create` you may need to change the database user and password variables values in the `config/test.exs` and `config/dev.exs` for this to work.
-5. Run the current database migrations using `mix ecto.migrate`
-6. Run tests by running the test command as `mix test` ideally this should exit with a status of 0
-7. Run the server using `mix phx.server`
-#Boom! and you can now hack away!
+**Step 1**
 
+Clone this repository by running 
+```
+git clone git@github.com:cambiatus/backend.git
+```
+**Step 2**
+
+Change into the new repository directory by running 
+```
+cd backend
+```
+**Step 3**
+
+Install dependencies by running 
+```
+mix deps.get
+```
+**Step 4** 
+
+Create a database by running 
+```
+mix ecto.create
+``` 
+*Note: you may need to change the database user and password variables values in the `config/test.exs` and `config/dev.exs` for this to work.*
+
+Then, run the current database migrations using 
+```
+mix ecto.migrate
+```
+**Step 5**
+
+Once the ecto migration is done successfully, run tests via the test command below 
+```
+mix test
+```
+Note: Ideally the test results should exit with a status of `0 failed tests`
+
+**Step 6** 
+
+Lastly, run the server using the following command
+```
+mix phx.server
+```
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
-## Contributing **(TO DO)**
+#Boom! Now you can hack away!
+
+## **Contributing**
 
 When you are ready to make your first contribution please check out our [Contribution guide](/.github/contributing.md), this will get your up to speed on where and how to start.
 
 Once done with the contributing guide, here are some developing tips to help you:
-
-1. Commit Practices
 		
-   - Formatting 
+**Code Formatting** 
    
-      - To ensure code consistency we use [linter](https://en.wikipedia.org/wiki/Lint_(software)) testing, static code analysis for the approval of our Pull Requests. Always run `mix credo` before pushing your commits.
+   - To ensure code consistency we use [linter](https://en.wikipedia.org/wiki/Lint_(software)) testing, static code analysis for the approval of our Pull Requests. Always run `mix credo` before pushing your commits.
 
-	   - Another critical formatting command is `mix format`, which formats a specific file according to the Elixir language formatting rules command. There are IDE specific extensions and settings that you could use to have automated formatting. Here is one [Elixir vscode](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls) example for this.
-	
-   - Local variables (difference between `dev.exs` and `config.exs`)**(TO DO)**
-	
-   - How to dump and restore data for local development **(TO DO)**
-	
-   - Instructions to don't commit certain files changes (`dev.exs` and `text.exs`) **(TO DO)**
+   - Another critical formatting command is `mix format`, which formats a specific file according to the Elixir language formatting rules command. There are IDE specific extensions and settings that you could use to have automated formatting. Here is one [Elixir vscode](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls) example for this.
 
-## Additional Resources **(TO DO)**
+
+**Local variables (difference between `dev.exs` and `config.exs`) (TO DO)**
+	
+**Database dumping** 
+
+Great for testing during development at your local machine. Here is one way of doing:
+
+**Step 1**
+
+Open your terminal and go to your Cambiatus workspace and create a folder to dump database files (folder name example: cambiatus_dbs)
+``` 
+mkdir <foldername>
+```
+*Note: The folder name  above is an example, your path may be different*
+
+Open your **psql terminal** and go to the created folder path, for instance:
+``` 
+cd workspace/cambiatus/cambiatus_dbs
+```
+*Note: The command above is an example, your path may be different*
+
+**Step 2**
+
+To dump a database called mydb into a SQL-script file:
+```
+$ pg_dump mydb > db.sql
+```
+**Step 3**
+
+After unzipping the dumped database file, run the following commands:
+```
+dropdb -U postgres cambiatus_dev
+createdb -U postgres cambiatus_dev
+psql cambiatus_dev < db.sql
+```
+*Note: The command above must be ran in the same directory as the unzipped database file*
+
+For a more detailed step-by-step about [database dumping command and options in Postgres](https://www.postgresql.org/docs/current/app-pgdump.html). 
+
+	
+Instructions to don't commit certain files changes (`dev.exs` and `text.exs`) **(TO DO)**
+
+## **Additional Resources**
 
 - Here is our [Frontend (Elm)](https://github.com/cambiatus/frontend) repo. We use Elm which is an awesome functional language to play with!
 
