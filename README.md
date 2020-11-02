@@ -21,13 +21,13 @@
 - **[Additional Resources](#additional-resources)**
 - **[License](#license)**
 
-## General Information
+## **General Information**
 
 Welcome to the Application that serves as one of the backends for the Cambiatus Ecosystem, One of the backends since this is the one that contains the data in a manner than is easy to index and search.
 
-In the context of the diagram below which is a high level view of how the data flows in our application this application serves as the datastore using a postgress db and as the API using Phoenix running a Graphql Server
+In the context of the diagram below which is a high level view of how the data flows in our application this application serves as the datastore using a Postgres db and as the API using Phoenix running a Graphql Server
 
-## Dataflow
+## **Dataflow**
 <img src='https://i.imgur.com/MFfGOe3.png' height='492' alt='Cambiatus Data Flow' />
 
 At a high level this is a database that is synced to events on an blockchain which then presents a Graphql API that makes
@@ -53,7 +53,7 @@ Here we have information on the type of technologies we use on our project, enjo
    
 - [Absinthe package](https://hexdocs.pm/absinthe/overview.html) GraphQL toolkit for Elixir
 
-- Sample Queries & Mutations **(TO DO)**
+- For more information on our GraphQL here is our [GraphQL wiki](https://cambiatus.github.io/) page
 
 **Databases**
 
@@ -62,9 +62,9 @@ Here we have information on the type of technologies we use on our project, enjo
 - EOS Blockchain main [documentation](https://developers.eos.io/welcome/latest/overview/index) page
    - Here is [our documentation](eos.md) on how we use EOS blockchain
 
-## **Building and running the application locally**
+## **Development Environment Setup**
 
-To build this backend follow the following
+To build and run this application locally follow the following steps!
 
 **Step 1**
 
@@ -90,7 +90,7 @@ Create a database by running
 ```
 mix ecto.create
 ``` 
-*Note: you may need to change the database user and password variables values in the `config/test.exs` and `config/dev.exs` for this to work.*
+*Note: you may need to change the database user and password variables values in the `config/test.exs` and `config/dev.exs` to ensure proper connection with Postgres.*
 
 Then, run the current database migrations using 
 ```
@@ -125,9 +125,6 @@ Once done with the contributing guide, here are some developing tips to help you
    - To ensure code consistency we use [linter](https://en.wikipedia.org/wiki/Lint_(software)) testing, static code analysis for the approval of our Pull Requests. Always run `mix credo` before pushing your commits.
 
    - Another critical formatting command is `mix format`, which formats a specific file according to the Elixir language formatting rules command. There are IDE specific extensions and settings that you could use to have automated formatting. Here is one [Elixir vscode](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls) example for this.
-
-
-**Local variables (difference between `dev.exs` and `config.exs`) (TO DO)**
 	
 **Database dumping** 
 
@@ -166,7 +163,17 @@ psql cambiatus_dev < db.sql
 For a more detailed step-by-step about [database dumping command and options in Postgres](https://www.postgresql.org/docs/current/app-pgdump.html). 
 
 	
-Instructions to don't commit certain files changes (`dev.exs` and `text.exs`) **(TO DO)**
+**Files To Not Commit Changes**
+
+Changes related to local Postgres database credentials must not be commited to the repo
+
+Here one way of how to not commit changes related to your local database connection credentials (user & password) to `dev.exs` and `text.exs` files:
+
+- After you **finished working on a development** and **before you commit your changes**, select `dev.exs` and `text.exs` files on your IDE or Git Desktop. 
+   - **IF** the only changes to these files are related to the local database connection credentials.
+      - Then, revert all the changes on these two files (`dev.exs` and `text.exs`).
+   - **ELSE** 
+      - ONLY revert the changes related to the local database connection credentials on these two files (`dev.exs` and `text.exs`).
 
 ## **Additional Resources**
 
@@ -174,8 +181,8 @@ Instructions to don't commit certain files changes (`dev.exs` and `text.exs`) **
 
 - Here is our [Smart Contract (EOS)](https://github.com/cambiatus/frontend) repo. We use EOS which is an awesome blockchain and uses C++ as language to play with!
 
-- Our [wiki](https://cambiatus.github.io/) page has several development resources to help and guide you during your collaboration.
+- Our [wiki](https://cambiatus.github.io/) page has several development resources to help you during your collaboration.
 
-## License
+## **License**
 
 - TBD
