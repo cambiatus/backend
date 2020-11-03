@@ -29,7 +29,7 @@ defmodule CambiatusWeb.Endpoint do
 
   plug(
     Plug.Parsers,
-    parsers: [:urlencoded, :multipart, :json],
+    parsers: [:urlencoded, {:multipart, length: 20_000_000}, :json],
     pass: ["*/*"],
     json_decoder: Poison
   )
