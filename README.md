@@ -21,7 +21,7 @@
 - **[Additional Resources](#additional-resources)**
 - **[License](#license)**
 
-## **General Information**
+## General Information
 
 Welcome to the Application that serves as one of the backends for the Cambiatus Ecosystem, One of the backends since this is the one that contains the data in a manner than is easy to index and search.
 
