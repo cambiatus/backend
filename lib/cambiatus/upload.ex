@@ -44,7 +44,8 @@ defmodule Cambiatus.Upload do
   end
 
   def resize(imagePath, width, height, opts \\ []) do
-    Mogrify.open(imagePath)
+    imagePath
+    |> Mogrify.open()
     |> Mogrify.resize_to_limit(~s(#{width}x#{height}))
     |> Mogrify.save(opts)
   end
