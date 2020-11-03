@@ -12,7 +12,7 @@
 - [Communities](https://www.cambiatus.com/pilots)
 - [FAQs](https://www.cambiatus.com/faq2)
 
-## **Table of Contents**
+## Table of Contents
 
 - **[General Information](#general-information)**
 - **[Technologies](#technologies)**
@@ -36,7 +36,7 @@ CRUD actions however creation and updating happens as a result of events that tr
 
 The intention down the line is to make this database a write only database in an Event Sourced structure which will enable us to replay events and give us much more observability.
 
-## **Technologies**
+## Technologies
 
 Here we have information on the type of technologies we use on our project, enjoy!
 
@@ -49,11 +49,12 @@ Here we have information on the type of technologies we use on our project, enjo
    
 - Intro to [GraphQL](https://graphql.org/learn/)
 
-- [Ecto](https://hexdocs.pm/ecto/Ecto.html) is Elixir's database wrapper that works around GraphQL
+Here are some notable packages related to GraphQL:
+   - [Ecto](https://hexdocs.pm/ecto/Ecto.html) is Elixir's database wrapper that works around GraphQL
    
-- [Absinthe package](https://hexdocs.pm/absinthe/overview.html) GraphQL toolkit for Elixir
+   - [Absinthe package](https://hexdocs.pm/absinthe/overview.html) GraphQL toolkit for Elixir
 
-- For more information on our GraphQL here is our [GraphQL wiki](https://cambiatus.github.io/onboarding.md) page
+Here is our [GraphQL wiki](https://cambiatus.github.io/onboarding.md) page
 
 **Databases**
 
@@ -62,7 +63,7 @@ Here we have information on the type of technologies we use on our project, enjo
 - EOS Blockchain main [documentation](https://developers.eos.io/welcome/latest/overview/index) page
    - Here is [our documentation](eos.md) on how we use EOS blockchain
 
-## **Development Environment Setup**
+## Development Environment Setup
 
 To build and run this application locally follow the following steps!
 
@@ -114,7 +115,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 #Boom! Now you can hack away!
 
-## **Contributing**
+## Contributing
 
 When you are ready to make your first contribution please check out our [Contribution guide](/.github/contributing.md), this will get your up to speed on where and how to start.
 
@@ -125,44 +126,7 @@ Once done with the contributing guide, here are some developing tips to help you
    - To ensure code consistency we use [linter](https://en.wikipedia.org/wiki/Lint_(software)) testing, static code analysis for the approval of our Pull Requests. Always run `mix credo` before pushing your commits.
 
    - Another critical formatting command is `mix format`, which formats a specific file according to the Elixir language formatting rules command. There are IDE specific extensions and settings that you could use to have automated formatting. Here is one [Elixir vscode](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls) example for this.
-	
-**Database dumping** 
-
-Great for testing during development at your local machine. Here is one way of doing:
-
-**Step 1**
-
-Open your terminal and go to your Cambiatus workspace and create a folder to dump database files (folder name example: cambiatus_dbs)
-``` 
-mkdir <foldername>
-```
-*Note: The folder name  above is an example, your path may be different*
-
-Open your **psql terminal** and go to the created folder path, for instance:
-``` 
-cd workspace/cambiatus/cambiatus_dbs
-```
-*Note: The command above is an example, your path may be different*
-
-**Step 2**
-
-To dump a database called mydb into a SQL-script file:
-```
-$ pg_dump mydb > db.sql
-```
-**Step 3**
-
-After unzipping the dumped database file, run the following commands:
-```
-dropdb -U postgres cambiatus_dev
-createdb -U postgres cambiatus_dev
-psql cambiatus_dev < db.sql
-```
-*Note: The command above must be ran in the same directory as the unzipped database file*
-
-For a more detailed step-by-step about [database dumping command and options in Postgres](https://www.postgresql.org/docs/current/app-pgdump.html). 
-
-	
+		
 **Files To Not Commit Changes**
 
 Changes related to local Postgres database credentials must not be commited to the repo
@@ -175,7 +139,9 @@ Here one way of how to not commit changes related to your local database connect
    - **ELSE** 
       - ONLY revert the changes related to the local database connection credentials on these two files (`dev.exs` and `text.exs`).
 
-## **Additional Resources**
+   - [HERE](https://stackoverflow.com/questions/1753070/how-do-i-configure-git-to-ignore-some-files-locally) is another alternative using the `exclude` command.  
+
+## Additional Resources
 
 - Here is our [Frontend (Elm)](https://github.com/cambiatus/frontend) repo. We use Elm which is an awesome functional language to play with!
 
@@ -183,6 +149,6 @@ Here one way of how to not commit changes related to your local database connect
 
 - Our [wiki](https://cambiatus.github.io/) page has several development resources to help you during your collaboration.
 
-## **License**
+## License
 
 - TBD
