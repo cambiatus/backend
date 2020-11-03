@@ -27,7 +27,7 @@ Welcome to the Application that serves as one of the backends for the Cambiatus 
 
 In the context of the diagram below which is a high level view of how the data flows in our application this application serves as the datastore using a Postgres db and as the API using Phoenix running a Graphql Server
 
-## **Dataflow**
+## Dataflow
 <img src='https://i.imgur.com/MFfGOe3.png' height='492' alt='Cambiatus Data Flow' />
 
 At a high level this is a database that is synced to events on an blockchain which then presents a Graphql API that makes
