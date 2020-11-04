@@ -58,6 +58,7 @@ defmodule Cambiatus.Mixfile do
        github: "benoitc/hackney", override: true, ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"},
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
+      {:mogrify, "~> 0.8.0"},
 
       # web_push
       {:web_push_encryption,
