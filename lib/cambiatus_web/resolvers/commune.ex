@@ -165,6 +165,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_transfer_count(community)
   end
 
+  @spec get_action_count(Cambiatus.Commune.Community.t(), any, any) :: {:ok, any}
   def get_action_count(%Community{} = community, _, _) do
     Commune.get_action_count(community)
   end
@@ -177,5 +178,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
   @spec get_invitation(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_invitation(_, %{input: %{id: id}}, _) do
     Auth.get_invitation(id)
+  end
+
+  @spec complete_objective(map(), map(), map()) :: {:ok, map()} | {:error, String.t()}
+  def complete_objective(_, %{input: %{objective_id: id}}, _) do
+    Commune.complete_objective(id)
   end
 end

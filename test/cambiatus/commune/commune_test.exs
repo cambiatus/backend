@@ -4,7 +4,8 @@ defmodule Cambiatus.CommuneTest do
   alias Cambiatus.{
     Commune,
     Commune.Community,
-    Commune.Action
+    Commune.Action,
+    Commune.Objective
   }
 
   describe "communities" do
@@ -156,6 +157,16 @@ defmodule Cambiatus.CommuneTest do
 
     test "create_network/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Commune.create_network(@invalid_attrs)
+    end
+  end
+
+  describe "objectives" do
+    test "update_objective/2 with valid data updates the objective" do
+      objective = insert(:objective)
+      change = %{is_completed: true}
+      assert {:ok, %Objective{} = objective} = Commune.update_objective(objective, change)
+      {:ok, found_objective} = Commune.get_objective(objective.id)
+      assert objective == Repo.preload(found_objective, [:creator, :community])
     end
   end
 end
