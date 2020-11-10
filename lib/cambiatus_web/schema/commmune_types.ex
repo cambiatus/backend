@@ -296,6 +296,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:verifications, non_null(:integer))
     field(:is_completed, non_null(:boolean))
     field(:verification_type, non_null(:verification_type))
+    field(:has_proof_photo, :boolean)
+    field(:has_proof_code, :boolean)
+    field(:photo_proof_instructions, :string)
 
     field(:objective, non_null(:objective), resolve: dataloader(Cambiatus.Commune))
 
@@ -317,6 +320,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:action, non_null(:action), resolve: dataloader(Cambiatus.Commune))
     field(:claimer, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
     field(:status, non_null(:claim_status))
+    field(:proof_photo, :string)
+    field(:proof_code, :string)
 
     field(:checks, non_null(list_of(non_null(:check)))) do
       arg(:input, :checks_input)

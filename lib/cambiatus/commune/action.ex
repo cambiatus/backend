@@ -21,6 +21,9 @@ defmodule Cambiatus.Commune.Action do
     field(:verifications, :integer)
     field(:verification_type, :string)
     field(:is_completed, :boolean, default: false)
+    field(:has_proof_photo, :boolean, default: false)
+    field(:has_proof_code, :boolean, default: false)
+    field(:photo_proof_instructions, :string)
 
     field(:created_block, :integer)
     field(:created_tx, :string)
@@ -32,18 +35,20 @@ defmodule Cambiatus.Commune.Action do
     has_many(:vals, Validator)
     has_many(:validators, through: [:vals, :validator])
     has_many(:claims, Claim)
+  end
 
-    @required_fields ~w(creator_id objective_id reward description verification_type)a
-    @optional_fields ~w(is_completed deadline usages usages_left verifier_reward verifications created_block created_tx created_at created_eos_account)a
+  @required_fields ~w(creator_id objective_id reward description verification_type)a
+  @optional_fields ~w(deadline usages usages_left verifier_reward verifications is_completed
+                       has_proof_photo has_proof_code photo_proof_instructions
+                       created_block created_tx created_at created_eos_account)a
 
-    @doc false
-    def changeset(action, attrs) do
-      action
-      |> cast(attrs, @required_fields ++ @optional_fields)
-      |> validate_required(@required_fields)
-      |> validate_inclusion(:verification_type, ["claimable", "automatic"])
-      |> foreign_key_constraint(:creator_id)
-      |> foreign_key_constraint(:objective_id)
-    end
+  @doc false
+  def changeset(action, attrs) do
+    action
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
+    |> validate_inclusion(:verification_type, ["claimable", "automatic"])
+    |> foreign_key_constraint(:creator_id)
+    |> foreign_key_constraint(:objective_id)
   end
 end

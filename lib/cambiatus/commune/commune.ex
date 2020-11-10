@@ -254,11 +254,8 @@ defmodule Cambiatus.Commune do
       on: o.id == a.objective_id,
       join: v in Validator,
       on: v.action_id == c.action_id,
-      left_join: ch in Check,
-      on: ch.claim_id == c.id,
       where: o.community_id == ^community_id,
       where: v.validator_id == ^account,
-      where: fragment("?.validator_id = ? OR ?.claim_id IS NULL", ch, ^account, ch),
       order_by: [desc: c.created_at]
     )
   end
