@@ -697,7 +697,7 @@ defmodule Cambiatus.Commune do
       iex> update_objective(objective, %{is_completed: new_value})
       {:ok, %Objective{}}
 
-      iex> update_community(objective, %{field: bad_value})
+      iex> update_objective(objective, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
