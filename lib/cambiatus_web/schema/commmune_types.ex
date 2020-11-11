@@ -129,6 +129,20 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     end
   end
 
+  @desc "Community mutations"
+  object :commune_mutations do
+    @desc "Complete an objective"
+    field :complete_objective, :objective do
+      arg(:input, non_null(:complete_objective_input))
+      resolve(&Commune.complete_objective/3)
+    end
+  end
+
+  @desc "Input to complete an objective"
+  input_object :complete_objective_input do
+    field(:objective_id, non_null(:integer))
+  end
+
   input_object :transfer_succeed_input do
     field(:from, non_null(:string))
     field(:to, non_null(:string))
@@ -273,6 +287,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
+
+    field(:is_completed, non_null(:boolean))
+    field(:completed_at, :naive_datetime)
 
     field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
     field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))

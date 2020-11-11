@@ -20,6 +20,35 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
   @num 3
   describe "Commune Resolver" do
+    test "updates an objective to be completed", %{conn: conn} do
+      objective = insert(:objective)
+
+      input = %{
+        "input" => %{
+          "objective_id" => objective.id
+        }
+      }
+
+      query = """
+      mutation ($input: CompleteObjectiveInput) {
+        completeObjective(input: $input) {
+          description
+          isCompleted
+          completedAt
+        }
+      }
+      """
+
+      res =
+        conn
+        |> post("/api/graph", query: query, variables: input)
+
+      response = json_response(res, 200)
+
+      assert response["data"]["completeObjective"]["description"] == objective.description
+      assert response["data"]["completeObjective"]["isCompleted"] == true
+    end
+
     test "collects claimable actions with their validators", %{conn: conn} do
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       comm = insert(:community)
@@ -408,6 +437,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       query {
         community(symbol: "#{cmm.symbol}") {
           objectives {
+            isCompleted
+            completedAt
             createdAt
           }
         }

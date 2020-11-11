@@ -149,23 +149,6 @@ defmodule Cambiatus.Commune do
   end
 
   @doc """
-  Fetch a single objective by id
-
-  ## Parameters
-  * id: the objective id
-  """
-  @spec get_objective(integer()) :: {:ok, Objective.t()} | {:error, term}
-  def get_objective(id) do
-    case Repo.get(Objective, id) do
-      nil ->
-        {:error, "No objective with id: #{id} found"}
-
-      objective ->
-        {:ok, objective}
-    end
-  end
-
-  @doc """
   Fetch a claimer's claimed action
 
   ## Parameters
@@ -686,6 +669,52 @@ defmodule Cambiatus.Commune do
 
       results ->
         {:ok, results}
+    end
+  end
+
+  @doc """
+  Fetch a single objective by id
+
+  ## Parameters
+  * id: the objective id
+  """
+  @spec get_objective(integer()) :: {:ok, Objective.t()} | {:error, term}
+  def get_objective(id) do
+    case Repo.get(Objective, id) do
+      nil ->
+        {:error, "No objective with id: #{id} found"}
+
+      objective ->
+        {:ok, objective}
+    end
+  end
+
+  @doc """
+  Updates an objective.
+
+  ## Examples
+
+      iex> update_objective(objective, %{is_completed: new_value})
+      {:ok, %Objective{}}
+
+      iex> update_objective(objective, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_objective(%Objective{} = objective, attrs) do
+    objective
+    |> Objective.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def complete_objective(objective_id) do
+    case get_objective(objective_id) do
+      {:ok, objective} ->
+        now = NaiveDateTime.utc_now()
+        update_objective(objective, %{is_completed: true, completed_at: now})
+
+      error ->
+        error
     end
   end
 end

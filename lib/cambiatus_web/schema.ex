@@ -42,6 +42,7 @@ defmodule CambiatusWeb.Schema do
     import_fields(:account_mutations)
     import_fields(:notification_mutations)
     import_fields(:kyc_mutations)
+    import_fields(:commune_mutations)
   end
 
   subscription do

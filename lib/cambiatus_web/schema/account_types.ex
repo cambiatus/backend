@@ -108,8 +108,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve: dataloader(Cambiatus.Commune)
     )
 
-    field(:invitations, list_of(:string))
-
     field(:analysis_count, non_null(:integer), resolve: &Accounts.get_analysis_count/3)
 
     @desc "List of payers to the given recipient fetched by the part of the account name."
