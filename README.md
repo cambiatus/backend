@@ -81,6 +81,8 @@ cd backend
 ```
 **Step 3**
 
+The system uses [ImageMagick](https://imagemagick.org/) for ensuring that the process of image uploads runs properly and [Mogrify](https://hex.pm/packages/mogrify) (dependency package) is dependent on this. [Here](https://imagemagick.org/script/download.php) are instructions for installing it.  
+
 Install dependencies by running 
 ```
 mix deps.get
