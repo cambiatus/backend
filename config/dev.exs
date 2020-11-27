@@ -10,9 +10,9 @@ config :cambiatus, CambiatusWeb.Endpoint,
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: "default",
   cambiatus_wallet_pass: System.get_env("BESPIRAL_WALLET_PASSWORD"),
-  cambiatus_account: "bespiral",
-  mcc_contract: "bes.cmm",
-  cambiatus_cmm: "BES"
+  cambiatus_account: "cambiatus",
+  mcc_contract: "cambiatus.cm",
+  cambiatus_cmm: "0,CMB"
 
 config :cambiatus, Cambiatus.Repo,
   database: "cambiatus_dev",
@@ -43,9 +43,9 @@ config :phoenix, :stacktrace_depth, 25
 
 config :cambiatus, :ipfs, conn: {}
 
-config :eosrpc, EOSRPC.Wallet, url: "http://localhost:8888/v1/wallet"
-config :eosrpc, EOSRPC.Chain, url: "https://eosio.cambiatus.io/v1/chain"
-config :eosrpc, EOSRPC.Helper, symbol: "EOS"
+config :eosrpc, EOSRPC.Wallet, url: "http://127.0.0.1:8900/v1/wallet"
+config :eosrpc, EOSRPC.Chain, url: "http://staging.cambiatus.io/v1/chain"
+config :eosrpc, EOSRPC.Helper, symbol: "SYS"
 
 # Configure Notifications Adapter
 config :cambiatus, Cambiatus.Notifications, adapter: Cambiatus.Notifications.HttpAdapter
