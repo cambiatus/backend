@@ -34,6 +34,14 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   @doc """
+  Creates Juridical user with the given account, KYC, and Address.
+  """
+  def create_user(_, %{input: params, kyc: kyc, address: address}, _) do
+    {:ok,
+     %{status: :error, reason: "The create_user for the juridical account isn't implemented yet."}}
+  end
+
+  @doc """
   Creates Natural user with the given account and KYC.
   """
   def create_user(_, %{input: params, kyc: kyc}, _) do

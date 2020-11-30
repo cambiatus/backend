@@ -37,6 +37,14 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:kyc, non_null(:kyc_data_update_input))
       resolve(&Accounts.create_user/3)
     end
+
+    @desc "Creates a new juridical user account with KYC and Address"
+    field :sign_up_juridical, non_null(:sign_up) do
+      arg(:input, non_null(:sign_up_input))
+      arg(:kyc, non_null(:kyc_data_update_input))
+      arg(:address, non_null(:address_update_input))
+      resolve(&Accounts.create_user/3)
+    end
   end
 
   @desc "Input object for creating a new user account"
