@@ -147,7 +147,7 @@ Here one way of how to not commit changes related to your local database connect
 
 - Here is our [Frontend (Elm)](https://github.com/cambiatus/frontend) repo. We use Elm which is an awesome functional language to play with!
 
-- Here is our [Smart Contract (EOS)](https://github.com/EOSIO/eos) repo. We use EOS which is an awesome blockchain and uses C++ as language to play with!
+- Here is our [Smart Contract (EOS)](https://github.com/cambiatus/contracts) repo. We use EOS which is an awesome blockchain and uses C++ as language to play with!
 
 - Our [wiki](https://cambiatus.github.io/) page has several development resources to help you during your collaboration.
 
