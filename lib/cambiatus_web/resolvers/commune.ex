@@ -6,13 +6,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
   alias Absinthe.Relay.Connection
 
   alias Cambiatus.{
-    Accounts,
     Auth,
-    Commune
-  }
-
-  alias Cambiatus.Commune.{
-    Community
+    Commune,
+    Commune.Community,
+    Shop
   }
 
   @doc """
@@ -71,14 +68,6 @@ defmodule CambiatusWeb.Resolvers.Commune do
   end
 
   @doc """
-  Fetch a sale from the database
-  """
-  @spec get_sale(map(), map(), map()) :: {:ok, map()} | {:error, term}
-  def get_sale(_, %{input: params}, _) do
-    Commune.get_sale(params.id)
-  end
-
-  @doc """
   Fetch a objective
   """
   @spec get_objective(map(), map(), map()) :: {:ok, map()} | {:error, term}
@@ -103,43 +92,6 @@ defmodule CambiatusWeb.Resolvers.Commune do
   end
 
   @doc """
-  Collects a user's, or community's or the entirety of sales on the platform
-  """
-  @spec get_sales(map(), map(), map()) :: {:ok, list(map())} | {:error, :string}
-  def get_sales(parent, params, resolution)
-
-  def get_sales(_, %{input: %{community_id: symbol, account: account}}, _) do
-    with {:ok, sales} <- Commune.get_community_sales(symbol, account) do
-      {:ok, sales}
-    end
-  end
-
-  def get_sales(_, %{input: %{account: acct}}, _) do
-    with {:ok, profile} <- Accounts.get_account_profile(acct),
-         {:ok, sales} <- Commune.get_user_sales(profile) do
-      {:ok, sales}
-    end
-  end
-
-  def get_sales(_, %{input: %{communities: sym}}, _) do
-    with {:ok, commune} <- Accounts.get_account_profile(sym),
-         {:ok, sales} <- Commune.get_user_communities_sales(commune) do
-      {:ok, sales}
-    end
-  end
-
-  def get_sales(_, %{input: %{all: account, community_id: community_id}}, _) do
-    with {:ok, profile} <- Accounts.get_account_profile(account),
-         {:ok, sales} <- Commune.all_sales_for(profile, community_id) do
-      {:ok, sales}
-    end
-  end
-
-  def get_sales_history(_, _, _) do
-    Commune.get_sales_history()
-  end
-
-  @doc """
   Collects all transfers from a community
   """
   @spec get_transfers(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
@@ -153,6 +105,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
     {:ok, result}
   end
 
+  @spec get_network(Cambiatus.Commune.Community.t(), any, any) :: {:ok, any}
   def get_network(%Community{} = community, _, _) do
     {:ok, Commune.list_community_network(community.symbol)}
   end
@@ -170,8 +123,8 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_action_count(community)
   end
 
-  def get_sale_count(%Community{} = community, _, _) do
-    Commune.get_sale_count(community)
+  def get_product_count(%Community{} = community, _, _) do
+    Shop.community_product_count(community.symbol)
   end
 
   @doc "Collect an invite"

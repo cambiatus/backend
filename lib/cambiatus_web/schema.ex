@@ -8,7 +8,8 @@ defmodule CambiatusWeb.Schema do
 
   alias Cambiatus.{
     Commune,
-    Kyc
+    Kyc,
+    Shop
   }
 
   def context(ctx) do
@@ -16,6 +17,7 @@ defmodule CambiatusWeb.Schema do
       Dataloader.new()
       |> Dataloader.add_source(Commune, Commune.data())
       |> Dataloader.add_source(Kyc, Kyc.data())
+      |> Dataloader.add_source(Shop, Shop.data())
 
     Map.put(ctx, :loader, loader)
   end
@@ -30,12 +32,14 @@ defmodule CambiatusWeb.Schema do
   import_types(__MODULE__.NotificationTypes)
   import_types(__MODULE__.RelayTypes)
   import_types(__MODULE__.KycTypes)
+  import_types(__MODULE__.ShopTypes)
 
   query do
     import_fields(:account_queries)
     import_fields(:community_queries)
     import_fields(:notification_queries)
     import_fields(:address_queries)
+    import_fields(:shop_queries)
   end
 
   mutation do

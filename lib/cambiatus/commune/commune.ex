@@ -10,13 +10,11 @@ defmodule Cambiatus.Commune do
   alias Cambiatus.{
     Accounts.User,
     Commune.Action,
-    Commune.AvailableSale,
     Commune.Check,
     Commune.Community,
     Commune.Claim,
     Commune.Network,
     Commune.Objective,
-    Commune.SaleHistory,
     Commune.Transfer,
     Commune.Validator,
     Repo
@@ -91,23 +89,6 @@ defmodule Cambiatus.Commune do
     case Repo.get(Transfer, id) do
       nil ->
         {:error, "No tranfer with the id: #{id} found"}
-
-      val ->
-        {:ok, val}
-    end
-  end
-
-  @doc """
-  Fetch a sale history record
-
-  ## Parameters
-  * id: id of the history to be fetched
-  """
-  @spec get_sale_history(integer()) :: {:ok, SaleHistory.t()} | {:error, term}
-  def get_sale_history(id) do
-    case Repo.get(SaleHistory, id) do
-      nil ->
-        {:error, "No SaleHistory record with the id: #{id} found"}
 
       val ->
         {:ok, val}
@@ -249,101 +230,6 @@ defmodule Cambiatus.Commune do
 
   def claim_filter_claimer(query, claimer) do
     query |> where(claimer_id: ^claimer)
-  end
-
-  @doc """
-  Fetch sale
-
-  ## Parameters
-  * id: the id of the sale in question
-  """
-  @spec get_sale(integer()) :: {:ok, AvailableSale.t()} | {:error, term}
-  def get_sale(id) do
-    case Repo.get(AvailableSale, id) do
-      nil ->
-        {:error, "Sale #{id} not found"}
-
-      val ->
-        {:ok, val}
-    end
-  end
-
-  @doc """
-  Gets all sales for a user
-  """
-  def all_sales_for(%User{account: acc}, community_id) do
-    query =
-      from(s in Cambiatus.Commune.Sale,
-        where: s.community_id == ^community_id,
-        where: s.creator_id != ^acc,
-        where: s.is_deleted == false,
-        where: (s.units > 0 and s.track_stock == true) or s.track_stock == false,
-        order_by: [desc: s.created_at]
-      )
-
-    sales = Repo.all(query)
-
-    {:ok, sales}
-  end
-
-  @doc """
-  Collect all sales that belong to a user
-  """
-  @spec get_user_sales(map()) :: {:ok, list(AvailableSale.t())} | {:error, term}
-  def get_user_sales(%User{account: acc}) do
-    query =
-      AvailableSale
-      |> where([s], s.creator_id == ^acc)
-      |> order_by([s], desc: s.created_at)
-
-    sales =
-      query
-      |> Repo.all()
-
-    {:ok, sales}
-  end
-
-  @doc """
-  Collect all sales from a user's communities
-  """
-  @spec get_user_communities_sales(map()) :: {:ok, list(AvailableSale.t())} | {:error, term()}
-  def get_user_communities_sales(%User{account: acc} = usr) do
-    %{communities: cms} = Repo.preload(usr, :communities)
-
-    symbols = Enum.map(cms, fn %{symbol: s} -> s end)
-
-    query =
-      AvailableSale
-      |> where([s], s.creator_id != ^acc)
-      |> where([s], s.community_id in ^symbols)
-      |> order_by([s], desc: s.created_at)
-
-    sales =
-      query
-      |> Repo.all()
-
-    {:ok, sales}
-  end
-
-  @spec get_community_sales(Int.t(), String.t()) ::
-          {:ok, list(AvailableSale.t())} | {:error, term()}
-  def get_community_sales(community_id, acc) do
-    query =
-      from(s in Cambiatus.Commune.Sale,
-        where: s.community_id == ^community_id,
-        where: s.creator_id == ^acc,
-        where: s.is_deleted == false,
-        order_by: [desc: s.created_at]
-      )
-
-    sales = Repo.all(query)
-
-    {:ok, sales}
-  end
-
-  @spec get_sales_history :: {:ok, list(map())} | {:error, term}
-  def get_sales_history() do
-    {:ok, Repo.all(SaleHistory)}
   end
 
   @doc """
@@ -621,24 +507,6 @@ defmodule Cambiatus.Commune do
       from(t in Cambiatus.Commune.Transfer,
         where: t.community_id == ^id,
         select: count(t.id)
-      )
-
-    query
-    |> Repo.one()
-    |> case do
-      nil ->
-        {:ok, 0}
-
-      results ->
-        {:ok, results}
-    end
-  end
-
-  def get_sale_count(%Community{symbol: id}) do
-    query =
-      from(s in Cambiatus.Commune.Sale,
-        where: s.community_id == ^id,
-        select: count(s.id)
       )
 
     query

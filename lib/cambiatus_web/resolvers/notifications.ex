@@ -5,7 +5,8 @@ defmodule CambiatusWeb.Resolvers.Notifications do
   alias Cambiatus.{
     Accounts,
     Commune,
-    Notifications
+    Notifications,
+    Shop
   }
 
   @doc """
@@ -35,7 +36,13 @@ defmodule CambiatusWeb.Resolvers.Notifications do
           Commune.get_transfer(data.id)
 
         %{type: "sale_history"} ->
-          Commune.get_sale_history(data.id)
+          case Shop.get_order(data.id) do
+            nil ->
+              {:error, "No Order record with the id: #{data.id} found"}
+
+            val ->
+              {:ok, val}
+          end
 
         _ ->
           {:ok, nil}

@@ -92,14 +92,14 @@ defmodule CambiatusWeb.Schema.NotificationTypes do
   end
 
   union(:notification_type) do
-    types([:transfer, :sale_history, :mint])
+    types([:transfer, :order, :mint])
 
     resolve_type(fn
       %Cambiatus.Commune.Transfer{}, _ ->
         :transfer
 
-      %Cambiatus.Commune.SaleHistory{}, _ ->
-        :sale_history
+      %Cambiatus.Shop.Order{}, _ ->
+        :order
 
       %Cambiatus.Commune.Mint{}, _ ->
         :mint

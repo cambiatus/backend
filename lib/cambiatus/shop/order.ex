@@ -1,24 +1,28 @@
-defmodule Cambiatus.Commune.SaleHistory do
+defmodule Cambiatus.Shop.Order do
   @moduledoc """
-  This module representes the a Sale History data structure, used to query and change the database
+  This module representes the an Order
   """
 
   use Ecto.Schema
-  # import Ecto.Changeset
+  @type t :: %__MODULE__{}
+
   alias Cambiatus.{
     Accounts.User,
     Commune.Community,
-    Commune.Sale
+    Commune.Product
   }
 
-  @type t :: %__MODULE__{}
-
-  schema "sale_history" do
+  schema "orders" do
     field(:amount, :float)
     field(:units, :integer)
 
+    field(:created_block, :integer)
+    field(:created_tx, :string)
+    field(:created_eos_account, :string)
+    field(:created_at, :utc_datetime)
+
     belongs_to(:community, Community, references: :symbol, type: :string)
-    belongs_to(:sale, Sale)
+    belongs_to(:product, Product)
     belongs_to(:from, User, references: :account, type: :string)
     belongs_to(:to, User, references: :account, type: :string)
   end
