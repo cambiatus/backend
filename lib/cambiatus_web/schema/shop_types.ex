@@ -29,10 +29,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   object(:shop_subscriptions) do
   end
 
-  # ===========
-  # Objects
-  # ===========
-
   object(:product) do
     field(:id, non_null(:integer))
     field(:creator_id, non_null(:string))
@@ -77,8 +73,4 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
   end
-
-  # ===========
-  # Input Objects
-  # ===========
 end
