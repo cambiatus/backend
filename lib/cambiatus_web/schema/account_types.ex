@@ -28,8 +28,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     @desc "Creates a new user account"
     field :sign_up, non_null(:sign_up) do
       arg(:input, non_null(:sign_up_input))
-      arg(:kyc, :kyc_data_update_input)
-      arg(:address, :address_update_input)
+
       resolve(&Accounts.create_user/3)
     end
   end
