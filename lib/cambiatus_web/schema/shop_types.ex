@@ -2,6 +2,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   @moduledoc """
   Holds all Absinthe Schema Objects, inputs, mutations and queries related to the Shop
   """
+
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
@@ -12,6 +13,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   object(:shop_queries) do
     field(:products, non_null(list_of(non_null(:product)))) do
       arg(:community_id, non_null(:string))
+      arg(:filters, :products_filter_input)
       resolve(&Shop.get_products/3)
     end
 
@@ -72,5 +74,13 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
+  end
+
+  # ============
+  # Input Object
+  # ============
+
+  input_object(:products_filter_input) do
+    field(:account, :string)
   end
 end

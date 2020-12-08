@@ -19,8 +19,16 @@ defmodule Cambiatus.Shop do
 
   @spec list_products(binary) :: {:ok, list(Product.t())}
   def list_products(community_id) do
-    query = from(p in Product, where: p.community_id == ^community_id, order_by: p.created_at)
-    Repo.all(query)
+    Product
+    |> Product.from_community(community_id)
+    |> Repo.all()
+  end
+
+  def list_products(community_id, account) do
+    Product
+    |> Product.from_community(community_id)
+    |> Product.created_by(account)
+    |> Repo.all()
   end
 
   def get_product(id) do

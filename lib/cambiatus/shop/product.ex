@@ -5,6 +5,7 @@ defmodule Cambiatus.Shop.Product do
   """
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   @type t :: %__MODULE__{}
 
   alias Cambiatus.{
@@ -52,5 +53,16 @@ defmodule Cambiatus.Shop.Product do
     |> put_assoc(:community, attrs.community)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
+  end
+
+  def from_community(query \\ Product, community_id) do
+    query
+    |> where([p], p.community_id == ^community_id)
+    |> order_by([p], p.created_at)
+  end
+
+  def created_by(query \\ Product, account) do
+    query
+    |> where([p], p.creator_id == ^account)
   end
 end

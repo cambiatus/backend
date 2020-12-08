@@ -5,6 +5,12 @@ defmodule CambiatusWeb.Resolvers.Shop do
 
   alias Cambiatus.Shop
 
+  def get_products(_, %{community_id: community_id, filters: %{account: account}}, _) do
+    case Shop.list_products(community_id, account) do
+      results -> {:ok, results}
+    end
+  end
+
   def get_products(_, %{community_id: community_id}, _) do
     case Shop.list_products(community_id) do
       results -> {:ok, results}
