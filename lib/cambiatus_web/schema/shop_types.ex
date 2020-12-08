@@ -81,6 +81,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   # ============
 
   input_object(:products_filter_input) do
-    field(:account, :string)
+    field(:account, non_null(:string))
   end
 end
