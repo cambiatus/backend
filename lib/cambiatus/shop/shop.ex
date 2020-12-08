@@ -17,10 +17,11 @@ defmodule Cambiatus.Shop do
     queryable
   end
 
-  @spec list_products(binary) :: {:ok, list(Product.t())}
+  @spec list_products(binary) :: list(Product.t())
   def list_products(community_id) do
     Product
     |> Product.from_community(community_id)
+    |> Product.active()
     |> Repo.all()
   end
 
