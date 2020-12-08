@@ -9,7 +9,7 @@ defmodule Cambiatus.Accounts.User do
     Accounts.User,
     Auth.Invitation,
     Commune.Network,
-    Commune.Sale,
+    Shop.Product,
     Commune.Transfer,
     Notifications.PushSubscription,
     Kyc.KycData,
@@ -34,7 +34,7 @@ defmodule Cambiatus.Accounts.User do
     field(:created_eos_account, :string)
 
     has_many(:push_subscriptions, PushSubscription, foreign_key: :account_id)
-    has_many(:sales, Sale, foreign_key: :creator_id)
+    has_many(:products, Product, foreign_key: :creator_id)
     has_many(:to_transfers, Transfer, foreign_key: :to_id)
     has_many(:from_transfers, Transfer, foreign_key: :from_id)
     has_many(:network, Network, foreign_key: :account_id)

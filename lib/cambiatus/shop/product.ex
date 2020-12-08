@@ -1,7 +1,7 @@
 defmodule Cambiatus.Shop.Product do
   @moduledoc """
   This module holds the data structure that represents an instance of a `Cambiatus.Commune.Product` use it to
-  build and validate changesets for operating on a sale
+  build and validate changesets for operating on a product
   """
   use Ecto.Schema
   import Ecto.Changeset
@@ -64,5 +64,10 @@ defmodule Cambiatus.Shop.Product do
   def created_by(query \\ Product, account) do
     query
     |> where([p], p.creator_id == ^account)
+  end
+
+  def active(query \\ Product) do
+    query
+    |> where([p], p.is_deleted == false)
   end
 end
