@@ -22,6 +22,7 @@ defmodule Cambiatus.Shop do
     Product
     |> Product.from_community(community_id)
     |> Product.active()
+    |> Product.newer_first()
     |> Repo.all()
   end
 
@@ -29,6 +30,7 @@ defmodule Cambiatus.Shop do
     Product
     |> Product.from_community(community_id)
     |> Product.created_by(account)
+    |> Product.newer_first()
     |> Repo.all()
   end
 

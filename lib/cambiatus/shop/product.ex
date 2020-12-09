@@ -58,7 +58,6 @@ defmodule Cambiatus.Shop.Product do
   def from_community(query \\ Product, community_id) do
     query
     |> where([p], p.community_id == ^community_id)
-    |> order_by([p], p.created_at)
   end
 
   def created_by(query \\ Product, account) do
@@ -69,5 +68,10 @@ defmodule Cambiatus.Shop.Product do
   def active(query \\ Product) do
     query
     |> where([p], p.is_deleted == false)
+  end
+
+  def newer_first(query \\ Product) do
+    query
+    |> order_by([p], desc: p.created_at)
   end
 end

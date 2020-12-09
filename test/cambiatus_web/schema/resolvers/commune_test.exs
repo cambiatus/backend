@@ -511,15 +511,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       %{title: f_title} = insert(:product, %{community: community, created_at: latest})
 
       variables = %{
-        "community_id" => community.symbol,
-        "filter" => %{
-          "account" => usr.account
-        }
+        "communityId" => community.symbol
       }
 
       query = """
-      query($input: ProductsInput!){
-        products($input) {
+      query($communityId: String!) {
+        products(communityId: $communityId) {
           id
           title
           description
@@ -540,10 +537,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       %{"title" => t} = hd(all_sales)
       assert t == f_title
-      assert Enum.count(all_sales) == @num
+      assert Enum.count(all_sales) == @num + 3
     end
 
-    test "collects all products from a communities", %{conn: conn} do
+    test "collects all products from a community", %{conn: conn} do
       assert Repo.aggregate(Product, :count, :id) == 0
 
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
@@ -560,17 +557,15 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       insert(:product, %{community: c2})
       insert(:product, %{creator: usr, community: c2})
-      %{title: f_title} = insert(:product, %{created_at: latest, community: c2})
+      %{title: f_title} = insert(:product, %{created_at: latest, community: c1})
 
       variables = %{
-        "input" => %{
-          "communities" => usr.account
-        }
+        "communityId" => c1.symbol
       }
 
       query = """
-      query($input: ProductInput!){
-        products(input: $input) {
+      query($communityId: String!) {
+        products(communityId: $communityId) {
           id
           title
           description
@@ -588,28 +583,30 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       assert %{"title" => ^f_title} = hd(community_sales)
       assert Repo.aggregate(Product, :count, :id) == @num * 3
-      # Assert that the collected items are the total less the
-      # 1 sale belonging to the user
-      assert Enum.count(community_sales) == @num * 3 - 1
+      assert Enum.count(community_sales) == @num * 3 - 2
     end
 
     test "collects a user's products", %{conn: conn} do
       assert Repo.aggregate(Product, :count, :id) == 0
       user = insert(:user)
+      community = insert(:community)
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
-      %{title: first_title} = insert(:product, %{creator: user, created_at: latest})
-      insert_list(@num, :product, %{creator: user})
+      %{title: first_title} =
+        insert(:product, %{creator: user, created_at: latest, community: community})
+
+      insert_list(@num, :product, %{creator: user, community: community})
 
       variables = %{
-        "input" => %{
+        "communityId" => community.symbol,
+        "filters" => %{
           "account" => user.account
         }
       }
 
       query = """
-      query($input: products!){
-        products($input) {
+      query($communityId: String!, $filters: ProductsFilterInput){
+        products(communityId: $communityId, filters: $filters) {
           id
           title
           description
@@ -640,14 +637,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       product = insert(:product)
 
       variables = %{
-        "input" => %{
-          "id" => product.id
-        }
+        "id" => product.id
       }
 
       query = """
-      query($input: ProductInput!) {
-        product($input) {
+      query($id: Int!) {
+        product(id: $id) {
           id
           title
           description
@@ -671,22 +666,19 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
     test "collect only sales not deleted", %{conn: conn} do
       assert Repo.aggregate(Product, :count, :id) == 0
 
-      usr = insert(:user)
+      user = insert(:user)
       community = insert(:community)
 
-      insert_list(@num, :product, %{community: community, is_deleted: true})
-      %{title: title} = insert(:product, %{community: community})
+      insert_list(@num, :product, %{community: community, is_deleted: true, creator: user})
+      %{title: title} = insert(:product, %{community: community, creator: user})
 
       variables = %{
-        "input" => %{
-          "all" => usr.account,
-          "community_id" => community.symbol
-        }
+        "communityId" => community.symbol
       }
 
       query = """
-      query($input: ProductInput!){
-        products($input) {
+      query($communityId: String!) {
+        products(communityId: $communityId) {
           id
           title
           description
