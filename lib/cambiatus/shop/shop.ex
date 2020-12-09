@@ -39,10 +39,13 @@ defmodule Cambiatus.Shop do
   end
 
   def community_product_count(community_id) do
-    from(p in Product,
-      where: p.community_id == ^community_id,
-      select: count(p.id)
-    )
+    query =
+      from(p in Product,
+        where: p.community_id == ^community_id,
+        select: count(p.id)
+      )
+
+    query
     |> Repo.one()
     |> case do
       nil ->
