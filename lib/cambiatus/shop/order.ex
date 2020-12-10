@@ -9,7 +9,7 @@ defmodule Cambiatus.Shop.Order do
   alias Cambiatus.{
     Accounts.User,
     Commune.Community,
-    Commune.Product
+    Shop.Product
   }
 
   schema "orders" do
