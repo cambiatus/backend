@@ -105,9 +105,13 @@ defmodule CambiatusWeb.Resolvers.Commune do
     {:ok, result}
   end
 
-  @spec get_network(Cambiatus.Commune.Community.t(), any, any) :: {:ok, any}
+  @spec get_network(Community.t(), any, any) :: {:ok, any}
   def get_network(%Community{} = community, _, _) do
     {:ok, Commune.list_community_network(community.symbol)}
+  end
+
+  def get_validators(%Community{} = community, _, _) do
+    {:ok, Commune.community_validators(community.symbol)}
   end
 
   def get_members_count(%Community{} = community, _, _) do

@@ -397,6 +397,22 @@ defmodule Cambiatus.Commune do
     Repo.all(from(n in Network, where: n.community_id == ^community_id))
   end
 
+  def community_validators(community_id) do
+    query =
+      from(u in User,
+        join: v in Validator,
+        on: v.validator_id == u.account,
+        join: a in Action,
+        on: a.id == v.action_id,
+        join: o in Objective,
+        on: a.objective_id == o.id,
+        where: o.community_id == ^community_id,
+        distinct: v.validator_id
+      )
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a single network.
 
@@ -522,8 +538,8 @@ defmodule Cambiatus.Commune do
 
   def get_action_count(%Community{symbol: id}) do
     query =
-      from(a in Cambiatus.Commune.Action,
-        join: o in Cambiatus.Commune.Objective,
+      from(a in Action,
+        join: o in Objective,
         on: a.objective_id == o.id,
         where: o.community_id == ^id,
         select: count(a.id)
@@ -539,9 +555,9 @@ defmodule Cambiatus.Commune do
 
   def get_claim_count(%Community{symbol: id}) do
     query =
-      from(c in Cambiatus.Commune.Claim,
-        join: a in Cambiatus.Commune.Action,
-        join: o in Cambiatus.Commune.Objective,
+      from(c in Claim,
+        join: a in Action,
+        join: o in Objective,
         on: a.objective_id == o.id,
         where: o.community_id == ^id,
         where: c.action_id == a.id,

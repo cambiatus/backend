@@ -212,6 +212,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve: dataloader(Cambiatus.Commune)
     )
 
+    @desc "List of users that are claim validators"
+    field(:validators, non_null(list_of(non_null(:profile))), resolve: &Commune.get_validators/3)
+
     field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(Cambiatus.Commune))
     field(:members, non_null(list_of(non_null(:profile))), resolve: dataloader(Cambiatus.Commune))
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
