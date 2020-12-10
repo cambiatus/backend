@@ -532,11 +532,27 @@ defmodule Cambiatus.Commune do
     query
     |> Repo.one()
     |> case do
-      nil ->
-        {:ok, 0}
+      nil -> {:ok, 0}
+      results -> {:ok, results}
+    end
+  end
 
-      results ->
-        {:ok, results}
+  def get_claim_count(%Community{symbol: id}) do
+    query =
+      from(c in Cambiatus.Commune.Claim,
+        join: a in Cambiatus.Commune.Action,
+        join: o in Cambiatus.Commune.Objective,
+        on: a.objective_id == o.id,
+        where: o.community_id == ^id,
+        where: c.action_id == a.id,
+        select: count(c.id)
+      )
+
+    query
+    |> Repo.one()
+    |> case do
+      nil -> {:ok, 0}
+      results -> {:ok, results}
     end
   end
 

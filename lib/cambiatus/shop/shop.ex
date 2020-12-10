@@ -48,11 +48,25 @@ defmodule Cambiatus.Shop do
     query
     |> Repo.one()
     |> case do
-      nil ->
-        {:ok, 0}
+      nil -> {:ok, 0}
+      results -> {:ok, results}
+    end
+  end
 
-      results ->
-        {:ok, results}
+  def community_order_count(community_id) do
+    query =
+      from(o in Order,
+        join: p in Product,
+        where: p.community_id == ^community_id,
+        where: p.id == o.product_id,
+        select: count(o.id)
+      )
+
+    query
+    |> Repo.one()
+    |> case do
+      nil -> {:ok, 0}
+      results -> {:ok, results}
     end
   end
 

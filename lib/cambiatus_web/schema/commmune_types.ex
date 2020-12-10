@@ -217,7 +217,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
     field(:product_count, non_null(:integer), resolve: &Commune.get_product_count/3)
+    field(:order_count, non_null(:integer), resolve: &Commune.get_order_count/3)
     field(:action_count, non_null(:integer), resolve: &Commune.get_action_count/3)
+    field(:claim_count, non_null(:integer), resolve: &Commune.get_claim_count/3)
   end
 
   @desc "A community objective"

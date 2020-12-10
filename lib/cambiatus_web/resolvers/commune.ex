@@ -123,8 +123,16 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_action_count(community)
   end
 
+  def get_claim_count(%Community{} = community, _, _) do
+    Commune.get_claim_count(community)
+  end
+
   def get_product_count(%Community{} = community, _, _) do
     Shop.community_product_count(community.symbol)
+  end
+
+  def get_order_count(%Community{} = community, _, _) do
+    Shop.community_order_count(community.symbol)
   end
 
   @doc "Collect an invite"
