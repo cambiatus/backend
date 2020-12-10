@@ -1,6 +1,6 @@
 defmodule Cambiatus.Shop.Order do
   @moduledoc """
-  This module representes the an Order
+  This module represents an Order.
   """
 
   use Ecto.Schema
@@ -9,7 +9,7 @@ defmodule Cambiatus.Shop.Order do
   alias Cambiatus.{
     Accounts.User,
     Commune.Community,
-    Commune.Product
+    Shop.Product
   }
 
   schema "orders" do
