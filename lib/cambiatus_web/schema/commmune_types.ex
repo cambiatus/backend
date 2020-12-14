@@ -10,12 +10,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   @desc "Community Queries on Cambiatus"
   object :community_queries do
-    @desc "A list of sales in Cambiatus"
-    field :sales, non_null(list_of(non_null(:sale))) do
-      arg(:input, non_null(:sales_input))
-      resolve(&Commune.get_sales/3)
-    end
-
     @desc "A list of communities in Cambiatus"
     field :communities, non_null(list_of(non_null(:community))) do
       resolve(&Commune.get_communities/3)
@@ -25,17 +19,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field :community, :community do
       arg(:symbol, non_null(:string))
       resolve(&Commune.find_community/3)
-    end
-
-    @desc "A list of sale history"
-    field :sale_history, list_of(:sale_history) do
-      resolve(&Commune.get_sales_history/3)
-    end
-
-    @desc "A single sale from Cambiatus"
-    field :sale, :sale do
-      arg(:input, non_null(:sale_input))
-      resolve(&Commune.get_sale/3)
     end
 
     @desc "A list of claims"
@@ -76,33 +59,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   @desc "Community Subscriptions on Cambiatus"
   object :community_subscriptions do
-    @desc "A subscription to resolve operations on the sales table"
-    field :sales_operation, :sale do
-      deprecate("Use push notifications to receive these updates")
-
-      config(fn _args, _info ->
-        {:ok, topic: "*"}
-      end)
-    end
-
-    @desc "A subscription for sale history"
-    field :sale_history_operation, :sale_history do
-      deprecate("Use push notifications to receive these updates")
-
-      config(fn _args, _info ->
-        {:ok, topic: "*"}
-      end)
-    end
-
-    @desc "A subscription for transfers"
-    field :transfers, :transfer do
-      deprecate("Use push notifications to receive these updates")
-
-      config(fn _args, _info ->
-        {:ok, topic: "*"}
-      end)
-    end
-
     @desc "A subscription for new community addition"
     field :newcommunity, non_null(:community) do
       arg(:input, non_null(:new_community_input))
@@ -127,6 +83,20 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
         {:ok, transfer}
       end)
     end
+  end
+
+  @desc "Community mutations"
+  object :commune_mutations do
+    @desc "Complete an objective"
+    field :complete_objective, :objective do
+      arg(:input, non_null(:complete_objective_input))
+      resolve(&Commune.complete_objective/3)
+    end
+  end
+
+  @desc "Input to complete an objective"
+  input_object :complete_objective_input do
+    field(:objective_id, non_null(:integer))
   end
 
   input_object :transfer_succeed_input do
@@ -161,22 +131,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:status, :string)
   end
 
-  @desc "Input to collect a sale"
-  input_object :sale_input do
-    field(:id, non_null(:integer))
-  end
-
   @desc "Input for run transfer"
   input_object :transfer_input do
     field(:id, non_null(:integer))
-  end
-
-  @desc "Input to collect sales"
-  input_object :sales_input do
-    field(:account, :string)
-    field(:community_id, :string)
-    field(:communities, :string)
-    field(:all, :string)
   end
 
   @desc "Input to collect a claim"
@@ -255,12 +212,17 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve: dataloader(Cambiatus.Commune)
     )
 
+    @desc "List of users that are claim validators"
+    field(:validators, non_null(list_of(non_null(:profile))), resolve: &Commune.get_validators/3)
+
     field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(Cambiatus.Commune))
     field(:members, non_null(list_of(non_null(:profile))), resolve: dataloader(Cambiatus.Commune))
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
-    field(:sale_count, non_null(:integer), resolve: &Commune.get_sale_count/3)
+    field(:product_count, non_null(:integer), resolve: &Commune.get_product_count/3)
+    field(:order_count, non_null(:integer), resolve: &Commune.get_order_count/3)
     field(:action_count, non_null(:integer), resolve: &Commune.get_action_count/3)
+    field(:claim_count, non_null(:integer), resolve: &Commune.get_claim_count/3)
   end
 
   @desc "A community objective"
@@ -273,6 +235,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
+
+    field(:is_completed, non_null(:boolean))
+    field(:completed_at, :naive_datetime)
 
     field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
     field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
@@ -360,46 +325,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:community, :community)
     field(:account, :profile)
     field(:invited_by, :string)
-  end
-
-  @desc "A sale on Cambiatus"
-  object :sale do
-    field(:id, non_null(:integer))
-    field(:creator_id, non_null(:string))
-
-    field(:community_id, non_null(:string))
-    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
-
-    field(:title, non_null(:string))
-    field(:description, non_null(:string))
-    field(:price, non_null(:float))
-    field(:image, :string)
-    field(:track_stock, non_null(:boolean))
-    field(:units, non_null(:integer))
-
-    field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
-    field(:created_block, non_null(:integer))
-    field(:created_tx, non_null(:string))
-    field(:created_eos_account, non_null(:string))
-    field(:created_at, non_null(:datetime))
-  end
-
-  @desc "A sale history"
-  object :sale_history do
-    field(:id, non_null(:integer))
-    field(:community_id, non_null(:string))
-    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
-
-    field(:sale_id, non_null(:integer))
-    field(:sale, non_null(:sale), resolve: dataloader(Cambiatus.Commune))
-
-    field(:from_id, non_null(:string))
-    field(:from, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
-
-    field(:to_id, non_null(:string))
-    field(:to, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
-    field(:amount, non_null(:float))
-    field(:units, :integer)
   end
 
   @desc "A transfer on Cambiatus"

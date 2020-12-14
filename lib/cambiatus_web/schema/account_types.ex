@@ -28,6 +28,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     @desc "Creates a new user account"
     field :sign_up, non_null(:sign_up) do
       arg(:input, non_null(:sign_up_input))
+
       resolve(&Accounts.create_user/3)
     end
   end
@@ -107,8 +108,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:communities, non_null(list_of(non_null(:community))),
       resolve: dataloader(Cambiatus.Commune)
     )
-
-    field(:invitations, list_of(:string))
 
     field(:analysis_count, non_null(:integer), resolve: &Accounts.get_analysis_count/3)
 

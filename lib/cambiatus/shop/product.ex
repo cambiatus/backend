@@ -1,21 +1,20 @@
-defmodule Cambiatus.Commune.Sale do
+defmodule Cambiatus.Shop.Product do
   @moduledoc """
-  This module holds the data structure that represents an instance of a `Cambiatus.Commune.Sale` use it to
-  build and validate changesets for operating on a sale
+  This module holds the data structure that represents an instance of a `Cambiatus.Commune.Product` use it to
+  build and validate changesets for operating on a product
   """
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   @type t :: %__MODULE__{}
 
   alias Cambiatus.{
     Accounts.User,
     Commune.Community,
-    Commune.Sale
+    Shop.Product
   }
 
-  schema "sales" do
-    belongs_to(:creator, User, references: :account, type: :string)
-    belongs_to(:community, Community, references: :symbol, type: :string)
+  schema "products" do
     field(:title, :string)
     field(:description, :string)
     field(:price, :float)
@@ -29,6 +28,9 @@ defmodule Cambiatus.Commune.Sale do
     field(:created_tx, :string)
     field(:created_eos_account, :string)
     field(:created_at, :utc_datetime)
+
+    belongs_to(:creator, User, references: :account, type: :string)
+    belongs_to(:community, Community, references: :symbol, type: :string)
   end
 
   @required_fields ~w(title description price image track_stock units
@@ -37,19 +39,39 @@ defmodule Cambiatus.Commune.Sale do
   @doc """
   This function contains the logic required for the validation of base shop changeset
   """
-  @spec changeset(Sale.t(), map()) :: Ecto.Changeset.t()
-  def changeset(%Sale{} = shop, attrs) do
+  @spec changeset(Product.t(), map()) :: Ecto.Changeset.t()
+  def changeset(%Product{} = shop, attrs) do
     shop
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
   end
 
   def create_changeset(attrs) do
-    %Sale{}
+    %Product{}
     |> changeset(attrs)
     |> put_assoc(:creator, attrs.creator)
     |> put_assoc(:community, attrs.community)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
+  end
+
+  def from_community(query \\ Product, community_id) do
+    query
+    |> where([p], p.community_id == ^community_id)
+  end
+
+  def created_by(query \\ Product, account) do
+    query
+    |> where([p], p.creator_id == ^account)
+  end
+
+  def active(query \\ Product) do
+    query
+    |> where([p], p.is_deleted == false)
+  end
+
+  def newer_first(query \\ Product) do
+    query
+    |> order_by([p], desc: p.created_at)
   end
 end

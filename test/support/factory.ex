@@ -11,7 +11,6 @@ defmodule Cambiatus.Factory do
     Accounts.User,
     Auth.Invitation,
     Commune.Action,
-    Commune.AvailableSale,
     Commune.Check,
     Commune.Community,
     Commune.Claim,
@@ -19,7 +18,7 @@ defmodule Cambiatus.Factory do
     Repo,
     Commune.Mint,
     Commune.Objective,
-    Commune.Sale,
+    Shop.Product,
     Commune.Transfer,
     Commune.Validator,
     Kyc.KycData,
@@ -69,25 +68,8 @@ defmodule Cambiatus.Factory do
     }
   end
 
-  def available_sale_factory do
-    %AvailableSale{
-      creator: build(:user),
-      community: build(:community),
-      title: sequence(:title, &"title-#{&1}"),
-      description: sequence(:description, &"desc-#{&1}"),
-      price: sequence(:price, &"#{&1}.544"),
-      image: sequence(:image, &"image-#{&1}"),
-      track_stock: true,
-      created_block: sequence(:created_block, &"#{&1}"),
-      created_tx: sequence(:tx, &"c_tx-#{&1}"),
-      created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
-      created_at: NaiveDateTime.utc_now(),
-      units: sequence(:units, &"#{&1}")
-    }
-  end
-
-  def sale_factory do
-    %Sale{
+  def product_factory do
+    %Product{
       creator: build(:user),
       community: build(:community),
       title: sequence(:title, &"title-#{&1}"),

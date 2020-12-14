@@ -10,7 +10,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
     Auth.Invitation,
     Auth.InvitationId,
     Commune.Action,
-    Commune.AvailableSale,
+    Shop.Product,
     Commune.Community,
     Commune.Claim,
     Commune.Objective,
@@ -20,6 +20,35 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
   @num 3
   describe "Commune Resolver" do
+    test "updates an objective to be completed", %{conn: conn} do
+      objective = insert(:objective)
+
+      input = %{
+        "input" => %{
+          "objective_id" => objective.id
+        }
+      }
+
+      query = """
+      mutation ($input: CompleteObjectiveInput) {
+        completeObjective(input: $input) {
+          description
+          isCompleted
+          completedAt
+        }
+      }
+      """
+
+      res =
+        conn
+        |> post("/api/graph", query: query, variables: input)
+
+      response = json_response(res, 200)
+
+      assert response["data"]["completeObjective"]["description"] == objective.description
+      assert response["data"]["completeObjective"]["isCompleted"] == true
+    end
+
     test "collects claimable actions with their validators", %{conn: conn} do
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       comm = insert(:community)
@@ -408,6 +437,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       query {
         community(symbol: "#{cmm.symbol}") {
           objectives {
+            isCompleted
+            completedAt
             createdAt
           }
         }
@@ -468,27 +499,24 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert(community1.name != found_community["name"])
     end
 
-    test "collects all sales", %{conn: conn} do
-      assert Repo.aggregate(AvailableSale, :count, :id) == 0
+    test "collects all products", %{conn: conn} do
+      assert Repo.aggregate(Product, :count, :id) == 0
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
       usr = insert(:user)
       community = insert(:community)
 
-      insert_list(@num, :sale, %{community: community, creator: usr})
-      insert_list(2, :sale, %{community: community})
-      %{title: f_title} = insert(:sale, %{community: community, created_at: latest})
+      insert_list(@num, :product, %{community: community, creator: usr})
+      insert_list(2, :product, %{community: community})
+      %{title: f_title} = insert(:product, %{community: community, created_at: latest})
 
       variables = %{
-        "input" => %{
-          "all" => usr.account,
-          "community_id" => community.symbol
-        }
+        "communityId" => community.symbol
       }
 
       query = """
-      query($input: SalesInput!){
-        sales(input: $input) {
+      query($communityId: String!) {
+        products(communityId: $communityId) {
           id
           title
           description
@@ -503,17 +531,17 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       %{
         "data" => %{
-          "sales" => all_sales
+          "products" => all_sales
         }
       } = json_response(res, 200)
 
       %{"title" => t} = hd(all_sales)
       assert t == f_title
-      assert Enum.count(all_sales) == @num
+      assert Enum.count(all_sales) == @num + 3
     end
 
-    test "collects all sales from a user's communities", %{conn: conn} do
-      assert Repo.aggregate(AvailableSale, :count, :id) == 0
+    test "collects all products from a community", %{conn: conn} do
+      assert Repo.aggregate(Product, :count, :id) == 0
 
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
@@ -521,25 +549,23 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       c2 = insert(:community)
       usr = insert(:user)
 
-      insert_list(@num, :sale, %{units: 0, community: c1})
-      insert_list(@num, :sale, %{community: c1})
+      insert_list(@num, :product, %{units: 0, community: c1})
+      insert_list(@num, :product, %{community: c1})
 
       insert(:network, %{community: c1, account: usr})
       insert(:network, %{community: c2, account: usr})
 
-      insert(:sale, %{community: c2})
-      insert(:sale, %{creator: usr, community: c2})
-      %{title: f_title} = insert(:sale, %{created_at: latest, community: c2})
+      insert(:product, %{community: c2})
+      insert(:product, %{creator: usr, community: c2})
+      %{title: f_title} = insert(:product, %{created_at: latest, community: c1})
 
       variables = %{
-        "input" => %{
-          "communities" => usr.account
-        }
+        "communityId" => c1.symbol
       }
 
       query = """
-      query($input: SalesInput!){
-        sales(input: $input) {
+      query($communityId: String!) {
+        products(communityId: $communityId) {
           id
           title
           description
@@ -551,34 +577,36 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       %{
         "data" => %{
-          "sales" => community_sales
+          "products" => community_sales
         }
       } = json_response(res, 200)
 
       assert %{"title" => ^f_title} = hd(community_sales)
-      assert Repo.aggregate(AvailableSale, :count, :id) == @num * 3
-      # Assert that the collected items are the total less the
-      # 1 sale belonging to the user
-      assert Enum.count(community_sales) == @num * 3 - 1
+      assert Repo.aggregate(Product, :count, :id) == @num * 3
+      assert Enum.count(community_sales) == @num * 3 - 2
     end
 
-    test "collects a user's sales", %{conn: conn} do
-      assert Repo.aggregate(AvailableSale, :count, :id) == 0
+    test "collects a user's products", %{conn: conn} do
+      assert Repo.aggregate(Product, :count, :id) == 0
       user = insert(:user)
+      community = insert(:community)
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
-      %{title: first_title} = insert(:sale, %{creator: user, created_at: latest})
-      insert_list(@num, :sale, %{creator: user})
+      %{title: first_title} =
+        insert(:product, %{creator: user, created_at: latest, community: community})
+
+      insert_list(@num, :product, %{creator: user, community: community})
 
       variables = %{
-        "input" => %{
+        "communityId" => community.symbol,
+        "filters" => %{
           "account" => user.account
         }
       }
 
       query = """
-      query($input: SalesInput!){
-        sales(input: $input) {
+      query($communityId: String!, $filters: ProductsFilterInput){
+        products(communityId: $communityId, filters: $filters) {
           id
           title
           description
@@ -594,29 +622,27 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       %{
         "data" => %{
-          "sales" => user_sales
+          "products" => user_sales
         }
       } = json_response(res, 200)
 
       acc = user.account
 
       assert %{"creator" => %{"account" => ^acc}, "title" => ^first_title} = hd(user_sales)
-      # account for the additional sort sale
+      # account for the additional sort product
       assert Enum.count(user_sales) == @num + 1
     end
 
-    test "collects a single sale", %{conn: conn} do
-      sale = insert(:sale)
+    test "collects a single product", %{conn: conn} do
+      product = insert(:product)
 
       variables = %{
-        "input" => %{
-          "id" => sale.id
-        }
+        "id" => product.id
       }
 
       query = """
-      query($input: SaleInput!) {
-        sale(input: $input) {
+      query($id: Int!) {
+        product(id: $id) {
           id
           title
           description
@@ -629,33 +655,30 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       %{
         "data" => %{
-          "sale" => saved_sale
+          "product" => saved_sale
         }
       } = json_response(res, 200)
 
-      assert Repo.aggregate(AvailableSale, :count, :id) == 1
-      assert saved_sale["id"] == sale.id
+      assert Repo.aggregate(Product, :count, :id) == 1
+      assert saved_sale["id"] == product.id
     end
 
     test "collect only sales not deleted", %{conn: conn} do
-      assert Repo.aggregate(AvailableSale, :count, :id) == 0
+      assert Repo.aggregate(Product, :count, :id) == 0
 
-      usr = insert(:user)
+      user = insert(:user)
       community = insert(:community)
 
-      insert_list(@num, :sale, %{community: community, is_deleted: true})
-      %{title: title} = insert(:sale, %{community: community})
+      insert_list(@num, :product, %{community: community, is_deleted: true, creator: user})
+      %{title: title} = insert(:product, %{community: community, creator: user})
 
       variables = %{
-        "input" => %{
-          "all" => usr.account,
-          "community_id" => community.symbol
-        }
+        "communityId" => community.symbol
       }
 
       query = """
-      query($input: SalesInput!){
-        sales(input: $input) {
+      query($communityId: String!) {
+        products(communityId: $communityId) {
           id
           title
           description
@@ -670,7 +693,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       %{
         "data" => %{
-          "sales" => all_sales
+          "products" => all_sales
         }
       } = json_response(res, 200)
 
