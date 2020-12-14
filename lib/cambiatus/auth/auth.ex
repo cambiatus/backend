@@ -60,31 +60,7 @@ defmodule Cambiatus.Auth do
     end
   end
 
-  @doc """
-  Signs up a new user.
-
-  It checks for existing invitations. If one can be found we create the user account on the blockchain,
-  and netlink he/her to the community that has created the invitation
-
-  If no invitation is found we assume the user is being invited to Cambiatus community.
-  """
-  def sign_up(%{
-        "name" => name,
-        "account" => account,
-        "email" => email,
-        "invitation_id" => invitation_id,
-        "public_key" => public_key,
-        "user_type" => user_type
-      }) do
-    sign_up(%{
-      name: name,
-      account: account,
-      email: email,
-      invitation_id: invitation_id,
-      public_key: public_key,
-      user_type: user_type
-    })
-  end
+  # TODO: Add here the call to sign_up module
 
   def sign_up(%{
         name: name,

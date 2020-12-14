@@ -3,11 +3,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   This module holds the implementation of the resolver for the accounts context
   use this to resolve any queries and mutations for Accounts
   """
-  alias Cambiatus.{
-    Accounts,
-    Accounts.User,
-    Kyc.KycData
-  }
+  alias Cambiatus.{Accounts, Accounts.User}
 
   @doc """
   Collects profile info
@@ -34,61 +30,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   @doc """
-  Creates Juridical user with the given account, KYC, and Address.
-  """
-  def create_user(_, %{input: params, kyc: kyc, address: address}, _) do
-    {:ok,
-     %{status: :error, reason: "The create_user for the juridical account isn't implemented yet."}}
-  end
-
-  @doc """
-  Creates Natural user with the given account and KYC.
-  """
-  def create_user(_, %{input: params, kyc: kyc}, _) do
-    # TODO:
-    # 1. Validate sign_up params
-    # 2. Validate KYC params
-    # 3. If both are valid, then run sign_up and upsert_kyc
-
-    sign_up_fields = %{name: params.name, account: params.account, email: params.email}
-    account_changeset = Accounts.change_user(sign_up_fields)
-
-    if account_changeset.valid? do
-      kyc_changeset = KycData.changeset(%KycData{}, kyc)
-
-      if kyc_changeset.valid? do
-        IO.inspect("kyc data is valid")
-
-        params
-        |> Cambiatus.Auth.sign_up()
-        |> case do
-          {:error, reason} ->
-            Sentry.capture_message("Sign up failed", extra: %{error: reason})
-            {:ok, %{status: :error, reason: reason}}
-
-          _ ->
-            # TODO: run upsert_kyc here
-            {:ok, %{status: :success, reason: ""}}
-        end
-      else
-        IO.inspect(KycData.changeset(%KycData{}, kyc),
-          label: "kyc fields are INvalid"
-        )
-
-        # TODO: return reasonable error message
-        {:ok, %{status: :error, reason: "#{inspect(kyc_changeset.errors)}"}}
-      end
-    else
-      # TODO: return reasonable error message
-      {:ok, %{status: :error, reason: "#{inspect(account_changeset.errors)}"}}
-    end
-  end
-
-  @doc """
   Updates an a user account profile info
   """
-  @spec create_user(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
-  def create_user(_, %{input: params}, _) do
+  @spec sign_up(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
+  def sign_up(_, params, _) do
     params
     |> Cambiatus.Auth.sign_up()
     |> case do
@@ -96,8 +41,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
         Sentry.capture_message("Sign up failed", extra: %{error: reason})
         {:ok, %{status: :error, reason: reason}}
 
-      _ ->
-        {:ok, %{status: :success, reason: ""}}
+      {:ok, result} ->
+        {:ok, %{status: :success, reason: result}}
     end
   end
 
