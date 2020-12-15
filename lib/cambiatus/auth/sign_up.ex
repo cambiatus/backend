@@ -43,14 +43,14 @@ defmodule Cambiatus.Auth.SignUp do
     |> validate(:account)
     |> validate(:changeset)
     |> validate(:user_type)
-    |> validate(:invite)
+    |> validate(:invitation)
     |> validate(:address)
     |> validate(:kyc)
   end
 
   def validate({:error, _} = error, _), do: error
 
-  @spec validate(map(), :account | :changeset | :invite | :user_type | :address | :kyc) ::
+  @spec validate(map(), :account | :changeset | :invitation | :user_type | :address | :kyc) ::
           map() | {:error, any()}
   def validate(%{account: account} = params, :account) do
     case Accounts.get_user(account) do
@@ -80,7 +80,7 @@ defmodule Cambiatus.Auth.SignUp do
     end
   end
 
-  def validate(%{invitation_id: id} = params, :invite) do
+  def validate(%{invitation_id: id} = params, :invitation) do
     case Auth.find_invitation(id) do
       {:ok, %Invitation{}} ->
         params
@@ -93,7 +93,7 @@ defmodule Cambiatus.Auth.SignUp do
     end
   end
 
-  def validate(params, :invite), do: params
+  def validate(params, :invitation), do: params
 
   def validate(%{address: address} = params, :address) do
     changeset = Address.changeset(address)
