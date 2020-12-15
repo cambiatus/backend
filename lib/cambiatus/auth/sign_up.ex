@@ -13,7 +13,7 @@ defmodule Cambiatus.Auth.SignUp do
   New users may or may not have been invited. Also, the user can provide KYC information and Address during the sign_up process.
 
   ## Steps
-  - Validate all params: account, kyc data, invitation
+  - Validate all params: account, kyc data, invitation, and address
   - Create EOS Account
   - Invite to the proper community (Default community or the one in the invitation)
   """
