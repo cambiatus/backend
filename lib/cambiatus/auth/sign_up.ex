@@ -10,7 +10,7 @@ defmodule Cambiatus.Auth.SignUp do
   @doc """
   Signs up a new user.
 
-  New users may or may not have been invited. Also the user can provide KYC information during the sign_up process.
+  New users may or may not have been invited. Also, the user can provide KYC information and Address during the sign_up process.
 
   ## Steps
   - Validate all params: account, kyc data, invitation
