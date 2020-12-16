@@ -75,7 +75,7 @@ defmodule Cambiatus.Auth do
     with {:ok, %Invitation{} = invitation} <- Auth.find_invitation(invitation_id),
          nil <- Accounts.get_user(account),
          true <- Accounts.change_user(params).valid?,
-         {:ok, _} <- Cambiatus.Eos.create_account(account, public_key),
+         {:ok, _} <- Cambiatus.Eos.create_account(public_key, account),
          {:ok, user} <- Accounts.create_user(params),
          user <- Repo.preload(user, :communities),
          {:ok, %{transaction_id: _txid}} <-
@@ -119,7 +119,7 @@ defmodule Cambiatus.Auth do
 
     with nil <- Accounts.get_user(account),
          true <- Accounts.change_user(params).valid?,
-         {:ok, _} <- Cambiatus.Eos.create_account(account, public_key),
+         {:ok, _} <- Cambiatus.Eos.create_account(public_key, account),
          {:ok, user} <- Accounts.create_user(params),
          {:ok, %{transaction_id: _txid}} <-
            @contract.netlink(user.account, @contract.cambiatus_account()) do
@@ -139,7 +139,7 @@ defmodule Cambiatus.Auth do
   end
 
   def sign_up(_) do
-    {:error, "Error parsing params"}
+    {:error, :error_parsing_params}
   end
 
   @doc """

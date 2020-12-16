@@ -119,12 +119,12 @@ defmodule Cambiatus.Auth.SignUp do
   def create_eos_account({:error, _, _} = error), do: error
 
   def create_eos_account(%{account: account, public_key: public_key} = params) do
-    case Eos.create_account(account, public_key) do
+    case Eos.create_account(public_key, account) do
       {:ok, _} ->
         params
 
-      {:error, "Account already exists"} ->
-        {:error, :user_already_registered}
+      {:error, :account_already_exists} = error ->
+        error
 
       _ ->
         {:error, :eos_account_creation_failed}
