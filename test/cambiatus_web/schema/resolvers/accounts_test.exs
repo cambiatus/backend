@@ -6,7 +6,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
   alias Cambiatus.{
     Accounts.User,
-    Commune.Transfer
+    Commune.Transfer,
+    Auth.InvitationId
   }
 
   describe "Accounts Resolver" do
@@ -14,7 +15,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       community = insert(:community, %{symbol: "BES"})
       invitation = insert(:invitation, %{community: community})
 
-      invitation_id = invitation.id |> Cambiatus.Auth.InvitationId.encode()
+      invitation_id = invitation.id |> InvitationId.encode()
 
       variables = %{
         "input" => %{

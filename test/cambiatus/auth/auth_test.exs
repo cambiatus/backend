@@ -23,7 +23,7 @@ defmodule Cambiatus.AuthTest do
       user = insert(:user)
       another_user = insert(:user)
       invitation = insert(:invitation, %{community: community, creator: user})
-      invitation_id = invitation.id |> Cambiatus.Auth.InvitationId.encode()
+      invitation_id = InvitationId.encode(invitation.id)
 
       body = %{
         "account" => another_user.account

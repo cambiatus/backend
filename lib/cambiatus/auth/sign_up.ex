@@ -96,7 +96,7 @@ defmodule Cambiatus.Auth.SignUp do
   def validate(params, :invitation), do: params
 
   def validate(%{address: address} = params, :address) do
-    changeset = Address.changeset(address)
+    changeset = Address.changeset(%Address{}, address)
 
     if changeset.valid? do
       params
@@ -106,7 +106,7 @@ defmodule Cambiatus.Auth.SignUp do
   end
 
   def validate(%{kyc: kyc} = params, :kyc) do
-    changeset = KycData.changeset(kyc)
+    changeset = KycData.changeset(%KycData{}, kyc)
 
     if changeset.valid? do
       params
