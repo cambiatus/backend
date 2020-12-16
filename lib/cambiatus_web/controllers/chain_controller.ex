@@ -12,9 +12,4 @@ defmodule CambiatusWeb.ChainController do
     json(conn, response.body)
   end
 
-  def create_account(conn, params) do
-    with {:ok, result} <- Eos.create_account(params) do
-      json(conn, result)
-    end
-  end
 end

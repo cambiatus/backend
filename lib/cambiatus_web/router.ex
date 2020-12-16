@@ -52,7 +52,6 @@ defmodule CambiatusWeb.Router do
     post("/upload", UploadController, :save)
 
     get("/chain/info", ChainController, :info)
-    post("/chain/account", ChainController, :create_account)
 
     post("/invite", InviteController, :invite)
   end
