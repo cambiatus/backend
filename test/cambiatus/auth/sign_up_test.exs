@@ -253,6 +253,8 @@ defmodule Cambiatus.Auth.SignUpTest do
 
       found_kyc = Repo.get_by!(KycData, %{account_id: user.account})
       assert found_kyc.account_id == user.account
+    end
+
     test "sign_up/1 with KYC" do
       community = insert(:community)
       user = build(:user)
