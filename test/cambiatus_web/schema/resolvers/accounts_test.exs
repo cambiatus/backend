@@ -4,11 +4,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   """
   use Cambiatus.ApiCase
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Transfer,
-    Auth.InvitationId
-  }
+  alias Cambiatus.{Accounts.User, Commune.Transfer}
 
   describe "Accounts Resolver" do
     test "collects a user account given the account name", %{conn: conn} do
