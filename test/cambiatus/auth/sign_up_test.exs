@@ -256,7 +256,7 @@ defmodule Cambiatus.Auth.SignUpTest do
     end
 
     test "sign_up/1 with KYC" do
-      community = insert(:community)
+      _community = insert(:community)
       user = build(:user)
       kyc = build(:kyc_data)
 
@@ -279,7 +279,7 @@ defmodule Cambiatus.Auth.SignUpTest do
     end
 
     test "sign_up/1 with Address" do
-      community = insert(:community)
+      _community = insert(:community)
       user = build(:user)
       address = build(:address)
 

@@ -70,7 +70,9 @@ defmodule Cambiatus.DataCase do
 
     {:ok, root} =
       Cambiatus.Accounts.create_user(%{
-        account: "cambiatustes"
+        account: "cambiatustes",
+        name: "Cambiatus Tests",
+        email: "support@cambiatus.com"
       })
 
     {:ok, user} =
