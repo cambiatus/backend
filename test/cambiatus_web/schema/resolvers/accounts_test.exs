@@ -11,40 +11,6 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   }
 
   describe "Accounts Resolver" do
-    test "creates a user with all parameters", %{conn: conn} do
-      community = insert(:community, %{symbol: "BES"})
-      invitation = insert(:invitation, %{community: community})
-
-      invitation_id = invitation.id |> InvitationId.encode()
-
-      variables = %{
-        "input" => %{
-          "account" => "loremlorem12",
-          "email" => "some@user.com",
-          "invitation_id" => invitation_id,
-          "name" => "Some User",
-          "public_key" => "mypublickey",
-          "user_type" => "natural"
-        }
-      }
-
-      query = """
-      mutation($input: SignUpInput!){
-        signUp(input: $input) {
-          status
-          reason
-        }
-      }
-      """
-
-      res = conn |> post("/api/graph", query: query, variables: variables)
-
-      response = json_response(res, 200)
-
-      assert response["data"]["signUp"]["status"] == "SUCCESS"
-      assert response["data"]["signUp"]["reason"] == ""
-    end
-
     test "collects a user account given the account name", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       usr = insert(:user)
@@ -147,7 +113,6 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert profile["kyc"]["userType"] == kyc.user_type
     end
 
-    @bio "new bio"
     test "updates a user account details given the account name", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       usr = insert(:user)
@@ -155,7 +120,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       variables = %{
         "input" => %{
           "account" => usr.account,
-          "bio" => @bio
+          "bio" => "new bio"
         }
       }
 
