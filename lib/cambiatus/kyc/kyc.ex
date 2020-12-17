@@ -3,13 +3,9 @@ defmodule Cambiatus.Kyc do
   Context for all KYC related entities
   """
 
-  alias Cambiatus.{
-    Kyc.Country,
-    Kyc.Address,
-    Kyc.KycData,
-    Repo,
-    Accounts.User
-  }
+  alias Cambiatus.{Repo, Accounts.User}
+  alias Cambiatus.Kyc.{Country, Address, KycData}
+  alias Ecto.Multi
 
   @spec data :: Dataloader.Ecto.t()
   def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
@@ -27,6 +23,16 @@ defmodule Cambiatus.Kyc do
     end
   end
 
+  def create(account, kyc, address) do
+    Multi.new()
+    |> Multi.insert(:kyc, KycData.changeset(%KycData{}, Map.merge(kyc, %{account_id: account})))
+    |> Multi.insert(
+      :address,
+      Address.changeset(%Address{}, Map.merge(address, %{account_id: account}))
+    )
+    |> Repo.transaction()
+  end
+
   @doc """
   Updates the KYC data record for the given user if it already exists
   or inserts a new one if the user hasn't it yet.
@@ -39,12 +45,10 @@ defmodule Cambiatus.Kyc do
         kyc -> kyc
       end
 
-    result =
-      kyc_entry
-      |> KycData.changeset(params)
-      |> Repo.insert_or_update()
-
-    case result do
+    kyc_entry
+    |> KycData.changeset(params)
+    |> Repo.insert_or_update()
+    |> case do
       {:ok, kyc} -> {:ok, kyc}
       {:error, %{errors: errors_list}} -> {:error, "#{inspect(errors_list)}"}
     end
@@ -62,12 +66,10 @@ defmodule Cambiatus.Kyc do
         addr -> addr
       end
 
-    result =
-      address_entry
-      |> Address.changeset(params)
-      |> Repo.insert_or_update()
-
-    case result do
+    address_entry
+    |> Address.changeset(params)
+    |> Repo.insert_or_update()
+    |> case do
       {:ok, address} -> {:ok, address}
       {:error, %{errors: errors_list}} -> {:error, "#{inspect(errors_list)}"}
     end

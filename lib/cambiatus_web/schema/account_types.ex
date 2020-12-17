@@ -26,13 +26,13 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Creates a new user account"
-    field :sign_up, non_null(:sign_up) do
+    field :sign_up, non_null(:sign_up_response) do
       arg(:name, non_null(:string))
       arg(:account, non_null(:string))
       arg(:email, non_null(:string))
-      arg(:invitation_id, :string)
       arg(:public_key, non_null(:string))
       arg(:user_type, non_null(:string))
+      arg(:invitation_id, :string)
       arg(:kyc, :kyc_data_update_input)
       arg(:address, :address_update_input)
 
@@ -67,7 +67,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     value(:error, description: "Sign up failed")
   end
 
-  object :sign_up do
+  object :sign_up_response do
     field(:status, non_null(:sign_up_status))
     field(:reason, non_null(:string))
   end

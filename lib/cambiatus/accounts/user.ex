@@ -45,7 +45,7 @@ defmodule Cambiatus.Accounts.User do
     has_one(:kyc, KycData, foreign_key: :account_id)
   end
 
-  @required_fields ~w(account)a
+  @required_fields ~w(account email name)a
   @optional_fields ~w(name email bio location interests avatar created_block created_tx created_at created_eos_account)a
 
   @doc false

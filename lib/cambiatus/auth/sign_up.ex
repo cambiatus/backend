@@ -3,7 +3,8 @@ defmodule Cambiatus.Auth.SignUp do
   Module responsible for SignUp
   """
 
-  alias Cambiatus.{Accounts, Eos, Kyc.Address, Kyc.KycData, Accounts.User, Auth.Invitation, Auth}
+  alias Cambiatus.{Accounts, Eos, Kyc, Accounts.User, Auth.Invitation, Auth}
+  alias Cambiatus.Kyc.{Address, KycData}
 
   @contract Application.get_env(:cambiatus, :contract)
 
@@ -22,6 +23,7 @@ defmodule Cambiatus.Auth.SignUp do
     |> validate_all()
     |> create_eos_account()
     |> create_user()
+    |> create_kyc()
     |> invite_user()
     |> case do
       {:error, _} = error ->
@@ -43,14 +45,19 @@ defmodule Cambiatus.Auth.SignUp do
     |> validate(:account)
     |> validate(:changeset)
     |> validate(:user_type)
+    |> validate(:public_key)
     |> validate(:invitation)
     |> validate(:address)
     |> validate(:kyc)
   end
 
   def validate({:error, _} = error, _), do: error
+  def validate({:error, _, _} = error, _), do: error
 
-  @spec validate(map(), :account | :changeset | :invitation | :user_type | :address | :kyc) ::
+  @spec validate(
+          map(),
+          :account | :changeset | :invitation | :user_type | :public_key | :address | :kyc
+        ) ::
           map() | {:error, any()}
   def validate(%{account: account} = params, :account) do
     case Accounts.get_user(account) do
@@ -80,6 +87,14 @@ defmodule Cambiatus.Auth.SignUp do
     end
   end
 
+  def validate(%{public_key: public_key} = params, :public_key) do
+    if String.match?(public_key, ~r/^(EOS){1}([\w\d]){50}$/) do
+      params
+    else
+      {:error, :invalid_public_key}
+    end
+  end
+
   def validate(%{invitation_id: id} = params, :invitation) do
     case Auth.find_invitation(id) do
       {:ok, %Invitation{}} ->
@@ -105,8 +120,10 @@ defmodule Cambiatus.Auth.SignUp do
     end
   end
 
+  def validate(params, :address), do: params
+
   def validate(%{kyc: kyc} = params, :kyc) do
-    changeset = KycData.changeset(%KycData{}, kyc)
+    changeset = KycData.changeset(%KycData{}, Map.merge(kyc, %{account_id: params.account}))
 
     if changeset.valid? do
       params
@@ -114,6 +131,8 @@ defmodule Cambiatus.Auth.SignUp do
       {:error, :kyc_invalid, changeset.errors}
     end
   end
+
+  def validate(params, :kyc), do: params
 
   def create_eos_account({:error, _} = error), do: error
   def create_eos_account({:error, _, _} = error), do: error
@@ -123,14 +142,21 @@ defmodule Cambiatus.Auth.SignUp do
       {:ok, _} ->
         params
 
-      {:error, :account_already_exists} = error ->
-        error
+      {:error, :account_already_exists} ->
+        {:error, :account_already_exists}
 
       _ ->
         {:error, :eos_account_creation_failed}
     end
   end
 
+  @doc """
+  Starts a new Ecto.Multi and inserts the user
+
+  It will pass on the Multi to create_kyc/2 and create_address/2
+
+  If anything goes wrong it will roll back everything
+  """
   def create_user({:error, _} = error), do: error
   def create_user({:error, _, _} = error), do: error
 
@@ -143,6 +169,22 @@ defmodule Cambiatus.Auth.SignUp do
         error
     end
   end
+
+  def create_kyc({:error, _} = error), do: error
+  def create_kyc({:error, _, _} = error), do: error
+
+  def create_kyc(%{kyc: kyc, address: address, account: account} = params) do
+    case Kyc.create(account, kyc, address) do
+      {:ok, _} -> params
+      _ -> {:error, :failed_to_add_kyc}
+    end
+  end
+
+  def create_kyc(%{kyc: _, account: _}), do: {:error, :kyc_without_address}
+  def create_kyc(%{address: _, account: _}), do: {:error, :address_without_kyc}
+
+  # SignUp without KYC
+  def create_kyc(params), do: params
 
   def invite_user({:error, _} = error), do: error
   def invite_user({:error, _, _} = error), do: error
