@@ -151,11 +151,7 @@ defmodule Cambiatus.Auth.SignUp do
   end
 
   @doc """
-  Starts a new Ecto.Multi and inserts the user
-
-  It will pass on the Multi to create_kyc/2 and create_address/2
-
-  If anything goes wrong it will roll back everything
+  Creates a new entry on our users table.
   """
   def create_user({:error, _} = error), do: error
   def create_user({:error, _, _} = error), do: error
