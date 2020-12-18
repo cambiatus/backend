@@ -100,8 +100,8 @@ defmodule Cambiatus.Auth.SignUp do
       {:ok, %Invitation{}} ->
         params
 
-      {:error, :invitation_not_found} ->
-        {:error, :invitation_not_found}
+      {:error, :invitation_not_found} = error ->
+        error
 
       {:error, :decode_failed} ->
         {:error, :invalid_invitation_id}
