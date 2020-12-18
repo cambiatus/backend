@@ -142,8 +142,8 @@ defmodule Cambiatus.Auth.SignUp do
       {:ok, _} ->
         params
 
-      {:error, :account_already_exists} ->
-        {:error, :account_already_exists}
+      {:error, :account_already_exists} = error ->
+        error
 
       _ ->
         {:error, :eos_account_creation_failed}
