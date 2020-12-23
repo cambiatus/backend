@@ -23,6 +23,15 @@ defmodule Cambiatus.Kyc do
     end
   end
 
+  @doc """
+  Creates new KYC and address for a given account.
+  """
+  def create(account, kyc) do
+    %KycData{}
+    |> KycData.changeset(Map.merge(kyc, %{account_id: account}))
+    |> Repo.insert()
+  end
+
   def create(account, kyc, address) do
     Multi.new()
     |> Multi.insert(:kyc, KycData.changeset(%KycData{}, Map.merge(kyc, %{account_id: account})))

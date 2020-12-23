@@ -88,7 +88,7 @@ defmodule Cambiatus.Auth.SignUp do
   end
 
   def validate(%{public_key: public_key} = params, :public_key) do
-    if String.match?(public_key, ~r/^(EOS){1}([\w\d]){50}$/) do
+    if String.match?(public_key, ~r/^(EOS){1}([\w\d]){50,53}$/) do
       params
     else
       {:error, :invalid_public_key}
@@ -168,6 +168,29 @@ defmodule Cambiatus.Auth.SignUp do
 
   def create_kyc({:error, _} = error), do: error
   def create_kyc({:error, _, _} = error), do: error
+
+  def create_kyc(%{kyc: kyc, address: address, account: account, user_type: "juridical"} = params) do
+    case Kyc.create(account, kyc, address) do
+      {:ok, _} -> params
+      _ -> {:error, :failed_to_add_kyc}
+    end
+  end
+
+  def create_kyc(%{kyc: _, account: _, user_type: "juridical"}),
+    do: {:error, :kyc_without_address}
+
+  def create_kyc(%{address: _, account: _, user_type: "juridical"}),
+    do: {:error, :address_without_kyc}
+
+  def create_kyc(%{kyc: kyc, account: account, user_type: "natural"} = params) do
+    case Kyc.create(account, kyc) do
+      {:ok, _} -> params
+      _ -> {:error, :failed_to_add_kyc}
+    end
+  end
+
+  def create_kyc(%{kyc: _, address: _, account: _, user_type: "natural"}),
+    do: {:error, :natural_user_type_with_address}
 
   def create_kyc(%{kyc: kyc, address: address, account: account} = params) do
     case Kyc.create(account, kyc, address) do
