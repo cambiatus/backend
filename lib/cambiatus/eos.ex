@@ -18,20 +18,20 @@ defmodule Cambiatus.Eos do
 
   require Logger
 
-  @spec unlock_wallet() :: boolean()
+  @spec unlock_wallet() :: atom()
   def unlock_wallet() do
     cambiatus_wallet()
     |> @eosrpc_wallet.unlock(cambiatus_wallet_password())
     |> case do
       {:ok, _res} ->
-        true
+        :ok
 
       # wallet already unlocked
       {:error, %{body: %{"error" => %{"code" => 3_120_007}}}} ->
-        true
+        :ok
 
       {:error, _error} ->
-        false
+        :error
     end
   end
 
@@ -50,10 +50,12 @@ defmodule Cambiatus.Eos do
         {:error, :blockchain_unacessible}
 
       {:error, _} ->
-        if unlock_wallet() do
-          push_create_account_transaction(account, public_key, public_key)
-        else
-          {:errror, :wallet_error}
+        case unlock_wallet() do
+          :ok ->
+            push_create_account_transaction(account, public_key, public_key)
+
+          :error ->
+            {:errror, :wallet_error}
         end
     end
   end
