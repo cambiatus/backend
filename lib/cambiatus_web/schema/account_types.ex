@@ -12,7 +12,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   object :account_queries do
     @desc "A users profile"
     field :profile, :profile do
-      arg(:input, non_null(:profile_input))
+      arg(:account, non_null(:string))
       resolve(&Accounts.get_profile/3)
     end
   end
@@ -49,11 +49,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:location, :string)
     field(:interests, :string)
     field(:avatar, :string)
-  end
-
-  @desc "Input Object for fetching a User Profile"
-  input_object :profile_input do
-    field(:account, :string)
   end
 
   @desc "The direction of the transfer"
@@ -107,7 +102,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     )
 
     field(:analysis_count, non_null(:integer), resolve: &Accounts.get_analysis_count/3)
-    field(:claims, non_null(list_of(:claim)), resolve: dataloader(Cambiatus.Commune))
+    field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(Cambiatus.Commune))
 
     @desc "List of payers to the given recipient fetched by the part of the account name."
     field(:get_payers_by_account, list_of(:profile)) do

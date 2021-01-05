@@ -9,8 +9,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   Collects profile info
   """
   @spec get_profile(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
-  def get_profile(_, %{input: params}, _) do
-    Accounts.get_account_profile(params.account)
+  def get_profile(_, %{account: account}, _) do
+    Accounts.get_account_profile(account)
   end
 
   @spec get_payers_by_account(map(), map(), map()) :: {:ok, list()}
