@@ -82,5 +82,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
   input_object(:products_filter_input) do
     field(:account, non_null(:string))
+    field(:in_stock, :boolean)
   end
 end

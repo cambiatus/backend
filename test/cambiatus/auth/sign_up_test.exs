@@ -257,6 +257,7 @@ defmodule Cambiatus.Auth.SignUpTest do
 
     test "sign_up/1 with KYC" do
       _community = insert(:community)
+      _inviter = insert(:user, %{account: "cambiatustes"})
       user = build(:user)
       kyc = build(:kyc_data)
 
@@ -275,7 +276,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         }
       }
 
-      assert {:error, :kyc_without_address} = SignUp.sign_up(params)
+      assert {:ok, %User{}} = SignUp.sign_up(params)
     end
 
     test "sign_up/1 with Address" do

@@ -17,21 +17,28 @@ defmodule Cambiatus.Shop do
     queryable
   end
 
-  @spec list_products(binary) :: list(Product.t())
-  def list_products(community_id) do
-    Product
-    |> Product.from_community(community_id)
-    |> Product.active()
-    |> Product.newer_first()
-    |> Repo.all()
-  end
+  def list_products(community_id, filters \\ %{}) do
+    query =
+      Product
+      |> Product.from_community(community_id)
+      |> Product.active()
+      |> Product.newer_first()
 
-  def list_products(community_id, account) do
-    Product
-    |> Product.from_community(community_id)
-    |> Product.created_by(account)
-    |> Product.newer_first()
-    |> Repo.all()
+    query =
+      if Map.has_key?(filters, :account) do
+        Product.created_by(query, Map.get(filters, :account))
+      else
+        query
+      end
+
+    query =
+      if Map.has_key?(filters, :in_stock) do
+        Product.in_stock(query, Map.get(filters, :in_stock))
+      else
+        query
+      end
+
+    Repo.all(query)
   end
 
   def get_product(id) do
