@@ -276,7 +276,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         }
       }
 
-      assert {:ok, %User{}} = SignUp.sign_up(params)
+      assert {:error, :kyc_without_address} = SignUp.sign_up(params)
     end
 
     test "sign_up/1 with Address" do
