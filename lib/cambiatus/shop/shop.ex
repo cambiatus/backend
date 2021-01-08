@@ -42,7 +42,13 @@ defmodule Cambiatus.Shop do
   end
 
   def get_product(id) do
-    Repo.get(Product, id)
+    product = Repo.get(Product, id)
+
+    if product.is_deleted do
+      nil
+    else
+      product
+    end
   end
 
   def community_product_count(community_id) do
