@@ -72,6 +72,11 @@ defmodule Cambiatus.Commune do
     query
   end
 
+  def query(Claim, %{community_id: community_id}) do
+    Claim
+    |> Claim.by_community(community_id)
+  end
+
   def query(queryable, _params) do
     queryable
   end
