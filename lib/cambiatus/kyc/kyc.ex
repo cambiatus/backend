@@ -24,7 +24,7 @@ defmodule Cambiatus.Kyc do
   end
 
   @doc """
-  Creates new KYC and address for a given account.
+  Creates a new KYC for a given account.
   """
   def create(account, kyc) do
     %KycData{}
