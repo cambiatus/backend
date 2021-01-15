@@ -716,15 +716,13 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       fetch = 3
 
       variables = %{
-        "input" => %{
-          "account" => usr.account
-        },
+        "account" => usr.account,
         "first" => fetch
       }
 
       query = """
-      query($input: ProfileInput!, $first: Int!) {
-        profile(input: $input) {
+      query($account: String!, $first: Int!) {
+        profile(account: $account) {
           transfers(first: $first) {
             totalCount
             fetchedCount

@@ -69,6 +69,7 @@ defmodule Cambiatus.Mixfile do
       {:edeliver, "~> 1.6"},
       {:rename, "~> 0.1.0", only: :dev},
       {:distillery, "~> 2.0", runtime: false},
+      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
 
       # test
       {:ex_machina, "~> 2.3", only: :test},

@@ -265,6 +265,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_proof_code, :boolean)
     field(:photo_proof_instructions, :string)
 
+    field(:position, :integer)
+
     field(:objective, non_null(:objective), resolve: dataloader(Cambiatus.Commune))
 
     field(:validators, non_null(list_of(non_null(:profile))),
