@@ -13,6 +13,11 @@ defmodule Cambiatus.Shop do
     Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
   end
 
+  def query(Product, %{query: query}) do
+    Product
+    |> Product.by_description(query)
+  end
+
   def query(queryable, _params) do
     queryable
   end

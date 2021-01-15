@@ -82,4 +82,9 @@ defmodule Cambiatus.Shop.Product do
       where(query, [p], p.track_stock == true and p.units <= 0)
     end
   end
+
+  def by_description(query \\ Product, q) do
+    query
+    |> where([p], p.description == ^q)
+  end
 end
