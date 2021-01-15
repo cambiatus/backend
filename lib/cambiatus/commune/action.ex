@@ -1,15 +1,11 @@
 defmodule Cambiatus.Commune.Action do
   @moduledoc false
-
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Claim,
-    Commune.Objective,
-    Commune.Validator
-  }
+  alias Cambiatus.{Accounts.User}
+  alias Cambiatus.Commune.{Claim, Objective, Validator, Action}
 
   schema "actions" do
     field(:description, :string)
@@ -24,6 +20,8 @@ defmodule Cambiatus.Commune.Action do
     field(:has_proof_photo, :boolean, default: false)
     field(:has_proof_code, :boolean, default: false)
     field(:photo_proof_instructions, :string)
+
+    field(:position, :integer)
 
     field(:created_block, :integer)
     field(:created_tx, :string)
@@ -50,5 +48,30 @@ defmodule Cambiatus.Commune.Action do
     |> validate_inclusion(:verification_type, ["claimable", "automatic"])
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:objective_id)
+  end
+
+  def created_by(query \\ Action, account) do
+    query
+    |> where([a], a.creator_id == ^account)
+  end
+
+  def with_validator(query \\ Action, validator) do
+    query
+    |> join(:inner, [a], v in Validator, on: a.id == v.action_id and v.validator_id == ^validator)
+  end
+
+  def completed(query \\ Action, is_completed?) do
+    query
+    |> where([a], a.is_completed == ^is_completed?)
+  end
+
+  def with_verification_type_of(query \\ Action, verification_type) do
+    query
+    |> where([a], a.verification_type == ^verification_type)
+  end
+
+  def ordered(query \\ Action) do
+    query
+    |> order_by([a], a.position)
   end
 end

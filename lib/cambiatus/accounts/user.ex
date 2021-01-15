@@ -8,13 +8,13 @@ defmodule Cambiatus.Accounts.User do
   alias Cambiatus.{
     Accounts.User,
     Auth.Invitation,
-    Commune.Network,
     Shop.Product,
-    Commune.Transfer,
     Notifications.PushSubscription,
     Kyc.KycData,
     Kyc.Address
   }
+
+  alias Cambiatus.Commune.{Network, Claim, Transfer}
 
   @primary_key {:account, :string, autogenerate: false}
   schema "users" do
@@ -40,13 +40,14 @@ defmodule Cambiatus.Accounts.User do
     has_many(:network, Network, foreign_key: :account_id)
     has_many(:communities, through: [:network, :community])
     has_many(:invitations, Invitation, foreign_key: :creator_id)
+    has_many(:claims, Claim, foreign_key: :claimer_id)
 
     has_one(:address, Address, foreign_key: :account_id)
     has_one(:kyc, KycData, foreign_key: :account_id)
   end
 
-  @required_fields ~w(account)a
-  @optional_fields ~w(name email bio location interests avatar created_block created_tx created_at created_eos_account)a
+  @required_fields ~w(account email name)a
+  @optional_fields ~w(bio location interests avatar created_block created_tx created_at created_eos_account)a
 
   @doc false
   def changeset(%User{} = user, attrs) do

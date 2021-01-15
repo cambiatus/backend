@@ -34,26 +34,24 @@ defmodule Cambiatus.Commune do
       |> Enum.reduce(Action, fn
         {:creator, account}, query ->
           query
-          |> where([a], a.creator_id == ^account)
+          |> Action.created_by(account)
 
         {:validator, account}, query ->
           query
-          |> join(:inner, [a], v in Validator,
-            on: a.id == v.action_id and v.validator_id == ^account
-          )
+          |> Action.with_validator(account)
 
         {:is_completed, is_completed}, query ->
           query
-          |> where([a], a.is_completed == ^is_completed)
+          |> Action.completed(is_completed)
 
         {:verification_type, verification_type}, query ->
           query
-          |> where([a], a.verification_type == ^verification_type)
+          |> Action.with_verification_type_of(verification_type)
 
         _, query ->
           query
       end)
-      |> order_by([a], a.created_at)
+      |> Action.ordered()
 
     query
   end
@@ -72,6 +70,11 @@ defmodule Cambiatus.Commune do
       |> order_by([c], c.created_at)
 
     query
+  end
+
+  def query(Claim, %{community_id: community_id}) do
+    Claim
+    |> Claim.by_community(community_id)
   end
 
   def query(queryable, _params) do

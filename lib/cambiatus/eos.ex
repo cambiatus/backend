@@ -18,8 +18,8 @@ defmodule Cambiatus.Eos do
 
   require Logger
 
-  @spec unlock_wallet() :: :ok | :error
-  def unlock_wallet do
+  @spec unlock_wallet() :: atom()
+  def unlock_wallet() do
     cambiatus_wallet()
     |> @eosrpc_wallet.unlock(cambiatus_wallet_password())
     |> case do
@@ -35,40 +35,29 @@ defmodule Cambiatus.Eos do
     end
   end
 
-  def create_account(account, key) do
-    create_account(%{"account" => account, "ownerKey" => key, "activeKey" => key})
-  end
-
-  def create_account(%{
-        "account" => account_name,
-        "ownerKey" => owner_key,
-        "activeKey" => active_key
-      }) do
-    case @eosrpc_chain.get_account(account_name) do
+  @spec create_account(String.t(), String.t()) ::
+          {:ok, map()}
+          | {:error, :account_already_exists | :blockchain_unaccessible | :wallet_error}
+  def create_account(public_key, account \\ random_eos_account()) do
+    case @eosrpc_chain.get_account(account) do
       {:ok, _} ->
-        {:error, "Account already exists"}
+        {:error, :account_already_exists}
 
       {:error, :nxdomain} ->
-        {:error, "Blockchain unacessible"}
+        {:error, :blockchain_unacessible}
 
       {:error, :econnrefused} ->
-        {:error, "Blockchain unacessible"}
+        {:error, :blockchain_unacessible}
 
       {:error, _} ->
         case unlock_wallet() do
           :ok ->
-            push_create_account_transaction(account_name, owner_key, active_key)
+            push_create_account_transaction(account, public_key, public_key)
 
           :error ->
-            {:errror, "Wallet error"}
+            {:errror, :wallet_error}
         end
     end
-  end
-
-  def create_account(%{"ownerKey" => _, "activeKey" => _} = params) do
-    params
-    |> Map.merge(%{"account" => random_eos_account()})
-    |> create_account()
   end
 
   def push_create_account_transaction(account_name, owner_key, active_key) do

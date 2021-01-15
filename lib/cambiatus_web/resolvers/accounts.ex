@@ -3,17 +3,14 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   This module holds the implementation of the resolver for the accounts context
   use this to resolve any queries and mutations for Accounts
   """
-  alias Cambiatus.{
-    Accounts,
-    Accounts.User
-  }
+  alias Cambiatus.{Accounts, Accounts.User, Accounts.Transfers, Auth.SignUp}
 
   @doc """
   Collects profile info
   """
   @spec get_profile(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
-  def get_profile(_, %{input: params}, _) do
-    Accounts.get_account_profile(params.account)
+  def get_profile(_, %{account: account}, _) do
+    Accounts.get_account_profile(account)
   end
 
   @spec get_payers_by_account(map(), map(), map()) :: {:ok, list()}
@@ -35,17 +32,17 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   @doc """
   Updates an a user account profile info
   """
-  @spec create_user(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
-  def create_user(_, %{input: params}, _) do
+  @spec sign_up(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
+  def sign_up(_, params, _) do
     params
-    |> Cambiatus.Auth.sign_up()
+    |> SignUp.sign_up()
     |> case do
       {:error, reason} ->
         Sentry.capture_message("Sign up failed", extra: %{error: reason})
         {:ok, %{status: :error, reason: reason}}
 
-      _ ->
-        {:ok, %{status: :success, reason: ""}}
+      {:ok, result} ->
+        {:ok, %{status: :success, reason: result}}
     end
   end
 
@@ -54,7 +51,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   """
   @spec get_transfers(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, args, _) do
-    case Accounts.Transfers.get_transfers(user, args) do
+    case Transfers.get_transfers(user, args) do
       {:ok, transfers} ->
         result =
           transfers

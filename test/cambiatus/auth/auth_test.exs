@@ -23,7 +23,7 @@ defmodule Cambiatus.AuthTest do
       user = insert(:user)
       another_user = insert(:user)
       invitation = insert(:invitation, %{community: community, creator: user})
-      invitation_id = invitation.id |> Cambiatus.Auth.InvitationId.encode()
+      invitation_id = InvitationId.encode(invitation.id)
 
       body = %{
         "account" => another_user.account
@@ -31,96 +31,6 @@ defmodule Cambiatus.AuthTest do
 
       assert {:ok, u} = Auth.sign_in(body, invitation_id)
       assert u.account == another_user.account
-    end
-  end
-
-  describe "authentication Sign up" do
-    setup :valid_community_and_user
-
-    alias Cambiatus.Commune
-
-    test "successful sign up with minimum params" do
-      account = "loremlorem15"
-      params = %{account: account, name: "somename", email: "some@email", public_key: "anykey"}
-      assert {:ok, user} = Auth.sign_up(params)
-      assert user.account == account
-    end
-
-    test "successful sign up with all params" do
-      account = "loremlorem31"
-
-      assert {:ok, user} =
-               Auth.sign_up(%{
-                 account: account,
-                 name: "name",
-                 email: "name@email",
-                 public_key: "pubkey"
-               })
-
-      assert user.email == "name@email"
-      assert user.name == "name"
-    end
-
-    test "sign up with user already registred", %{user: user} do
-      params = %{account: user.account, name: "anyname", email: "anyemail", public_key: "anykey"}
-      assert {:error, :user_already_registered} = Auth.sign_up(params)
-    end
-
-    test "sign up with user already registred and with invitation", %{user: user} do
-      # Create invitation
-      invitation = insert(:invitation)
-
-      auth_params = %{
-        account: user.account,
-        name: "name",
-        email: user.email,
-        public_key: "publickey",
-        invitation_id: InvitationId.encode(invitation.id)
-      }
-
-      assert {:error, :user_already_registered} = Auth.sign_up(auth_params)
-    end
-
-    test "sign up with invalid invitation", %{user: user} do
-      auth_params = %{
-        "account" => user.account,
-        "name" => "name",
-        "email" => "something@email.com",
-        "invitation_id" => "",
-        "public_key" => "mykey",
-        "user_type" => "natural"
-      }
-
-      assert Auth.sign_up(auth_params) == {:error, :invitation_not_found}
-    end
-
-    test "sign up with invitation" do
-      community = insert(:community)
-      user = insert(:user)
-      invitation = insert(:invitation, %{community: community, creator: user})
-
-      new_user_email = "t@test.local"
-      new_user_account_name = "loremlorem13"
-
-      {:ok, new_user} =
-        Auth.sign_up(%{
-          "account" => new_user_account_name,
-          "name" => "name",
-          "email" => new_user_email,
-          "invitation_id" => InvitationId.encode(invitation.id),
-          "public_key" => "mykey",
-          "user_type" => "natural"
-        })
-
-      assert(new_user.email == new_user_email)
-      assert(new_user.account == new_user_account_name)
-      assert(new_user.name == "name")
-
-      # check if user belongs to the community
-      community.symbol
-      |> Commune.list_community_network()
-      |> Enum.any?(&(Map.get(&1, :account_id) == new_user_account_name))
-      |> assert
     end
   end
 

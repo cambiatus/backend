@@ -24,7 +24,7 @@ defmodule Cambiatus.Kyc.KycData do
   @required_fields ~w(account_id user_type document document_type phone country_id)a
   @optional_fields ~w(is_verified)a
 
-  def changeset(model, params \\ :empty) do
+  def changeset(model, params) do
     model
     |> Repo.preload(:country)
     |> Repo.preload(:account)
@@ -80,7 +80,11 @@ defmodule Cambiatus.Kyc.KycData do
     if document_type in natural_documents do
       changeset
     else
-      add_error(changeset, :document_type, "Document type entry is not valid for 'natural' user_type")
+      add_error(
+        changeset,
+        :document_type,
+        "Document type entry is not valid for 'natural' user_type"
+      )
     end
   end
 
@@ -91,7 +95,11 @@ defmodule Cambiatus.Kyc.KycData do
     if document_type in juridical_documents do
       changeset
     else
-      add_error(changeset, :document_type, "Document type entry is not valid for 'juridical' user_type")
+      add_error(
+        changeset,
+        :document_type,
+        "Document type entry is not valid for 'juridical' user_type"
+      )
     end
   end
 
@@ -124,16 +132,16 @@ defmodule Cambiatus.Kyc.KycData do
         ~r/^[1-9]-?\d{4}-?\d{4}$/
 
       "dimex" ->
-        ~r/[1-9]{1}\d{10,11}/
+        ~r/^[1-9]{1}\d{10,11}$/
 
       "nite" ->
-        ~r/[1-9]{1}\d{9}/
+        ~r/^[1-9]{1}\d{9}$/
 
       "mipyme" ->
-        ~r/\d-?\d{3}-?\d{6}/
+        ~r/^\d-?\d{3}-?\d{6}$/
 
       "gran_empresa" ->
-        ~r/\d-?\d{3}-?\d{6}/
+        ~r/^\d-?\d{3}-?\d{6}$/
     end
   end
 end

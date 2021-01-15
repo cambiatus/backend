@@ -74,4 +74,12 @@ defmodule Cambiatus.Shop.Product do
     query
     |> order_by([p], desc: p.created_at)
   end
+
+  def in_stock(query \\ Product, in_stock?) do
+    if in_stock? do
+      where(query, [p], p.track_stock == false or (p.track_stock == true and p.units > 0))
+    else
+      where(query, [p], p.track_stock == true and p.units <= 0)
+    end
+  end
 end

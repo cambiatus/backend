@@ -12,7 +12,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   object :account_queries do
     @desc "A users profile"
     field :profile, :profile do
-      arg(:input, non_null(:profile_input))
+      arg(:account, non_null(:string))
       resolve(&Accounts.get_profile/3)
     end
   end
@@ -26,21 +26,18 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Creates a new user account"
-    field :sign_up, non_null(:sign_up) do
-      arg(:input, non_null(:sign_up_input))
+    field :sign_up, non_null(:sign_up_response) do
+      arg(:name, non_null(:string))
+      arg(:account, non_null(:string))
+      arg(:email, non_null(:string))
+      arg(:public_key, non_null(:string))
+      arg(:user_type, non_null(:string))
+      arg(:invitation_id, :string)
+      arg(:kyc, :kyc_data_update_input)
+      arg(:address, :address_update_input)
 
-      resolve(&Accounts.create_user/3)
+      resolve(&Accounts.sign_up/3)
     end
-  end
-
-  @desc "Input object for creating a new user account"
-  input_object :sign_up_input do
-    field(:name, non_null(:string))
-    field(:account, non_null(:string))
-    field(:email, non_null(:string))
-    field(:invitation_id, :string)
-    field(:public_key, non_null(:string))
-    field(:user_type, :string)
   end
 
   @desc "An input object for updating a user Profile"
@@ -54,11 +51,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:avatar, :string)
   end
 
-  @desc "Input Object for fetching a User Profile"
-  input_object :profile_input do
-    field(:account, :string)
-  end
-
   @desc "The direction of the transfer"
   enum :transfer_direction do
     value(:incoming, description: "User's incoming transfers.")
@@ -70,7 +62,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     value(:error, description: "Sign up failed")
   end
 
-  object :sign_up do
+  object :sign_up_response do
     field(:status, non_null(:sign_up_status))
     field(:reason, non_null(:string))
   end
@@ -110,6 +102,11 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     )
 
     field(:analysis_count, non_null(:integer), resolve: &Accounts.get_analysis_count/3)
+
+    field(:claims, non_null(list_of(non_null(:claim)))) do
+      arg(:community_id, :string)
+      resolve(dataloader(Cambiatus.Commune))
+    end
 
     @desc "List of payers to the given recipient fetched by the part of the account name."
     field(:get_payers_by_account, list_of(:profile)) do

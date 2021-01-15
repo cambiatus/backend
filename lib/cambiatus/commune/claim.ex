@@ -6,13 +6,10 @@ defmodule Cambiatus.Commune.Claim do
   @type t :: %__MODULE__{}
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Action,
-    Commune.Claim,
-    Commune.Check
-  }
+  alias Cambiatus.Commune.{Action, Claim, Check, Objective}
+  alias Cambiatus.Accounts.User
 
   schema "claims" do
     field(:status, :string)
@@ -45,5 +42,12 @@ defmodule Cambiatus.Commune.Claim do
     |> changeset(attrs)
     |> foreign_key_constraint(:action_id)
     |> foreign_key_constraint(:claimer_id)
+  end
+
+  def by_community(query \\ Claim, community_id) do
+    query
+    |> join(:inner, [c], a in Action, on: a.id == c.action_id)
+    |> join(:inner, [c, a], o in Objective, on: o.id == a.objective_id)
+    |> where([c, a, o], o.community_id == ^community_id)
   end
 end
