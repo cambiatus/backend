@@ -64,7 +64,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
   object :sign_up_response do
     field(:status, non_null(:sign_up_status))
-    field(:reason, non_null(:string))
+    field(:reason, :string)
+    field(:profile, :profile)
   end
 
   @desc "User's address"
