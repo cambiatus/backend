@@ -56,6 +56,11 @@ defmodule Cambiatus.Commune do
     query
   end
 
+  def query(Action, %{query: query}) do
+    Action
+    |> Action.search(query)
+  end
+
   def query(Check, %{input: filters}) do
     query =
       filters

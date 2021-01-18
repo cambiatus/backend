@@ -25,7 +25,7 @@ defmodule CambiatusWeb.Schema.SearchTypes do
 
     field(:actions, non_null(list_of(non_null(:action)))) do
       arg(:query, :string)
-      resolve(dataloader(Cambiatus.Shop))
+      resolve(dataloader(Cambiatus.Commune))
     end
   end
 end

@@ -83,8 +83,11 @@ defmodule Cambiatus.Shop.Product do
     end
   end
 
-  def by_description(query \\ Product, q) do
+  def search(query \\ Product, q) do
     query
-    |> where([p], p.description == ^q)
+    |> where([p], fragment("?.description @@ plainto_tsquery(?) ", p, ^q))
+    |> or_where([p], fragment("?.title @@ plainto_tsquery(?)", p, ^q))
+    |> or_where([p], ilike(p.title, ^"%#{q}%"))
+    |> or_where([p], ilike(p.description, ^"%#{q}%"))
   end
 end

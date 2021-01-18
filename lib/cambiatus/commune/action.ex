@@ -74,4 +74,10 @@ defmodule Cambiatus.Commune.Action do
     query
     |> order_by([a], a.position)
   end
+
+  def search(query \\ Action, q) do
+    query
+    |> where([a], fragment("?.description @@ plainto_tsquery(?) ", a, ^q))
+    |> or_where([a], ilike(a.description, ^"%#{q}%"))
+  end
 end

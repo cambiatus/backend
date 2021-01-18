@@ -15,7 +15,7 @@ defmodule Cambiatus.Shop do
 
   def query(Product, %{query: query}) do
     Product
-    |> Product.by_description(query)
+    |> Product.search(query)
   end
 
   def query(queryable, _params) do
