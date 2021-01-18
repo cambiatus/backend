@@ -216,7 +216,7 @@ defmodule Cambiatus.Factory do
     }
   end
 
-  def kyc_data_factory() do
+  def kyc_data_factory do
     user_type = sequence(:user_type, ["juridical", "natural"])
 
     {document_type, document} =
