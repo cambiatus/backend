@@ -276,11 +276,16 @@ defmodule Cambiatus.Auth.SignUpTest do
         }
       }
 
-      assert {:error, :kyc_without_address} = SignUp.sign_up(params)
+      if kyc.user_type == "juridical" do
+        assert {:error, :kyc_without_address} = SignUp.sign_up(params)
+      else
+        assert {:ok, %User{}} = SignUp.sign_up(params)
+      end
     end
 
     test "sign_up/1 with Address" do
       _community = insert(:community)
+      _inviter = insert(:user, %{account: "cambiatustes"})
       user = build(:user)
       address = build(:address)
 
@@ -302,7 +307,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         }
       }
 
-      assert {:error, :address_without_kyc} = SignUp.sign_up(params)
+      assert {:ok, %User{}} = SignUp.sign_up(params)
     end
   end
 end
