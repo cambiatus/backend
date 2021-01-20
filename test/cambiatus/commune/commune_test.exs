@@ -1,12 +1,8 @@
 defmodule Cambiatus.CommuneTest do
   use Cambiatus.DataCase
 
-  alias Cambiatus.{
-    Commune,
-    Commune.Community,
-    Commune.Action,
-    Commune.Objective
-  }
+  alias Cambiatus.Commune
+  alias Cambiatus.Commune.{Community, Action, Objective}
 
   describe "communities" do
     @valid_attrs %{
@@ -167,6 +163,21 @@ defmodule Cambiatus.CommuneTest do
       assert {:ok, %Objective{} = objective} = Commune.update_objective(objective, change)
       {:ok, found_objective} = Commune.get_objective(objective.id)
       assert objective == Repo.preload(found_objective, [:creator, :community])
+    end
+  end
+
+  describe "search" do
+    test "fuzzy search actions" do
+      objective = insert(:objective)
+      _action1 = insert(:action, %{objective: objective, description: "asdf QUERY asdf"})
+      _action2 = insert(:action, %{objective: objective, description: "asdfQUERYasdf"})
+      _action3 = insert(:action, %{objective: objective, description: "QUERYasdf"})
+      _action4 = insert(:action, %{objective: objective, description: "asdfQUERY"})
+      _action5 = insert(:action, %{objective: objective, description: "asdf"})
+      _action6 = insert(:action, %{objective: objective, description: "asdfquery"})
+
+      results = Action |> Commune.query(%{query: "QUERY"}) |> Repo.all()
+      assert(Enum.count(results) == 5)
     end
   end
 end
