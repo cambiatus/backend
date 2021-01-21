@@ -5,12 +5,11 @@ defmodule CambiatusWeb.Resolvers.Commune do
   """
   alias Absinthe.Relay.Connection
 
-  alias Cambiatus.{
-    Auth,
-    Commune,
-    Commune.Community,
-    Shop
-  }
+  alias Cambiatus.{Auth, Commune, Commune.Community, Shop}
+
+  def search(_, %{community_id: symbol}, _) do
+    Commune.get_community(symbol)
+  end
 
   @doc """
   Fetches a single transfer

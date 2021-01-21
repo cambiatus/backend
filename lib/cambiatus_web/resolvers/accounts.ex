@@ -41,8 +41,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
         Sentry.capture_message("Sign up failed", extra: %{error: reason})
         {:ok, %{status: :error, reason: reason}}
 
-      {:ok, result} ->
-        {:ok, %{status: :success, reason: result}}
+      {:ok, user} ->
+        {:ok, %{status: :success, reason: "ok", profile: user}}
     end
   end
 

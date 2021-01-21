@@ -6,11 +6,7 @@ defmodule CambiatusWeb.Schema do
   use Absinthe.Schema
   use Absinthe.Relay.Schema, :classic
 
-  alias Cambiatus.{
-    Commune,
-    Kyc,
-    Shop
-  }
+  alias Cambiatus.{Commune, Kyc, Shop}
 
   def context(ctx) do
     loader =
@@ -33,6 +29,7 @@ defmodule CambiatusWeb.Schema do
   import_types(__MODULE__.RelayTypes)
   import_types(__MODULE__.KycTypes)
   import_types(__MODULE__.ShopTypes)
+  import_types(__MODULE__.SearchTypes)
 
   query do
     import_fields(:account_queries)
@@ -40,6 +37,7 @@ defmodule CambiatusWeb.Schema do
     import_fields(:notification_queries)
     import_fields(:address_queries)
     import_fields(:shop_queries)
+    import_fields(:search_queries)
   end
 
   mutation do

@@ -199,9 +199,6 @@ defmodule Cambiatus.Auth.SignUp do
     end
   end
 
-  def create_kyc(%{kyc: _, account: _}), do: {:error, :kyc_without_address}
-  def create_kyc(%{address: _, account: _}), do: {:error, :address_without_kyc}
-
   # SignUp without KYC
   def create_kyc(params), do: params
 

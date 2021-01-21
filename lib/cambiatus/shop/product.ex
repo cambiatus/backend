@@ -82,4 +82,12 @@ defmodule Cambiatus.Shop.Product do
       where(query, [p], p.track_stock == true and p.units <= 0)
     end
   end
+
+  def search(query \\ Product, q) do
+    query
+    |> where([p], fragment("?.description @@ plainto_tsquery(?) ", p, ^q))
+    |> or_where([p], fragment("?.title @@ plainto_tsquery(?)", p, ^q))
+    |> or_where([p], ilike(p.title, ^"%#{q}%"))
+    |> or_where([p], ilike(p.description, ^"%#{q}%"))
+  end
 end
