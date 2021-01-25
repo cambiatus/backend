@@ -49,6 +49,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:location, :string)
     field(:interests, :string)
     field(:avatar, :string)
+    field(:contacts, list_of(non_null(:contact)))
   end
 
   @desc "The direction of the transfer"
@@ -97,6 +98,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:address, :address, resolve: dataloader(Cambiatus.Kyc))
     field(:kyc, :kyc_data, resolve: dataloader(Cambiatus.Kyc))
+    field(:contacts, list_of(non_null(:contact)), resolve: dataloader(Cambiatus.Accounts))
 
     field(:communities, non_null(list_of(non_null(:community))),
       resolve: dataloader(Cambiatus.Commune)
@@ -125,5 +127,18 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:date, :date, description: "The date of the transfer in `yyyy-mm-dd` format.")
       resolve(&Accounts.get_transfers/3)
     end
+  end
+
+  object :contact do
+    field(:type, :contact_type)
+    field(:external_id, :string)
+  end
+
+  enum :contact_type do
+    value(:phone, description: "A regular phone number")
+    value(:whatsapp, description: "A phone number used in Whatsapp")
+    value(:telegram, description: "An username or phone number for Telegram")
+    value(:signal, description: "A username for signal")
+    value(:instagram, description: "An Instagram account")
   end
 end

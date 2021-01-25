@@ -2,7 +2,7 @@ defmodule Cambiatus.Repo.Migrations.AddProfileContacts do
   use Ecto.Migration
 
   def change do
-    create_query = "CREATE TYPE contact_type AS ENUM ('phone', 'whatsapp', 'telegram', 'signal')"
+    create_query = "CREATE TYPE contact_type AS ENUM ('phone', 'whatsapp', 'telegram', 'signal', 'instagram')"
     drop_query = "DROP TYPE contact_type"
     execute(create_query, drop_query)
 

@@ -9,14 +9,14 @@ defmodule Cambiatus.Accounts.Contact do
   alias Cambiatus.Accounts.{Contact, User}
 
   schema "contacts" do
-    field(:type, Ecto.Enum, values: [:phone, :whatsapp, :telegram, :signal])
+    field(:type, Ecto.Enum, values: [:phone, :whatsapp, :telegram, :signal, :instagram])
     field(:external_id, :string)
 
     belongs_to(:user, User, references: :account, type: :string)
     timestamps(type: :utc_datetime)
   end
 
-  @required_fields ~w(user_id type external_id)
+  @required_fields ~w(user_id type external_id)a
 
   def changeset(%Contact{} = contact, attrs) do
     contact
