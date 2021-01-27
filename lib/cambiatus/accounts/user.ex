@@ -5,7 +5,7 @@ defmodule Cambiatus.Accounts.User do
 
   import Ecto.Changeset
 
-  alias Cambiatus.{Auth.Invitation, Shop.Product, Notifications.PushSubscription}
+  alias Cambiatus.{Auth.Invitation, Shop.Product, Notifications.PushSubscription, Repo}
   alias Cambiatus.Accounts.{Contact, User}
   alias Cambiatus.Commune.{Network, Claim, Transfer}
   alias Cambiatus.Kyc.{KycData, Address}
@@ -47,6 +47,8 @@ defmodule Cambiatus.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
+    |> Repo.preload(:contacts)
+    |> cast_assoc(:contacts)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> unique_constraint(:account)

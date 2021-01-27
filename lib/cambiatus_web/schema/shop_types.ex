@@ -5,6 +5,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
+
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Shop
@@ -45,7 +46,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:track_stock, non_null(:boolean))
     field(:units, non_null(:integer))
 
-    field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
@@ -62,10 +63,10 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:product, non_null(:product), resolve: dataloader(Cambiatus.Shop))
 
     field(:from_id, non_null(:string))
-    field(:from, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:from, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
 
     field(:to_id, non_null(:string))
-    field(:to, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:to, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
 
     field(:amount, non_null(:float))
     field(:units, :integer)
@@ -75,10 +76,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
   end
-
-  # ============
-  # Input Object
-  # ============
 
   input_object(:products_filter_input) do
     field(:account, non_null(:string))

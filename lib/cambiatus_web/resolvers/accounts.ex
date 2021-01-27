@@ -3,7 +3,9 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   This module holds the implementation of the resolver for the accounts context
   use this to resolve any queries and mutations for Accounts
   """
-  alias Cambiatus.{Accounts, Accounts.User, Accounts.Transfers, Auth.SignUp}
+
+  alias Cambiatus.{Accounts, Auth.SignUp}
+  alias Cambiatus.Accounts.{User, Transfers}
 
   @doc """
   Collects profile info
@@ -19,13 +21,18 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   @doc """
-  Updates an a user account profile info
+  Updates a user
   """
-  @spec update_profile(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
-  def update_profile(_, %{input: params}, _) do
+  @spec update_user(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
+  def update_user(_, %{input: params}, _) do
     with {:ok, acc} <- Accounts.get_account_profile(params.account),
          {:ok, prof} <- Accounts.update_user(acc, params) do
       {:ok, prof}
+    else
+      error ->
+        require IEx
+        IEx.pry()
+        error
     end
   end
 
