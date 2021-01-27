@@ -26,6 +26,7 @@ defmodule Cambiatus.Mixfile do
 
   defp deps do
     [
+      # Basic packages
       {:calendar, "~> 1.0.0", override: true},
       {:phoenix, "~> 1.4.0"},
       {:phoenix_pubsub, "~> 1.1"},
@@ -39,51 +40,51 @@ defmodule Cambiatus.Mixfile do
       {:cors_plug, "~> 1.5"},
       {:poolboy, ">= 0.0.0"},
       {:timex, "~> 3.4"},
+      {:poison, "~> 3.0"},
       {:bamboo, "~> 1.1"},
       {:plug_cowboy, "~> 2.0"},
-      {:absinthe, "~> 1.4"},
-      {:absinthe_ecto, "~> 0.1.3"},
-      {:absinthe_plug, "~> 1.4.0"},
-      {:absinthe_phoenix, "~> 1.4.0"},
-      {:absinthe_relay, "~> 1.4.6"},
-      {:dataloader, "~> 1.0.0"},
-      {:ipfs, "~> 0.1.0"},
-      {:eosrpc, "~> 0.6.1"},
-      {:sentry, "~> 6.4"},
-      {:hashids, "~> 2.0"},
-      {:ex_aws, "~> 2.1"},
-      {:ex_aws_s3, "~> 2.0"},
-      {:poison, "~> 3.0"},
       {:hackney,
        github: "benoitc/hackney", override: true, ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"},
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
       {:mogrify, "~> 0.8.0"},
 
-      # web_push
+      # Absinthe Packages
+      {:absinthe, "~> 1.4"},
+      {:absinthe_ecto, "~> 0.1.3"},
+      {:absinthe_plug, "~> 1.4.0"},
+      {:absinthe_phoenix, "~> 1.4.0"},
+      {:absinthe_relay, "~> 1.4.6"},
+      {:dataloader, "~> 1.0.0"},
+
+      # EOS/Blockchain Packages
+      {:ipfs, "~> 0.1.0"},
+      {:eosrpc, "~> 0.6.1"},
+      {:sentry, "~> 6.4"},
+      {:hashids, "~> 2.0"},
+
+      # AWS Packages
+      {:ex_aws, "~> 2.1"},
+      {:ex_aws_s3, "~> 2.0"},
+
+      # Push Notification Packages
       {:web_push_encryption,
        git: "https://github.com/danhper/elixir-web-push-encryption.git", ref: "97297fd3db"},
 
-      # dev
+      # Dev only
       {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
       {:edeliver, "~> 1.6"},
       {:rename, "~> 0.1.0", only: :dev},
       {:distillery, "~> 2.0", runtime: false},
       {:dialyxir, "~> 1.0", only: :dev, runtime: false},
 
-      # test
+      # Test Only
       {:ex_machina, "~> 2.3", only: :test},
       {:faker, "~> 0.14", only: :test},
       {:mox, "~> 0.5.0", only: :test}
     ]
   end
 
-  # Aliases are shortcuts or tasks specific to the current project.
-  # For example, to create, migrate and run the seeds file at once:
-  #
-  #     $ mix ecto.setup
-  #
-  # See the documentation for `Mix` for more info on aliases.
   defp aliases do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
