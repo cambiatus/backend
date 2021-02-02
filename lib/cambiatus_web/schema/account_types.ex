@@ -147,6 +147,9 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
   end
 
+  @desc """
+  Contact information for an user. Everytime contact is updated it replaces all entries
+  """
   object(:contact) do
     field(:type, :contact_type)
     field(:external_id, :string)
@@ -154,8 +157,19 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
   enum(:contact_type) do
     value(:phone, description: "A regular phone number")
-    value(:whatsapp, description: "A phone number used in Whatsapp")
-    value(:telegram, description: "An username or phone number for Telegram")
-    value(:instagram, description: "An Instagram account")
+
+    value(:whatsapp,
+      description: "A phone number used in Whatsapp. Regular international phone number"
+    )
+
+    value(:telegram,
+      description:
+        "An username or phone number for Telegram. Must be https://t.me/${username} or https://telegram.org/${username}"
+    )
+
+    value(:instagram,
+      description:
+        "An Instagram account. Must have full URL like https://instagram.com/${username}"
+    )
   end
 end
