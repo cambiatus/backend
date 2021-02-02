@@ -156,7 +156,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     value(:phone, description: "A regular phone number")
     value(:whatsapp, description: "A phone number used in Whatsapp")
     value(:telegram, description: "An username or phone number for Telegram")
-    value(:signal, description: "A username for signal")
     value(:instagram, description: "An Instagram account")
   end
 end

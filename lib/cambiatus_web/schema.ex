@@ -3,6 +3,7 @@ defmodule CambiatusWeb.Schema do
   This module holds the implementation for the GraphQL schema for Cambiatus, use this module
   to add and remove middleware from the schema and define its root shape
   """
+
   use Absinthe.Schema
   use Absinthe.Relay.Schema, :classic
 

@@ -25,14 +25,12 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   """
   @spec update_user(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
   def update_user(_, %{input: params}, _) do
-    with {:ok, acc} <- Accounts.get_account_profile(params.account),
-         {:ok, prof} <- Accounts.update_user(acc, params) do
-      {:ok, prof}
+    with {:ok, user} <- Accounts.get_account_profile(params.account),
+         {:ok, updated_user} <- Accounts.update_user(user, params) do
+      {:ok, updated_user}
     else
-      error ->
-        require IEx
-        IEx.pry()
-        error
+      {:error, changeset} ->
+        {:error, message: "Could not update user", details: Cambiatus.Error.from(changeset)}
     end
   end
 
