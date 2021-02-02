@@ -5,10 +5,11 @@ defmodule Cambiatus.Accounts.User do
 
   import Ecto.Changeset
 
-  alias Cambiatus.{Auth.Invitation, Shop.Product, Notifications.PushSubscription, Repo}
+  alias Cambiatus.{Auth.Invitation, Notifications.PushSubscription, Repo}
   alias Cambiatus.Accounts.{Contact, User}
   alias Cambiatus.Commune.{Network, Claim, Transfer}
   alias Cambiatus.Kyc.{KycData, Address}
+  alias Cambiatus.Shop.{Product, Order}
 
   @primary_key {:account, :string, autogenerate: false}
   schema "users" do

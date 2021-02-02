@@ -122,6 +122,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve: dataloader(Cambiatus.Commune)
     )
 
+    field(:products, non_null(list_of(:product)), resolve: dataloader(Cambiatus.Shop))
+
     field(:analysis_count, non_null(:integer), resolve: &AccountsResolver.get_analysis_count/3)
 
     field(:claims, non_null(list_of(non_null(:claim)))) do
