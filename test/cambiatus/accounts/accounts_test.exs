@@ -17,6 +17,7 @@ defmodule Cambiatus.AccountsTest do
         |> Accounts.create_user()
 
       user
+      |> Repo.preload(:contacts)
     end
 
     test "collects user by account when one exists" do
@@ -33,12 +34,14 @@ defmodule Cambiatus.AccountsTest do
 
     test "list_users/0 returns all users" do
       user = user_fixture()
-      assert Accounts.list_users() == [user]
+      users = Accounts.list_users()
+      assert users = [user]
     end
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      assert Accounts.get_user!(user.account) == user
+      found_user = Accounts.get_user!(user.account)
+      assert found_user = user
     end
 
     test "create_user/1 with valid data creates a user" do
@@ -58,7 +61,7 @@ defmodule Cambiatus.AccountsTest do
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
-      assert user == Accounts.get_user!(user.account)
+      assert user = Accounts.get_user!(user.account)
     end
 
     test "delete_user/1 deletes the user" do

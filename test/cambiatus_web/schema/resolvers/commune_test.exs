@@ -722,7 +722,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       query = """
       query($account: String!, $first: Int!) {
-        profile(account: $account) {
+        user(account: $account) {
           transfers(first: $first) {
             totalCount
             fetchedCount
@@ -743,7 +743,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "transfers" => %{
               "totalCount" => total_count,
               "fetchedCount" => fetched_count
