@@ -83,7 +83,7 @@ defmodule CambiatusWeb.Schema.NotificationTypes do
   object :notification_history do
     field(:id, non_null(:integer))
     field(:recipient_id, non_null(:string))
-    field(:recipient, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:recipient, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:type, non_null(:string))
     field(:payload, non_null(:notification_type), resolve: &Notifications.get_payload/3)
     field(:is_read, non_null(:boolean))

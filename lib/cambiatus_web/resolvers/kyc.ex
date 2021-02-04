@@ -4,11 +4,8 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   use this to resolve any queries and mutations for Kyc and Address
   """
 
-  alias Cambiatus.{
-    Kyc,
-    Kyc.Country,
-    Kyc.KycData
-  }
+  alias Cambiatus.Kyc
+  alias Cambiatus.Kyc.{Country, KycData}
 
   @spec get_country(map(), map(), map()) :: {:ok, Country.t()} | {:error, term()}
   def get_country(_, %{input: params}, _) do
@@ -29,7 +26,7 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   def delete_kyc(_, %{input: params}, _) do
     params
     |> Kyc.delete_kyc()
-    |> case  do
+    |> case do
       {:error, reason} ->
         Sentry.capture_message("KYC deletion failed", extra: %{error: reason})
         {:ok, %{status: :error, reason: reason}}
@@ -43,7 +40,7 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   def delete_address(_, %{input: params}, _) do
     params
     |> Kyc.delete_address()
-    |> case  do
+    |> case do
       {:error, reason} ->
         Sentry.capture_message("Address deletion failed", extra: %{error: reason})
         {:ok, %{status: :error, reason: reason}}

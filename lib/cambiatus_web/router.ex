@@ -45,9 +45,6 @@ defmodule CambiatusWeb.Router do
 
     get("/health_check", HealthCheckController, :index)
 
-    post("/auth/sign_in", AuthController, :sign_in)
-    post("/auth/sign_up", AuthController, :sign_up)
-
     post("/ipfs", IPFSController, :save)
     post("/upload", UploadController, :save)
 

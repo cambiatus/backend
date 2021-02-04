@@ -5,16 +5,11 @@ defmodule Cambiatus.Accounts.User do
 
   import Ecto.Changeset
 
-  alias Cambiatus.{
-    Accounts.User,
-    Auth.Invitation,
-    Shop.Product,
-    Notifications.PushSubscription,
-    Kyc.KycData,
-    Kyc.Address
-  }
-
+  alias Cambiatus.{Auth.Invitation, Notifications.PushSubscription, Repo}
+  alias Cambiatus.Accounts.{Contact, User}
   alias Cambiatus.Commune.{Network, Claim, Transfer}
+  alias Cambiatus.Kyc.{KycData, Address}
+  alias Cambiatus.Shop.{Product, Order}
 
   @primary_key {:account, :string, autogenerate: false}
   schema "users" do
@@ -41,6 +36,7 @@ defmodule Cambiatus.Accounts.User do
     has_many(:communities, through: [:network, :community])
     has_many(:invitations, Invitation, foreign_key: :creator_id)
     has_many(:claims, Claim, foreign_key: :claimer_id)
+    has_many(:contacts, Contact, foreign_key: :user_id, on_replace: :delete)
 
     has_one(:address, Address, foreign_key: :account_id)
     has_one(:kyc, KycData, foreign_key: :account_id)
@@ -52,10 +48,21 @@ defmodule Cambiatus.Accounts.User do
   @doc false
   def changeset(%User{} = user, attrs) do
     user
+    |> Repo.preload(:contacts)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> unique_constraint(:account)
     |> validate_format(:email, ~r/@/)
     |> validate_format(:account, ~r/^[a-z1-5]{12}$/)
+    |> assoc_contacts(attrs)
+  end
+
+  def assoc_contacts(changeset, attrs) do
+    if Map.has_key?(attrs, :contacts) do
+      changeset
+      |> put_assoc(:contacts, Map.get(attrs, :contacts))
+    else
+      changeset
+    end
   end
 end

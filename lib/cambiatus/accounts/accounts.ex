@@ -3,11 +3,16 @@ defmodule Cambiatus.Accounts do
   The Account context.
   """
 
-  import Ecto.Query, warn: false
+  import Ecto.Query
 
-  alias Cambiatus.Accounts.User
+  alias Cambiatus.Accounts.{User}
   alias Cambiatus.Commune.Transfer
   alias Cambiatus.Repo
+
+  @spec data :: Dataloader.Ecto.t()
+  def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+
+  def query(queryable, _params), do: queryable
 
   @doc """
   Returns a user when given their `account` string

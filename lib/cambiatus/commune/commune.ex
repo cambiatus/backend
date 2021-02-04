@@ -6,18 +6,17 @@ defmodule Cambiatus.Commune do
   import Ecto.Query
 
   alias Absinthe.Relay.Connection
+  alias Cambiatus.{Accounts.User, Repo}
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Action,
-    Commune.Check,
-    Commune.Community,
-    Commune.Claim,
-    Commune.Network,
-    Commune.Objective,
-    Commune.Transfer,
-    Commune.Validator,
-    Repo
+  alias Cambiatus.Commune.{
+    Action,
+    Check,
+    Community,
+    Claim,
+    Network,
+    Objective,
+    Transfer,
+    Validator
   }
 
   @spec data :: Dataloader.Ecto.t()

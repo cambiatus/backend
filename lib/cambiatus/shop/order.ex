@@ -4,13 +4,8 @@ defmodule Cambiatus.Shop.Order do
   """
 
   use Ecto.Schema
-  @type t :: %__MODULE__{}
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Community,
-    Shop.Product
-  }
+  alias Cambiatus.{Accounts.User, Commune.Community, Shop.Product}
 
   schema "orders" do
     field(:amount, :float)

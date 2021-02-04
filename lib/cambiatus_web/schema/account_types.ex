@@ -3,45 +3,63 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   This module holds objects, input objects, mutations and queries used with the Accounts context in `Cambiatus`
   use it to define entities to be used with the Accounts Context
   """
+
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
+
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
-  alias CambiatusWeb.Resolvers.Accounts
+
+  alias CambiatusWeb.Resolvers.Accounts, as: AccountsResolver
 
   @desc "Accounts Queries"
-  object :account_queries do
-    @desc "A users profile"
-    field :profile, :profile do
+  object(:account_queries) do
+    @desc "A users"
+    field :user, :user do
       arg(:account, non_null(:string))
-      resolve(&Accounts.get_profile/3)
+      resolve(&AccountsResolver.get_profile/3)
     end
   end
 
   @desc "Account Mutations"
-  object :account_mutations do
-    @desc "A mutation to update a user's profile"
-    field :update_profile, :profile do
-      arg(:input, non_null(:profile_update_input))
-      resolve(&Accounts.update_profile/3)
+  object(:account_mutations) do
+    @desc "A mutation to update a user"
+    field :update_user, :user do
+      arg(:input, non_null(:user_update_input))
+      resolve(&AccountsResolver.update_user/3)
     end
 
     @desc "Creates a new user account"
     field :sign_up, non_null(:sign_up_response) do
-      arg(:name, non_null(:string))
-      arg(:account, non_null(:string))
-      arg(:email, non_null(:string))
-      arg(:public_key, non_null(:string))
-      arg(:user_type, non_null(:string))
-      arg(:invitation_id, :string)
-      arg(:kyc, :kyc_data_update_input)
-      arg(:address, :address_update_input)
+      arg(:name, non_null(:string), description: "User's Full name")
 
-      resolve(&Accounts.sign_up/3)
+      arg(:account, non_null(:string),
+        description: "EOS Account, must have 12 chars long and use only [a-z] and [0-5]"
+      )
+
+      arg(:email, non_null(:string), description: "User's email")
+
+      arg(:public_key, non_null(:string),
+        description: "EOS Account public key, used for creating a new account"
+      )
+
+      arg(:user_type, non_null(:string),
+        description:
+          "User type informs if its a 'natural' or 'juridical' user for regular users and companies"
+      )
+
+      arg(:invitation_id, :string,
+        description: "Optinal, used to auto invite an user to a community"
+      )
+
+      arg(:kyc, :kyc_data_update_input, description: "KYC data")
+      arg(:address, :address_update_input, description: "Address data")
+
+      resolve(&AccountsResolver.sign_up/3)
     end
   end
 
-  @desc "An input object for updating a user Profile"
-  input_object :profile_update_input do
+  @desc "An input object for updating a User"
+  input_object(:user_update_input) do
     field(:account, non_null(:string))
     field(:name, :string)
     field(:email, :string)
@@ -49,27 +67,33 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:location, :string)
     field(:interests, :string)
     field(:avatar, :string)
+    field(:contacts, list_of(non_null(:contact_input)))
+  end
+
+  input_object(:contact_input) do
+    field(:type, :contact_type)
+    field(:external_id, :string)
   end
 
   @desc "The direction of the transfer"
-  enum :transfer_direction do
+  enum(:transfer_direction) do
     value(:incoming, description: "User's incoming transfers.")
     value(:outgoing, description: "User's outgoing transfers.")
   end
 
-  enum :sign_up_status do
+  enum(:sign_up_status) do
     value(:success, description: "Sign up succeed")
     value(:error, description: "Sign up failed")
   end
 
-  object :sign_up_response do
+  object(:sign_up_response) do
     field(:status, non_null(:sign_up_status))
     field(:reason, :string)
-    field(:profile, :profile)
+    field(:user, :user)
   end
 
   @desc "User's address"
-  object :address do
+  object(:address) do
     field(:country, non_null(:country), resolve: dataloader(Cambiatus.Kyc))
     field(:state, non_null(:state), resolve: dataloader(Cambiatus.Kyc))
     field(:city, non_null(:city), resolve: dataloader(Cambiatus.Kyc))
@@ -79,8 +103,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:zip, non_null(:string))
   end
 
-  @desc "A users profile on the system"
-  object :profile do
+  @desc "A users on the system"
+  object(:user) do
     field(:account, non_null(:string))
     field(:name, :string)
     field(:email, :string)
@@ -97,12 +121,15 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:address, :address, resolve: dataloader(Cambiatus.Kyc))
     field(:kyc, :kyc_data, resolve: dataloader(Cambiatus.Kyc))
+    field(:contacts, list_of(non_null(:contact)), resolve: dataloader(Cambiatus.Accounts))
 
     field(:communities, non_null(list_of(non_null(:community))),
       resolve: dataloader(Cambiatus.Commune)
     )
 
-    field(:analysis_count, non_null(:integer), resolve: &Accounts.get_analysis_count/3)
+    field(:products, non_null(list_of(:product)), resolve: dataloader(Cambiatus.Shop))
+
+    field(:analysis_count, non_null(:integer), resolve: &AccountsResolver.get_analysis_count/3)
 
     field(:claims, non_null(list_of(non_null(:claim)))) do
       arg(:community_id, :string)
@@ -110,9 +137,9 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "List of payers to the given recipient fetched by the part of the account name."
-    field(:get_payers_by_account, list_of(:profile)) do
+    field(:get_payers_by_account, list_of(:user)) do
       arg(:account, non_null(:string))
-      resolve(&Accounts.get_payers_by_account/3)
+      resolve(&AccountsResolver.get_payers_by_account/3)
     end
 
     connection field(:transfers, node_type: :transfer) do
@@ -123,7 +150,33 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       )
 
       arg(:date, :date, description: "The date of the transfer in `yyyy-mm-dd` format.")
-      resolve(&Accounts.get_transfers/3)
+      resolve(&AccountsResolver.get_transfers/3)
     end
+  end
+
+  @desc """
+  Contact information for an user. Everytime contact is updated it replaces all entries
+  """
+  object(:contact) do
+    field(:type, :contact_type)
+    field(:external_id, :string)
+  end
+
+  enum(:contact_type) do
+    value(:phone, description: "A regular phone number")
+
+    value(:whatsapp,
+      description: "A phone number used in Whatsapp. Regular international phone number"
+    )
+
+    value(:telegram,
+      description:
+        "An username or phone number for Telegram. Must be https://t.me/${username} or https://telegram.org/${username}"
+    )
+
+    value(:instagram,
+      description:
+        "An Instagram account. Must have full URL like https://instagram.com/${username}"
+    )
   end
 end
