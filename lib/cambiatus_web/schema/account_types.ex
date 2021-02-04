@@ -67,7 +67,12 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:location, :string)
     field(:interests, :string)
     field(:avatar, :string)
-    field(:contacts, list_of(non_null(:contact)))
+    field(:contacts, list_of(non_null(:contact_input)))
+  end
+
+  input_object(:contact_input) do
+    field(:type, :contact_type)
+    field(:external_id, :string)
   end
 
   @desc "The direction of the transfer"
