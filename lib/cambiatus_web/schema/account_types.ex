@@ -29,7 +29,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Creates a new user account"
-    field :sign_up, non_null(:sign_up_response) do
+    field :sign_up, :session do
       arg(:name, non_null(:string), description: "User's Full name")
 
       arg(:account, non_null(:string),
@@ -41,6 +41,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:public_key, non_null(:string),
         description: "EOS Account public key, used for creating a new account"
       )
+
+      arg(:password, non_null(:string))
 
       arg(:user_type, non_null(:string),
         description:
@@ -54,7 +56,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:kyc, :kyc_data_update_input, description: "KYC data")
       arg(:address, :address_update_input, description: "Address data")
 
-      resolve(&AccountsResolver.sign_up/3)
+      resolve(&AccountsResolver.sign_up2/3)
     end
   end
 
@@ -81,15 +83,9 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     value(:outgoing, description: "User's outgoing transfers.")
   end
 
-  enum(:sign_up_status) do
-    value(:success, description: "Sign up succeed")
-    value(:error, description: "Sign up failed")
-  end
-
-  object(:sign_up_response) do
-    field(:status, non_null(:sign_up_status))
-    field(:reason, :string)
-    field(:user, :user)
+  object :session do
+    field(:user, non_null(:user))
+    field(:token, non_null(:string))
   end
 
   @desc "User's address"

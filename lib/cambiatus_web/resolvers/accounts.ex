@@ -34,6 +34,19 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
+  def sign_up2(_, args, _) do
+    case SignUp.sign_up(args) do
+      {:error, reason, details} ->
+        {:error, message: reason, details: details}
+
+      {:error, reason} ->
+        {:error, message: "Couldn't create user", details: Cambiatus.Error.from(reason)}
+
+      {:ok, user} ->
+        {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
+    end
+  end
+
   @doc """
   Updates an a user account profile info
   """

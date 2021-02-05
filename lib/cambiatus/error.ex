@@ -12,7 +12,7 @@ defmodule Cambiatus.Error do
 
   alias Cambiatus.Error
 
-  defstruct [:type, :message, :x]
+  defstruct [:type, :message]
 
   @doc """
   Converts common error structures used on libraries such as Ecto, Absinthe to `Cambiatus.Error`

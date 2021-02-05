@@ -75,7 +75,7 @@ defmodule Cambiatus.Auth.SignUp do
     if changeset.valid? do
       params
     else
-      {:error, :invalid_user_params, changeset.errors}
+      {:error, changeset}
     end
   end
 
