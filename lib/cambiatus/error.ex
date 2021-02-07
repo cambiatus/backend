@@ -30,6 +30,6 @@ defmodule Cambiatus.Error do
     Logger.error("Unhandled error term: \n#{inspect(other)}")
     Sentry.capture_message("Unhandled error term:", extra: %{error: other})
 
-    %Error{type: :unhandled_error, message: "Unhandled term"}
+    %Error{type: :unhandled_error, message: other}
   end
 end
