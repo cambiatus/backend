@@ -44,7 +44,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
       arg(:password, non_null(:string))
 
-      arg(:user_type, non_null(:string),
+      arg(:user_type, :string,
         description:
           "User type informs if its a 'natural' or 'juridical' user for regular users and companies"
       )
@@ -53,10 +53,17 @@ defmodule CambiatusWeb.Schema.AccountTypes do
         description: "Optinal, used to auto invite an user to a community"
       )
 
-      arg(:kyc, :kyc_data_update_input, description: "KYC data")
-      arg(:address, :address_update_input, description: "Address data")
+      arg(:kyc, :kyc_data_update_input, description: "Optional, KYC data")
+      arg(:address, :address_update_input, description: "Optional, Address data")
 
       resolve(&AccountsResolver.sign_up2/3)
+    end
+
+    field :sign_in, :session do
+      arg(:account, non_null(:string))
+      arg(:password, non_null(:string))
+
+      resolve(&AccountsResolver.sign_in/3)
     end
   end
 
