@@ -21,10 +21,10 @@ defmodule Cambiatus.Auth.SignUp do
   def sign_up(params) do
     params
     |> validate_all()
-    |> create_eos_account()
+    # |> create_eos_account()
     |> create_user()
     |> create_kyc()
-    |> invite_user()
+    # |> invite_user()
     |> case do
       {:error, _} = error ->
         error
