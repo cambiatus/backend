@@ -9,17 +9,22 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Shop
+  alias CambiatusWeb.Schema.Middleware
 
   @desc "Shop queries"
   object(:shop_queries) do
     field(:products, non_null(list_of(non_null(:product)))) do
       arg(:community_id, non_null(:string))
       arg(:filters, :products_filter_input)
+
+      middleware(Middleware.Authenticate)
       resolve(&Shop.get_products/3)
     end
 
     field(:product, :product) do
       arg(:id, non_null(:integer))
+
+      middleware(Middleware.Authenticate)
       resolve(&Shop.get_product/3)
     end
   end

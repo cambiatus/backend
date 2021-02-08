@@ -16,6 +16,8 @@ defmodule CambiatusWeb.Schema.KycTypes do
     @desc "List of supported countries"
     field(:country, :country) do
       arg(:input, non_null(:country_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Kyc.get_country/3)
     end
   end
