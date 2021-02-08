@@ -46,7 +46,7 @@ defmodule Cambiatus.Auth do
   #   end
   # end
 
-  def sign_in(account, _password) do
+  def sign_in(account, password) do
     account
     |> Accounts.get_user()
     |> case do
@@ -54,8 +54,11 @@ defmodule Cambiatus.Auth do
         {:error, :not_found}
 
       user ->
-        # TODO: validate password
-        {:ok, user}
+        if Accounts.verify_pass(account, password) do
+          {:ok, user}
+        else
+          {:error, :invalid_password}
+        end
     end
   end
 

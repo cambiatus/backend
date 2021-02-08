@@ -10,12 +10,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   @doc """
   Collects profile info
   """
-  @spec get_profile(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
-  def get_profile(_, %{account: account}, _) do
+  def get_user(_, %{account: account}, _) do
     Accounts.get_account_profile(account)
   end
 
-  @spec get_payers_by_account(map(), map(), map()) :: {:ok, list()}
   def get_payers_by_account(%User{} = user, %{account: _} = payer, _) do
     Accounts.get_payers_by_account(user, payer)
   end
@@ -23,19 +21,20 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   @doc """
   Updates a user
   """
-  @spec update_user(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
-  def update_user(_, %{input: params}, _) do
-    with {:ok, user} <- Accounts.get_account_profile(params.account),
-         {:ok, updated_user} <- Accounts.update_user(user, params) do
-      {:ok, updated_user}
-    else
+  def update_user(_, %{input: params}, %{context: %{current_user: current_user}}) do
+    current_user
+    |> Accounts.update_user(params)
+    |> case do
+      {:ok, updated_user} ->
+        {:ok, updated_user}
+
       {:error, changeset} ->
         {:error, message: "Could not update user", details: Cambiatus.Error.from(changeset)}
     end
   end
 
-  def sign_in(_, args, _) do
-    case Auth.sign(args) do
+  def sign_in(_, %{account: account, password: password}, _) do
+    case Auth.sign_in(account, password) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
@@ -44,33 +43,18 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_up2(_, args, _) do
+  def sign_up(_, args, _) do
     case SignUp.sign_up(args) do
       {:error, reason, details} ->
+        Sentry.capture_message("Sign up failed", extra: %{error: reason, details: details})
         {:error, message: reason, details: details}
 
       {:error, reason} ->
+        Sentry.capture_message("Sign up failed", extra: %{error: reason})
         {:error, message: "Couldn't create user", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
         {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
-    end
-  end
-
-  @doc """
-  Updates an a user account profile info
-  """
-  @spec sign_up(map(), map(), map()) :: {:ok, User.t()} | {:error, term()}
-  def sign_up(_, params, _) do
-    params
-    |> SignUp.sign_up()
-    |> case do
-      {:error, reason} ->
-        Sentry.capture_message("Sign up failed", extra: %{error: reason})
-        {:ok, %{status: :error, reason: reason}}
-
-      {:ok, user} ->
-        {:ok, %{status: :success, reason: "ok", profile: user}}
     end
   end
 

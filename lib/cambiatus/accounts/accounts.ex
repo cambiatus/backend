@@ -14,6 +14,11 @@ defmodule Cambiatus.Accounts do
 
   def query(queryable, _params), do: queryable
 
+  def verify_pass(account, password) do
+    # TODO: Add EOS Auth here
+    password == "d8Ed.-qfhj7"
+  end
+
   @doc """
   Returns a user when given their `account` string
   """

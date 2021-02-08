@@ -10,13 +10,14 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Accounts, as: AccountsResolver
+  alias CambiatusWeb.Schema.Middleware
 
   @desc "Accounts Queries"
   object(:account_queries) do
     @desc "A users"
     field :user, :user do
       arg(:account, non_null(:string))
-      resolve(&AccountsResolver.get_profile/3)
+      resolve(&AccountsResolver.get_user/3)
     end
   end
 
@@ -25,6 +26,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     @desc "A mutation to update a user"
     field :update_user, :user do
       arg(:input, non_null(:user_update_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&AccountsResolver.update_user/3)
     end
 
@@ -56,7 +59,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:kyc, :kyc_data_update_input, description: "Optional, KYC data")
       arg(:address, :address_update_input, description: "Optional, Address data")
 
-      resolve(&AccountsResolver.sign_up2/3)
+      resolve(&AccountsResolver.sign_up/3)
     end
 
     field :sign_in, :session do
@@ -67,9 +70,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
   end
 
-  @desc "An input object for updating a User"
+  @desc "An input object for updating the current logged User"
   input_object(:user_update_input) do
-    field(:account, non_null(:string))
     field(:name, :string)
     field(:email, :string)
     field(:bio, :string)
@@ -90,6 +92,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     value(:outgoing, description: "User's outgoing transfers.")
   end
 
+  @desc "Session object, contains the user and a token used to authenticate requests"
   object :session do
     field(:user, non_null(:user))
     field(:token, non_null(:string))
