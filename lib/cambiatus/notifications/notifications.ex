@@ -238,15 +238,19 @@ defmodule Cambiatus.Notifications do
   ## Parameters
   * id: id of the notification
   """
-  @spec get_notification_history(integer()) ::
+  @spec get_notification_history(User.t(), integer()) ::
           {:ok, NotificationHistory.t()} | {:error, String.t()}
-  def get_notification_history(id) do
+  def get_notification_history(current_user, id) do
     case Repo.get(NotificationHistory, id) do
       nil ->
         {:error, "NotificationHistory with id: #{id} not found"}
 
-      val ->
-        {:ok, val}
+      notification ->
+        if notification.recipient_id == current_user.account do
+          {:ok, notification}
+        else
+          {:error, "Unauthorized"}
+        end
     end
   end
 

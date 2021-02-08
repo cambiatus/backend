@@ -55,20 +55,20 @@ defmodule CambiatusWeb.Resolvers.Notifications do
   Count number of unread notifications for a user
   """
   @spec unread_notifications(map(), map(), map()) :: {:ok, map()} | {:error, term}
-  def unread_notifications(_, %{input: %{account: acc}}, _) do
-    Notifications.get_unread(acc)
+  def unread_notifications(_, _, %{context: %{current_user: current_user}}) do
+    Notifications.get_unread(current_user.account)
   end
 
   @doc """
   Flag a notification as read
   """
   @spec read_notification(map(), map(), map()) :: {:ok, map()} | {:error, term}
-  def read_notification(_, %{input: %{id: id}}, _) do
-    with {:ok, n} <- Notifications.get_notification_history(id) do
+  def read_notification(_, %{input: %{id: id}}, %{context: %{current_user: current_user}}) do
+    with {:ok, n} <- Notifications.get_notification_history(current_user, id) do
       Notifications.mark_as_read(n)
     else
       {:error, err} ->
-        {:error, err}
+        {:error, message: "Could not read given notification", details: Cambiatus.Error.from(err)}
     end
   end
 end
