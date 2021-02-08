@@ -72,13 +72,22 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
   @desc "An input object for updating the current logged User"
   input_object(:user_update_input) do
-    field(:name, :string)
-    field(:email, :string)
-    field(:bio, :string)
-    field(:location, :string)
-    field(:interests, :string)
-    field(:avatar, :string)
-    field(:contacts, list_of(non_null(:contact_input)))
+    field(:name, :string, description: "Optional, name displayed on the app")
+
+    field(:email, :string,
+      description:
+        "Optional, used for contacting only, must be a valid email but we dont check for ownership"
+    )
+
+    field(:bio, :string, description: "Optional, short bio to let others know more about you")
+    field(:location, :string, description: "Optional, location, can be virtual or real")
+    field(:interests, :string, description: "Optional, a list of strings interpolated with `-`")
+    field(:avatar, :string, description: "Optional, URL that must be used as an avatar")
+
+    field(:contacts, list_of(non_null(:contact_input)),
+      description:
+        "Optional, list sent here will substitute all other entries, always send everything"
+    )
   end
 
   input_object(:contact_input) do
