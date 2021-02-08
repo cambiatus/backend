@@ -5,15 +5,8 @@ defmodule Cambiatus.Notifications do
 
   import Ecto.Query
 
-  alias Cambiatus.{
-    Commune,
-    Commune.Mint,
-    Notifications.PushSubscription,
-    Notifications.Payload,
-    Notifications.NotificationHistory,
-    Accounts.User,
-    Repo
-  }
+  alias Cambiatus.{Commune, Commune.Mint, Accounts.User, Repo}
+  alias Cambiatus.Notifications.{PushSubscription, Payload, NotificationHistory}
 
   @valid_types ~w(transfer verification mint)a
 
@@ -22,8 +15,8 @@ defmodule Cambiatus.Notifications do
   """
   @spec add_push_subscription(map(), map()) ::
           {:ok, PushSubscription.t()} | {:error, Ecto.Changeset.t()}
-  def add_push_subscription(%User{} = usr, params) do
-    usr
+  def add_push_subscription(%User{} = user, params) do
+    user
     |> PushSubscription.create_changeset(params)
     |> Repo.insert()
   end
@@ -77,11 +70,11 @@ defmodule Cambiatus.Notifications do
     |> Repo.insert()
   end
 
-  @spec get_user_notification_history(binary()) :: {:ok, list(Ecto.Schama.t())}
-  def get_user_notification_history(user) do
+  @spec get_user_notification_history(User.t()) :: {:ok, list(Ecto.Schama.t())}
+  def get_user_notification_history(%{account: account}) do
     query =
       NotificationHistory
-      |> where([n], n.recipient_id == ^user)
+      |> where([n], n.recipient_id == ^account)
       |> order_by([n], desc: n.inserted_at)
 
     {:ok, Repo.all(query)}
