@@ -13,8 +13,8 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   end
 
   @spec upsert_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
-  def upsert_kyc(_, %{input: params}, _) do
-    Kyc.upsert_kyc(params)
+  def upsert_kyc(_, %{input: params}, %{context: %{current_user: current_user}}) do
+    Kyc.upsert_kyc(current_user, params)
   end
 
   @spec upsert_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}

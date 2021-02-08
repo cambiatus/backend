@@ -46,11 +46,11 @@ defmodule Cambiatus.Kyc do
   Updates the KYC data record for the given user if it already exists
   or inserts a new one if the user hasn't it yet.
   """
-  @spec upsert_kyc(map()) :: {:ok, KycData.t()} | {:error, binary()}
-  def upsert_kyc(params) do
+  @spec upsert_kyc(User.t(), map()) :: {:ok, KycData.t()} | {:error, binary()}
+  def upsert_kyc(%{account: account}, params) do
     kyc_entry =
-      case Repo.get_by(KycData, account_id: params.account_id) do
-        nil -> %KycData{is_verified: false}
+      case Repo.get_by(KycData, account_id: account) do
+        nil -> %KycData{is_verified: false, account_id: account}
         kyc -> kyc
       end
 
