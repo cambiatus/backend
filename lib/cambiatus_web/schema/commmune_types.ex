@@ -15,47 +15,61 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   object :community_queries do
     @desc "A list of communities in Cambiatus"
     field :communities, non_null(list_of(non_null(:community))) do
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_communities/3)
     end
 
     @desc "A single community"
     field :community, :community do
       arg(:symbol, non_null(:string))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.find_community/3)
     end
 
     @desc "A list of claims"
     connection field(:claims_analysis, node_type: :claim) do
       arg(:input, non_null(:claims_analysis_input))
+
+      # TODO: Add authorization and adjust resolvers
       resolve(&Commune.get_claims_analysis/3)
     end
 
     connection field(:claims_analysis_history, node_type: :claim) do
       arg(:input, non_null(:claim_analysis_history_input))
+
+      # TODO: Add authorization and adjust resolvers
       resolve(&Commune.get_claims_analysis_history/3)
     end
 
     @desc "A single claim"
     field :claim, non_null(:claim) do
       arg(:input, non_null(:claim_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_claim/3)
     end
 
     @desc "A single objective"
     field :objective, :objective do
       arg(:input, non_null(:objective_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_objective/3)
     end
 
     @desc "A single Transfer"
     field :transfer, :transfer do
       arg(:input, non_null(:transfer_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_transfer/3)
     end
 
     @desc "An invite"
     field :invite, :invite do
       arg(:input, non_null(:invite_input))
+
       resolve(&Commune.get_invitation/3)
     end
   end
