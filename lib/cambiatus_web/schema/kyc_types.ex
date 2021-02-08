@@ -33,6 +33,8 @@ defmodule CambiatusWeb.Schema.KycTypes do
     @desc "Updates user's address if it already exists or inserts a new one if user hasn't it yet."
     field :upsert_address, :address do
       arg(:input, non_null(:address_update_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Kyc.upsert_address/3)
     end
 
@@ -105,7 +107,6 @@ defmodule CambiatusWeb.Schema.KycTypes do
 
   @desc "Input for creating/updating address fields"
   input_object :address_update_input do
-    field(:account_id, non_null(:string))
     field(:country_id, non_null(:id))
     field(:state_id, non_null(:id))
     field(:city_id, non_null(:id))

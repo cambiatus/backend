@@ -67,11 +67,11 @@ defmodule Cambiatus.Kyc do
   Updates the Address of the given user if it already exists
   or inserts new Address if the user hasn't filled it yet.
   """
-  @spec upsert_address(map()) :: {:ok, Address.t()} | {:error, binary()}
-  def upsert_address(params) do
+  @spec upsert_address(User.t(), map()) :: {:ok, Address.t()} | {:error, binary()}
+  def upsert_address(%{account: account},  params) do
     address_entry =
-      case Repo.get_by(Address, account_id: params.account_id) do
-        nil -> %Address{}
+      case Repo.get_by(Address, account_id: account) do
+        nil -> %Address{account_id: account}
         addr -> addr
       end
 
