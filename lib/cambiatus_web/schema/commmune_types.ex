@@ -29,16 +29,17 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "A list of claims"
     connection field(:claims_analysis, node_type: :claim) do
-      arg(:input, non_null(:claims_analysis_input))
+      arg(:community_id, non_null(:string))
 
-      # TODO: Add authorization and adjust resolvers
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_claims_analysis/3)
     end
 
     connection field(:claims_analysis_history, node_type: :claim) do
-      arg(:input, non_null(:claim_analysis_history_input))
+      arg(:community_id, non_null(:string))
+      arg(:filter, :claim_analysis_history_filter)
 
-      # TODO: Add authorization and adjust resolvers
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_claims_analysis_history/3)
     end
 
@@ -132,17 +133,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "Input object to collect a single Objective"
   input_object :objective_input do
     field(:id, non_null(:integer))
-  end
-
-  input_object(:claims_analysis_input) do
-    field(:account, non_null(:string))
-    field(:symbol, non_null(:string))
-  end
-
-  input_object(:claim_analysis_history_input) do
-    field(:account, non_null(:string))
-    field(:symbol, non_null(:string))
-    field(:filter, :claim_analysis_history_filter)
   end
 
   input_object(:claim_analysis_history_filter) do

@@ -29,13 +29,13 @@ defmodule CambiatusWeb.Resolvers.Commune do
 
   def get_claims_analysis_history(
         _,
-        %{input: %{symbol: id, account: account}} = args,
-        _
+        %{community_id: community_id} = args,
+        %{context: %{current_user: current_user}}
       ) do
-    query = Commune.claim_analysis_history_query(id, account)
+    query = Commune.claim_analysis_history_query(community_id, current_user.account)
 
     query =
-      case Map.get(args[:input], :filter) do
+      case Map.get(args, :filter) do
         nil ->
           query
 
@@ -61,8 +61,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
   end
 
-  def get_claims_analysis(_, %{input: %{symbol: id, account: account}} = args, _) do
-    query = Commune.claim_analysis_query(id, account)
+  def get_claims_analysis(_, %{community_id: community_id} = args, %{
+        context: %{current_user: current_user}
+      }) do
+    query = Commune.claim_analysis_query(community_id, current_user.account)
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
   end
 
