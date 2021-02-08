@@ -614,11 +614,17 @@ defmodule Cambiatus.Commune do
     |> Repo.update()
   end
 
-  def complete_objective(objective_id) do
+  def complete_objective(current_user, objective_id) do
     case get_objective(objective_id) do
       {:ok, objective} ->
-        now = NaiveDateTime.utc_now()
-        update_objective(objective, %{is_completed: true, completed_at: now})
+        objective = Repo.preload(objective, :community)
+
+        if objective.community.creator == current_user.account do
+          now = NaiveDateTime.utc_now()
+          update_objective(objective, %{is_completed: true, completed_at: now})
+        else
+          {:error, "Unauthorized"}
+        end
 
       error ->
         error

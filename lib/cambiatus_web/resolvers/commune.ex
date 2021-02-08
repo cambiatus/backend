@@ -145,7 +145,9 @@ defmodule CambiatusWeb.Resolvers.Commune do
   end
 
   @spec complete_objective(map(), map(), map()) :: {:ok, map()} | {:error, String.t()}
-  def complete_objective(_, %{input: %{objective_id: id}}, _) do
-    Commune.complete_objective(id)
+  def complete_objective(_, %{input: %{objective_id: id}}, %{
+        context: %{current_user: current_user}
+      }) do
+    Commune.complete_objective(current_user, id)
   end
 end

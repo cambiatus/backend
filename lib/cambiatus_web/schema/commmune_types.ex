@@ -5,8 +5,11 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
+
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
   alias CambiatusWeb.Resolvers.Commune
+  alias CambiatusWeb.Schema.Middleware
 
   @desc "Community Queries on Cambiatus"
   object :community_queries do
@@ -90,6 +93,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     @desc "Complete an objective"
     field :complete_objective, :objective do
       arg(:input, non_null(:complete_objective_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.complete_objective/3)
     end
   end
