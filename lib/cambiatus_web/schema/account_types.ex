@@ -17,6 +17,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     @desc "A users"
     field :user, :user do
       arg(:account, non_null(:string))
+
+      middleware(Middleware.Authenticate)
       resolve(&AccountsResolver.get_user/3)
     end
   end
