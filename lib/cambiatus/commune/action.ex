@@ -65,6 +65,15 @@ defmodule Cambiatus.Commune.Action do
     |> where([a], a.is_completed == ^is_completed?)
   end
 
+  def available(query \\ Action) do
+    {:ok, now} = DateTime.now("Etc/UTC")
+
+    query
+    |> completed(false)
+    |> where([a], a.deadline >= ^now)
+    |> where([a], a.usagesLeft > 1 and a.usages > 0)
+  end
+
   def with_verification_type_of(query \\ Action, verification_type) do
     query
     |> where([a], a.verification_type == ^verification_type)
