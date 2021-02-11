@@ -2,7 +2,7 @@ defmodule CambiatusWeb.Resolvers.Notifications do
   @moduledoc """
   Resolver functions implementation for the Notifications context
   """
-  alias Cambiatus.{Accounts, Commune, Notifications, Shop}
+  alias Cambiatus.{Commune, Notifications, Shop}
 
   @doc """
   Function to register push subscriptions

@@ -9,7 +9,7 @@ defmodule Cambiatus.Accounts.User do
   alias Cambiatus.Accounts.{Contact, User}
   alias Cambiatus.Commune.{Network, Claim, Transfer}
   alias Cambiatus.Kyc.{KycData, Address}
-  alias Cambiatus.Shop.{Product, Order}
+  alias Cambiatus.Shop.Product
 
   @primary_key {:account, :string, autogenerate: false}
   schema "users" do
