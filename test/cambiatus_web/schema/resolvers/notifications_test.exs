@@ -5,14 +5,15 @@ defmodule CambiatusWeb.Schema.Resolvers.NotificationsTests do
   use Cambiatus.ApiCase
 
   alias Cambiatus.{
-    Notifications.PushSubscription,
+    Notifications.PushSubscription
   }
 
   describe "Notifications resolvers" do
-    test "creates a push subscription from the GraphQL endpoint", %{conn: conn} do
+    test "creates a push subscription from the GraphQL endpoint" do
       assert Repo.aggregate(PushSubscription, :count, :id) == 0
 
       user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       query = """
       mutation($input: PushSubscriptionInput) {
@@ -24,7 +25,6 @@ defmodule CambiatusWeb.Schema.Resolvers.NotificationsTests do
 
       variables = %{
         "input" => %{
-          "account" => user.account,
           "p_key" => "some-p-key",
           "auth_key" => "some-auth",
           "endpoint" => "some-endpoint"
@@ -44,14 +44,17 @@ defmodule CambiatusWeb.Schema.Resolvers.NotificationsTests do
       assert pushed_account["accountId"] == user.account
     end
 
-    test "flags a notification as read", %{conn: conn} do
-      notif = insert(:notification_history)
+    test "flags a notification as read" do
+      user = insert(:user)
+      notif = insert(:notification_history, recipient: user)
+
+      conn = build_conn() |> auth_user(user)
 
       mutation = """
       mutation($input: ReadNotificationInput!) {
         readNotification(input: $input) {
           id
-          isRead 
+          isRead
         }
       }
       """
