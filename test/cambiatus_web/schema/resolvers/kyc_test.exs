@@ -8,15 +8,16 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
     @zip "10102"
     @street "Elm Street"
 
-    test "updates kyc data for the given account", %{conn: conn} do
+    test "updates kyc data for the given account" do
       kyc = insert(:kyc_data)
       user = kyc.account
+
+      conn = build_conn() |> auth_user(user)
 
       new_kyc = build(:kyc_data, %{account: nil})
 
       variables = %{
         "input" => %{
-          "account_id" => user.account,
           "country_id" => "1",
           "phone" => new_kyc.phone,
           "user_type" => new_kyc.user_type,
@@ -48,13 +49,13 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert updated_kyc["phone"] == new_kyc.phone
     end
 
-    test "updates address for the given account", %{conn: conn} do
+    test "updates address for the given account" do
       address = insert(:address)
       user = address.account
+      conn = build_conn() |> auth_user(user)
 
       variables = %{
         "input" => %{
-          "account_id" => user.account,
           "country_id" => "1",
           "state_id" => "1",
           "city_id" => "1",
@@ -86,13 +87,14 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert updated_address["street"] == @street
     end
 
-    test "creates an address and KYC for the given account name", %{conn: conn} do
+    test "creates an address and KYC for the given account name" do
       usr = insert(:user)
       new_kyc = build(:kyc_data, %{account: nil})
 
+      conn = build_conn() |> auth_user(usr)
+
       variables = %{
         "inputAddress" => %{
-          "account_id" => usr.account,
           "country_id" => "1",
           "state_id" => "1",
           "city_id" => "1",
@@ -102,7 +104,6 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
           "zip" => @zip
         },
         "inputKyc" => %{
-          "account_id" => usr.account,
           "country_id" => "1",
           "phone" => new_kyc.phone,
           "user_type" => new_kyc.user_type,
@@ -141,19 +142,16 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert updated_kyc["user_type"] == new_kyc.user_type
     end
 
-    test "deletes kyc for the given account", %{conn: conn} do
+    test "deletes kyc for the given account" do
       kyc = insert(:kyc_data)
       user = kyc.account
+      conn = build_conn() |> auth_user(user)
 
-      variables = %{
-        "input" => %{
-          "account" => user.account
-        }
-      }
+      variables = %{}
 
       query = """
-      mutation ($input: KycAddressDeletionInput!) {
-        deleteKyc(input: $input) {
+      mutation {
+        deleteKyc {
           status
           reason
         }
@@ -168,19 +166,17 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert response["data"]["deleteKyc"]["reason"] == "KYC data deletion succeeded"
     end
 
-    test "deletes address for the given account", %{conn: conn} do
+    test "deletes address for the given account" do
       address = insert(:address)
       user = address.account
 
-      variables = %{
-        "input" => %{
-          "account" => user.account
-        }
-      }
+      conn = build_conn() |> auth_user(user)
+
+      variables = %{}
 
       query = """
-      mutation ($input: KycAddressDeletionInput!) {
-        deleteAddress(input: $input) {
+      mutation  {
+        deleteAddress {
           status
           reason
         }
