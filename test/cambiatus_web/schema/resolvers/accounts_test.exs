@@ -7,9 +7,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   alias Cambiatus.{Accounts.User, Commune.Transfer}
 
   describe "Accounts Resolver" do
-    test "collects a user account given the account name", %{conn: conn} do
+    test "collects a user account given the account name" do
       assert Repo.aggregate(User, :count, :account) == 0
       usr = insert(:user)
+
+      conn = build_conn() |> auth_user(usr)
 
       variables = %{
         "account" => usr.account
@@ -37,10 +39,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert profile["account"] == usr.account
     end
 
-    test "fetches user address", %{conn: conn} do
+    test "fetches user address" do
       assert Repo.aggregate(User, :count, :account) == 0
       address = insert(:address)
       usr = address.account
+
+      conn = build_conn() |> auth_user(usr)
 
       variables = %{
         "account" => usr.account
@@ -70,10 +74,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert profile["address"]["zip"] == address.zip
     end
 
-    test "fetches user KYC data", %{conn: conn} do
+    test "fetches user KYC data" do
       assert Repo.aggregate(User, :count, :account) == 0
       kyc = insert(:kyc_data)
       usr = kyc.account
+      conn = build_conn() |> auth_user(usr)
 
       variables = %{
         "account" => usr.account
@@ -82,10 +87,10 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query = """
       query($account: String!){
         user(account: $account) {
-        account
-        kyc {
-          userType
-        }
+          account
+          kyc {
+            userType
+          }
         }
       }
       """
@@ -103,13 +108,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert profile["kyc"]["userType"] == kyc.user_type
     end
 
-    test "updates a user account details given the account name", %{conn: conn} do
+    test "updates a user account details given the account name" do
       assert Repo.aggregate(User, :count, :account) == 0
       usr = insert(:user)
+      conn = build_conn() |> auth_user(usr)
 
       variables = %{
         "input" => %{
-          "account" => usr.account,
           "bio" => "new bio"
         }
       }
@@ -172,7 +177,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
     end
 
-    test "incoming transfers", %{conn: conn, variables: variables} do
+    test "incoming transfers", %{variables: variables} do
       query = """
         query ($account: String!, $first: Int!) {
           user(account: $account) {
@@ -182,6 +187,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
           }
         }
       """
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       res = conn |> get("/api/graph", query: query, variables: variables)
 
@@ -198,7 +206,10 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user1_incoming_transfers_count == 1
     end
 
-    test "outgoing transfers", %{conn: conn, variables: variables} do
+    test "outgoing transfers", %{variables: variables} do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       query = """
         query ($account: String!, $first: Int!) {
           user(account: $account) {
@@ -224,7 +235,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user1_outgoing_transfers_count == 3
     end
 
-    test "transfers for the date", %{conn: conn, variables: variables} do
+    test "transfers for the date", %{variables: variables} do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
       today_date = Date.to_string(Date.utc_today())
 
       query = """
@@ -252,8 +265,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user1_today_transfers_count == 3
     end
 
-    test "incoming transfers for the date", %{conn: conn, variables: variables} do
+    test "incoming transfers for the date", %{variables: variables} do
       today_date = Date.to_string(Date.utc_today())
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       query = """
         query ($account: String!, $first: Int!) {
@@ -280,8 +296,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user1_today_incoming_transfers_count == 1
     end
 
-    test "outgoing transfers for the date", %{conn: conn, variables: variables} do
+    test "outgoing transfers for the date", %{variables: variables} do
       today_date = Date.to_string(Date.utc_today())
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       query = """
         query ($account: String!, $first: Int!) {
@@ -309,11 +328,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "incoming transfers for the date from user2 to user1", %{
-      conn: conn,
       users: _users,
       variables: variables
     } do
       today_date = Date.utc_today() |> Date.to_string()
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       query = """
         query ($account: String!, $first: Int!) {
@@ -364,10 +385,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "outgoing transfers for the date from user1 to user2", %{
-      conn: conn,
       users: _users,
       variables: variables
     } do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       today_date = Date.utc_today() |> Date.to_string()
 
       query = """
@@ -418,7 +441,10 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert transfers_from_user1_to_user2_for_today_count == 2
     end
 
-    test "list of payers to `user1`", %{conn: conn, users: users, variables: variables} do
+    test "list of payers to `user1`", %{users: users, variables: variables} do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       [_, user2] = users
       account_part = String.slice(user2.account, 0, 3)
 
