@@ -56,6 +56,8 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
+
+    field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
   end
 
   @desc "An Order"

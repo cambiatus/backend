@@ -5,7 +5,7 @@ defmodule Cambiatus.Shop.Order do
 
   use Ecto.Schema
 
-  alias Cambiatus.{Accounts.User, Commune.Community, Shop.Product}
+  alias Cambiatus.{Accounts.User, Shop.Product}
 
   schema "orders" do
     field(:amount, :float)
@@ -16,7 +16,6 @@ defmodule Cambiatus.Shop.Order do
     field(:created_eos_account, :string)
     field(:created_at, :utc_datetime)
 
-    belongs_to(:community, Community, references: :symbol, type: :string)
     belongs_to(:product, Product)
     belongs_to(:from, User, references: :account, type: :string)
     belongs_to(:to, User, references: :account, type: :string)

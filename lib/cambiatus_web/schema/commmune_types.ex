@@ -226,6 +226,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(Cambiatus.Commune))
     field(:members, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Commune))
+    field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
+
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
     field(:product_count, non_null(:integer), resolve: &Commune.get_product_count/3)
