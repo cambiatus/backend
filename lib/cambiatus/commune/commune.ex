@@ -80,7 +80,6 @@ defmodule Cambiatus.Commune do
   def query(Claim, %{community_id: community_id}) do
     Claim
     |> Claim.by_community(community_id)
-    |> Claim.claimable_only()
     |> Claim.newer_first()
   end
 

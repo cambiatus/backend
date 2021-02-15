@@ -51,12 +51,6 @@ defmodule Cambiatus.Commune.Claim do
     |> where([c, a, o], o.community_id == ^community_id)
   end
 
-  def claimable_only(query \\ Claim) do
-    query
-    |> join(:inner, [c], a in Action, on: a.id == c.action_id)
-    |> where([c, a], a.verification_type == "claimable")
-  end
-
   def newer_first(query \\ Claim) do
     query
     |> order_by([c], desc: c.created_at)
