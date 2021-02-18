@@ -3,15 +3,17 @@ defmodule CambiatusWeb.Schema do
   This module holds the implementation for the GraphQL schema for Cambiatus, use this module
   to add and remove middleware from the schema and define its root shape
   """
+
   use Absinthe.Schema
   use Absinthe.Relay.Schema, :classic
 
-  alias Cambiatus.{Commune, Kyc, Shop}
+  alias Cambiatus.{Accounts, Commune, Kyc, Shop}
 
   def context(ctx) do
     loader =
       Dataloader.new()
       |> Dataloader.add_source(Commune, Commune.data())
+      |> Dataloader.add_source(Accounts, Accounts.data())
       |> Dataloader.add_source(Kyc, Kyc.data())
       |> Dataloader.add_source(Shop, Shop.data())
 

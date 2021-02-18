@@ -169,7 +169,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   object :mint do
     field(:memo, :string)
     field(:quantity, non_null(:float))
-    field(:to, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:to, non_null(:user), resolve: dataloader(Cambiatus.Commune))
     field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
 
     field(:created_block, non_null(:integer))
@@ -213,10 +213,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     )
 
     @desc "List of users that are claim validators"
-    field(:validators, non_null(list_of(non_null(:profile))), resolve: &Commune.get_validators/3)
+    field(:validators, non_null(list_of(non_null(:user))), resolve: &Commune.get_validators/3)
 
     field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(Cambiatus.Commune))
-    field(:members, non_null(list_of(non_null(:profile))), resolve: dataloader(Cambiatus.Commune))
+    field(:members, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Commune))
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
     field(:product_count, non_null(:integer), resolve: &Commune.get_product_count/3)
@@ -239,8 +239,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:is_completed, non_null(:boolean))
     field(:completed_at, :naive_datetime)
 
-    field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
-    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
+    field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
+    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Accounts))
 
     field(:actions, non_null(list_of(non_null(:action)))) do
       arg(:input, :actions_input)
@@ -269,12 +269,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     field(:objective, non_null(:objective), resolve: dataloader(Cambiatus.Commune))
 
-    field(:validators, non_null(list_of(non_null(:profile))),
-      resolve: dataloader(Cambiatus.Commune)
-    )
+    field(:validators, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Accounts))
 
     field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(Cambiatus.Commune))
-    field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
@@ -285,7 +283,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   object :claim do
     field(:id, non_null(:integer))
     field(:action, non_null(:action), resolve: dataloader(Cambiatus.Commune))
-    field(:claimer, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:claimer, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:status, non_null(:claim_status))
     field(:proof_photo, :string)
     field(:proof_code, :string)
@@ -310,7 +308,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "A check for a given claim"
   object :check do
     field(:claim, non_null(:claim), resolve: dataloader(Cambiatus.Commune))
-    field(:validator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:validator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:is_verified, non_null(:boolean))
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
@@ -325,7 +323,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
     field(:community, :community)
-    field(:account, :profile)
+    field(:account, :user, resolve: dataloader(Cambiatus.Accounts))
     field(:invited_by, :string)
   end
 
@@ -337,8 +335,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:amount, non_null(:float))
     field(:community_id, non_null(:string))
     field(:memo, :string)
-    field(:from, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
-    field(:to, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:from, non_null(:user), resolve: dataloader(Cambiatus.Commune))
+    field(:to, non_null(:user), resolve: dataloader(Cambiatus.Commune))
     field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
 
     field(:created_block, non_null(:integer))
@@ -350,7 +348,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "A community invite"
   object :invite do
     field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
-    field(:creator, non_null(:profile), resolve: dataloader(Cambiatus.Commune))
+    field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Commune))
   end
 
   @desc "Action verification types"

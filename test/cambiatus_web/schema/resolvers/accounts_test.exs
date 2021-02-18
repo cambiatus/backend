@@ -17,7 +17,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
       query($account: String!){
-        profile(account: $account) {
+        user(account: $account) {
         account
         avatar
         bio
@@ -29,7 +29,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => profile
+          "user" => profile
         }
       } = json_response(res, 200)
 
@@ -48,7 +48,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
       query($account: String!) {
-        profile(account: $account) {
+        user(account: $account) {
           account
           address {
             zip
@@ -61,7 +61,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => profile
+          "user" => profile
         }
       } = json_response(res, 200)
 
@@ -81,7 +81,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
       query($account: String!){
-        profile(account: $account) {
+        user(account: $account) {
         account
         kyc {
           userType
@@ -94,7 +94,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => profile
+          "user" => profile
         }
       } = json_response(res, 200)
 
@@ -115,8 +115,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
 
       query = """
-      mutation($input: ProfileUpdateInput!){
-        updateProfile(input: $input) {
+      mutation($input: UserUpdateInput!){
+        updateUser(input: $input) {
           account
           bio
         }
@@ -127,7 +127,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "updateProfile" => profile
+          "updateUser" => profile
         }
       } = json_response(res, 200)
 
@@ -175,7 +175,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     test "incoming transfers", %{conn: conn, variables: variables} do
       query = """
         query ($account: String!, $first: Int!) {
-          profile(account: $account) {
+          user(account: $account) {
             transfers(first: $first, direction: INCOMING) {
               fetchedCount
             }
@@ -187,7 +187,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "transfers" => %{
               "fetchedCount" => user1_incoming_transfers_count
             }
@@ -201,7 +201,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     test "outgoing transfers", %{conn: conn, variables: variables} do
       query = """
         query ($account: String!, $first: Int!) {
-          profile(account: $account) {
+          user(account: $account) {
             transfers(first: $first, direction: OUTGOING) {
               fetchedCount
             }
@@ -213,7 +213,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "transfers" => %{
               "fetchedCount" => user1_outgoing_transfers_count
             }
@@ -229,7 +229,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
         query ($account: String!, $first: Int!) {
-          profile(account: $account) {
+          user(account: $account) {
             transfers(first: $first, date: "#{today_date}") {
               fetchedCount
             }
@@ -241,7 +241,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "transfers" => %{
               "fetchedCount" => user1_today_transfers_count
             }
@@ -257,7 +257,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
         query ($account: String!, $first: Int!) {
-          profile(account: $account) {
+          user(account: $account) {
            transfers(first: $first, direction: INCOMING, date: "#{today_date}") {
               fetchedCount
             }
@@ -269,7 +269,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "transfers" => %{
               "fetchedCount" => user1_today_incoming_transfers_count
             }
@@ -285,7 +285,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
         query ($account: String!, $first: Int!) {
-          profile(account: $account) {
+          user(account: $account) {
             transfers(first: $first, direction: OUTGOING, date: "#{today_date}") {
               fetchedCount
             }
@@ -297,7 +297,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "transfers" => %{
               "fetchedCount" => user1_today_outgoing_transfers_count
             }
@@ -317,7 +317,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
         query ($account: String!, $first: Int!) {
-          profile(account: $account) {
+          user(account: $account) {
             transfers(
               first: $first,
               direction: INCOMING,
@@ -344,7 +344,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "transfers" => %{
               "fetchedCount" => transfers_from_user2_to_user1_for_today_count,
               "edges" => collected_transfers
@@ -372,7 +372,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
         query ($account: String!, $first: Int!) {
-          profile(account: $account) {
+          user(account: $account) {
             transfers(
               first: $first,
               direction: OUTGOING,
@@ -399,7 +399,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "transfers" => %{
               "fetchedCount" => transfers_from_user1_to_user2_for_today_count,
               "edges" => collected_transfers
@@ -424,7 +424,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
       query ($account: String!) {
-        profile(account: $account) {
+        user(account: $account) {
           getPayersByAccount(account: "#{account_part}") {
             account
             name
@@ -438,7 +438,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "profile" => %{
+          "user" => %{
             "getPayersByAccount" => payers
           }
         }
