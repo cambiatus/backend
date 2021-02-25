@@ -49,13 +49,13 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
       arg(:password, non_null(:string))
 
-      arg(:user_type, :string,
+      arg(:user_type, non_null(:string),
         description:
           "User type informs if its a 'natural' or 'juridical' user for regular users and companies"
       )
 
       arg(:invitation_id, :string,
-        description: "Optinal, used to auto invite an user to a community"
+        description: "Optional, used to auto invite an user to a community"
       )
 
       arg(:kyc, :kyc_data_update_input, description: "Optional, KYC data")
@@ -88,7 +88,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:contacts, list_of(non_null(:contact_input)),
       description:
-        "Optional, list sent here will substitute all other entries, always send everything"
+        "Optional, list will overwrite all entries, ensure to send all contact information"
     )
   end
 
