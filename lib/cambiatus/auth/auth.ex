@@ -19,33 +19,6 @@ defmodule Cambiatus.Auth do
 
   # We check our demux/postgres database to see if have a entry for this user.
   # """
-  # def sign_in(%{"account" => account}) do
-  #   # Check params
-  #   account
-  #   |> Accounts.get_user()
-  #   |> case do
-  #     nil ->
-  #       {:error, :not_found}
-
-  #     user ->
-  #       # Add user to Cambiatus if it isn't on it yet
-  #       user = Repo.preload(user, :communities)
-
-  #       user
-  #       |> Map.get(:communities)
-  #       |> Enum.any?(&(&1.symbol == @contract.cambiatus_community()))
-  #       |> case do
-  #         false ->
-  #           # Add to cambiatus
-  #           {:ok, _} = @contract.netlink(user.account, @contract.cambiatus_account())
-  #           {:ok, user}
-
-  #         _ ->
-  #           {:ok, user}
-  #       end
-  #   end
-  # end
-
   def sign_in(account, password) do
     account
     |> Accounts.get_user()
