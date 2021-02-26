@@ -88,10 +88,10 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
     end
 
     test "creates an address and KYC for the given account name" do
-      usr = insert(:user)
+      user = insert(:user)
       new_kyc = build(:kyc_data, %{account: nil})
 
-      conn = build_conn() |> auth_user(usr)
+      conn = build_conn() |> auth_user(user)
 
       variables = %{
         "inputAddress" => %{

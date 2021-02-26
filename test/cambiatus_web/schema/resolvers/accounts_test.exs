@@ -9,12 +9,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   describe "Accounts Resolver" do
     test "collects a user account given the account name" do
       assert Repo.aggregate(User, :count, :account) == 0
-      usr = insert(:user)
+      user = insert(:user)
 
-      conn = build_conn() |> auth_user(usr)
+      conn = build_conn() |> auth_user(user)
 
       variables = %{
-        "account" => usr.account
+        "account" => user.account
       }
 
       query = """
@@ -36,18 +36,18 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       } = json_response(res, 200)
 
       assert Repo.aggregate(User, :count, :account) == 1
-      assert profile["account"] == usr.account
+      assert profile["account"] == user.account
     end
 
     test "fetches user address" do
       assert Repo.aggregate(User, :count, :account) == 0
       address = insert(:address)
-      usr = address.account
+      user = address.account
 
-      conn = build_conn() |> auth_user(usr)
+      conn = build_conn() |> auth_user(user)
 
       variables = %{
-        "account" => usr.account
+        "account" => user.account
       }
 
       query = """
@@ -70,18 +70,18 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       } = json_response(res, 200)
 
       assert Repo.aggregate(User, :count, :account) == 1
-      assert profile["account"] == usr.account
+      assert profile["account"] == user.account
       assert profile["address"]["zip"] == address.zip
     end
 
     test "fetches user KYC data" do
       assert Repo.aggregate(User, :count, :account) == 0
       kyc = insert(:kyc_data)
-      usr = kyc.account
-      conn = build_conn() |> auth_user(usr)
+      user = kyc.account
+      conn = build_conn() |> auth_user(user)
 
       variables = %{
-        "account" => usr.account
+        "account" => user.account
       }
 
       query = """
@@ -104,14 +104,14 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       } = json_response(res, 200)
 
       assert Repo.aggregate(User, :count, :account) == 1
-      assert profile["account"] == usr.account
+      assert profile["account"] == user.account
       assert profile["kyc"]["userType"] == kyc.user_type
     end
 
     test "updates a user account details given the account name" do
       assert Repo.aggregate(User, :count, :account) == 0
-      usr = insert(:user)
-      conn = build_conn() |> auth_user(usr)
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       variables = %{
         "input" => %{
@@ -137,8 +137,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       } = json_response(res, 200)
 
       assert Repo.aggregate(User, :count, :account) == 1
-      assert profile["account"] == usr.account
-      refute profile["bio"] == usr.bio
+      assert profile["account"] == user.account
+      refute profile["bio"] == user.bio
     end
   end
 

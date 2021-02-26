@@ -536,12 +536,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Repo.aggregate(Product, :count, :id) == 0
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
-      usr = insert(:user)
-      conn = build_conn() |> auth_user(usr)
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       community = insert(:community)
 
-      insert_list(@num, :product, %{community: community, creator: usr})
+      insert_list(@num, :product, %{community: community, creator: user})
       insert_list(2, :product, %{community: community})
       %{title: f_title} = insert(:product, %{community: community, created_at: latest})
 
@@ -582,18 +582,18 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       c1 = insert(:community)
       c2 = insert(:community)
-      usr = insert(:user)
+      user = insert(:user)
 
-      conn = build_conn() |> auth_user(usr)
+      conn = build_conn() |> auth_user(user)
 
       insert_list(@num, :product, %{units: 0, community: c1})
       insert_list(@num, :product, %{community: c1})
 
-      insert(:network, %{community: c1, account: usr})
-      insert(:network, %{community: c2, account: usr})
+      insert(:network, %{community: c1, account: user})
+      insert(:network, %{community: c2, account: user})
 
       insert(:product, %{community: c2})
-      insert(:product, %{creator: usr, community: c2})
+      insert(:product, %{creator: user, community: c2})
       %{title: f_title} = insert(:product, %{created_at: latest, community: c1})
 
       variables = %{
@@ -750,19 +750,19 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
     test "collects a user's transfers" do
       assert Repo.aggregate(Transfer, :count, :id) == 0
-      usr = insert(:user)
+      user = insert(:user)
 
-      conn = build_conn() |> auth_user(usr)
+      conn = build_conn() |> auth_user(user)
 
-      usr1 = insert(:user)
-      insert_list(@num, :transfer, %{from: usr1})
-      insert_list(@num, :transfer, %{from: usr})
-      insert_list(@num, :transfer, %{to: usr})
+      user1 = insert(:user)
+      insert_list(@num, :transfer, %{from: user1})
+      insert_list(@num, :transfer, %{from: user})
+      insert_list(@num, :transfer, %{to: user})
 
       fetch = 3
 
       variables = %{
-        "account" => usr.account,
+        "account" => user.account,
         "first" => fetch
       }
 
