@@ -63,8 +63,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   @desc "An Order"
   object :order do
     field(:id, non_null(:integer))
-    field(:community_id, non_null(:string))
-    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
 
     field(:product_id, non_null(:integer))
     field(:product, non_null(:product), resolve: dataloader(Cambiatus.Shop))
