@@ -9,6 +9,34 @@ defmodule CambiatusWeb.Schema.Resolvers.NotificationsTests do
   }
 
   describe "Notifications resolvers" do
+    test "query notification" do
+      user = insert(:user)
+      notif = insert(:notification_history, recipient: user)
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      query{
+        notificationHistory {
+          id
+          recipient {
+            name
+          }
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query)
+
+      %{
+        "data" => %{
+          "notificationHistory" => [notification_history]
+        }
+      } = json_response(res, 200)
+
+      assert notification_history["id"] == notif.id
+      assert notification_history["recipient"]["name"] == user.name
+    end
+
     test "creates a push subscription from the GraphQL endpoint" do
       assert Repo.aggregate(PushSubscription, :count, :id) == 0
 

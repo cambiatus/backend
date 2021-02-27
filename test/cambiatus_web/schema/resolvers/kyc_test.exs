@@ -8,6 +8,36 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
     @zip "10102"
     @street "Elm Street"
 
+    test "query country for kyc_data" do
+      kyc = insert(:kyc_data)
+      user = kyc.account
+      conn = build_conn() |> auth_user(user)
+
+      variables = %{
+        "country" => %{
+          "name" => kyc.country.name
+        }
+      }
+
+      query = """
+      query($country: CountryInput!){
+        country(input: $country) {
+        name
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "country" => country
+        }
+      } = json_response(res, 200)
+
+      assert country["name"] == kyc.country.name
+    end
+
     test "updates kyc data for the given account" do
       kyc = insert(:kyc_data)
       user = kyc.account
