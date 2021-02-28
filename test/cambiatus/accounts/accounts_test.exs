@@ -50,7 +50,7 @@ defmodule Cambiatus.AccountsTest do
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      found_user = Accounts.get_user!(user.account) |> Repo.preload(:contacts)
+      found_user = user.account |> Accounts.get_user!() |> Repo.preload(:contacts)
       assert found_user == user
     end
 
