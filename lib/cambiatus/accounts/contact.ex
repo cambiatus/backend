@@ -45,7 +45,7 @@ defmodule Cambiatus.Accounts.Contact do
 
       :instagram ->
         validate_format(changeset, :external_id, @instagram_regex)
-        
+
       _ ->
         validate_format(changeset, :external_id, ~r/(?s).*/)
     end
@@ -54,6 +54,7 @@ defmodule Cambiatus.Accounts.Contact do
   defp validate_phone_number(changeset, country_code \\ @default_country_code) do
     external_id = changeset.changes.external_id
     {:ok, phone_number} = ExPhoneNumber.parse(external_id, country_code)
+
     case ExPhoneNumber.is_possible_number?(phone_number) do
       true -> changeset
       false -> add_error(changeset, :external_id, "invalid phone number", additional: "parsed number #{phone_number.national_number}")
