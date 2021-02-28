@@ -44,14 +44,14 @@ defmodule Cambiatus.AccountsTest do
 
     test "list_users/0 returns all users" do
       user = user_fixture()
-      users = Accounts.list_users()
-      assert users = [user]
+      users = Accounts.list_users() |> Repo.preload(:contacts)
+      assert users == [user]
     end
 
     test "get_user!/1 returns the user with given id" do
       user = user_fixture()
-      found_user = Accounts.get_user!(user.account)
-      assert found_user = user
+      found_user = Accounts.get_user!(user.account) |> Repo.preload(:contacts)
+      assert found_user == user
     end
 
     test "create_user/1 with valid data creates a user" do
