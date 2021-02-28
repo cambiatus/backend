@@ -2,13 +2,23 @@ defmodule Cambiatus.AccountsTest do
   use Cambiatus.DataCase
 
   alias Cambiatus.Accounts
+  alias Cambiatus.Accounts.Contact
 
   describe "users" do
     alias Cambiatus.Accounts.User
 
-    @valid_attrs %{account: "testtesttest", name: "Jureg", email: "jureg@email.com"}
-    @update_attrs %{}
-    @invalid_attrs %{email: 10}
+    @valid_contact_attrs %{user_id: "testtesttest", type: :phone, external_id: Faker.Phone.EnUs.phone()}
+    @valid_telegram_attrs %{user_id: "testtesttest", type: :telegram, external_id: "https://t.me/janedoe"}
+    @valid_instagram_attrs %{user_id: "testtesttest", type: :instagram, external_id: "https://www.instagram.com/test/"}
+
+    @invalid_contact_attrs %{user_id: "testtesttest", type: :phone, external_id: "955-5490-4146"}
+    @invalid_telegram_attrs %{user_id: "testtesttest", type: :instagram, external_id: "https://telegram.org/1111"}
+    @invalid_instagram_attrs %{user_id: "testtesttest", type: :instagram, external_id: "https://www.instagr.am/10-tet-10/"}
+    @update_contact_attrs %{user_id: "testtesttest", type: :whatsapp, external_id: Faker.Phone.EnUs.phone()}
+
+    @valid_attrs %{account: "testtesttest", name: "Jureg", email: "jureg@email.com", contacts: [@valid_contact_attrs]}
+    @update_attrs %{name: "Jane", email: "jane_doe@email.io", contacts: [@update_contact_attrs, @valid_telegram_attrs, @valid_instagram_attrs]}
+    @invalid_attrs %{email: 10, contacts: [@invalid_contact_attrs, @invalid_telegram_attrs, @invalid_instagram_attrs]}
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -66,7 +76,10 @@ defmodule Cambiatus.AccountsTest do
 
     test "delete_user/1 deletes the user" do
       user = user_fixture()
+      contact_id = user.contacts |> List.first() |> Map.get(:id)
+
       assert {:ok, %User{}} = Accounts.delete_user(user)
+      assert Repo.get_by(Contact, id: contact_id) == nil
       assert_raise Ecto.NoResultsError, fn -> Accounts.get_user!(user.account) end
     end
 
