@@ -3,10 +3,17 @@ defmodule Cambiatus.Accounts.Contact do
   Ecto entity to hold contact information
   """
 
+  @default_country_code "US"
+
+  # Regex was inspired by https://github.com/lorey/social-media-profiles-regexs
+  @telegram_regex ~r/(?:https?:)?\/\/(?:t(?:elegram)?\.me|telegram\.org)\/(?P<username>[a-z0-9\_]{5,32})\/?/
+  @instagram_regex ~r/(?:https?:)?\/\/(?:www\.)?(?:instagram\.com|instagr\.am)\/(?P<username>[A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)/
+
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Cambiatus.Accounts.{Contact, User}
+  alias ExPhoneNumber
 
   schema "contacts" do
     field(:type, Ecto.Enum, values: [:phone, :whatsapp, :telegram, :instagram])
@@ -26,24 +33,30 @@ defmodule Cambiatus.Accounts.Contact do
   end
 
   def validate_external_id(changeset) do
-    regex =
-      case changeset.params["type"] do
-        "phone" ->
-          ~r/^\+?\(?[0-9]{3}\)?[-\s\.]?\(?[0-9]{2}?\)?[-\s\.]?[0-9]{3,5}[-\s\.]?[0-9]{3,4}$/
+    case changeset.changes.type do
+      :phone ->
+        validate_phone_number(changeset)
 
-        "whatsapp" ->
-          ~r/^\+?\(?[0-9]{3}\)?[-\s\.]?\(?[0-9]{2}?\)?[-\s\.]?[0-9]{3,5}[-\s\.]?[0-9]{3,4}$/
+      :whatsapp ->
+        validate_phone_number(changeset)
 
-        "telegram" ->
-          ~r/^(?:https?:)?\/\/(?:t(?:elegram)?\.me|telegram\.org)\/(?P<username>[a-z0-9\_]{5,32})\/?$/
+      :telegram ->
+        validate_format(changeset, :external_id, @telegram_regex)
 
-        "instagram" ->
-          ~r/^(?:https?:)?\/\/(?:www\.)?(?:instagram\.com|instagr\.am)\/(?P<username>[A-Za-z0-9_](?:(?:[A-Za-z0-9_]|(?:\.(?!\.))){0,28}(?:[A-Za-z0-9_]))?)$/
+      :instagram ->
+        validate_format(changeset, :external_id, @instagram_regex)
+        
+      _ ->
+        validate_format(changeset, :external_id, ~r/(?s).*/)
+    end
+  end
 
-        _ ->
-          ~r/(?s).*/
-      end
-
-    validate_format(changeset, :external_id, regex)
+  defp validate_phone_number(changeset, country_code \\ @default_country_code) do
+    external_id = changeset.changes.external_id
+    {:ok, phone_number} = ExPhoneNumber.parse(external_id, country_code)
+    case ExPhoneNumber.is_possible_number?(phone_number) do
+      true -> changeset
+      false -> add_error(changeset, :external_id, "invalid phone number", additional: "parsed number #{phone_number.national_number}")
+    end
   end
 end
