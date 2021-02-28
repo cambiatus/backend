@@ -3,7 +3,7 @@ defmodule Cambiatus.Accounts.Contact do
   Ecto entity to hold contact information
   """
 
-  @default_country_code "US"
+  @default_country_code "BR"
 
   # Regex was inspired by https://github.com/lorey/social-media-profiles-regexs
   @telegram_regex ~r/(?:https?:)?\/\/(?:t(?:elegram)?\.me|telegram\.org)\/(?P<username>[a-z0-9\_]{5,32})\/?/
