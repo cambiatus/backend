@@ -9,7 +9,7 @@ defmodule Cambiatus.Accounts.User do
   alias Cambiatus.Accounts.{Contact, User}
   alias Cambiatus.Commune.{Network, Claim, Transfer}
   alias Cambiatus.Kyc.{KycData, Address}
-  alias Cambiatus.Shop.{Product, Order}
+  alias Cambiatus.Shop.Product
 
   @primary_key {:account, :string, autogenerate: false}
   schema "users" do
@@ -30,13 +30,19 @@ defmodule Cambiatus.Accounts.User do
 
     has_many(:push_subscriptions, PushSubscription, foreign_key: :account_id)
     has_many(:products, Product, foreign_key: :creator_id)
+    has_many(:orders, through: [:products, :orders])
     has_many(:to_transfers, Transfer, foreign_key: :to_id)
     has_many(:from_transfers, Transfer, foreign_key: :from_id)
     has_many(:network, Network, foreign_key: :account_id)
     has_many(:communities, through: [:network, :community])
     has_many(:invitations, Invitation, foreign_key: :creator_id)
     has_many(:claims, Claim, foreign_key: :claimer_id)
-    has_many(:contacts, Contact, foreign_key: :user_id, on_replace: :delete, on_delete: :delete_all)
+
+    has_many(:contacts, Contact,
+      foreign_key: :user_id,
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
 
     has_one(:address, Address, foreign_key: :account_id)
     has_one(:kyc, KycData, foreign_key: :account_id)
@@ -55,7 +61,6 @@ defmodule Cambiatus.Accounts.User do
     |> validate_format(:email, ~r/@/)
     |> validate_format(:account, ~r/^[a-z1-5]{12}$/)
     |> cast_assoc(:contacts, with: &Contact.changeset/2)
-    # |> assoc_contacts(attrs)
   end
 
   def assoc_contacts(changeset, attrs) do
