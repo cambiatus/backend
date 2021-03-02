@@ -13,6 +13,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
   @desc "Shop queries"
   object(:shop_queries) do
+    @desc "[Auth required] Products in a community"
     field(:products, non_null(list_of(non_null(:product)))) do
       arg(:community_id, non_null(:string))
       arg(:filters, :products_filter_input)
@@ -21,6 +22,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       resolve(&Shop.get_products/3)
     end
 
+    @desc "[Auth required] Gets a single product"
     field(:product, :product) do
       arg(:id, non_null(:integer))
 

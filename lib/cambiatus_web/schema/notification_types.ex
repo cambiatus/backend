@@ -10,6 +10,7 @@ defmodule CambiatusWeb.Schema.NotificationTypes do
 
   @desc "Notification history queries"
   object :notification_queries do
+    @desc "[Auth required] User's notifications"
     field(:notification_history, non_null(list_of(non_null(:notification_history)))) do
       middleware(Middleware.Authenticate)
       resolve(&Notifications.user_notification_history/3)
@@ -18,7 +19,7 @@ defmodule CambiatusWeb.Schema.NotificationTypes do
 
   @desc "Notifications Mutations on Cambiatus"
   object :notification_mutations do
-    @desc "Register an push subscription on Cambiatus"
+    @desc "[Auth required] Register an push subscription on Cambiatus"
     field(:register_push, non_null(:push_subscription)) do
       arg(:input, non_null(:push_subscription_input))
 
@@ -26,7 +27,7 @@ defmodule CambiatusWeb.Schema.NotificationTypes do
       resolve(&Notifications.register/3)
     end
 
-    @desc "Mark a notification history as read"
+    @desc "[Auth required] Mark a notification history as read"
     field(:read_notification, non_null(:notification_history)) do
       arg(:input, non_null(:read_notification_input))
 

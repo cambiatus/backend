@@ -13,13 +13,13 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   @desc "Community Queries on Cambiatus"
   object :community_queries do
-    @desc "A list of communities in Cambiatus"
+    @desc "[Auth required] A list of communities in Cambiatus"
     field :communities, non_null(list_of(non_null(:community))) do
       middleware(Middleware.Authenticate)
       resolve(&Commune.get_communities/3)
     end
 
-    @desc "A single community"
+    @desc "[Auth required] A single community"
     field :community, :community do
       arg(:symbol, non_null(:string))
 
@@ -27,7 +27,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(&Commune.find_community/3)
     end
 
-    @desc "A list of claims"
+    @desc "[Auth required] A list of claims"
     connection field(:claims_analysis, node_type: :claim) do
       arg(:community_id, non_null(:string))
 
@@ -43,7 +43,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(&Commune.get_claims_analysis_history/3)
     end
 
-    @desc "A single claim"
+    @desc "[Auth required] A single claim"
     field :claim, non_null(:claim) do
       arg(:input, non_null(:claim_input))
 
@@ -51,7 +51,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(&Commune.get_claim/3)
     end
 
-    @desc "A single objective"
+    @desc "[Auth required] A single objective"
     field :objective, :objective do
       arg(:input, non_null(:objective_input))
 
@@ -59,7 +59,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(&Commune.get_objective/3)
     end
 
-    @desc "A single Transfer"
+    @desc "[Auth required] A single Transfer"
     field :transfer, :transfer do
       arg(:input, non_null(:transfer_input))
 
@@ -105,7 +105,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   @desc "Community mutations"
   object :commune_mutations do
-    @desc "Complete an objective"
+    @desc "[Auth required - Admin only] Complete an objective"
     field :complete_objective, :objective do
       arg(:input, non_null(:complete_objective_input))
 

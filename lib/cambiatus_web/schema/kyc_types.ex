@@ -13,7 +13,7 @@ defmodule CambiatusWeb.Schema.KycTypes do
 
   @desc "Address query"
   object :address_queries do
-    @desc "List of supported countries"
+    @desc "[Auth required] List of supported countries"
     field(:country, :country) do
       arg(:input, non_null(:country_input))
 
@@ -24,7 +24,7 @@ defmodule CambiatusWeb.Schema.KycTypes do
 
   @desc "Kyc data mutations"
   object :kyc_mutations do
-    @desc "Updates user's KYC info if it already exists or inserts a new one if user hasn't it yet."
+    @desc "[Auth required] Updates user's KYC info if it already exists or inserts a new one if user hasn't it yet."
     field :upsert_kyc, :kyc_data do
       arg(:input, non_null(:kyc_data_update_input))
 
@@ -32,7 +32,7 @@ defmodule CambiatusWeb.Schema.KycTypes do
       resolve(&Kyc.upsert_kyc/3)
     end
 
-    @desc "Updates user's address if it already exists or inserts a new one if user hasn't it yet."
+    @desc "[Auth required] Updates user's address if it already exists or inserts a new one if user hasn't it yet."
     field :upsert_address, :address do
       arg(:input, non_null(:address_update_input))
 
@@ -40,13 +40,13 @@ defmodule CambiatusWeb.Schema.KycTypes do
       resolve(&Kyc.upsert_address/3)
     end
 
-    @desc "A mutation to delete user's kyc data"
+    @desc "[Auth required] A mutation to delete user's kyc data"
     field :delete_kyc, :delete_kyc_address do
       middleware(Middleware.Authenticate)
       resolve(&Kyc.delete_kyc/3)
     end
 
-    @desc "A mutation to delete user's address data"
+    @desc "[Auth required] A mutation to delete user's address data"
     field :delete_address, :delete_kyc_address do
       middleware(Middleware.Authenticate)
       resolve(&Kyc.delete_address/3)

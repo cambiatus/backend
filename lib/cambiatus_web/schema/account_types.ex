@@ -14,7 +14,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
   @desc "Accounts Queries"
   object(:account_queries) do
-    @desc "A users"
+    @desc "[Auth required] A user"
     field :user, :user do
       arg(:account, non_null(:string))
 
@@ -25,7 +25,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
   @desc "Account Mutations"
   object(:account_mutations) do
-    @desc "A mutation to update a user"
+    @desc "[Auth required] A mutation to update a user"
     field :update_user, :user do
       arg(:input, non_null(:user_update_input))
 
