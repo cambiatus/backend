@@ -36,7 +36,7 @@ defmodule Cambiatus.Accounts.User do
     has_many(:communities, through: [:network, :community])
     has_many(:invitations, Invitation, foreign_key: :creator_id)
     has_many(:claims, Claim, foreign_key: :claimer_id)
-    has_many(:contacts, Contact, foreign_key: :user_id, on_replace: :delete)
+    has_many(:contacts, Contact, foreign_key: :user_id, on_replace: :delete, on_delete: :delete_all)
 
     has_one(:address, Address, foreign_key: :account_id)
     has_one(:kyc, KycData, foreign_key: :account_id)
@@ -54,7 +54,8 @@ defmodule Cambiatus.Accounts.User do
     |> unique_constraint(:account)
     |> validate_format(:email, ~r/@/)
     |> validate_format(:account, ~r/^[a-z1-5]{12}$/)
-    |> assoc_contacts(attrs)
+    |> cast_assoc(:contacts, with: &Contact.changeset/2)
+    # |> assoc_contacts(attrs)
   end
 
   def assoc_contacts(changeset, attrs) do
