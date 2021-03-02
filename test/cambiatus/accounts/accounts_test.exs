@@ -7,7 +7,7 @@ defmodule Cambiatus.AccountsTest do
   describe "users" do
     alias Cambiatus.Accounts.User
 
-    @valid_contact_attrs %{user_id: "testtesttest", type: :phone, external_id: "+55 11 91234-1234"}
+    @valid_contact_attrs %{user_id: "testtesttest", type: :phone, external_id: "50625233600"}
     @valid_telegram_attrs %{user_id: "testtesttest", type: :telegram, external_id: "https://t.me/janedoe"}
     @valid_instagram_attrs %{user_id: "testtesttest", type: :instagram, external_id: "https://www.instagram.com/test/"}
 
