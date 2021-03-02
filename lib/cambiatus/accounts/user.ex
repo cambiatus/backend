@@ -62,13 +62,4 @@ defmodule Cambiatus.Accounts.User do
     |> validate_format(:account, ~r/^[a-z1-5]{12}$/)
     |> cast_assoc(:contacts, with: &Contact.changeset/2)
   end
-
-  def assoc_contacts(changeset, attrs) do
-    if Map.has_key?(attrs, :contacts) do
-      changeset
-      |> put_assoc(:contacts, Map.get(attrs, :contacts))
-    else
-      changeset
-    end
-  end
 end
