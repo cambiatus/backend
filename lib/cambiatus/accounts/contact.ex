@@ -55,9 +55,10 @@ defmodule Cambiatus.Accounts.Contact do
     external_id = changeset.changes.external_id
     {:ok, phone_number} = ExPhoneNumber.parse(external_id, country_code)
 
-    case ExPhoneNumber.is_possible_number?(phone_number) do
-      true -> changeset
-      false -> add_error(changeset, :external_id, "invalid phone number", additional: "parsed number #{phone_number.national_number}")
+    if ExPhoneNumber.is_possible_number?(phone_number) do
+      changeset
+    else
+      add_error(changeset, :external_id, "invalid phone number", additional: "parsed number #{phone_number.national_number}")
     end
   end
 end
