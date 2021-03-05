@@ -9,15 +9,13 @@ defmodule Cambiatus.Accounts do
   alias Cambiatus.Commune.Transfer
   alias Cambiatus.Repo
 
-  @password Application.get_env(:cambiatus, :graphql_secret)
-
   @spec data :: Dataloader.Ecto.t()
   def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
 
   def query(queryable, _params), do: queryable
 
   def verify_pass(_account, password) do
-    password == @password
+    password == Application.get_env(:cambiatus, :graphql_secret)
   end
 
   @doc """
