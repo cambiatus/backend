@@ -64,6 +64,13 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&AccountsResolver.sign_up/3)
     end
 
+    field :sign_in_v2, :session do
+      arg(:account, non_null(:string))
+      arg(:password, non_null(:string))
+
+      resolve(&AccountsResolver.sign_in_v2/3)
+    end
+
     field :sign_in, :session do
       arg(:account, non_null(:string))
       arg(:password, non_null(:string))

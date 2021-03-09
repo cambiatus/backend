@@ -1,5 +1,6 @@
 defmodule Cambiatus.Auth do
   @moduledoc "Cambiatus Account Authentication and Signup Manager"
+  @static_phrase "secret to be encrypted"
 
   import Ecto.Query
 
@@ -20,6 +21,7 @@ defmodule Cambiatus.Auth do
   # We check our demux/postgres database to see if have a entry for this user.
   # """
   def sign_in(account, password) do
+    password = "d8Ed.-qfhj7"
     account
     |> Accounts.get_user()
     |> case do
@@ -33,6 +35,39 @@ defmodule Cambiatus.Auth do
           {:error, :invalid_password}
         end
     end
+  end
+
+  def sign_in_v2(account, password) do
+    # valid = verifyHash(password, sha256(@static_phrase), publicKeyFromAccount(account)) |> IO.inspect(label: "RESULT")
+
+    account
+    |> Accounts.get_user()
+    |> case do
+      nil ->
+        {:error, :not_found}
+
+      user ->
+        if Accounts.verify_pass(account, password) do
+          {:ok, user}
+        else
+          {:error, :invalid_password}
+        end
+    end
+  end
+
+  # TODO create different encodin based the encoding used on frontend: utf8, hex or base64 see (eosjs-ecc/src/api_common.js)
+  def sha256(data, encoding \\ :hex) do
+    :crypto.hash(:sha256, data)
+    |> Base.encode16(case: :lower)
+  end
+
+  # signature has to be string
+  defp verify(signature, phrase, pubkey) do
+    verify_hash(signature, __MODULE__.sha256(phrase), pubkey)
+  end
+
+  defp verify_hash(signature, dataSha256, pubkey, encoding \\ :hex) do
+
   end
 
   @doc """
