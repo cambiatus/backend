@@ -5,7 +5,7 @@ defmodule Cambiatus.Mixfile do
     [
       app: :cambiatus,
       version: "1.7.8",
-      elixir: "~> 1.8",
+      elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -48,6 +48,7 @@ defmodule Cambiatus.Mixfile do
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
       {:mogrify, "~> 0.8.0"},
+      {:starkbank_ecdsa, "~> 1.0.0"},
 
       # Absinthe Packages
       {:absinthe, "~> 1.4"},
