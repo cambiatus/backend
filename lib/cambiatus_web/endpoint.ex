@@ -51,6 +51,8 @@ defmodule CambiatusWeb.Endpoint do
 
   plug(CORSPlug)
 
+  plug(CambiatusWeb.Plug.Subdomain, CambiatusWeb.SubdomainRouter)
+
   plug(CambiatusWeb.Router)
 
   @doc """
