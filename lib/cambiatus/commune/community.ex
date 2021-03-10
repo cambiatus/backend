@@ -19,6 +19,7 @@ defmodule Cambiatus.Commune.Community do
     field(:logo, :string)
     field(:name, :string)
     field(:description, :string)
+    field(:subdomain, :string)
     field(:inviter_reward, :float)
     field(:invited_reward, :float)
 
@@ -58,5 +59,6 @@ defmodule Cambiatus.Commune.Community do
     community
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+    |> unique_constraint(:subdomain)
   end
 end
