@@ -7,7 +7,6 @@ defmodule CambiatusWeb.Plug.Subdomain do
   @doc false
   def call(conn, router) do
     get_subdomain(conn.host)
-    |> IO.inspect(label: "SUBDOMAIN")
     |> case do
       subdomain when byte_size(subdomain) > 0 ->
         conn
@@ -19,9 +18,7 @@ defmodule CambiatusWeb.Plug.Subdomain do
   end
 
   defp get_subdomain(host) do
-    IO.inspect(host, label: "HOST")
     root_host = CambiatusWeb.Endpoint.config(:url)[:host]
-    IO.inspect(root_host, label: "ROOT")
     String.replace(host, ~r/.?#{root_host}/, "")
   end
 end
