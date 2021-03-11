@@ -68,6 +68,10 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:account, non_null(:string))
       arg(:password, non_null(:string))
 
+      arg(:invitation_id, :string,
+        description: "Optional, used to auto invite an user to a community"
+      )
+
       resolve(&AccountsResolver.sign_in/3)
     end
   end
