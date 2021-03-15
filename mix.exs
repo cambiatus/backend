@@ -48,7 +48,7 @@ defmodule Cambiatus.Mixfile do
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
       {:mogrify, "~> 0.8.0"},
-      {:starkbank_ecdsa, "~> 1.0.0"},
+      {:nodejs, "~> 2.0"},
 
       # Absinthe Packages
       {:absinthe, "~> 1.4"},
@@ -63,6 +63,7 @@ defmodule Cambiatus.Mixfile do
       {:eosrpc, "~> 0.6.1"},
       {:sentry, "~> 6.4"},
       {:hashids, "~> 2.0"},
+      {:starkbank_ecdsa, "~> 1.0.0"},
 
       # AWS Packages
       {:ex_aws, "~> 2.1"},
