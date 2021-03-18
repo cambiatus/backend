@@ -13,11 +13,10 @@ defmodule CambiatusWeb.Schema.KycTypes do
 
   @desc "Address query"
   object :address_queries do
-    @desc "[Auth required] List of supported countries"
+    @desc "List of supported countries"
     field(:country, :country) do
       arg(:input, non_null(:country_input))
 
-      middleware(Middleware.Authenticate)
       resolve(&Kyc.get_country/3)
     end
   end
