@@ -64,7 +64,8 @@ defmodule Cambiatus.Mixfile do
       {:sentry, "~> 6.4"},
       {:hashids, "~> 2.0"},
       {:starkbank_ecdsa, "~> 1.0.0"},
-
+      {:puid, "~> 1.0"},
+      
       # AWS Packages
       {:ex_aws, "~> 2.1"},
       {:ex_aws_s3, "~> 2.0"},
