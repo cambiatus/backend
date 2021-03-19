@@ -21,8 +21,6 @@ defmodule Cambiatus.Auth do
   # We check our demux/postgres database to see if have a entry for this user.
   # """
   def sign_in(account, password) do
-    password = "d8Ed.-qfhj7"
-
     account
     |> Accounts.get_user()
     |> case do
@@ -39,7 +37,8 @@ defmodule Cambiatus.Auth do
   end
 
   def sign_in_v2(account, signature) do
-    verify_signature(signature)
+    account
+    |> verify_signature(signature)
     |> case do
       true ->
         account
@@ -61,7 +60,7 @@ defmodule Cambiatus.Auth do
     end
   end
 
-  defp verify_signature(signature) do
+  defp verify_signature(account, signature) do
     {:ok, message} = Jason.encode(%{message: "hello"})
 
     # TODO implement using task
@@ -98,9 +97,25 @@ defmodule Cambiatus.Auth do
           s: String.to_integer(signature_points["s"])
         }
 
-        EllipticCurve.Ecdsa.verify?(message, signature_elixir, public_key)
+        EllipticCurve.Ecdsa.verify?(message, signature_elixir, public_key) &&
+          compare_public_keys(pub_points["string"], account)
 
       {:error, _} ->
+        false
+    end
+  end
+
+  defp compare_public_keys(public_key_a, account) do
+    NodeJS.call({"app", :accountToPublicKey}, [account])
+    |> case do
+      {:ok, %{"ok" => account_info}} ->
+        public_key_b =
+          account_info
+          |> get_in(["permissions", Access.at(0), "required_auth", "keys", Access.at(0), "key"])
+
+        public_key_a == public_key_b
+
+      {:ok, %{"error" => _}} ->
         false
     end
   end
