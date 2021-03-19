@@ -15,7 +15,8 @@ const publicKeyPoints = (signature, message) => {
     return {
         publicKey: {
             x: publicKey.Q.x.toString(),
-            y: publicKey.Q.y.toString()
+            y: publicKey.Q.y.toString(),
+            string: publickeyString
         },
         signature: {
             r: signatureObj.r.toString(),
@@ -25,16 +26,16 @@ const publicKeyPoints = (signature, message) => {
 }
 const accountToPublicKey = (account) => {
     const eos = EosApi(options)
-    async function getAccounInfo() {
+    async function fetchAccounInfo() {
         try {
-            return await eos.getAccount(account)
+            return { ok: await eos.getAccount(account) }
         } catch (error) {
             return { error: "error fetching account" };
         }
     }
 
     return (async function () {
-        return await getAccounInfo();
+        return await fetchAccounInfo();
     })();
 }
 
