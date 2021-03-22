@@ -105,6 +105,9 @@ defmodule Cambiatus.Auth do
     end
   end
 
+  @doc """
+  Verify public key associated to the signature private key and the public key for the account
+  """
   defp compare_public_keys(public_key_a, account) do
     NodeJS.call({"app", :accountToPublicKey}, [account])
     |> case do
