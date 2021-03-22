@@ -5,7 +5,7 @@ defmodule Cambiatus.Mixfile do
     [
       app: :cambiatus,
       version: "1.7.8",
-      elixir: "~> 1.8",
+      elixir: "~> 1.9",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
