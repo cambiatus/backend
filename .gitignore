@@ -24,3 +24,4 @@ bespiral-platform.iml
 .ssh-tunnel.sh
 
 .elixir_ls/
+.tool-versions
