@@ -52,7 +52,7 @@ defmodule Cambiatus.Commune.Community do
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
   @optional_fields ~w(logo type supply max_supply min_balance issuer precision created_block
-  created_tx created_at created_eos_account)a
+  created_tx created_at created_eos_account subdomain)a
 
   @doc false
   def changeset(%Community{} = community, attrs) do
