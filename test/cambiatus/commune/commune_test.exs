@@ -52,6 +52,11 @@ defmodule Cambiatus.CommuneTest do
                |> Commune.create_community()
     end
 
+    test "create_community/1 with reserved subdomain returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} =
+               @valid_attrs |> Map.put(:subdomain, "staging") |> Commune.create_community()
+    end
+
     test "update_community/2 with valid data updates the community" do
       community = insert(:community)
       assert {:ok, %Community{} = community} = Commune.update_community(community, @update_attrs)
