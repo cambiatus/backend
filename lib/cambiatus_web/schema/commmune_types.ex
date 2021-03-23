@@ -188,6 +188,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:inviter_reward, non_null(:float))
     field(:invited_reward, non_null(:float))
 
+    field(:subdomain, :string)
     field(:type, :string)
     field(:issuer, :string)
     field(:supply, :float)
