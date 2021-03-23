@@ -6,7 +6,8 @@ defmodule CambiatusWeb.Plug.Subdomain do
 
   @doc false
   def call(conn, _router) do
-    get_subdomain(conn.host)
+    conn.host
+    |> get_subdomain()
     |> case do
       subdomain when byte_size(subdomain) > 0 ->
         conn
