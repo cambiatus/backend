@@ -51,9 +51,10 @@ defmodule CambiatusWeb.Endpoint do
 
   plug(CORSPlug)
 
-  plug(CambiatusWeb.Router)
+  plug(CambiatusWeb.Plug.Subdomain)
+  # plug(CambiatusWeb.Plug.Subdomain, CambiatusWeb.SubdomainRouter)
 
-  plug(CambiatusWeb.Plug.Subdomain, CambiatusWeb.SubdomainRouter)
+  plug(CambiatusWeb.Router)
 
   @doc """
   Callback invoked for dynamically configuring the endpoint.

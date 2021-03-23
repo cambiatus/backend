@@ -2,17 +2,17 @@ defmodule CambiatusWeb.Plug.Subdomain do
   import Plug.Conn
 
   @doc false
-  def init(default), do: default
+  def init(opts), do: opts
 
   @doc false
-  def call(conn, router) do
+  def call(conn, _router) do
     get_subdomain(conn.host)
     |> case do
       subdomain when byte_size(subdomain) > 0 ->
         conn
         |> put_private(:subdomain, subdomain)
-        |> router.call(router.init({}))
-        |> halt()
+        # |> router.call(router.init({}))
+        # |> halt()
       _ -> conn
     end
   end
