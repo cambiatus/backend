@@ -1,4 +1,7 @@
 defmodule CambiatusWeb.SubdomainRouter do
+  @moduledoc """
+  Router subdomain request via this module
+  """
   use CambiatusWeb, :router
   use Plug.ErrorHandler
   use Sentry.Plug

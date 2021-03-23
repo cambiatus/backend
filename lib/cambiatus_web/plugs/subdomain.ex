@@ -1,4 +1,7 @@
 defmodule CambiatusWeb.Plug.Subdomain do
+  @moduledoc """
+  This plug adds the subdomain
+  """
   import Plug.Conn
 
   @doc false
