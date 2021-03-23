@@ -38,6 +38,30 @@ const accountToPublicKey = (account) => {
         return await fetchAccounInfo();
     })();
 }
+const generateKeys = () => {
+    async function getKeys() {
+        return ecc.randomKey().then(privateKey => ({
+            privateKey: privateKey,
+            publicKey: ecc.privateToPublic(privateKey)
+        }))
+    }
+
+    return (async function () {
+        return await getKeys();
+    })();
+}
+const sign = (phrase) => {
+    return ecc.randomKey().then(privateKey => {
+        let publicKey = ecc.privateToPublic(privateKey)
+        let signature = ecc.sign(JSON.stringify(phrase), privateKey)
+        return {
+            signature: signature,
+            privateKey: privateKey,
+            publicKey: publicKey
+        }
+    })
+}
 
 exports.publicKeyPoints = publicKeyPoints
 exports.accountToPublicKey = accountToPublicKey
+exports.sign = sign
