@@ -19,7 +19,7 @@ defmodule Cambiatus.CommuneTest do
       allow_subcommunity: true,
       subcommunity_price: 0.0
     }
-    @update_attrs %{name: "some updated name"}
+    @update_attrs %{name: "some updated name", subdomain: "test"}
     @invalid_attrs %{symbol: nil}
 
     test "list_communities/0 returns all communities" do
@@ -41,10 +41,22 @@ defmodule Cambiatus.CommuneTest do
       assert {:error, %Ecto.Changeset{}} = Commune.create_community(@invalid_attrs)
     end
 
+    test "create_community/1 with duplicate subdomain returns error changeset" do
+      assert {:ok, %Community{} = community} =
+               @valid_attrs |> Map.put(:subdomain, "test") |> Commune.create_community()
+
+      assert {:error, %Ecto.Changeset{}} =
+               @valid_attrs
+               |> Map.put(:symbol, "FOO")
+               |> Map.put(:subdomain, "test")
+               |> Commune.create_community()
+    end
+
     test "update_community/2 with valid data updates the community" do
       community = insert(:community)
       assert {:ok, %Community{} = community} = Commune.update_community(community, @update_attrs)
-      assert community.name == "some updated name"
+      assert community.name == @update_attrs.name
+      assert community.subdomain == @update_attrs.subdomain
     end
 
     test "update_community/2 with invalid data returns error changeset" do
