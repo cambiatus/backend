@@ -142,6 +142,33 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
   end
 
+  describe "Accounts Auth" do
+    test "Valid sign" do
+      assert Repo.aggregate(User, :count, :account) == 0
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      query{
+        phrase
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query)
+
+      %{
+        "data" => %{
+          "phrase" => phrase
+        }
+      } = json_response(res, 200)
+
+      {:ok, %{"signature" => signature, "privateKey" => priv_key, "publicKey" => pub_key}} =
+        NodeJS.call({"app", :sign}, [phrase])
+
+      assert Cambiatus.Auth.verify_signature(phrase, signature, :test) == true
+    end
+  end
+
   describe "payment history" do
     setup do
       assert Repo.aggregate(User, :count, :account) == 0
