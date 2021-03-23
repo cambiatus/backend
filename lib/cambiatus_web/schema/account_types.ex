@@ -21,6 +21,11 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       middleware(Middleware.Authenticate)
       resolve(&AccountsResolver.get_user/3)
     end
+
+    @desc "Sign in phrase"
+    field :phrase, :string do
+      resolve(&AccountsResolver.get_phrase/3)
+    end
   end
 
   @desc "Account Mutations"
