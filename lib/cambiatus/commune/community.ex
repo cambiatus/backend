@@ -13,6 +13,7 @@ defmodule Cambiatus.Commune.Community do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @reserved_subdomain ~w(dev demo staging)
   @primary_key {:symbol, :string, autogenerate: false}
   schema "communities" do
     field(:creator, :string)
@@ -60,5 +61,6 @@ defmodule Cambiatus.Commune.Community do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> unique_constraint(:subdomain)
+    |> validate_exclusion(:subdomain, @reserved_subdomain)
   end
 end
