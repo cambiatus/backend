@@ -48,6 +48,7 @@ defmodule Cambiatus.Mixfile do
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
       {:mogrify, "~> 0.8.0"},
+      {:ex_phone_number, "~> 0.2"},
 
       # Absinthe Packages
       {:absinthe, "~> 1.4"},

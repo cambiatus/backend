@@ -142,7 +142,10 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:address, :address, resolve: dataloader(Cambiatus.Kyc))
     field(:kyc, :kyc_data, resolve: dataloader(Cambiatus.Kyc))
-    field(:contacts, list_of(non_null(:contact)), resolve: dataloader(Cambiatus.Accounts))
+
+    field(:contacts, non_null(list_of(non_null(:contact))),
+      resolve: dataloader(Cambiatus.Accounts)
+    )
 
     field(:communities, non_null(list_of(non_null(:community))),
       resolve: dataloader(Cambiatus.Commune)

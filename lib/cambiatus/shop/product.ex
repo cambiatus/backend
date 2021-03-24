@@ -9,7 +9,7 @@ defmodule Cambiatus.Shop.Product do
   @type t :: %__MODULE__{}
 
   alias Cambiatus.{Accounts.User, Commune.Community}
-  alias Cambiatus.Shop.{Product, Order}
+  alias Cambiatus.Shop.{Order, Product}
 
   schema "products" do
     field(:title, :string)
