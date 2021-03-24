@@ -6,6 +6,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
   alias Cambiatus.{Accounts.User, Commune.Transfer}
 
+  @eos_account %{
+    priv_key: "5Jhua6LXYtwYS9jWSdYwEHVyfVG3MbitNWMELNBzFGhmdX1UHUy",
+    pub_key: "EOS4yryLa548uFLFjbcDuBwRA86ChDLqBcGY68n9Gp4tyS6Uw9ffW",
+    name: "nertnertn123"
+  }
   describe "Accounts Resolver" do
     test "collects a user account given the account name" do
       assert Repo.aggregate(User, :count, :account) == 0
@@ -143,16 +148,25 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   end
 
   describe "Accounts Auth" do
-    test "Valid sign" do
-      assert Repo.aggregate(User, :count, :account) == 0
-      user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+    test "valid sign" do
+      query = "query{ phrase }"
 
-      query = """
-      query{
-        phrase
-      }
-      """
+      res = conn |> get("/api/graph", query: query)
+
+      %{
+        "data" => %{
+          "phrase" => phrase
+        }
+      } = json_response(res, 200)
+
+      {:ok, %{"signature" => signature}} =
+        NodeJS.call({"app", :sign}, [phrase, @eos_account.priv_key])
+
+      assert Cambiatus.Auth.verify_signature(@eos_account.name, signature, phrase) == true
+    end
+
+    test "invalid sign" do
+      query = "query{ phrase }"
 
       res = conn |> get("/api/graph", query: query)
 
@@ -163,9 +177,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       } = json_response(res, 200)
 
       {:ok, %{"signature" => signature, "privateKey" => priv_key, "publicKey" => pub_key}} =
-        NodeJS.call({"app", :sign}, [phrase])
+        NodeJS.call({"app", :signWithRandom}, [phrase])
 
-      assert Cambiatus.Auth.verify_signature(phrase, signature, :test) == true
+      assert Cambiatus.Auth.verify_signature(@eos_account.name, signature, phrase) == false
     end
   end
 
