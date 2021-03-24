@@ -24,6 +24,10 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     @desc "Sign in phrase"
     field :phrase, :string do
+      arg(:account, non_null(:string),
+        description: "EOS Account, must have 12 chars long and use only [a-z] and [0-5]"
+      )
+
       resolve(&AccountsResolver.get_phrase/3)
     end
   end

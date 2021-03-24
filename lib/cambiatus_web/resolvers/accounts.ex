@@ -14,8 +14,9 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     Accounts.get_account_profile(account)
   end
 
-  def get_phrase(_, _, _) do
-    {:ok, Auth.Phrase.generate()}
+  def get_phrase(_, %{account: account}, _) do
+    phrase = Auth.Phrase.generate()
+    {:ok, %{phrase: phrase, token: CambiatusWeb.AuthToken.initiate(account, phrase)}}
   end
 
   def get_payers_by_account(%User{} = user, %{account: _} = payer, _) do
