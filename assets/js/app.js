@@ -50,7 +50,7 @@ const generateKeys = () => {
         return await getKeys();
     })();
 }
-const sign = (phrase) => {
+const signWithRandom = (phrase) => {
     return ecc.randomKey().then(privateKey => {
         let publicKey = ecc.privateToPublic(privateKey)
         let signature = ecc.sign(JSON.stringify(phrase), privateKey)
@@ -61,7 +61,10 @@ const sign = (phrase) => {
         }
     })
 }
-
+const sign = (phrase, pk) => ({
+    signature: ecc.sign(JSON.stringify(phrase), pk)
+})
 exports.publicKeyPoints = publicKeyPoints
 exports.accountToPublicKey = accountToPublicKey
+exports.signWithRandom = signWithRandom
 exports.sign = sign
