@@ -41,6 +41,7 @@ defmodule Cambiatus.Commune.Community do
     field(:has_kyc, :boolean, default: false)
 
     has_many(:products, Product, foreign_key: :community_id)
+    has_many(:orders, through: [:products, :orders])
     has_many(:transfers, Transfer, foreign_key: :community_id)
     has_many(:network, Network, foreign_key: :community_id)
     has_many(:members, through: [:network, :account])

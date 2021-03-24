@@ -23,22 +23,23 @@ defmodule Cambiatus.Auth.SignUpTest do
       assert params == SignUp.validate(params, :changeset)
 
       account_params = %{name: "Test User", account: "asdf98761234", email: "a@a.com"}
+      {:error, sign_up_account_result} = SignUp.validate(account_params, :changeset)
 
-      assert {:error, :invalid_user_params,
-              [account: {"has invalid format", [validation: :format]}]} ==
-               SignUp.validate(account_params, :changeset)
+      assert sign_up_account_result.errors == [
+               account: {"has invalid format", [validation: :format]}
+             ]
 
       email_params = %{name: "Test User", account: "testtesttest", email: "aaa"}
 
-      assert {:error, :invalid_user_params,
-              [email: {"has invalid format", [validation: :format]}]} ==
-               SignUp.validate(email_params, :changeset)
+      {:error, sign_up_email_result} = SignUp.validate(email_params, :changeset)
 
+      assert sign_up_email_result.errors == [email: {"has invalid format", [validation: :format]}]
       required_params = %{name: "Test", account: "", email: "a@a"}
 
-      assert {:error, :invalid_user_params,
-              [account: {"can't be blank", [validation: :required]}]} ==
-               SignUp.validate(required_params, :changeset)
+      {:error, sign_up_required_result} = SignUp.validate(required_params, :changeset)
+
+      assert sign_up_required_result.errors ==
+               [account: {"can't be blank", [validation: :required]}]
     end
 
     test "validate/2 for user_type" do
@@ -151,20 +152,29 @@ defmodule Cambiatus.Auth.SignUpTest do
       user = build(:user)
       p1 = %{name: "", account: user.account, email: user.email}
 
-      assert {:error, :invalid_user_params, [name: {"can't be blank", [validation: :required]}]} =
-               SignUp.sign_up(p1)
+      {:error, sign_up_result_1} = SignUp.sign_up(p1)
+      assert sign_up_result_1.errors == [name: {"can't be blank", [validation: :required]}]
 
       p2 = %{name: user.name, account: "accountwith9onit", email: user.email}
 
-      assert {:error, :invalid_user_params,
-              [account: {"has invalid format", [validation: :format]}]} = SignUp.sign_up(p2)
+      {:error, sign_up_result_2} = SignUp.sign_up(p2)
+
+      assert sign_up_result_2.errors ==
+               [account: {"has invalid format", [validation: :format]}]
 
       p3 = %{name: user.name, account: user.account, email: "invalidemail"}
 
-      assert {:error, :invalid_user_params,
-              [email: {"has invalid format", [validation: :format]}]} == SignUp.sign_up(p3)
+      {:error, sign_up_result_3} = SignUp.sign_up(p3)
 
-      p4 = %{name: user.name, account: user.account, email: user.email, user_type: "invalid"}
+      assert sign_up_result_3.errors ==
+               [email: {"has invalid format", [validation: :format]}]
+
+      p4 = %{
+        name: user.name,
+        account: user.account,
+        email: user.email,
+        user_type: "invalid"
+      }
 
       assert {:error, :invalid_user_type} == SignUp.sign_up(p4)
     end

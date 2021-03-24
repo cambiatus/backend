@@ -10,26 +10,31 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Accounts, as: AccountsResolver
+  alias CambiatusWeb.Schema.Middleware
 
   @desc "Accounts Queries"
   object(:account_queries) do
-    @desc "A users"
+    @desc "[Auth required] A user"
     field :user, :user do
       arg(:account, non_null(:string))
-      resolve(&AccountsResolver.get_profile/3)
+
+      middleware(Middleware.Authenticate)
+      resolve(&AccountsResolver.get_user/3)
     end
   end
 
   @desc "Account Mutations"
   object(:account_mutations) do
-    @desc "A mutation to update a user"
+    @desc "[Auth required] A mutation to update a user"
     field :update_user, :user do
       arg(:input, non_null(:user_update_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&AccountsResolver.update_user/3)
     end
 
     @desc "Creates a new user account"
-    field :sign_up, non_null(:sign_up_response) do
+    field :sign_up, :session do
       arg(:name, non_null(:string), description: "User's Full name")
 
       arg(:account, non_null(:string),
@@ -42,32 +47,53 @@ defmodule CambiatusWeb.Schema.AccountTypes do
         description: "EOS Account public key, used for creating a new account"
       )
 
+      arg(:password, non_null(:string))
+
       arg(:user_type, non_null(:string),
         description:
           "User type informs if its a 'natural' or 'juridical' user for regular users and companies"
       )
 
       arg(:invitation_id, :string,
-        description: "Optinal, used to auto invite an user to a community"
+        description: "Optional, used to auto invite an user to a community"
       )
 
-      arg(:kyc, :kyc_data_update_input, description: "KYC data")
-      arg(:address, :address_update_input, description: "Address data")
+      arg(:kyc, :kyc_data_update_input, description: "Optional, KYC data")
+      arg(:address, :address_update_input, description: "Optional, Address data")
 
       resolve(&AccountsResolver.sign_up/3)
     end
+
+    field :sign_in, :session do
+      arg(:account, non_null(:string))
+      arg(:password, non_null(:string))
+
+      arg(:invitation_id, :string,
+        description: "Optional, used to auto invite an user to a community"
+      )
+
+      resolve(&AccountsResolver.sign_in/3)
+    end
   end
 
-  @desc "An input object for updating a User"
+  @desc "An input object for updating the current logged User"
   input_object(:user_update_input) do
-    field(:account, non_null(:string))
-    field(:name, :string)
-    field(:email, :string)
-    field(:bio, :string)
-    field(:location, :string)
-    field(:interests, :string)
-    field(:avatar, :string)
-    field(:contacts, list_of(non_null(:contact_input)))
+    field(:name, :string, description: "Optional, name displayed on the app")
+
+    field(:email, :string,
+      description:
+        "Optional, used for contacting only, must be a valid email but we dont check for ownership"
+    )
+
+    field(:bio, :string, description: "Optional, short bio to let others know more about you")
+    field(:location, :string, description: "Optional, location, can be virtual or real")
+    field(:interests, :string, description: "Optional, a list of strings interpolated with `-`")
+    field(:avatar, :string, description: "Optional, URL that must be used as an avatar")
+
+    field(:contacts, list_of(non_null(:contact_input)),
+      description:
+        "Optional, list will overwrite all entries, ensure to send all contact information"
+    )
   end
 
   input_object(:contact_input) do
@@ -81,15 +107,10 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     value(:outgoing, description: "User's outgoing transfers.")
   end
 
-  enum(:sign_up_status) do
-    value(:success, description: "Sign up succeed")
-    value(:error, description: "Sign up failed")
-  end
-
-  object(:sign_up_response) do
-    field(:status, non_null(:sign_up_status))
-    field(:reason, :string)
-    field(:user, :user)
+  @desc "Session object, contains the user and a token used to authenticate requests"
+  object :session do
+    field(:user, non_null(:user))
+    field(:token, non_null(:string))
   end
 
   @desc "User's address"
