@@ -35,6 +35,15 @@ defmodule Cambiatus.Auth do
     end
   end
 
+  @doc """
+  Login logic for Cambiatus when signing in with an invitationId
+  """
+  def sign_in(account, password, invitation_id) do
+    account
+    |> sign_in(password)
+    |> netlink(invitation_id)
+  end
+
   def sign_in_v2(account, signature, phrase) do
     account
     |> verify_signature(signature, phrase)
@@ -108,27 +117,21 @@ defmodule Cambiatus.Auth do
   Verify public key associated to the signature private key and the public key for the account
   """
   defp compare_public_keys(public_key_a, account) do
+    IO.inspect(public_key_a, label: "KEY A")
+
     NodeJS.call({"app", :accountToPublicKey}, [account])
     |> case do
       {:ok, %{"ok" => account_info}} ->
         public_key_b =
           account_info
           |> get_in(["permissions", Access.at(0), "required_auth", "keys", Access.at(0), "key"])
+          |> IO.inspect(label: "KEY B")
 
         public_key_a == public_key_b
 
       {:ok, %{"error" => _}} ->
         false
     end
-  end
-
-  @doc """
-  Login logic for Cambiatus when signing in with an invitationId
-  """
-  def sign_in(account, password, invitation_id) do
-    account
-    |> sign_in(password)
-    |> netlink(invitation_id)
   end
 
   def netlink({:ok, user}, invitation_id) do
