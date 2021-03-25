@@ -38,8 +38,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in_v2(_, %{account: account, signature: signature}, _) do
-    case Auth.sign_in_v2(account, signature) do
+  def sign_in_v2(_, %{account: account, signature: signature, token: token}, _) do
+    phrase = CambiatusWeb.AuthToken.get_phrase(token)
+
+    case Auth.sign_in_v2(account, signature, phrase) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
