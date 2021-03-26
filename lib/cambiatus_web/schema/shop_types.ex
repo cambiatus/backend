@@ -9,17 +9,24 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Shop
+  alias CambiatusWeb.Schema.Middleware
 
   @desc "Shop queries"
   object(:shop_queries) do
+    @desc "[Auth required] Products in a community"
     field(:products, non_null(list_of(non_null(:product)))) do
       arg(:community_id, non_null(:string))
       arg(:filters, :products_filter_input)
+
+      middleware(Middleware.Authenticate)
       resolve(&Shop.get_products/3)
     end
 
+    @desc "[Auth required] Gets a single product"
     field(:product, :product) do
       arg(:id, non_null(:integer))
+
+      middleware(Middleware.Authenticate)
       resolve(&Shop.get_product/3)
     end
   end
@@ -51,13 +58,13 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
+
+    field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
   end
 
   @desc "An Order"
   object :order do
     field(:id, non_null(:integer))
-    field(:community_id, non_null(:string))
-    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
 
     field(:product_id, non_null(:integer))
     field(:product, non_null(:product), resolve: dataloader(Cambiatus.Shop))

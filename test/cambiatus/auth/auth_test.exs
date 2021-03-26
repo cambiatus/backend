@@ -10,12 +10,12 @@ defmodule Cambiatus.AuthTest do
     setup :valid_community_and_user
 
     test "successful sign in", %{user: user} do
-      assert {:ok, u} = Auth.sign_in(%{"account" => user.account})
+      assert {:ok, u} = Auth.sign_in(user.account, "pass")
       assert u.account == user.account
     end
 
     test "non existing user sign_in" do
-      assert Auth.sign_in(%{"account" => "nonexisting"}) == {:error, :not_found}
+      assert Auth.sign_in("nonexisting", "") == {:error, :not_found}
     end
 
     test "sign in with invitation" do
@@ -25,11 +25,7 @@ defmodule Cambiatus.AuthTest do
       invitation = insert(:invitation, %{community: community, creator: user})
       invitation_id = InvitationId.encode(invitation.id)
 
-      body = %{
-        "account" => another_user.account
-      }
-
-      assert {:ok, u} = Auth.sign_in(body, invitation_id)
+      assert {:ok, u} = Auth.sign_in(another_user.account, "pass", invitation_id)
       assert u.account == another_user.account
     end
   end

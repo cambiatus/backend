@@ -169,12 +169,13 @@ defmodule Cambiatus.CommuneTest do
   describe "search" do
     test "fuzzy search actions" do
       objective = insert(:objective)
-      _action1 = insert(:action, %{objective: objective, description: "asdf QUERY asdf"})
-      _action2 = insert(:action, %{objective: objective, description: "asdfQUERYasdf"})
-      _action3 = insert(:action, %{objective: objective, description: "QUERYasdf"})
-      _action4 = insert(:action, %{objective: objective, description: "asdfQUERY"})
-      _action5 = insert(:action, %{objective: objective, description: "asdf"})
-      _action6 = insert(:action, %{objective: objective, description: "asdfquery"})
+      base = %{objective: objective, verification_type: "claimable", description: ""}
+      _action1 = insert(:action, %{base | description: "asdf QUERY asdf"})
+      _action2 = insert(:action, %{base | description: "asdfQUERYasdf"})
+      _action3 = insert(:action, %{base | description: "QUERYasdf"})
+      _action4 = insert(:action, %{base | description: "asdfQUERY"})
+      _action5 = insert(:action, %{base | description: "asdf"})
+      _action6 = insert(:action, %{base | description: "asdfquery"})
 
       results = Action |> Commune.query(%{query: "QUERY"}) |> Repo.all()
       assert(Enum.count(results) == 5)

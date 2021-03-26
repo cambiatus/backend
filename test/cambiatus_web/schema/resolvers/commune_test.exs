@@ -20,8 +20,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
   @num 3
   describe "Commune Resolver" do
-    test "updates an objective to be completed", %{conn: conn} do
-      objective = insert(:objective)
+    test "updates an objective to be completed" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+      community = insert(:community, %{creator: user.account})
+
+      objective = insert(:objective, %{community: community})
 
       input = %{
         "input" => %{
@@ -39,9 +43,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res =
-        conn
-        |> post("/api/graph", query: query, variables: input)
+      res = post(conn, "/api/graph", query: query, variables: input)
 
       response = json_response(res, 200)
 
@@ -49,9 +51,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert response["data"]["completeObjective"]["isCompleted"] == true
     end
 
-    test "collects claimable actions with their validators", %{conn: conn} do
+    test "collects claimable actions with their validators" do
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       comm = insert(:community)
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       objectives = insert_list(@num, :objective, %{community: comm})
 
@@ -95,7 +100,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       end)
     end
 
-    test "collects all actions from a specific creator", %{conn: conn} do
+    test "collects all actions from a specific creator" do
       assert Repo.aggregate(User, :count, :account) == 0
       assert Repo.aggregate(Community, :count, :symbol) == 0
       assert Repo.aggregate(Objective, :count, :id) == 0
@@ -103,6 +108,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       user1 = insert(:user)
       user2 = insert(:user)
+
+      conn = build_conn() |> auth_user(user1)
 
       comm = insert(:community)
 
@@ -146,7 +153,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
                end)
     end
 
-    test "collects all actions from a specific validator", %{conn: conn} do
+    test "collects all actions from a specific validator" do
       assert Repo.aggregate(User, :count, :account) == 0
       assert Repo.aggregate(Community, :count, :symbol) == 0
       assert Repo.aggregate(Objective, :count, :id) == 0
@@ -154,6 +161,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       user1 = insert(:user)
       user2 = insert(:user)
+
+      conn = build_conn() |> auth_user(user1)
 
       comm = insert(:community)
 
@@ -204,7 +213,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
                end)
     end
 
-    test "collects all uncompleted actions", %{conn: conn} do
+    test "collects all uncompleted actions" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert Repo.aggregate(Community, :count, :symbol) == 0
       assert Repo.aggregate(Objective, :count, :id) == 0
       assert Repo.aggregate(Action, :count, :id) == 0
@@ -249,7 +261,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
                end)
     end
 
-    test "collects all automatic actions", %{conn: conn} do
+    test "collects all automatic actions" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert Repo.aggregate(Community, :count, :symbol) == 0
       assert Repo.aggregate(Objective, :count, :id) == 0
       assert Repo.aggregate(Action, :count, :id) == 0
@@ -294,7 +309,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
                end)
     end
 
-    test "collects all claimable actions", %{conn: conn} do
+    test "collects all claimable actions" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert Repo.aggregate(Community, :count, :symbol) == 0
       assert Repo.aggregate(Objective, :count, :id) == 0
       assert Repo.aggregate(Action, :count, :id) == 0
@@ -341,7 +359,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
                end)
     end
 
-    test "collects a single transfer", %{conn: conn} do
+    test "collects a single transfer" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert(Repo.aggregate(Transfer, :count, :id) == 0)
 
       transfer = insert(:transfer)
@@ -381,9 +402,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert collected_transfer["to"]["account"] == transfer.to.account
     end
 
-    test "collects a community with its objectives and their actions", %{conn: conn} do
+    test "collects a community with its objectives and their actions" do
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       comm = insert(:community)
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
 
       objectives = insert_list(@num, :objective, %{community: comm})
 
@@ -425,7 +449,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
                end)
     end
 
-    test "collects all objectives in a community sorted by date", %{conn: conn} do
+    test "collects all objectives in a community sorted by date" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       cmm = insert(:community)
 
@@ -456,7 +483,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert List.first(objectives)["createdAt"] > List.last(objectives)["createdAt"]
     end
 
-    test "collects all communities", %{conn: conn} do
+    test "collects all communities" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       insert(:community)
 
@@ -479,7 +509,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Enum.count(all_communities) == 1
     end
 
-    test "collect a single community", %{conn: conn} do
+    test "collect a single community" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert(Repo.aggregate(Community, :count, :symbol) == 0)
       community = insert(:community)
       community1 = insert(:community)
@@ -499,14 +532,16 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert(community1.name != found_community["name"])
     end
 
-    test "collects all products", %{conn: conn} do
+    test "collects all products" do
       assert Repo.aggregate(Product, :count, :id) == 0
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
-      usr = insert(:user)
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       community = insert(:community)
 
-      insert_list(@num, :product, %{community: community, creator: usr})
+      insert_list(@num, :product, %{community: community, creator: user})
       insert_list(2, :product, %{community: community})
       %{title: f_title} = insert(:product, %{community: community, created_at: latest})
 
@@ -540,23 +575,25 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Enum.count(all_sales) == @num + 3
     end
 
-    test "collects all products from a community", %{conn: conn} do
+    test "collects all products from a community" do
       assert Repo.aggregate(Product, :count, :id) == 0
 
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
       c1 = insert(:community)
       c2 = insert(:community)
-      usr = insert(:user)
+      user = insert(:user)
+
+      conn = build_conn() |> auth_user(user)
 
       insert_list(@num, :product, %{units: 0, community: c1})
       insert_list(@num, :product, %{community: c1})
 
-      insert(:network, %{community: c1, account: usr})
-      insert(:network, %{community: c2, account: usr})
+      insert(:network, %{community: c1, account: user})
+      insert(:network, %{community: c2, account: user})
 
       insert(:product, %{community: c2})
-      insert(:product, %{creator: usr, community: c2})
+      insert(:product, %{creator: user, community: c2})
       %{title: f_title} = insert(:product, %{created_at: latest, community: c1})
 
       variables = %{
@@ -586,9 +623,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Enum.count(community_sales) == @num * 3 - 2
     end
 
-    test "collects a user's products", %{conn: conn} do
+    test "collects a user's products" do
       assert Repo.aggregate(Product, :count, :id) == 0
+
       user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       community = insert(:community)
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
@@ -633,7 +673,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Enum.count(user_sales) == @num + 1
     end
 
-    test "collects a single product", %{conn: conn} do
+    test "collects a single product" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       product = insert(:product)
 
       variables = %{
@@ -663,10 +706,11 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert saved_sale["id"] == product.id
     end
 
-    test "collect only sales not deleted", %{conn: conn} do
+    test "collect only sales not deleted" do
       assert Repo.aggregate(Product, :count, :id) == 0
 
       user = insert(:user)
+      conn = build_conn() |> auth_user(user)
       community = insert(:community)
 
       insert_list(@num, :product, %{community: community, is_deleted: true, creator: user})
@@ -704,19 +748,21 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert %{"title" => ^title} = hd(all_sales)
     end
 
-    test "collects a user's transfers", %{conn: conn} do
+    test "collects a user's transfers" do
       assert Repo.aggregate(Transfer, :count, :id) == 0
-      usr = insert(:user)
+      user = insert(:user)
 
-      usr1 = insert(:user)
-      insert_list(@num, :transfer, %{from: usr1})
-      insert_list(@num, :transfer, %{from: usr})
-      insert_list(@num, :transfer, %{to: usr})
+      conn = build_conn() |> auth_user(user)
+
+      user1 = insert(:user)
+      insert_list(@num, :transfer, %{from: user1})
+      insert_list(@num, :transfer, %{from: user})
+      insert_list(@num, :transfer, %{to: user})
 
       fetch = 3
 
       variables = %{
-        "account" => usr.account,
+        "account" => user.account,
         "first" => fetch
       }
 
@@ -757,7 +803,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Repo.aggregate(Transfer, :count, :id) == @num * 3
     end
 
-    test "collects a community s features", %{conn: conn} do
+    test "collects a community s features" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       community = insert(:community)
 
       variables = %{
@@ -791,7 +840,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert kyc == false
     end
 
-    test "collects a community's transfers", %{conn: conn} do
+    test "collects a community's transfers" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert Repo.aggregate(Transfer, :count, :id) == 0
       community = insert(:community)
       comm = insert(:community)
@@ -843,7 +895,10 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Repo.aggregate(Transfer, :count, :id) == @num * 2
     end
 
-    test "collect's a single claim", %{conn: conn} do
+    test "collect's a single claim" do
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
       assert Repo.aggregate(Claim, :count, :id) == 0
 
       claim = insert(:claim)
@@ -889,6 +944,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       verifier2 = insert(:user)
       verifier3 = insert(:user)
 
+      conn = build_conn() |> auth_user(verifier3)
+
       # Create action
       action1 = insert(:action, %{verification_type: "claimable", objective: objective})
       insert(:validator, %{action: action1, validator: verifier1})
@@ -910,16 +967,13 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       # Collect all validator's claims for analysis
       params = %{
-        "input" => %{
-          "account" => verifier1.account,
-          "symbol" => community.symbol
-        },
+        "communityId" => community.symbol,
         "first" => @num
       }
 
       query_analysis = """
-      query($first: Int!, $input: ClaimsAnalysisInput) {
-        claimsAnalysis(first: $first, input: $input) {
+      query($first: Int!, $communityId: String!) {
+        claimsAnalysis(first: $first, communityId: $communityId) {
           edges {
             node {
               id
@@ -932,7 +986,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = build_conn() |> get("/api/graph", query: query_analysis, variables: params)
+      res = conn |> get("/api/graph", query: query_analysis, variables: params)
       %{"data" => %{"claimsAnalysis" => cs}} = json_response(res, 200)
       claim_action_ids = cs["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
@@ -940,8 +994,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Enum.count(claim_action_ids) == 1
 
       query_history = """
-      query($first: Int!, $input: ClaimsAnalysisInput) {
-        claimsAnalysisHistory(first: $first, input: $input) {
+      query($first: Int!, $communityId: String!) {
+        claimsAnalysisHistory(first: $first, communityId: $communityId) {
           edges {
             node {
               id
@@ -954,7 +1008,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = build_conn() |> get("/api/graph", query: query_history, variables: params)
+      res = conn |> get("/api/graph", query: query_history, variables: params)
       %{"data" => %{"claimsAnalysisHistory" => ch}} = json_response(res, 200)
       claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 

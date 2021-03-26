@@ -8,11 +8,8 @@ defmodule Cambiatus.Shop.Product do
   import Ecto.Query
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Community,
-    Shop.Product
-  }
+  alias Cambiatus.{Accounts.User, Commune.Community}
+  alias Cambiatus.Shop.{Order, Product}
 
   schema "products" do
     field(:title, :string)
@@ -31,6 +28,8 @@ defmodule Cambiatus.Shop.Product do
 
     belongs_to(:creator, User, references: :account, type: :string)
     belongs_to(:community, Community, references: :symbol, type: :string)
+
+    has_many(:orders, Order, foreign_key: :product_id)
   end
 
   @required_fields ~w(title description price image track_stock units

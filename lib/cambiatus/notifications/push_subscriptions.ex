@@ -35,9 +35,9 @@ defmodule Cambiatus.Notifications.PushSubscription do
   Associates a user to a new push subscription
   """
   @spec create_changeset(map(), map()) :: Ecto.Changeset.t()
-  def create_changeset(%User{} = usr, params) do
+  def create_changeset(%User{} = user, params) do
     %PushSubscription{}
     |> changeset(params)
-    |> put_assoc(:account, usr)
+    |> put_assoc(:account, user)
   end
 end
