@@ -53,18 +53,22 @@ defmodule Cambiatus.Accounts.User do
 
   @doc false
   def changeset(%User{} = user, attrs) do
-    c =
-      user
-      |> Repo.preload(:contacts)
-      |> cast(attrs, @required_fields ++ @optional_fields)
-      |> validate_required(@required_fields)
-      |> unique_constraint(:account)
-      |> validate_format(:email, ~r/@/)
-      |> validate_format(:account, ~r/^[a-z1-5]{12}$/)
+    user
+    |> Repo.preload(:contacts)
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> validate_required(@required_fields)
+    |> unique_constraint(:account)
+    |> validate_format(:email, ~r/@/)
+    |> validate_format(:account, ~r/^[a-z1-5]{12}$/)
+    |> assoc_contacts(attrs)
+  end
 
-    IO.inpect(c)
-
-    c
-    |> cast_assoc(:contacts, with: &Contact.changeset/2)
+  def assoc_contacts(changeset, attrs) do
+    if Map.has_key?(attrs, :contacts) do
+      changeset
+      |> put_assoc(:contacts, Map.get(attrs, :contacts))
+    else
+      changeset
+    end
   end
 end
