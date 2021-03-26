@@ -49,7 +49,7 @@ defmodule Cambiatus.Accounts.User do
   end
 
   @required_fields ~w(account email name)a
-  @optional_fields ~w(bio location interests avatar contacts created_block created_tx created_at created_eos_account)a
+  @optional_fields ~w(bio location interests avatar created_block created_tx created_at created_eos_account)a
 
   @doc false
   def changeset(%User{} = user, attrs) do
