@@ -29,7 +29,7 @@ defmodule Cambiatus.Shop.Product do
     belongs_to(:creator, User, references: :account, type: :string)
     belongs_to(:community, Community, references: :symbol, type: :string)
 
-    has_many(:orders, Order)
+    has_many(:orders, Order, foreign_key: :product_id)
   end
 
   @required_fields ~w(title description price image track_stock units

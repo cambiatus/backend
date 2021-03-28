@@ -50,4 +50,9 @@ defmodule Cambiatus.Commune.Claim do
     |> join(:inner, [c, a], o in Objective, on: o.id == a.objective_id)
     |> where([c, a, o], o.community_id == ^community_id)
   end
+
+  def newer_first(query \\ Claim) do
+    query
+    |> order_by([c], desc: c.created_at)
+  end
 end

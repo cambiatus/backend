@@ -8,15 +8,46 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
     @zip "10102"
     @street "Elm Street"
 
-    test "updates kyc data for the given account", %{conn: conn} do
+    test "query country for kyc_data" do
       kyc = insert(:kyc_data)
       user = kyc.account
+      conn = build_conn() |> auth_user(user)
+
+      variables = %{
+        "country" => %{
+          "name" => kyc.country.name
+        }
+      }
+
+      query = """
+      query($country: CountryInput!){
+        country(input: $country) {
+        name
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "country" => country
+        }
+      } = json_response(res, 200)
+
+      assert country["name"] == kyc.country.name
+    end
+
+    test "updates kyc data for the given account" do
+      kyc = insert(:kyc_data)
+      user = kyc.account
+
+      conn = build_conn() |> auth_user(user)
 
       new_kyc = build(:kyc_data, %{account: nil})
 
       variables = %{
         "input" => %{
-          "account_id" => user.account,
           "country_id" => "1",
           "phone" => new_kyc.phone,
           "user_type" => new_kyc.user_type,
@@ -48,13 +79,13 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert updated_kyc["phone"] == new_kyc.phone
     end
 
-    test "updates address for the given account", %{conn: conn} do
+    test "updates address for the given account" do
       address = insert(:address)
       user = address.account
+      conn = build_conn() |> auth_user(user)
 
       variables = %{
         "input" => %{
-          "account_id" => user.account,
           "country_id" => "1",
           "state_id" => "1",
           "city_id" => "1",
@@ -86,13 +117,14 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert updated_address["street"] == @street
     end
 
-    test "creates an address and KYC for the given account name", %{conn: conn} do
-      usr = insert(:user)
+    test "creates an address and KYC for the given account name" do
+      user = insert(:user)
       new_kyc = build(:kyc_data, %{account: nil})
+
+      conn = build_conn() |> auth_user(user)
 
       variables = %{
         "inputAddress" => %{
-          "account_id" => usr.account,
           "country_id" => "1",
           "state_id" => "1",
           "city_id" => "1",
@@ -102,7 +134,6 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
           "zip" => @zip
         },
         "inputKyc" => %{
-          "account_id" => usr.account,
           "country_id" => "1",
           "phone" => new_kyc.phone,
           "user_type" => new_kyc.user_type,
@@ -141,19 +172,16 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert updated_kyc["user_type"] == new_kyc.user_type
     end
 
-    test "deletes kyc for the given account", %{conn: conn} do
+    test "deletes kyc for the given account" do
       kyc = insert(:kyc_data)
       user = kyc.account
+      conn = build_conn() |> auth_user(user)
 
-      variables = %{
-        "input" => %{
-          "account" => user.account
-        }
-      }
+      variables = %{}
 
       query = """
-      mutation ($input: KycAddressDeletionInput!) {
-        deleteKyc(input: $input) {
+      mutation {
+        deleteKyc {
           status
           reason
         }
@@ -168,19 +196,17 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
       assert response["data"]["deleteKyc"]["reason"] == "KYC data deletion succeeded"
     end
 
-    test "deletes address for the given account", %{conn: conn} do
+    test "deletes address for the given account" do
       address = insert(:address)
       user = address.account
 
-      variables = %{
-        "input" => %{
-          "account" => user.account
-        }
-      }
+      conn = build_conn() |> auth_user(user)
+
+      variables = %{}
 
       query = """
-      mutation ($input: KycAddressDeletionInput!) {
-        deleteAddress(input: $input) {
+      mutation  {
+        deleteAddress {
           status
           reason
         }

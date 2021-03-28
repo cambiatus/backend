@@ -46,11 +46,11 @@ defmodule Cambiatus.Kyc do
   Updates the KYC data record for the given user if it already exists
   or inserts a new one if the user hasn't it yet.
   """
-  @spec upsert_kyc(map()) :: {:ok, KycData.t()} | {:error, binary()}
-  def upsert_kyc(params) do
+  @spec upsert_kyc(User.t(), map()) :: {:ok, KycData.t()} | {:error, binary()}
+  def upsert_kyc(%{account: account}, params) do
     kyc_entry =
-      case Repo.get_by(KycData, account_id: params.account_id) do
-        nil -> %KycData{is_verified: false}
+      case Repo.get_by(KycData, account_id: account) do
+        nil -> %KycData{is_verified: false, account_id: account}
         kyc -> kyc
       end
 
@@ -67,11 +67,11 @@ defmodule Cambiatus.Kyc do
   Updates the Address of the given user if it already exists
   or inserts new Address if the user hasn't filled it yet.
   """
-  @spec upsert_address(map()) :: {:ok, Address.t()} | {:error, binary()}
-  def upsert_address(params) do
+  @spec upsert_address(User.t(), map()) :: {:ok, Address.t()} | {:error, binary()}
+  def upsert_address(%{account: account},  params) do
     address_entry =
-      case Repo.get_by(Address, account_id: params.account_id) do
-        nil -> %Address{}
+      case Repo.get_by(Address, account_id: account) do
+        nil -> %Address{account_id: account}
         addr -> addr
       end
 
@@ -87,10 +87,9 @@ defmodule Cambiatus.Kyc do
   @doc """
   Deletes the kyc_data
   """
-  def delete_kyc(params) do
-    with {:user, %User{}} <- {:user, Repo.get_by(User, account: params.account)},
-         {:kyc, %KycData{} = kyc} <-
-           {:kyc, Repo.get_by(KycData, account_id: params.account)},
+  def delete_kyc(%{account: account}) do
+    with {:kyc, %KycData{} = kyc} <-
+           {:kyc, Repo.get_by(KycData, account_id: account)},
          {:deletion, {:ok, _}} <- {:deletion, Repo.delete(kyc)} do
       {:ok, "KYC data deletion succeeded"}
     else
@@ -103,10 +102,9 @@ defmodule Cambiatus.Kyc do
   @doc """
   Deletes the address data
   """
-  def delete_address(params) do
-    with {:user, %User{}} <- {:user, Repo.get_by(User, account: params.account)},
-         {:address, %Address{} = address} <-
-           {:address, Repo.get_by(Address, account_id: params.account)},
+  def delete_address(%{account: account}) do
+    with {:address, %Address{} = address} <-
+           {:address, Repo.get_by(Address, account_id: account)},
          {:deletion, {:ok, _}} <- {:deletion, Repo.delete(address)} do
       {:ok, "Address data deletion succeeded"}
     else

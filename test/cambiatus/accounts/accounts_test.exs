@@ -31,10 +31,10 @@ defmodule Cambiatus.AccountsTest do
     end
 
     test "collects user by account when one exists" do
-      usr = insert(:user)
+      user = insert(:user)
       assert Repo.aggregate(User, :count, :account) == 1
-      {:ok, saved_user} = Accounts.get_account_profile(usr.account)
-      assert saved_user.account == usr.account
+      {:ok, saved_user} = Accounts.get_account_profile(user.account)
+      assert saved_user.account == user.account
     end
 
     test "errors out if no user exists with the given accounts key" do

@@ -13,18 +13,18 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   end
 
   @spec upsert_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
-  def upsert_kyc(_, %{input: params}, _) do
-    Kyc.upsert_kyc(params)
+  def upsert_kyc(_, %{input: params}, %{context: %{current_user: current_user}}) do
+    Kyc.upsert_kyc(current_user, params)
   end
 
   @spec upsert_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}
-  def upsert_address(_, %{input: params}, _) do
-    Kyc.upsert_address(params)
+  def upsert_address(_, %{input: params}, %{context: %{current_user: current_user}}) do
+    Kyc.upsert_address(current_user, params)
   end
 
   @spec delete_kyc(map(), map(), map()) :: {:ok, KycData.t()} | {:error, term()}
-  def delete_kyc(_, %{input: params}, _) do
-    params
+  def delete_kyc(_, _, %{context: %{current_user: current_user}}) do
+    current_user
     |> Kyc.delete_kyc()
     |> case do
       {:error, reason} ->
@@ -37,8 +37,8 @@ defmodule CambiatusWeb.Resolvers.Kyc do
   end
 
   @spec delete_address(map(), map(), map()) :: {:ok, Address.t()} | {:error, term()}
-  def delete_address(_, %{input: params}, _) do
-    params
+  def delete_address(_, _, %{context: %{current_user: current_user}}) do
+    current_user
     |> Kyc.delete_address()
     |> case do
       {:error, reason} ->
