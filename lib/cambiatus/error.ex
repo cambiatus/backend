@@ -12,7 +12,7 @@ defmodule Cambiatus.Error do
 
   alias Cambiatus.Error
 
-  defstruct [:type, :message, :x]
+  defstruct [:type, :message]
 
   @doc """
   Converts common error structures used on libraries such as Ecto, Absinthe to `Cambiatus.Error`
@@ -30,6 +30,6 @@ defmodule Cambiatus.Error do
     Logger.error("Unhandled error term: \n#{inspect(other)}")
     Sentry.capture_message("Unhandled error term:", extra: %{error: other})
 
-    %Error{type: :unhandled_error, message: "Unhandled term"}
+    %Error{type: :unhandled_error, message: other}
   end
 end

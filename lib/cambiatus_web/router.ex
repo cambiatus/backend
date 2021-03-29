@@ -7,6 +7,7 @@ defmodule CambiatusWeb.Router do
 
   pipeline :api do
     plug(:accepts, ["json"])
+    plug(CambiatusWeb.Plugs.SetCurrentUser)
   end
 
   pipeline :browser do

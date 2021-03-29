@@ -8,11 +8,15 @@ defmodule CambiatusWeb.Schema.SearchTypes do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Commune
+  alias CambiatusWeb.Schema.Middleware
 
   @desc "Search queries"
   object(:search_queries) do
+    @desc "[Auth required] Searches the community for a product or action"
     field(:search, non_null(:search_result)) do
       arg(:community_id, non_null(:string))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.search/3)
     end
   end

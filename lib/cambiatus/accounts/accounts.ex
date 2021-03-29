@@ -14,6 +14,10 @@ defmodule Cambiatus.Accounts do
 
   def query(queryable, _params), do: queryable
 
+  def verify_pass(_account, password) do
+    password == Application.get_env(:cambiatus, :graphql_secret)
+  end
+
   @doc """
   Returns a user when given their `account` string
   """

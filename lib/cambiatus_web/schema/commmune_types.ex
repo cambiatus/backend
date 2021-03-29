@@ -5,54 +5,72 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   """
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
+
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
   alias CambiatusWeb.Resolvers.Commune
+  alias CambiatusWeb.Schema.Middleware
 
   @desc "Community Queries on Cambiatus"
   object :community_queries do
-    @desc "A list of communities in Cambiatus"
+    @desc "[Auth required] A list of communities in Cambiatus"
     field :communities, non_null(list_of(non_null(:community))) do
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_communities/3)
     end
 
-    @desc "A single community"
+    @desc "[Auth required] A single community"
     field :community, :community do
       arg(:symbol, non_null(:string))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.find_community/3)
     end
 
-    @desc "A list of claims"
+    @desc "[Auth required] A list of claims"
     connection field(:claims_analysis, node_type: :claim) do
-      arg(:input, non_null(:claims_analysis_input))
+      arg(:community_id, non_null(:string))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_claims_analysis/3)
     end
 
     connection field(:claims_analysis_history, node_type: :claim) do
-      arg(:input, non_null(:claim_analysis_history_input))
+      arg(:community_id, non_null(:string))
+      arg(:filter, :claim_analysis_history_filter)
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_claims_analysis_history/3)
     end
 
-    @desc "A single claim"
+    @desc "[Auth required] A single claim"
     field :claim, non_null(:claim) do
       arg(:input, non_null(:claim_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_claim/3)
     end
 
-    @desc "A single objective"
+    @desc "[Auth required] A single objective"
     field :objective, :objective do
       arg(:input, non_null(:objective_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_objective/3)
     end
 
-    @desc "A single Transfer"
+    @desc "[Auth required] A single Transfer"
     field :transfer, :transfer do
       arg(:input, non_null(:transfer_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.get_transfer/3)
     end
 
     @desc "An invite"
     field :invite, :invite do
       arg(:input, non_null(:invite_input))
+
       resolve(&Commune.get_invitation/3)
     end
   end
@@ -87,9 +105,11 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   @desc "Community mutations"
   object :commune_mutations do
-    @desc "Complete an objective"
+    @desc "[Auth required - Admin only] Complete an objective"
     field :complete_objective, :objective do
       arg(:input, non_null(:complete_objective_input))
+
+      middleware(Middleware.Authenticate)
       resolve(&Commune.complete_objective/3)
     end
   end
@@ -113,17 +133,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "Input object to collect a single Objective"
   input_object :objective_input do
     field(:id, non_null(:integer))
-  end
-
-  input_object(:claims_analysis_input) do
-    field(:account, non_null(:string))
-    field(:symbol, non_null(:string))
-  end
-
-  input_object(:claim_analysis_history_input) do
-    field(:account, non_null(:string))
-    field(:symbol, non_null(:string))
-    field(:filter, :claim_analysis_history_filter)
   end
 
   input_object(:claim_analysis_history_filter) do
@@ -217,6 +226,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(Cambiatus.Commune))
     field(:members, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Commune))
+    field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
+
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
     field(:product_count, non_null(:integer), resolve: &Commune.get_product_count/3)
