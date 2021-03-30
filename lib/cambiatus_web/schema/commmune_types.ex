@@ -138,6 +138,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   input_object(:claim_analysis_history_filter) do
     field(:claimer, :string)
     field(:status, :string)
+    field(:direction, :direction)
   end
 
   @desc "Input for run transfer"
@@ -310,12 +311,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_at, non_null(:datetime))
   end
 
-  enum :claim_status do
-    value(:approved, as: "approved")
-    value(:rejected, as: "rejected")
-    value(:pending, as: "pending")
-  end
-
   @desc "A check for a given claim"
   object :check do
     field(:claim, non_null(:claim), resolve: dataloader(Cambiatus.Commune))
@@ -366,5 +361,18 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   enum :verification_type do
     value(:automatic, as: "automatic", description: "An action that is verified automatically")
     value(:claimable, as: "claimable", description: "An action that needs be mannually verified")
+  end
+
+  @desc "Claim possible status"
+  enum :claim_status do
+    value(:approved, as: "approved")
+    value(:rejected, as: "rejected")
+    value(:pending, as: "pending")
+  end
+
+  @desc "Sort direction"
+  enum(:direction) do
+    value(:asc, description: "Ascending order")
+    value(:desc, description: "Descending order")
   end
 end
