@@ -30,13 +30,19 @@ defmodule Cambiatus.Accounts.User do
 
     has_many(:push_subscriptions, PushSubscription, foreign_key: :account_id)
     has_many(:products, Product, foreign_key: :creator_id)
+    has_many(:orders, through: [:products, :orders])
     has_many(:to_transfers, Transfer, foreign_key: :to_id)
     has_many(:from_transfers, Transfer, foreign_key: :from_id)
     has_many(:network, Network, foreign_key: :account_id)
     has_many(:communities, through: [:network, :community])
     has_many(:invitations, Invitation, foreign_key: :creator_id)
     has_many(:claims, Claim, foreign_key: :claimer_id)
-    has_many(:contacts, Contact, foreign_key: :user_id, on_replace: :delete)
+
+    has_many(:contacts, Contact,
+      foreign_key: :user_id,
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
 
     has_one(:address, Address, foreign_key: :account_id)
     has_one(:kyc, KycData, foreign_key: :account_id)
