@@ -147,41 +147,41 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
   end
 
-  describe "Accounts Auth" do
-    test "valid sign" do
-      query = "query{ phrase }"
+  # describe "Accounts Auth" do
+  #   test "valid sign" do
+  #     query = "query{ phrase }"
 
-      res = conn |> get("/api/graph", query: query)
+  #     res = conn |> get("/api/graph", query: query)
 
-      %{
-        "data" => %{
-          "phrase" => phrase
-        }
-      } = json_response(res, 200)
+  #     %{
+  #       "data" => %{
+  #         "phrase" => phrase
+  #       }
+  #     } = json_response(res, 200)
 
-      {:ok, %{"signature" => signature}} =
-        NodeJS.call({"app", :sign}, [phrase, @eos_account.priv_key])
+  #     {:ok, %{"signature" => signature}} =
+  #       NodeJS.call({"app", :sign}, [phrase, @eos_account.priv_key])
 
-      assert Cambiatus.Auth.verify_signature(@eos_account.name, signature, phrase) == true
-    end
+  #     assert Cambiatus.Auth.verify_signature(@eos_account.name, signature, phrase) == true
+  #   end
 
-    test "invalid sign" do
-      query = "query{ phrase }"
+  #   test "invalid sign" do
+  #     query = "query{ phrase }"
 
-      res = conn |> get("/api/graph", query: query)
+  #     res = conn |> get("/api/graph", query: query)
 
-      %{
-        "data" => %{
-          "phrase" => phrase
-        }
-      } = json_response(res, 200)
+  #     %{
+  #       "data" => %{
+  #         "phrase" => phrase
+  #       }
+  #     } = json_response(res, 200)
 
-      {:ok, %{"signature" => signature, "privateKey" => priv_key, "publicKey" => pub_key}} =
-        NodeJS.call({"app", :signWithRandom}, [phrase])
+  #     {:ok, %{"signature" => signature, "privateKey" => priv_key, "publicKey" => pub_key}} =
+  #       NodeJS.call({"app", :signWithRandom}, [phrase])
 
-      assert Cambiatus.Auth.verify_signature(@eos_account.name, signature, phrase) == false
-    end
-  end
+  #     assert Cambiatus.Auth.verify_signature(@eos_account.name, signature, phrase) == false
+  #   end
+  # end
 
   describe "payment history" do
     setup do
