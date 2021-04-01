@@ -38,14 +38,17 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in_v2(_, %{account: account, signature: signature, token: token}, _) do
-    phrase = CambiatusWeb.AuthToken.get_phrase(token)
+  def sign_in_v2(_, %{account: account, signature: signature}, %{context: context}) do
+    # phrase = CambiatusWeb.AuthToken.get_phrase(token)
+    %{phrase: phrase, token: token} = context
 
     case Auth.sign_in_v2(account, signature, phrase) do
       {:error, reason} ->
+        CambiatusWeb.AuthToken.invalidate(token) |> IO.inspect(label: "INVALIDATED")
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
+        CambiatusWeb.AuthToken.invalidate(token) |> IO.inspect(label: "REMOVED")
         {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
     end
   end
