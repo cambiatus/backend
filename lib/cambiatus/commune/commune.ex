@@ -28,31 +28,28 @@ defmodule Cambiatus.Commune do
   end
 
   def query(Action, %{input: filters}) do
-    query =
-      filters
-      |> Enum.reduce(Action, fn
-        {:creator, account}, query ->
-          query
-          |> Action.created_by(account)
+    filters
+    |> Enum.reduce(Action, fn
+      {:creator, account}, query ->
+        query
+        |> Action.created_by(account)
 
-        {:validator, account}, query ->
-          query
-          |> Action.with_validator(account)
+      {:validator, account}, query ->
+        query
+        |> Action.with_validator(account)
 
-        {:is_completed, is_completed}, query ->
-          query
-          |> Action.completed(is_completed)
+      {:is_completed, is_completed}, query ->
+        query
+        |> Action.completed(is_completed)
 
-        {:verification_type, verification_type}, query ->
-          query
-          |> Action.with_verification_type_of(verification_type)
+      {:verification_type, verification_type}, query ->
+        query
+        |> Action.with_verification_type_of(verification_type)
 
-        _, query ->
-          query
-      end)
-      |> Action.ordered()
-
-    query
+      _, query ->
+        query
+    end)
+    |> Action.ordered()
   end
 
   def query(Action, %{query: query}) do
@@ -228,17 +225,8 @@ defmodule Cambiatus.Commune do
       join: v in Validator,
       on: v.action_id == c.action_id,
       where: o.community_id == ^community_id,
-      where: v.validator_id == ^account,
-      order_by: [desc: c.created_at]
+      where: v.validator_id == ^account
     )
-  end
-
-  def claim_filter_status(query, status) do
-    query |> where(status: ^status)
-  end
-
-  def claim_filter_claimer(query, claimer) do
-    query |> where(claimer_id: ^claimer)
   end
 
   @doc """
