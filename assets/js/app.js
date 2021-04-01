@@ -1,6 +1,7 @@
 import ecc, { PublicKey, Signature } from 'eosjs-ecc'
 import EosApi from 'eosjs-api'
 
+// TODO setup config files
 const options = {
     httpEndpoint: 'https://staging.cambiatus.io',
     verbose: false
@@ -38,6 +39,20 @@ const accountToPublicKey = (account) => {
         return await fetchAccounInfo();
     })();
 }
+const publicKeyToAccount = (publicKey) => {
+    const eos = EosApi(options)
+    async function fetchAccounInfo() {
+        try {
+            return { ok: await eos.getKeyAccounts(publicKey) }
+        } catch (error) {
+            return { error: "error fetching account" };
+        }
+    }
+
+    return (async function () {
+        return await fetchAccounInfo();
+    })();
+}
 const generateKeys = () => {
     async function getKeys() {
         return ecc.randomKey().then(privateKey => ({
@@ -66,5 +81,6 @@ const sign = (phrase, pk) => ({
 })
 exports.publicKeyPoints = publicKeyPoints
 exports.accountToPublicKey = accountToPublicKey
+exports.publicKeyToAccount = publicKeyToAccount
 exports.signWithRandom = signWithRandom
 exports.sign = sign
