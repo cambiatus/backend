@@ -8,8 +8,11 @@ defmodule CambiatusWeb.AuthToken do
   end
 
   def get_phrase(token) do
-    {:ok, %{phrase: phrase}} = decrypt(Endpoint, auth_salt(), token)
-    phrase
+    {:ok, data} = decrypt(Endpoint, auth_salt(), token)
+  end
+
+  def invalidate(token) do
+    Phoenix.Token.verify(Endpoint, auth_salt(), token, max_age: 3_600)
   end
 
   @doc "Encodes given `user` and signs it, returning a token clients can use as ID"
