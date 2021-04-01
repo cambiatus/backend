@@ -55,4 +55,18 @@ defmodule Cambiatus.Commune.Claim do
     query
     |> order_by([c], desc: c.created_at)
   end
+
+  def with_claimer(query \\ Claim, claimer) do
+    query
+    |> where(claimer_id: ^claimer)
+  end
+
+  def with_status(query \\ Claim, status) do
+    query
+    |> where(status: ^status)
+  end
+
+  def ordered(query \\ Claim, direction \\ :asc)
+  def ordered(query, :asc), do: query |> order_by([a], a.created_at)
+  def ordered(query, :desc), do: query |> order_by([a], desc: a.created_at)
 end
