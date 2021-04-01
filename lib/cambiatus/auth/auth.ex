@@ -55,11 +55,7 @@ defmodule Cambiatus.Auth do
             {:error, :not_found}
 
           user ->
-            if Accounts.verify_pass(account, signature) do
-              {:ok, user}
-            else
-              {:error, :invalid_password}
-            end
+            {:ok, user}
         end
 
       false ->
@@ -68,8 +64,6 @@ defmodule Cambiatus.Auth do
   end
 
   def verify_signature(account, signature, phrase) do
-    {:ok, phrase} = Jason.encode(phrase)
-
     # TODO implement using task
     NodeJS.call({"app", :publicKeyPoints}, [signature, phrase])
     |> case do
@@ -131,15 +125,6 @@ defmodule Cambiatus.Auth do
       {:ok, %{"error" => _}} ->
         false
     end
-  end
-
-  @doc """
-  Login logic for Cambiatus when signing in with an invitationId
-  """
-  def sign_in(account, password, invitation_id) do
-    account
-    |> sign_in(password)
-    |> netlink(invitation_id)
   end
 
   def netlink({:ok, user}, invitation_id) do
