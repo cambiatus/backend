@@ -8,7 +8,11 @@ defmodule CambiatusWeb.AuthToken do
   end
 
   def get_phrase(token) do
-    {:ok, data} = decrypt(Endpoint, auth_salt(), token)
+    decrypt(Endpoint, auth_salt(), token)
+    |> case do
+      {:ok, data} -> {:ok, data}
+      {:error, :invalid} -> {:error, :invalid}
+    end
   end
 
   def invalidate(token) do
