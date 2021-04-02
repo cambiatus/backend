@@ -204,7 +204,6 @@ defmodule Cambiatus.Commune do
           ^account
         ) == 0
     )
-    |> order_by([c], desc: c.id)
   end
 
   @doc """
