@@ -78,7 +78,7 @@ const signWithRandom = (phrase) => {
     })
 }
 const sign = (phrase, pk) => ({
-    signature: ecc.sign(JSON.stringify(phrase), pk)
+    signature: ecc.sign(phrase, pk)
 })
 exports.publicKeyPoints = publicKeyPoints
 exports.accountToPublicKey = accountToPublicKey
