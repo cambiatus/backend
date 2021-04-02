@@ -44,11 +44,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
 
     case Auth.sign_in_v2(account, signature, phrase) do
       {:error, reason} ->
-        CambiatusWeb.AuthToken.invalidate(token) |> IO.inspect(label: "INVALIDATED")
+        CambiatusWeb.AuthToken.invalidate(token)
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
-        CambiatusWeb.AuthToken.invalidate(token) |> IO.inspect(label: "REMOVED")
         {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
     end
   end
