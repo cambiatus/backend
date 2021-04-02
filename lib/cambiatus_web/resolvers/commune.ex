@@ -5,7 +5,8 @@ defmodule CambiatusWeb.Resolvers.Commune do
   """
   alias Absinthe.Relay.Connection
 
-  alias Cambiatus.{Auth, Commune, Commune.Community, Shop}
+  alias Cambiatus.{Auth, Commune, Shop}
+  alias Cambiatus.Commune.{Claim, Community}
 
   def search(_, %{community_id: symbol}, _) do
     Commune.get_community(symbol)
@@ -35,27 +36,24 @@ defmodule CambiatusWeb.Resolvers.Commune do
     query = Commune.claim_analysis_history_query(community_id, current_user.account)
 
     query =
-      case Map.get(args, :filter) do
-        nil ->
-          query
+      if Map.has_key?(args, :filter) do
+        args
+        |> Map.get(:filter)
+        |> Enum.reduce(query, fn
+          {:claimer, claimer}, query ->
+            query
+            |> Claim.with_claimer(claimer)
 
-        filter ->
-          case filter do
-            %{claimer: claimer, status: status} when claimer != "" and status != "claimer" ->
-              # add necessary where
-              query
-              |> Commune.claim_filter_claimer(claimer)
-              |> Commune.claim_filter_status(status)
+          {:status, status}, query ->
+            query
+            |> Claim.with_status(status)
 
-            %{claimer: claimer} ->
-              query |> Commune.claim_filter_claimer(claimer)
-
-            %{status: status} ->
-              query |> Commune.claim_filter_status(status)
-
-            _ ->
-              query
-          end
+          {:direction, direction}, query ->
+            query
+            |> Claim.ordered(direction)
+        end)
+      else
+        query
       end
 
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
