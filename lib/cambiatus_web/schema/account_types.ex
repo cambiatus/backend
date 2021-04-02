@@ -23,7 +23,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Sign in phrase"
-    field :initiate, :auth_phrase do
+    field :get_auth_phrase, :auth_phrase do
       arg(:account, non_null(:string),
         description: "EOS Account, must have 12 chars long and use only [a-z] and [0-5]"
       )
