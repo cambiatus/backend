@@ -38,8 +38,17 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in_v2(_, %{account: account, signature: signature}, %{context: context}) do
-    # phrase = CambiatusWeb.AuthToken.get_phrase(token)
+  def sign_in(_, %{account: account, password: password}, _) do
+    case Auth.sign_in(account, password) do
+      {:error, reason} ->
+        {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
+
+      {:ok, user} ->
+        {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
+    end
+  end
+
+  def sign_in(_, %{account: account, signature: signature}, %{context: context}) do
     %{phrase: phrase, token: token} = context
 
     case Auth.sign_in_v2(account, signature, phrase) do
@@ -54,16 +63,6 @@ defmodule CambiatusWeb.Resolvers.Accounts do
 
   def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, _) do
     case Auth.sign_in(account, password, invitation_id) do
-      {:error, reason} ->
-        {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
-
-      {:ok, user} ->
-        {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
-    end
-  end
-
-  def sign_in(_, %{account: account, password: password}, _) do
-    case Auth.sign_in(account, password) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
