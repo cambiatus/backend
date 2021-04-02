@@ -5,7 +5,8 @@
   "description": "Auth library for Elixir NIF",
   "main": "./js/app.js",
   "scripts": {
-    "deploy": "webpack --mode production"
+    "deploy": "webpack --mode production",
+    "develop": "webpack --mode development"
   },
   "author": "",
   "license": "ISC",
