@@ -1,9 +1,10 @@
 import ecc, { PublicKey, Signature } from 'eosjs-ecc'
 import EosApi from 'eosjs-api'
+import configuration from './config.js'
 
-// TODO setup config files
+const config = configuration[process.env.NODE_ENV]
 const options = {
-    httpEndpoint: 'https://staging.cambiatus.io',
+    httpEndpoint: config.eosOptions.httpEndpoint,
     verbose: false
 }
 const eos = EosApi(options)

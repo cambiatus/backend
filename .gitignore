@@ -25,5 +25,5 @@ bespiral-platform.iml
 
 .elixir_ls/
 .tool-versions
-assets/node_modules
-assets/dist
+nodejs_auth/node_modules
+nodejs_auth/dist

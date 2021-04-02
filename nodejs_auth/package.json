@@ -2,7 +2,7 @@
   "name": "assets",
   "version": "1.0.0",
   "private": true,
-  "description": "Auh library for Elixir NIF",
+  "description": "Auth library for Elixir NIF",
   "main": "./js/app.js",
   "scripts": {
     "deploy": "webpack --mode production"
