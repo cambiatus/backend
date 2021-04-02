@@ -64,4 +64,14 @@ defmodule Cambiatus.Auth.Ecdsa do
         false
     end
   end
+
+  def sign(phrase, priv_key) do
+    {"app", :sign}
+    |> NodeJS.call([phrase, priv_key])
+  end
+
+  def sign_with_random(phrase) do
+    {"app", :signWithRandom}
+    |> NodeJS.call([phrase])
+  end
 end
