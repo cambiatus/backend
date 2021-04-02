@@ -11,7 +11,7 @@ config :cambiatus, CambiatusWeb.Endpoint,
       "--mode",
       "development",
       "--watch-stdin",
-      cd: Path.expand("../assets", __DIR__)
+      cd: Path.expand("../nodejs_auth", __DIR__)
     ]
   ]
 

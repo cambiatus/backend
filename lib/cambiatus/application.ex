@@ -13,7 +13,7 @@ defmodule Cambiatus.Application do
       {Absinthe.Subscription, [CambiatusWeb.Endpoint]},
       %{
         id: NodeJS,
-        start: {NodeJS, :start_link, [[path: "./assets/dist/js", pool_size: 4]]}
+        start: {NodeJS, :start_link, [[path: "./nodejs_auth/dist/js", pool_size: 4]]}
       }
     ]
 
