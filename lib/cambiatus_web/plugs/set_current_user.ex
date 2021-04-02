@@ -14,9 +14,7 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context_user = set_user(conn)
-    context_phrase = set_phrase(conn)
-    context = Map.merge(context_user, context_phrase)
+    context = conn |> set_user() |> update_context()
     Absinthe.Plug.put_options(conn, context: context)
   end
 
@@ -24,27 +22,14 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          {:ok, %{id: account}} <- AuthToken.verify(token),
          %{} = user <- Cambiatus.Accounts.get_user(account) do
-      %{current_user: user}
+      {conn, %{current_user: user}}
     else
-      _ -> %{}
+      _ -> {conn, %{}}
     end
   end
 
-  def set_phrase(conn) do
-    get_req_header(conn, "authorization")
-    |> case do
-      ["Bearer " <> token] ->
-        AuthToken.get_phrase(token)
-        |> case do
-          {:ok, data} ->
-            data |> Map.put(:token, token)
-
-          _ ->
-            %{}
-        end
-
-      [] ->
-        %{}
-    end
+  defp update_context({conn, context}) do
+    context
+    |> Map.merge(conn.private[:absinthe].context)
   end
 end

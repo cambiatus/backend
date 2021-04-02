@@ -14,15 +14,17 @@ defmodule CambiatusWeb.Plugs.SetPhrase do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = build_context(conn)
+    context = set_phrase(conn)
     Absinthe.Plug.put_options(conn, context: context)
   end
 
-  def build_context(conn) do
-    get_req_header(conn, "authorization")
+  def set_phrase(conn) do
+    conn
+    |> get_req_header("authorization")
     |> case do
       ["Bearer " <> token] ->
-        AuthToken.get_phrase(token)
+        token
+        |> AuthToken.get_phrase()
         |> case do
           {:ok, data} ->
             data |> Map.put(:token, token)
@@ -34,14 +36,5 @@ defmodule CambiatusWeb.Plugs.SetPhrase do
       [] ->
         %{}
     end
-
-    # with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
-    #      {:ok, data} <- AuthToken.get_phrase(token) do
-    #   data
-    # else
-    #   _ ->
-    #     AuthToken.invalidate(token)
-    #     %{}
-    # end
   end
 end
