@@ -200,7 +200,6 @@ defmodule Cambiatus.Commune do
         v.validator_id == ^account and
         a.is_completed == false and
         not (a.usages > 0 and a.usages_left == 0) and
-        fragment("NOW()") < a.deadline and
         c.status == "pending" and
         fragment(
           "select count(*) from checks b where b.claim_id = ?.id and b.validator_id = ?",
