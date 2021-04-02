@@ -4,7 +4,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   """
   use Cambiatus.ApiCase
 
-  alias Cambiatus.{Accounts.User, Commune.Transfer}
+  alias Cambiatus.{
+    Accounts.User,
+    Commune.Transfer,
+    Auth.Ecdsa
+  }
 
   @eos_account %{
     priv_key: "5Jhua6LXYtwYS9jWSdYwEHVyfVG3MbitNWMELNBzFGhmdX1UHUy",
@@ -147,41 +151,90 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
   end
 
-  # describe "Accounts Auth" do
-  #   test "valid sign" do
-  #     query = "query{ phrase }"
+  describe "Accounts Auth" do
+    test "valid sign" do
+      _user = insert(:user, account: @eos_account.name)
 
-  #     res = conn |> get("/api/graph", query: query)
+      account_variables = %{
+        "account" => @eos_account.name
+      }
 
-  #     %{
-  #       "data" => %{
-  #         "phrase" => phrase
-  #       }
-  #     } = json_response(res, 200)
+      get_phrase_query = """
+      query($account: String!){
+        getAuthPhrase(account: $account) {
+          phrase
+          token
+        }
+      }
+      """
 
-  #     {:ok, %{"signature" => signature}} =
-  #       NodeJS.call({"app", :sign}, [phrase, @eos_account.priv_key])
+      %{
+        "data" => %{
+          "getAuthPhrase" => auth_data
+        }
+      } =
+        build_conn()
+        |> get("/api/graph", query: get_phrase_query, variables: account_variables)
+        |> json_response(200)
 
-  #     assert Cambiatus.Auth.verify_signature(@eos_account.name, signature, phrase) == true
-  #   end
+      {:ok, %{"signature" => signature}} = Ecdsa.sign(auth_data["phrase"], @eos_account.priv_key)
 
-  #   test "invalid sign" do
-  #     query = "query{ phrase }"
+      signature_variables = %{
+        "account" => @eos_account.name,
+        "signature" => signature
+      }
 
-  #     res = conn |> get("/api/graph", query: query)
+      sign_in_query = """
+      mutation($account: String!, $signature: String!) {
+        signInV2(account: $account, signature: $signature) {
+          user {
+            account
+          }
+        }
+      }
+      """
 
-  #     %{
-  #       "data" => %{
-  #         "phrase" => phrase
-  #       }
-  #     } = json_response(res, 200)
+      %{
+        "data" => %{
+          "signInV2" => user_data
+        }
+      } =
+        build_conn()
+        |> add_token(auth_data["token"])
+        |> post("/api/graph", query: sign_in_query, variables: signature_variables)
+        |> json_response(200)
 
-  #     {:ok, %{"signature" => signature, "privateKey" => priv_key, "publicKey" => pub_key}} =
-  #       NodeJS.call({"app", :signWithRandom}, [phrase])
+      assert user_data["user"]["account"] == @eos_account.name
+    end
 
-  #     assert Cambiatus.Auth.verify_signature(@eos_account.name, signature, phrase) == false
-  #   end
-  # end
+    test "invalid sign" do
+      account_variables = %{
+        "account" => @eos_account.name
+      }
+
+      get_phrase_query = """
+      query($account: String!){
+        getAuthPhrase(account: $account) {
+          phrase
+          token
+        }
+      }
+      """
+
+      %{
+        "data" => %{
+          "getAuthPhrase" => auth_data
+        }
+      } =
+        build_conn()
+        |> get("/api/graph", query: get_phrase_query, variables: account_variables)
+        |> json_response(200)
+
+      {:ok, %{"signature" => signature}} = Ecdsa.sign_with_random(auth_data["phrase"])
+
+      assert Ecdsa.verify_signature(@eos_account.name, signature, auth_data["phrase"]) == false
+    end
+  end
 
   describe "payment history" do
     setup do

@@ -27,6 +27,10 @@ defmodule Cambiatus.ApiCase do
 
       @endpoint CambiatusWeb.Endpoint
 
+      defp add_token(conn, token) do
+        put_req_header(conn, "authorization", "Bearer #{token}")
+      end
+
       defp auth_user(conn, user) do
         token = CambiatusWeb.AuthToken.sign(user)
         put_req_header(conn, "authorization", "Bearer #{token}")
