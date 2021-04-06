@@ -3,15 +3,22 @@ defmodule Cambiatus.Auth do
 
   import Ecto.Query
 
+  alias CambiatusWeb.AuthToken
+
   alias Cambiatus.{
     Accounts,
     Accounts.User,
-    Auth,
-    Auth.Invitation,
-    Auth.InvitationId,
-    Auth.Ecdsa,
     Commune.Network,
-    Repo
+    Repo,
+    Auth
+  }
+
+  alias Cambiatus.Auth.{
+    Invitation,
+    InvitationId,
+    Ecdsa,
+    Phrase,
+    UserToken
   }
 
   @contract Application.get_env(:cambiatus, :contract)
@@ -62,6 +69,126 @@ defmodule Cambiatus.Auth do
       false ->
         {:error, "Invalid signature"}
     end
+  end
+
+  def gen_auth_phrase(user) do
+    user
+    |> create_auth()
+    |> create_session()
+  end
+
+  def create_auth(user) do
+    phrase = Phrase.generate()
+    token = AuthToken.gen_token(%{phrase: phrase})
+
+    %UserToken{}
+    |> UserToken.changeset(%{phrase: phrase, token: token, context: "auth"}, user)
+    |> Repo.insert()
+    |> case do
+      {:ok, _} -> {:ok, {user, phrase}}
+      {:error, _err} -> {:error, "Phrase exists already"}
+    end
+  end
+
+  def create_session({:error, _} = err), do: err
+
+  def create_session({:ok, {user, phrase}}) do
+    token = AuthToken.gen_token(%{account: user.account})
+
+    %UserToken{}
+    |> UserToken.changeset(%{token: token, context: "session"}, user)
+    |> Repo.insert()
+    |> case do
+      {:ok, _} -> {:ok, {phrase, token}}
+      {:error, _err} -> {:error, "Session exists already"}
+    end
+  end
+
+  def verify_session_token(account, token) do
+    account
+    |> get_user_token(:session)
+    |> Map.values()
+    |> Enum.member?(token)
+    |> case do
+      true ->
+        AuthToken.verify(token, 2 * 24 * 3600)
+
+      false ->
+        delete_user_token(account, :auth)
+        {:error, "No session found"}
+    end
+  end
+
+  def verify_signature(account, signature) do
+    result =
+      case get_user_token(account, :auth) do
+        %{phrase: phrase} ->
+          account
+          |> Ecdsa.verify_signature(signature, phrase)
+          |> case do
+            true ->
+              {:ok, Accounts.get_user(account)}
+
+            false ->
+              {:error, "Invalid signature"}
+          end
+
+        nil ->
+          {:error, "No phrase found"}
+      end
+
+    delete_user_token(account, :auth)
+
+    result
+  end
+
+  def get_user_token(account, :session) do
+    from("user_tokens",
+      where: [context: "session", user_id: ^account],
+      select: [:context, :user_id, :token]
+    )
+    |> Repo.one!()
+  end
+
+  def get_user_token(account, :auth) do
+    from("user_tokens",
+      where: [context: "auth", user_id: ^account],
+      select: [:context, :user_id, :token, :phrase]
+    )
+    |> Repo.one!()
+  end
+
+  def delete_user_token(account, :session) do
+    from("user_tokens",
+      where: [context: "session", user_id: ^account]
+    )
+    |> Repo.delete_all()
+  end
+
+  def delete_user_token(account, :auth) do
+    from("user_tokens",
+      where: [context: "auth", user_id: ^account]
+    )
+    |> Repo.delete_all()
+  end
+
+  def delete_all_user_token() do
+    [:session, :auth]
+    |> Enum.each(&delete_all_user_token(&1))
+  end
+
+  def delete_all_user_token(:auth) do
+    from("user_tokens",
+      where: [context: "auth"]
+    )
+    |> Repo.delete_all()
+  end
+
+  def delete_all_user_token(:session) do
+    from("user_tokens",
+      where: [context: "session"]
+    )
+    |> Repo.delete_all()
   end
 
   def netlink({:ok, user}, invitation_id) do
