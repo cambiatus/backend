@@ -5,7 +5,7 @@ defmodule Cambiatus.Accounts.User do
 
   import Ecto.Changeset
 
-  alias Cambiatus.{Auth.Invitation, Notifications.PushSubscription, Repo}
+  alias Cambiatus.{Auth.Invitation, Auth.UserToken, Notifications.PushSubscription, Repo}
   alias Cambiatus.Accounts.{Contact, User}
   alias Cambiatus.Commune.{Network, Claim, Transfer}
   alias Cambiatus.Kyc.{KycData, Address}
@@ -39,6 +39,12 @@ defmodule Cambiatus.Accounts.User do
     has_many(:claims, Claim, foreign_key: :claimer_id)
 
     has_many(:contacts, Contact,
+      foreign_key: :user_id,
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
+
+    has_many(:user_tokens, UserToken,
       foreign_key: :user_id,
       on_replace: :delete,
       on_delete: :delete_all
