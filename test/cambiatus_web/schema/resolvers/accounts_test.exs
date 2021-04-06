@@ -159,9 +159,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "account" => @eos_account.name
       }
 
-      get_phrase_query = """
+      auth_session_query = """
       query($account: String!){
-        getAuthPhrase(account: $account) {
+        startAuthSession(account: $account) {
           phrase
           token
         }
@@ -170,11 +170,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "getAuthPhrase" => auth_data
+          "startAuthSession" => auth_data
         }
       } =
         build_conn()
-        |> get("/api/graph", query: get_phrase_query, variables: account_variables)
+        |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
       {:ok, %{"signature" => signature}} = Ecdsa.sign(auth_data["phrase"], @eos_account.priv_key)
@@ -212,9 +212,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "account" => @eos_account.name
       }
 
-      get_phrase_query = """
+      auth_session_query = """
       query($account: String!){
-        getAuthPhrase(account: $account) {
+        startAuthSession(account: $account) {
           phrase
           token
         }
@@ -223,11 +223,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "getAuthPhrase" => auth_data
+          "startAuthSession" => auth_data
         }
       } =
         build_conn()
-        |> get("/api/graph", query: get_phrase_query, variables: account_variables)
+        |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
       {:ok, %{"signature" => signature}} = Ecdsa.sign_with_random(auth_data["phrase"])
