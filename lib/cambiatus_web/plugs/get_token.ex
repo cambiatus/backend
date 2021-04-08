@@ -9,8 +9,6 @@ defmodule CambiatusWeb.Plugs.GetToken do
 
   import Plug.Conn
 
-  alias CambiatusWeb.AuthToken
-
   def init(opts), do: opts
 
   def call(conn, _) do
