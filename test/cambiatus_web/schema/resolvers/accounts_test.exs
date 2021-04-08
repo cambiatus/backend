@@ -7,7 +7,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   alias Cambiatus.{
     Accounts.User,
     Commune.Transfer,
-    Auth.Ecdsa
+    Auth.Ecdsa,
+    Auth,
+    Auth.UserToken
   }
 
   @eos_account %{
@@ -153,7 +155,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
   describe "Accounts Auth" do
     test "valid sign" do
-      _user = insert(:user, account: @eos_account.name)
+      assert Repo.aggregate(User, :count, :account) == 0
+      user = insert(:user, account: @eos_account.name)
+      conn = build_conn()
 
       account_variables = %{
         "account" => @eos_account.name
@@ -161,7 +165,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       auth_session_query = """
       query($account: String!){
-        startAuthSession(account: $account) {
+        genAuth(account: $account) {
           phrase
           token
         }
@@ -170,10 +174,10 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "startAuthSession" => auth_data
+          "genAuth" => auth_data
         }
       } =
-        build_conn()
+        conn
         |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
@@ -205,16 +209,24 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         |> json_response(200)
 
       assert user_data["user"]["account"] == @eos_account.name
+
+      assert_raise Ecto.NoResultsError, fn ->
+        Auth.get_user_token(%{account: @eos_account.name, filter: :auth})
+      end
     end
 
     test "invalid sign" do
+      assert Repo.aggregate(User, :count, :account) == 0
+      user = insert(:user, account: @eos_account.name)
+      conn = build_conn()
+
       account_variables = %{
         "account" => @eos_account.name
       }
 
       auth_session_query = """
       query($account: String!){
-        startAuthSession(account: $account) {
+        genAuth(account: $account) {
           phrase
           token
         }
@@ -223,16 +235,20 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "startAuthSession" => auth_data
+          "genAuth" => auth_data
         }
       } =
-        build_conn()
+        conn
         |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
       {:ok, %{"signature" => signature}} = Ecdsa.sign_with_random(auth_data["phrase"])
 
       assert Ecdsa.verify_signature(@eos_account.name, signature, auth_data["phrase"]) == false
+
+      assert Auth.get_user_token(%{account: @eos_account.name, filter: :auth})
+             |> Map.values()
+             |> Enum.member?(@eos_account.name) == true
     end
   end
 
