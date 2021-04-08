@@ -22,14 +22,4 @@ defmodule CambiatusWeb.AuthToken do
   def auth_salt() do
     Application.get_env(:cambiatus, :auth_salt)
   end
-
-  defp encrypt(endpoint, secret, data) do
-    endpoint.config(:secret_key_base)
-    |> Plug.Crypto.encrypt(secret, data)
-  end
-
-  defp decrypt(endpoint, secret, token) do
-    endpoint.config(:secret_key_base)
-    |> Plug.Crypto.decrypt(secret, token)
-  end
 end
