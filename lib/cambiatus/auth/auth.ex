@@ -51,33 +51,13 @@ defmodule Cambiatus.Auth do
     |> netlink(invitation_id)
   end
 
-  def sign_in_v2(account, signature, phrase) do
-    account
-    |> Ecdsa.verify_signature(signature, phrase)
-    |> case do
-      true ->
-        account
-        |> Accounts.get_user()
-        |> case do
-          nil ->
-            {:error, :not_found}
-
-          user ->
-            {:ok, user}
-        end
-
-      false ->
-        {:error, "Invalid signature"}
-    end
-  end
-
   def gen_auth_phrase(user) do
     user
-    |> create_auth()
+    |> create_phrase()
     |> create_session()
   end
 
-  def create_auth(user) do
+  def create_phrase(user) do
     phrase = Phrase.generate()
     token = AuthToken.gen_token(%{phrase: phrase})
 
@@ -104,9 +84,34 @@ defmodule Cambiatus.Auth do
     end
   end
 
+  def verify(token) do
+    token
+    |> verify_session_token()
+    |> get_account_from_token()
+  end
+
+  def verify_session_token(token) do
+    get_user_token(%{token: token, filter: :session})
+    |> case do
+      user_token when is_map(user_token) ->
+        {AuthToken.verify(user_token.token, 2 * 24 * 3600), user_token}
+
+      nil ->
+        {:error, "Session not found"}
+    end
+  end
+
+  def get_account_from_token({{:ok, _}, user_token}) do
+    Cambiatus.Accounts.get_user(user_token.user_id)
+  end
+
+  def get_account_from_token({{:error, _}, _}) do
+    {:error, "Invalid session"}
+  end
+
   def verify_session_token(account, token) do
-    account
-    |> get_user_token(:session)
+    %{account: account, filter: :session}
+    |> get_user_token()
     |> Map.values()
     |> Enum.member?(token)
     |> case do
@@ -114,35 +119,31 @@ defmodule Cambiatus.Auth do
         AuthToken.verify(token, 2 * 24 * 3600)
 
       false ->
-        delete_user_token(account, :auth)
+        delete_user_token(%{account: account, filter: :auth})
         {:error, "No session found"}
     end
   end
 
   def verify_signature(account, signature) do
     result =
-      case get_user_token(account, :auth) do
+      case get_user_token(%{account: account, filter: :auth}) do
         %{phrase: phrase} ->
-          account
-          |> Ecdsa.verify_signature(signature, phrase)
-          |> case do
-            true ->
-              {:ok, Accounts.get_user(account)}
-
-            false ->
-              {:error, "Invalid signature"}
+          if Ecdsa.verify_signature(account, signature, phrase) do
+            {:ok, Accounts.get_user(account)}
+          else
+            {:error, "Invalid signature"}
           end
 
         nil ->
           {:error, "No phrase found"}
       end
 
-    delete_user_token(account, :auth)
+    delete_user_token(%{account: account, filter: :auth})
 
     result
   end
 
-  def get_user_token(account, :session) do
+  def get_user_token(%{account: account, filter: :session}) do
     from("user_tokens",
       where: [context: "session", user_id: ^account],
       select: [:context, :user_id, :token]
@@ -150,7 +151,15 @@ defmodule Cambiatus.Auth do
     |> Repo.one!()
   end
 
-  def get_user_token(account, :auth) do
+  def get_user_token(%{token: token, filter: :session}) do
+    from("user_tokens",
+      where: [context: "session", token: ^token],
+      select: [:context, :user_id, :token]
+    )
+    |> Repo.one!()
+  end
+
+  def get_user_token(%{account: account, filter: :auth}) do
     from("user_tokens",
       where: [context: "auth", user_id: ^account],
       select: [:context, :user_id, :token, :phrase]
@@ -158,14 +167,14 @@ defmodule Cambiatus.Auth do
     |> Repo.one!()
   end
 
-  def delete_user_token(account, :session) do
+  def delete_user_token(%{account: account, filter: :session}) do
     from("user_tokens",
       where: [context: "session", user_id: ^account]
     )
     |> Repo.delete_all()
   end
 
-  def delete_user_token(account, :auth) do
+  def delete_user_token(%{account: account, filter: :auth}) do
     from("user_tokens",
       where: [context: "auth", user_id: ^account]
     )
