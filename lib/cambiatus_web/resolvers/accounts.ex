@@ -94,20 +94,19 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_out(_, %{account: account}, %{context: context}) do
-    %{token: token} = context
+  def sign_out(_, _, %{context: context}) do
+    %{current_user: user} = context
 
-    with {:ok, _token_data} <- Auth.verify_session_token(account, token) do
-      Auth.delete_user_token(account, :session)
+    with {1, nil} <- Auth.delete_user_token(%{account: user.account, filter: :session}) do
       {:ok, "Logged out"}
     else
-      error -> error
+      error -> {:ok, "Unable to sign out"}
     end
   end
 
   @doc """
   Collects transfers belonging to the given user according various criteria, provided in `args`.
-  """
+  """ 
   @spec get_transfers(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, args, _) do
     case Transfers.get_transfers(user, args) do
