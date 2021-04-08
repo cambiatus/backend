@@ -23,7 +23,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Sign in phrase"
-    field :start_auth_session, :auth_session do
+    field :gen_auth, :auth_session do
       arg(:account, non_null(:string),
         description: "EOS Account, must have 12 chars long and use only [a-z] and [0-5]"
       )
@@ -81,8 +81,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     field :sign_out, :string do
-      arg(:account, non_null(:string))
-
+      middleware(Middleware.Authenticate)
       resolve(&AccountsResolver.sign_out/3)
     end
 
