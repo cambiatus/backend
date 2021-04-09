@@ -139,7 +139,6 @@ defmodule Cambiatus.Auth do
       end
 
     delete_user_token(%{account: account, filter: :auth})
-
     result
   end
 
