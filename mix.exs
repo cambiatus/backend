@@ -5,7 +5,7 @@ defmodule Cambiatus.Mixfile do
     [
       app: :cambiatus,
       version: "1.7.8",
-      elixir: "~> 1.8",
+      elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
@@ -28,7 +28,7 @@ defmodule Cambiatus.Mixfile do
     [
       # Basic packages
       {:calendar, "~> 1.0.0", override: true},
-     {:ecto_sql, "~> 3.5"},
+      {:ecto_sql, "~> 3.5"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 2.0"},
