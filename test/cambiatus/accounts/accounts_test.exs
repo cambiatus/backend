@@ -8,17 +8,44 @@ defmodule Cambiatus.AccountsTest do
     alias Cambiatus.Accounts.User
 
     @valid_contact_attrs %{user_id: "testtesttest", type: :phone, external_id: "50625233600"}
-    @valid_telegram_attrs %{user_id: "testtesttest", type: :telegram, external_id: "https://t.me/janedoe"}
-    @valid_instagram_attrs %{user_id: "testtesttest", type: :instagram, external_id: "https://www.instagram.com/test/"}
+    @valid_telegram_attrs %{
+      user_id: "testtesttest",
+      type: :telegram,
+      external_id: "https://t.me/janedoe"
+    }
+    @valid_instagram_attrs %{
+      user_id: "testtesttest",
+      type: :instagram,
+      external_id: "https://www.instagram.com/test/"
+    }
 
     @invalid_contact_attrs %{user_id: "testtesttest", type: :phone, external_id: "955-5490-4146"}
-    @invalid_telegram_attrs %{user_id: "testtesttest", type: :instagram, external_id: "https://telegram.org/1111"}
-    @invalid_instagram_attrs %{user_id: "testtesttest", type: :instagram, external_id: "https://www.instagr.am/10-tet-10/"}
-    @update_contact_attrs %{user_id: "testtesttest", type: :whatsapp, external_id: "+55 99 81234-1234"}
+    @invalid_telegram_attrs %{
+      user_id: "testtesttest",
+      type: :instagram,
+      external_id: "https://telegram.org/1111"
+    }
+    @invalid_instagram_attrs %{
+      user_id: "testtesttest",
+      type: :instagram,
+      external_id: "https://www.instagr.am/10-tet-10/"
+    }
+    @update_contact_attrs %{
+      user_id: "testtesttest",
+      type: :whatsapp,
+      external_id: "+55 99 81234-1234"
+    }
 
     @valid_attrs %{account: "testtesttest", name: "Jureg", email: "jureg@email.com"}
-    @update_attrs %{name: "Jane", email: "jane_doe@email.io", contacts: [@update_contact_attrs, @valid_telegram_attrs, @valid_instagram_attrs]}
-    @invalid_attrs %{email: 10, contacts: [@invalid_contact_attrs, @invalid_telegram_attrs, @invalid_instagram_attrs]}
+    @update_attrs %{
+      name: "Jane",
+      email: "jane_doe@email.io",
+      contacts: [@update_contact_attrs, @valid_telegram_attrs, @valid_instagram_attrs]
+    }
+    @invalid_attrs %{
+      email: 10,
+      contacts: [@invalid_contact_attrs, @invalid_telegram_attrs, @invalid_instagram_attrs]
+    }
 
     def user_fixture(attrs \\ %{}) do
       {:ok, user} =
@@ -55,7 +82,7 @@ defmodule Cambiatus.AccountsTest do
     end
 
     test "create_user/1 with valid data creates a user" do
-      assert {:ok, %User{} = user} = Accounts.create_user(@valid_attrs)
+      assert {:ok, %User{}} = Accounts.create_user(@valid_attrs)
     end
 
     test "create_user/1 with invalid data returns error changeset" do

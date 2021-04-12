@@ -62,7 +62,7 @@ defmodule Cambiatus.Mixfile do
       # EOS/Blockchain Packages
       {:ipfs, "~> 0.1.0"},
       {:eosrpc, "~> 0.6.1"},
-      {:sentry, "~> 6.4"},
+      {:sentry, "~> 8.0"},
       {:hashids, "~> 2.0"},
 
       # AWS Packages

@@ -1,10 +1,10 @@
 defmodule CambiatusWeb.SubscriptionCase do
   @moduledoc """
-  A test case for testing Absinter Subscriptions 
+  A test case for testing Absinter Subscriptions
   """
 
   use ExUnit.CaseTemplate
-  use Phoenix.ChannelTest
+  import Phoenix.ChannelTest
 
   @endpoint CambiatusWeb.Endpoint
   alias CambiatusWeb.UserSocket
