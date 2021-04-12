@@ -28,10 +28,7 @@ defmodule Cambiatus.Mixfile do
     [
       # Basic packages
       {:calendar, "~> 1.0.0", override: true},
-      {:phoenix, "~> 1.4.0"},
-      {:phoenix_pubsub, "~> 1.1"},
-      {:phoenix_ecto, "~> 4.0"},
-      {:ecto_sql, "~> 3.5"},
+     {:ecto_sql, "~> 3.5"},
       {:postgrex, ">= 0.0.0"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 2.0"},
@@ -50,12 +47,16 @@ defmodule Cambiatus.Mixfile do
       {:mogrify, "~> 0.8.0"},
       {:ex_phone_number, "~> 0.2"},
 
+      # Phoenix
+      {:phoenix, "~> 1.5.8"},
+      {:phoenix_pubsub, "~> 2.0"},
+      {:phoenix_ecto, "~> 4.0"},
+
       # Absinthe Packages
-      {:absinthe, "~> 1.4"},
-      {:absinthe_ecto, "~> 0.1.3"},
-      {:absinthe_plug, "~> 1.4.0"},
-      {:absinthe_phoenix, "~> 1.4.0"},
-      {:absinthe_relay, "~> 1.4.6"},
+      {:absinthe, "~> 1.6"},
+      {:absinthe_plug, "~> 1.5"},
+      {:absinthe_phoenix, "~> 2.0.1"},
+      {:absinthe_relay, "~> 1.5"},
       {:dataloader, "~> 1.0.0"},
 
       # EOS/Blockchain Packages
@@ -73,7 +74,7 @@ defmodule Cambiatus.Mixfile do
        git: "https://github.com/danhper/elixir-web-push-encryption.git", ref: "97297fd3db"},
 
       # Dev only
-      {:credo, "~> 1.0.0", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
       {:edeliver, "~> 1.6"},
       {:rename, "~> 0.1.0", only: :dev},
       {:distillery, "~> 2.0", runtime: false},

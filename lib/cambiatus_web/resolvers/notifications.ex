@@ -9,9 +9,10 @@ defmodule CambiatusWeb.Resolvers.Notifications do
   """
   @spec register(map(), map(), map()) :: {:ok, map()} | {:error, term}
   def register(_, %{input: params}, %{context: %{current_user: current_user}}) do
-    with {:ok, push} <- Notifications.add_push_subscription(current_user, params) do
-      {:ok, push}
-    else
+    case Notifications.add_push_subscription(current_user, params) do
+      {:ok, push} ->
+        {:ok, push}
+
       {:error, changeset} ->
         {:error,
          message: "Could not register subscription", details: Cambiatus.Error.from(changeset)}
@@ -28,24 +29,25 @@ defmodule CambiatusWeb.Resolvers.Notifications do
 
   @spec get_payload(map(), map(), map()) :: {:ok, map()} | {:error, term}
   def get_payload(notification_history, _, _) do
-    with {:ok, %{record: data}} <- notification_history.payload |> Jason.decode(keys: :atoms) do
-      case notification_history do
-        %{type: "transfer"} ->
-          Commune.get_transfer(data.id)
+    case Jason.decode(notification_history.payload, keys: :atoms) do
+      {:ok, %{record: data}} ->
+        case notification_history do
+          %{type: "transfer"} ->
+            Commune.get_transfer(data.id)
 
-        %{type: "sale_history"} ->
-          case Shop.get_order(data.id) do
-            nil ->
-              {:error, "No Order record with the id: #{data.id} found"}
+          %{type: "sale_history"} ->
+            case Shop.get_order(data.id) do
+              nil ->
+                {:error, "No Order record with the id: #{data.id} found"}
 
-            val ->
-              {:ok, val}
-          end
+              val ->
+                {:ok, val}
+            end
 
-        _ ->
-          {:ok, nil}
-      end
-    else
+          _ ->
+            {:ok, nil}
+        end
+
       _ ->
         {:error, "Failed to parse notification"}
     end
@@ -64,9 +66,10 @@ defmodule CambiatusWeb.Resolvers.Notifications do
   """
   @spec read_notification(map(), map(), map()) :: {:ok, map()} | {:error, term}
   def read_notification(_, %{input: %{id: id}}, %{context: %{current_user: current_user}}) do
-    with {:ok, n} <- Notifications.get_notification_history(current_user, id) do
-      Notifications.mark_as_read(n)
-    else
+    case Notifications.get_notification_history(current_user, id) do
+      {:ok, n} ->
+        Notifications.mark_as_read(n)
+
       {:error, err} ->
         {:error, message: "Could not read given notification", details: Cambiatus.Error.from(err)}
     end

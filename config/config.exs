@@ -29,7 +29,7 @@ config :cambiatus, CambiatusWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "Tbckg2miZcMoSPt4L5vSwyjKG6VHCwbg3MBp+e/tszbcvQ/a4HJOI3G4/IRYwo8m",
   render_errors: [view: CambiatusWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Cambiatus.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub_server: Cambiatus.PubSub
 
 config :cambiatus,
   ecto_repos: [Cambiatus.Repo]

@@ -12,9 +12,10 @@ defmodule Cambiatus.Auth.InvitationId do
   def decode(""), do: {:ok, 0}
 
   def decode(data) do
-    with {:ok, [val]} <- Hashids.decode(@coder, data) do
-      {:ok, val}
-    else
+    case Hashids.decode(@coder, data) do
+      {:ok, [val]} ->
+        {:ok, val}
+
       _ ->
         {:error, "Something went wrong while decoding the hashid"}
     end

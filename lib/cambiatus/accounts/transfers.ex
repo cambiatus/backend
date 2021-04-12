@@ -10,7 +10,19 @@ defmodule Cambiatus.Accounts.Transfers do
   alias Cambiatus.Commune.Transfer
 
   @doc """
+  Get transfers. Here is a list of all avaiable matchs
+
   Incoming transfers to the user from the given account on the given date.
+  Incoming transfers to the user from the given account.
+  Incoming transfers to the user on the given date.
+  Outgoing  from the user to the given account on the given date.
+  All incoming transfers to the user.
+  Outgoing transfers from the user to the given account.
+  Outgoing transfers from the user on the given date.
+  All outgoing transfers from the user.
+  All transfers (incoming and outgoing) for the given date.
+  All transfers (incoming and outgoing) belonging to the user where the given account is involved as a second party.
+  All transfers (incoming and outgoing) belonging to the user.
   """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(
@@ -24,9 +36,6 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  Incoming transfers to the user from the given account.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(
         %User{} = user,
@@ -38,9 +47,6 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  Incoming transfers to the user on the given date.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, %{direction: :incoming, date: date} = args) do
     user
@@ -49,9 +55,6 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  All incoming transfers to the user.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, %{direction: :incoming} = args) do
     user
@@ -59,9 +62,6 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  Outgoing transfers from the user to the given account on the given date.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(
         %User{} = user,
@@ -74,9 +74,6 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  Outgoing transfers from the user to the given account.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(
         %User{} = user,
@@ -88,9 +85,6 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  Outgoing transfers from the user on the given date.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, %{direction: :outgoing, date: date} = args) do
     user
@@ -99,19 +93,13 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  All outgoing transfers from the user.
-  """
-  @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
+ @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, %{direction: :outgoing} = args) do
     user
     |> query_outgoing_transfers
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  All transfers (incoming and outgoing) for the given date.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, %{date: date} = args) do
     user
@@ -120,9 +108,6 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  All transfers (incoming and outgoing) belonging to the user where the given account is involved as a second party.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, %{second_party_account: second_party_account} = args) do
     Transfer
@@ -134,9 +119,6 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
-  @doc """
-  All transfers (incoming and outgoing) belonging to the user.
-  """
   @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, args) do
     user
