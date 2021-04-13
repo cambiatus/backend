@@ -10,7 +10,6 @@ defmodule Cambiatus.Application do
       Cambiatus.Repo,
       Cambiatus.DbListener,
       CambiatusWeb.Endpoint,
-      {Phoenix.PubSub, [name: Cambiatus.PubSub, adapter: Phoenix.PubSub.PG2]},
       {Absinthe.Subscription, [CambiatusWeb.Endpoint]}
     ]
 

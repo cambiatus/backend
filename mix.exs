@@ -33,13 +33,12 @@ defmodule Cambiatus.Mixfile do
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 2.0"},
       {:tesla, "~> 1.2.1"},
-      {:jason, "~> 1.0.0"},
+      {:jason, "~> 1.2.0"},
       {:cors_plug, "~> 1.5"},
       {:poolboy, ">= 0.0.0"},
       {:timex, "~> 3.4"},
       {:poison, "~> 3.0"},
       {:bamboo, "~> 1.1"},
-      {:plug_cowboy, "~> 2.0"},
       {:hackney,
        github: "benoitc/hackney", override: true, ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"},
       {:uuid, "~> 1.1"},
@@ -48,22 +47,26 @@ defmodule Cambiatus.Mixfile do
       {:ex_phone_number, "~> 0.2"},
 
       # Phoenix
-      {:phoenix, "~> 1.5.8"},
-      {:phoenix_pubsub, "~> 2.0"},
+      {:phoenix, "~> 1.4.0"},
+      {:phoenix_pubsub, "~> 1.1"},
       {:phoenix_ecto, "~> 4.0"},
 
       # Absinthe Packages
-      {:absinthe, "~> 1.6"},
-      {:absinthe_plug, "~> 1.5"},
-      {:absinthe_phoenix, "~> 2.0.1"},
-      {:absinthe_relay, "~> 1.5"},
+      {:absinthe, "~> 1.4"},
+      {:absinthe_ecto, "~> 0.1.3"},
+      {:absinthe_plug, "~> 1.4.0"},
+      {:absinthe_phoenix, "~> 1.4.0"},
+      {:absinthe_relay, "~> 1.4.6"},
       {:dataloader, "~> 1.0.0"},
 
       # EOS/Blockchain Packages
       {:ipfs, "~> 0.1.0"},
-      {:eosrpc, "~> 0.6.1"},
-      {:sentry, "~> 8.0"},
+      {:eosrpc, "~> 0.6.2"},
       {:hashids, "~> 2.0"},
+
+      # Sentry
+      {:sentry, "~> 6.4"},
+      {:plug_cowboy, "~> 2.3"},
 
       # AWS Packages
       {:ex_aws, "~> 2.1"},
