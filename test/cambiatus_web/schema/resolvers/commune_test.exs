@@ -903,22 +903,17 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       claim = insert(:claim)
 
-      variables = %{
-        "input" => %{
-          "id" => claim.id
-        }
-      }
-
       query = """
-      query ($input: ClaimInput!) {
-        claim (input: $input) {
+      query {
+        claim(input:{id: #{claim.id}}) {
           id
           createdAt
         }
       }
+
       """
 
-      res = conn |> get("/api/graph", query: query, variables: variables)
+      res = conn |> get("/api/graph", query: query)
 
       %{
         "data" => %{

@@ -172,16 +172,17 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         :variables => %{
           # tests are based on the `user1` profile
           "account" => user1.account,
-          "first" => Enum.count(transfers)
+          "first" => Enum.count(transfers),
+          :first => Enum.count(transfers)
         }
       }
     end
 
     test "incoming transfers", %{variables: variables} do
       query = """
-        query ($account: String!, $first: Int!) {
+        query ($account: String!) {
           user(account: $account) {
-            transfers(first: $first, direction: INCOMING) {
+            transfers(first: #{variables.first}, direction: INCOMING) {
               fetchedCount
             }
           }
@@ -211,9 +212,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       conn = build_conn() |> auth_user(user)
 
       query = """
-        query ($account: String!, $first: Int!) {
+        query ($account: String!) {
           user(account: $account) {
-            transfers(first: $first, direction: OUTGOING) {
+            transfers(first: #{variables.first}, direction: OUTGOING) {
               fetchedCount
             }
           }
@@ -241,9 +242,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       today_date = Date.to_string(Date.utc_today())
 
       query = """
-        query ($account: String!, $first: Int!) {
+        query ($account: String!) {
           user(account: $account) {
-            transfers(first: $first, date: "#{today_date}") {
+            transfers(first: #{variables.first}, date: "#{today_date}") {
               fetchedCount
             }
           }
@@ -272,9 +273,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       conn = build_conn() |> auth_user(user)
 
       query = """
-        query ($account: String!, $first: Int!) {
+        query ($account: String!) {
           user(account: $account) {
-           transfers(first: $first, direction: INCOMING, date: "#{today_date}") {
+           transfers(first: #{variables.first}, direction: INCOMING, date: "#{today_date}") {
               fetchedCount
             }
           }
@@ -303,9 +304,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       conn = build_conn() |> auth_user(user)
 
       query = """
-        query ($account: String!, $first: Int!) {
+        query ($account: String!) {
           user(account: $account) {
-            transfers(first: $first, direction: OUTGOING, date: "#{today_date}") {
+            transfers(first: #{variables.first}, direction: OUTGOING, date: "#{today_date}") {
               fetchedCount
             }
           }
@@ -337,10 +338,10 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       conn = build_conn() |> auth_user(user)
 
       query = """
-        query ($account: String!, $first: Int!) {
+        query ($account: String!) {
           user(account: $account) {
             transfers(
-              first: $first,
+              first: #{variables.first},
               direction: INCOMING,
               secondPartyAccount: "user2",
               date: "#{today_date}"
@@ -394,10 +395,10 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       today_date = Date.utc_today() |> Date.to_string()
 
       query = """
-        query ($account: String!, $first: Int!) {
+        query ($account: String!) {
           user(account: $account) {
             transfers(
-              first: $first,
+              first: #{variables.first},
               direction: OUTGOING,
               secondPartyAccount: "user2",
               date: "#{today_date}"
@@ -451,7 +452,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query = """
       query ($account: String!) {
         user(account: $account) {
-          getPayersByAccount(account: "#{account_part}") {
+          getPayersByAccount(account: "#{user2.account}") {
             account
             name
             avatar
