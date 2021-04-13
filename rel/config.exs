@@ -7,15 +7,14 @@
 |> Path.wildcard()
 |> Enum.map(&Code.eval_file(&1))
 
-use Mix.Releases.Config,
-    # This sets the default release built by `mix release`
-    default_release: :default,
-    # This sets the default environment used by `mix release`
-    default_environment: Mix.env()
+use Distillery.Releases.Config,
+  # This sets the default release built by `mix release`
+  default_release: :default,
+  # This sets the default environment used by `mix release`
+  default_environment: Mix.env()
 
 # For a full list of config options for both releases
 # and environments, visit https://hexdocs.pm/distillery/configuration.html
-
 
 # You may define one or more environments in this file,
 # an environment's settings will override those of a release
@@ -29,17 +28,17 @@ environment :dev do
   # It is recommended that you build with MIX_ENV=prod and pass
   # the --env flag to Distillery explicitly if you want to use
   # dev mode.
-  set dev_mode: true
-  set include_erts: false
-  set cookie: :"n.UySE)]5h6~W1KD=KIObgndS/:E*&mp|B|FsdRum5rN2k~a(2^{p0jE/E;B_1MP"
+  set(dev_mode: true)
+  set(include_erts: false)
+  set(cookie: :"n.UySE)]5h6~W1KD=KIObgndS/:E*&mp|B|FsdRum5rN2k~a(2^{p0jE/E;B_1MP")
 end
 
 environment :prod do
-  set pre_start_hooks: "rel/hooks/pre_start"
-  set include_erts: true
-  set include_src: false
-  set cookie: :"G3BTe:9$A*Q?l/}C>TuB9S]G%I(AFp@Fvsf7Fd:~Ym/;uOkIc5~z`RR?]W=P3!KO"
-  set vm_args: "rel/prod.vm.args"
+  set(pre_start_hooks: "rel/hooks/pre_start")
+  set(include_erts: true)
+  set(include_src: false)
+  set(cookie: :"G3BTe:9$A*Q?l/}C>TuB9S]G%I(AFp@Fvsf7Fd:~Ym/;uOkIc5~z`RR?]W=P3!KO")
+  set(vm_args: "rel/prod.vm.args")
 end
 
 # You may define one or more releases in this file.
@@ -48,23 +47,31 @@ end
 # will be used by default
 
 release :cambiatus do
-  set version: current_version(:cambiatus)
+  set(version: current_version(:cambiatus))
 
-  set config_providers: [
-    {Mix.Releases.Config.Providers.Elixir, ["${RELEASE_ROOT_DIR}/etc/runtime_config.exs"]}
-  ]
+  set(
+    config_providers: [
+      {Mix.Releases.Config.Providers.Elixir, ["${RELEASE_ROOT_DIR}/etc/runtime_config.exs"]}
+    ]
+  )
 
-  set overlays: [
-    {:copy, "rel/runtime_config.exs", "etc/runtime_config.exs"}
-  ]
+  set(
+    overlays: [
+      {:copy, "rel/runtime_config.exs", "etc/runtime_config.exs"}
+    ]
+  )
 
-  set applications: [
-    :runtime_tools,
-    cambiatus: :permanent
-  ]
+  set(
+    applications: [
+      :runtime_tools,
+      cambiatus: :permanent
+    ]
+  )
 
-  set commands: [
-    migrate: "rel/commands/migrate.sh",
-    seed: "rel/commands/seed.sh"
-  ]
+  set(
+    commands: [
+      migrate: "rel/commands/migrate.sh",
+      seed: "rel/commands/seed.sh"
+    ]
+  )
 end
