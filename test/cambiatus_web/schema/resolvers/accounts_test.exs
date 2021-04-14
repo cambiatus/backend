@@ -461,7 +461,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
       """
 
-      res = conn |> get("/api/graph", query: query, users: users, variables: variables)
+      res = conn |> get("/api/graph", query: query, variables: variables)
 
       %{
         "data" => %{
