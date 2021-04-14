@@ -150,7 +150,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   @desc "Input for run transfer"
   input_object :transfer_input do
-    field(:id, non_null(:integer))
+    field(:id, non_null(:custom_id))
   end
 
   @desc "Input to collect a claim"
