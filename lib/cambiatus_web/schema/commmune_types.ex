@@ -370,6 +370,12 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     value(:claimable, as: "claimable", description: "An action that needs be mannually verified")
   end
 
+  @desc "Accept id as a string or integer"
+  scalar :custom_id, description: "Id" do
+    parse &id_parse(&1)
+    serialize &id_serialize(&1)
+  end
+
   @desc "Claim possible status"
   enum :claim_status do
     value(:approved, as: "approved")
@@ -382,4 +388,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     value(:asc, description: "Ascending order")
     value(:desc, description: "Descending order")
   end
+
+  defp id_parse(input) when is_bitstring(input.value), do: {:ok, String.to_integer(input.value)}
+  defp id_parse(input) when is_integer(input.value), do: {:ok, input.value}
+  defp id_serialize(id), do: id
 end
