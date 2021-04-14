@@ -10,11 +10,7 @@ defmodule Cambiatus.Application do
       Cambiatus.Repo,
       Cambiatus.DbListener,
       CambiatusWeb.Endpoint,
-      {Absinthe.Subscription, [CambiatusWeb.Endpoint]},
-      %{
-        id: NodeJS,
-        start: {NodeJS, :start_link, [[path: "./nodejs_auth/dist/js", pool_size: 4]]}
-      }
+      {Absinthe.Subscription, [CambiatusWeb.Endpoint]}
     ]
 
     opts = [strategy: :one_for_one, name: Cambiatus.Supervisor]
