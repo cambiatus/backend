@@ -48,7 +48,6 @@ defmodule Cambiatus.Mixfile do
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
       {:mogrify, "~> 0.8.0"},
-      {:eosjs_auth_wrapper, "~> 0.1.6"},
       {:ex_phone_number, "~> 0.2"},
 
       # Absinthe Packages
@@ -65,6 +64,7 @@ defmodule Cambiatus.Mixfile do
       {:sentry, "~> 6.4"},
       {:hashids, "~> 2.0"},
       {:puid, "~> 1.0"},
+      {:eosjs_auth_wrapper, "~> 0.1.7"},
 
       # AWS Packages
       {:ex_aws, "~> 2.1"},
