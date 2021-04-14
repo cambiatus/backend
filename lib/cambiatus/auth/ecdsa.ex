@@ -16,6 +16,14 @@ defmodule Cambiatus.Auth.Ecdsa do
     end
   end
 
+  def sign(signature, priv_key) do
+    EosjsAuthWrapper.sign(signature, priv_key)
+  end
+
+  def sign_with_random(phrase) do
+    EosjsAuthWrapper.gen_rand_signature(phrase)
+  end
+
   defp get_pub_key(account) do
     account
     |> case do
