@@ -63,6 +63,20 @@ defmodule CambiatusWeb.Resolvers.Commune do
         context: %{current_user: current_user}
       }) do
     query = Commune.claim_analysis_query(community_id, current_user.account)
+
+    query =
+      if Map.has_key?(args, :filter) do
+        args
+        |> Map.get(:filter)
+        |> Enum.reduce(query, fn
+          {:direction, direction}, query ->
+            Claim.ordered(query, direction)
+        end)
+      else
+        query
+        |> Claim.ordered(:desc)
+      end
+
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
   end
 
