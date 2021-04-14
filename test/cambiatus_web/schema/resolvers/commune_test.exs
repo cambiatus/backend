@@ -369,11 +369,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       assert(Repo.aggregate(Transfer, :count, :id) == 1)
 
-      variables = %{
-        "input" => %{
-          "id" => transfer.id
+      variables =
+        %{
+          "input" => %{
+            "id" => transfer.id
+          }
         }
-      }
 
       query = """
       query($input: TransferInput!){
@@ -389,7 +390,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn |> get("/api/graph", query: query, variables: variables)
+      res =
+        conn |> get("/api/graph", query: query, variables: variables)
 
       %{
         "data" => %{
@@ -762,14 +764,13 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       fetch = 3
 
       variables = %{
-        "account" => user.account,
-        "first" => fetch
+        "account" => user.account
       }
 
       query = """
-      query($account: String!, $first: Int!) {
+      query($account: String!) {
         user(account: $account) {
-          transfers(first: $first) {
+          transfers(first: #{fetch}) {
             totalCount
             fetchedCount
             edges {
@@ -854,14 +855,13 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       fetch = 2
 
       variables = %{
-        "symbol" => community.symbol,
-        "first" => fetch
+        "symbol" => community.symbol
       }
 
       query = """
-      query($symbol: String!, $first: Int!) {
+      query($symbol: String!) {
         community(symbol: $symbol) {
-          transfers(first: $first) {
+          transfers(first: #{fetch}) {
             totalCount
             fetchedCount
             edges {
@@ -962,13 +962,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       # Collect all validator's claims for analysis
       params = %{
-        "communityId" => community.symbol,
-        "first" => @num
+        "communityId" => community.symbol
       }
 
       query_analysis = """
-      query($first: Int!, $communityId: String!) {
-        claimsAnalysis(first: $first, communityId: $communityId) {
+      query($communityId: String!) {
+        claimsAnalysis(first: #{@num}, communityId: $communityId) {
           edges {
             node {
               id
@@ -989,8 +988,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Enum.count(claim_action_ids) == 1
 
       query_history = """
-      query($first: Int!, $communityId: String!) {
-        claimsAnalysisHistory(first: $first, communityId: $communityId) {
+      query($communityId: String!) {
+        claimsAnalysisHistory(first: #{@num}, communityId: $communityId) {
           edges {
             node {
               id
