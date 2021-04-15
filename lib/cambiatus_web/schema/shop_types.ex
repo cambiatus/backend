@@ -24,7 +24,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
     @desc "[Auth required] Gets a single product"
     field(:product, :product) do
-      arg(:id, non_null(:integer))
+      arg(:id, non_null(:custom_id))
 
       middleware(Middleware.Authenticate)
       resolve(&Shop.get_product/3)
