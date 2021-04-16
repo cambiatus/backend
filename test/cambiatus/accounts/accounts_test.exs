@@ -104,7 +104,7 @@ defmodule Cambiatus.AccountsTest do
     test "update_user/2 with invalid data returns error changeset" do
       user = user_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
-      assert user = Accounts.get_user!(user.account)
+      assert _user = Accounts.get_user!(user.account)
     end
 
     test "delete_user/1 deletes the user" do

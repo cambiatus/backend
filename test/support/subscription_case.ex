@@ -4,7 +4,6 @@ defmodule CambiatusWeb.SubscriptionCase do
   """
 
   use ExUnit.CaseTemplate
-  import Phoenix.ChannelTest
 
   @endpoint CambiatusWeb.Endpoint
   alias CambiatusWeb.UserSocket

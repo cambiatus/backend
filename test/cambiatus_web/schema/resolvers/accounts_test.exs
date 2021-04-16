@@ -447,7 +447,6 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       conn = build_conn() |> auth_user(user)
 
       [_, user2] = users
-      account_part = String.slice(user2.account, 0, 3)
 
       query = """
       query ($account: String!) {
