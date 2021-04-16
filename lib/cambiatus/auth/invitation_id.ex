@@ -2,7 +2,7 @@ defmodule Cambiatus.Auth.InvitationId do
   @moduledoc """
   Used to encode IDs so they can be shared in public. Uses a custom salt
   """
-  @salt Application.get_env(:cambiatus, __MODULE__) |> Keyword.get(:salt)
+  @salt Application.compile_env(:cambiatus, __MODULE__) |> Keyword.get(:salt)
   @coder Hashids.new(salt: @salt, min_len: 6)
 
   def encode(id) do

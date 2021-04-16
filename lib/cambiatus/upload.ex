@@ -1,7 +1,7 @@
 defmodule Cambiatus.Upload do
   @moduledoc "Handles file uploading"
 
-  @s3_client Application.get_env(:cambiatus, :s3_client, ExAws)
+  @s3_client Application.compile_env(:cambiatus, :s3_client, ExAws)
 
   @spec upload_file(String.t(), String.t()) :: {:ok, String.t()} | {:error, String.t()}
   defp upload_file(file_contents, content_type) do

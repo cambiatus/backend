@@ -13,7 +13,8 @@ defmodule Cambiatus.Auth do
     Repo
   }
 
-  @contract Application.get_env(:cambiatus, :contract)
+  @contract Application.compile_env(:cambiatus, :contract)
+
   # @doc """
   # Login logic for Cambiatus.
 

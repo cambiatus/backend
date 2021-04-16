@@ -11,7 +11,7 @@ defmodule Cambiatus.ReleaseTasks do
     :ecto_sql
   ]
 
-  @repos Application.get_env(:cambiatus, :ecto_repos, [])
+  @repos Application.compile_env(:cambiatus, :ecto_repos, [])
 
   def migrate(_argv) do
     start_services()
