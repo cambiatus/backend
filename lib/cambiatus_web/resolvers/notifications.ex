@@ -31,26 +31,30 @@ defmodule CambiatusWeb.Resolvers.Notifications do
   def get_payload(notification_history, _, _) do
     case Jason.decode(notification_history.payload, keys: :atoms) do
       {:ok, %{record: data}} ->
-        case notification_history do
-          %{type: "transfer"} ->
-            Commune.get_transfer(data.id)
-
-          %{type: "sale_history"} ->
-            case Shop.get_order(data.id) do
-              nil ->
-                {:error, "No Order record with the id: #{data.id} found"}
-
-              val ->
-                {:ok, val}
-            end
-
-          _ ->
-            {:ok, nil}
-        end
+        handle_payload(notification_history, data)
 
       _ ->
         {:error, "Failed to parse notification"}
     end
+  end
+
+  def handle_payload(notification_history, data) do
+    case notification_history do
+      %{type: "transfer"} ->
+        Commune.get_transfer(data.id)
+
+      %{type: "sale_history"} ->
+        case Shop.get_order(data.id) do
+            nil ->
+              {:error, "No Order record with the id: #{data.id} found"}
+
+            val ->
+              {:ok, val}
+        end
+
+        _ ->
+          {:ok, nil}
+      end
   end
 
   @doc """
