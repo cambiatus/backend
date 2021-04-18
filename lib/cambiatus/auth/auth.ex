@@ -89,15 +89,7 @@ defmodule Cambiatus.Auth do
     end
   end
 
-  def get_account_from_token({{:ok, _}, user_token}) do
-    Cambiatus.Accounts.get_user(user_token.user_id)
-  end
-
-  def get_account_from_token({{:error, _}, _}) do
-    {:error, "Invalid session"}
-  end
-
-  def verify_session_token(account, token) do
+   def verify_session_token(account, token) do
     %{account: account, filter: :session}
     |> get_user_token()
     |> Map.values()
@@ -108,8 +100,20 @@ defmodule Cambiatus.Auth do
 
       false ->
         delete_user_token(%{account: account, filter: :auth})
-        {:error, "No session found"}
+        {:error, "Session not found"}
     end
+  end
+
+  def get_account_from_token({{:ok, _}, user_token}) do
+    Cambiatus.Accounts.get_user(user_token.user_id)
+  end
+
+  def get_account_from_token({{:error, _}, _}) do
+    {:error, "Invalid session"}
+  end
+
+  def get_account_from_token({:error, _}) do
+    {:error, "Invalid session"}
   end
 
   def verify_signature(phrase, signature) do
