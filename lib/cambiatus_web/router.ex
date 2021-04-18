@@ -8,6 +8,7 @@ defmodule CambiatusWeb.Router do
   pipeline :api do
     plug(:accepts, ["json"])
     plug(CambiatusWeb.Plugs.GetToken)
+    plug(CambiatusWeb.Plugs.SetPhrase)
     plug(CambiatusWeb.Plugs.SetCurrentUser)
   end
 
@@ -30,6 +31,7 @@ defmodule CambiatusWeb.Router do
       "/graph",
       Absinthe.Plug,
       schema: CambiatusWeb.Schema,
+      before_send: {CambiatusWeb.BeforeSend, :absinthe_before_send},
       socket: CambiatusWeb.UserSocket
     )
 
@@ -37,6 +39,7 @@ defmodule CambiatusWeb.Router do
       "/graphiql",
       Absinthe.Plug.GraphiQL,
       schema: CambiatusWeb.Schema,
+      before_send: {CambiatusWeb.BeforeSend, :absinthe_before_send},
       socket: CambiatusWeb.UserSocket,
       interface: :playground
     )
@@ -54,4 +57,5 @@ defmodule CambiatusWeb.Router do
 
     post("/invite", InviteController, :invite)
   end
+
 end
