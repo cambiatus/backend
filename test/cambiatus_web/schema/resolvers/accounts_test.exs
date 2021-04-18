@@ -3,13 +3,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   This module integration tests to for resolvers that work with the accounts context
   """
   use Cambiatus.ApiCase
+  import Plug.Test
 
   alias Cambiatus.{
     Accounts.User,
     Commune.Transfer,
     Auth.Ecdsa,
-    Auth,
-    Auth.UserToken
+    Auth
   }
 
   @eos_account %{
@@ -156,7 +156,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   describe "Accounts Auth" do
     test "valid sign" do
       assert Repo.aggregate(User, :count, :account) == 0
-      user = insert(:user, account: @eos_account.name)
+      _user = insert(:user, account: @eos_account.name)
       conn = build_conn()
 
       account_variables = %{
@@ -165,32 +165,30 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       auth_session_query = """
       query($account: String!){
-        genAuth(account: $account) {
-          phrase
-          token
-        }
+        genAuth(account: $account)
       }
       """
 
       %{
         "data" => %{
-          "genAuth" => auth_data
+          "genAuth" => phrase
         }
       } =
         conn
         |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
-      {:ok, %{"signature" => signature}} = Ecdsa.sign(auth_data["phrase"], @eos_account.priv_key)
+      conn = conn |> init_test_session(%{}) |> fetch_session() |> put_session(:phrase, phrase)
+
+      {:ok, %{"signature" => signature}} = Ecdsa.sign(phrase, @eos_account.priv_key)
 
       signature_variables = %{
-        "account" => @eos_account.name,
         "signature" => signature
       }
 
       sign_in_query = """
-      mutation($account: String!, $signature: String!) {
-        signInV2(account: $account, signature: $signature) {
+      mutation($signature: String!) {
+        signInV2(signature: $signature) {
           user {
             account
           }
@@ -203,21 +201,18 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
           "signInV2" => user_data
         }
       } =
-        build_conn()
-        |> add_token(auth_data["token"])
+        conn
         |> post("/api/graph", query: sign_in_query, variables: signature_variables)
         |> json_response(200)
 
       assert user_data["user"]["account"] == @eos_account.name
 
-      assert_raise Ecto.NoResultsError, fn ->
-        Auth.get_user_token(%{account: @eos_account.name, filter: :auth})
-      end
+      assert Auth.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
     end
 
     test "invalid sign" do
       assert Repo.aggregate(User, :count, :account) == 0
-      user = insert(:user, account: @eos_account.name)
+      _user = insert(:user, account: @eos_account.name)
       conn = build_conn()
 
       account_variables = %{
@@ -226,29 +221,26 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       auth_session_query = """
       query($account: String!){
-        genAuth(account: $account) {
-          phrase
-          token
-        }
+        genAuth(account: $account)
       }
       """
 
       %{
         "data" => %{
-          "genAuth" => auth_data
+          "genAuth" => phrase
         }
       } =
         conn
         |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
-      {:ok, %{"signature" => signature}} = Ecdsa.sign_with_random(auth_data["phrase"])
+      {:ok, %{"signature" => signature}} = Ecdsa.sign_with_random(phrase)
 
-      assert Ecdsa.verify_signature(@eos_account.name, signature, auth_data["phrase"]) == false
+      assert Ecdsa.verify_signature(@eos_account.name, signature, phrase) == false
 
       assert Auth.get_user_token(%{account: @eos_account.name, filter: :auth})
-             |> Map.values()
-             |> Enum.member?(@eos_account.name) == true
+            |> Map.values()
+            |> Enum.member?(@eos_account.name) == true
     end
   end
 

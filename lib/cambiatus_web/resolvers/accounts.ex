@@ -40,11 +40,11 @@ defmodule CambiatusWeb.Resolvers.Accounts do
 
   def get_auth_session(_, %{account: account}, _) do
     with %User{} = user <- Accounts.get_user(account),
-         {:ok, {phrase, token}} <- Auth.gen_auth_phrase(user) do
-      {:ok, %{phrase: phrase, token: token}}
+         {:ok, phrase} <- Auth.gen_auth_phrase(user) do
+      {:ok, phrase}
     else
       nil -> {:error, "Account not found"}
-      {:error, err} -> {:error, err}
+      err -> err
     end
   end
 
@@ -58,11 +58,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in(_, %{account: account, signature: signature}, %{context: context}) do
-    %{token: token} = context
+  def sign_in(_, %{signature: signature}, %{context: context}) do
+    phrase = context.phrase
 
-    with {:ok, _token_data} <- Auth.verify_session_token(account, token),
-         {:ok, user} <- Auth.verify_signature(account, signature) do
+    with {:ok, {user, token}} <- Auth.verify_signature(phrase, signature) do
       {:ok, %{user: user, token: token}}
     else
       error -> error
@@ -100,7 +99,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     with {1, nil} <- Auth.delete_user_token(%{account: user.account, filter: :session}) do
       {:ok, "Logged out"}
     else
-      _error -> {:ok, "Unable to sign out"}
+      _error -> {:error, "Unable to sign out"}
     end
   end
 

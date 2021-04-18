@@ -9,7 +9,8 @@ defmodule Cambiatus.Auth.Ecdsa do
       |> EosjsAuthWrapper.get_account_info()
       |> get_pub_key()
 
-    EosjsAuthWrapper.verify(signature, phrase, pub_key)
+    signature
+    |> EosjsAuthWrapper.verify(phrase, pub_key)
     |> case do
       {:ok, result} -> result
       {:error, _} -> false
