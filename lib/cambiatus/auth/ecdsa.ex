@@ -24,6 +24,7 @@ defmodule Cambiatus.Auth.Ecdsa do
     EosjsAuthWrapper.gen_rand_signature(phrase)
   end
 
+  defp get_pub_key({:ok, %{"error" => err}}), do: {:error, err}
   defp get_pub_key(account) do
     account
     |> case do
