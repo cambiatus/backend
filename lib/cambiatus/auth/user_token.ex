@@ -15,8 +15,8 @@ defmodule Cambiatus.Auth.UserToken do
     timestamps(updated_at: false)
   end
 
-  @required_fields ~w(token context)a
-  @optional_fields ~w(phrase)a
+  @required_fields ~w(context)a
+  @optional_fields ~w(phrase token)a
   @doc false
   def changeset(auth_token, attrs, user) do
     auth_token

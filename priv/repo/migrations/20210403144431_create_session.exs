@@ -13,7 +13,7 @@ defmodule Cambiatus.Repo.Migrations.CreateSession do
       )
 
       add(:phrase, :string)
-      add(:token, :binary, null: false)
+      add(:token, :binary)
       add(:context, :context_type, null: false)
 
       timestamps(updated_at: false)
