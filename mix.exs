@@ -69,8 +69,8 @@ defmodule Cambiatus.Mixfile do
       {:plug_cowboy, "~> 2.3"},
 
       # AWS Packages
-      {:ex_aws, "~> 2.1"},
-      {:ex_aws_s3, "~> 2.0"},
+      {:ex_aws, "~> 2.1.9"},
+      {:ex_aws_s3, "~> 2.1"},
 
       # Push Notification Packages
       {:web_push_encryption,
