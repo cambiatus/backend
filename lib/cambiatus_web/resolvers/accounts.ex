@@ -64,7 +64,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     with {:ok, {user, token}} <- Auth.verify_signature(phrase, signature) do
       {:ok, %{user: user, token: token}}
     else
-      error -> error
+      {:error, _details} = error -> error
     end
   end
 
