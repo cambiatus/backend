@@ -5,19 +5,6 @@ defmodule Cambiatus.Auth.Ecdsa do
   alias EosjsAuthWrapper, as: EosWrap
 
   def verify_signature(account, signature, phrase) do
-    # account
-    # |> EosWrap.get_account_info()
-    # |> get_pub_key()
-    # |> case do
-    #   {:ok, pub_key} ->
-    #     signature
-    #     |> EosWrap.verify(phrase, pub_key)
-    #     |> case do
-    #       {:ok, result} -> result
-    #       {:error, _} -> false
-    #     end
-    #   err -> err
-    # end
     with account <- EosWrap.get_account_info(account),
          {:ok, pub_key} <- get_pub_key(account),
          {:ok, result} <- EosWrap.verify(signature, phrase, pub_key) do
@@ -25,7 +12,6 @@ defmodule Cambiatus.Auth.Ecdsa do
     else
       {:error, _details} = error -> error
     end
-
   end
 
   def sign(signature, priv_key) do
