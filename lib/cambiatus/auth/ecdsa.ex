@@ -2,39 +2,51 @@ defmodule Cambiatus.Auth.Ecdsa do
   @moduledoc """
   This module is a wrapper for eosjs-ecc utilizing NIF
   """
+  alias EosjsAuthWrapper, as: EosWrap
 
   def verify_signature(account, signature, phrase) do
-    pub_key =
-      account
-      |> EosjsAuthWrapper.get_account_info()
-      |> get_pub_key()
-
-    signature
-    |> EosjsAuthWrapper.verify(phrase, pub_key)
-    |> case do
-      {:ok, result} -> result
-      {:error, _} -> false
+    # account
+    # |> EosWrap.get_account_info()
+    # |> get_pub_key()
+    # |> case do
+    #   {:ok, pub_key} ->
+    #     signature
+    #     |> EosWrap.verify(phrase, pub_key)
+    #     |> case do
+    #       {:ok, result} -> result
+    #       {:error, _} -> false
+    #     end
+    #   err -> err
+    # end
+    with account <- EosWrap.get_account_info(account),
+         {:ok, pub_key} <- get_pub_key(account),
+         {:ok, result} <- EosWrap.verify(signature, phrase, pub_key) do
+          result
+    else
+      {:error, _details} = error -> error
     end
+
   end
 
   def sign(signature, priv_key) do
-    EosjsAuthWrapper.sign(signature, priv_key)
+    EosWrap.sign(signature, priv_key)
   end
 
   def sign_with_random(phrase) do
-    EosjsAuthWrapper.gen_rand_signature(phrase)
+    EosWrap.gen_rand_signature(phrase)
   end
 
-  defp get_pub_key({:ok, %{"error" => err}}), do: {:error, err}
-  defp get_pub_key(account) do
+  def get_pub_key({:ok, %{"error" => err}}), do: {:error, err}
+  def get_pub_key(account) do
     account
     |> case do
       {:ok, %{"ok" => account_info}} ->
-        account_info
+        pub_key = account_info
         |> get_in(["permissions", Access.at(0), "required_auth", "keys", Access.at(0), "key"])
 
-      {:error, _} ->
-        nil
+        {:ok , pub_key}
+
+      {:error, _} -> {:error, "No public key found"}
     end
   end
 end
