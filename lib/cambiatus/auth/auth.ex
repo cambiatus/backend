@@ -65,7 +65,7 @@ defmodule Cambiatus.Auth do
 
   def create_session(user), do: Session.create_session(user)
 
-  def delete_user_token(args),do: Session.delete_user_token(args)
+  def delete_user_token(args), do: Session.delete_user_token(args)
 
   def netlink({:ok, user}, invitation_id) do
     with {:ok, invitation} <- Auth.get_invitation(invitation_id),

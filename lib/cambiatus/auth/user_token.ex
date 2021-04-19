@@ -16,7 +16,9 @@ defmodule Cambiatus.Auth.UserToken do
   end
 
   @required_fields ~w(context)a
+
   @optional_fields ~w(phrase token)a
+
   @doc false
   def changeset(auth_token, attrs, user) do
     auth_token

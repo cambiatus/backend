@@ -134,7 +134,6 @@ defmodule Cambiatus.Auth.Session do
     from("user_tokens",
       where: [context: "session", user_id: ^account]
     )
-    |> IO.inspect(label: "RESULT")
     |> Repo.delete_all()
   end
 
