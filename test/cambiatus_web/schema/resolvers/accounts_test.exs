@@ -207,7 +207,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       assert user_data["user"]["account"] == @eos_account.name
 
-      assert Auth.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
+      assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
     end
 
     test "invalid sign" do
@@ -238,7 +238,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       assert Ecdsa.verify_signature(@eos_account.name, signature, phrase) == false
 
-      assert Auth.get_user_token(%{account: @eos_account.name, filter: :auth})
+      assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth})
             |> Map.values()
             |> Enum.member?(@eos_account.name) == true
     end
