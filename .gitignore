@@ -24,6 +24,3 @@ bespiral-platform.iml
 .ssh-tunnel.sh
 
 .elixir_ls/
-.tool-versions
-nodejs_auth/node_modules
-nodejs_auth/dist
