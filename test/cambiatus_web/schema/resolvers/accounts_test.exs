@@ -156,6 +156,80 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   end
 
   describe "Accounts Auth" do
+    test "sign up" do
+      assert Repo.aggregate(User, :count, :account) == 0
+      conn = build_conn()
+
+      account_variables = {
+        "name": "nert",
+        "account": "nertnertt123",
+        "email": "test@gmail.com",
+        "publicKey": "EOS76BxcY69Kmt959YRRC8TdbnftZeMJHV6NSjvy6gJTyKwXZTYfE",
+        "password": "sdfasfdf",
+        "userType": "juridical"
+      }
+
+      sign_up_query = """
+      mutation(
+        $name: String!,
+        $account: String!,
+        $email: String!,
+        $publicKey: String!,
+        $password: String!,
+        $userType: String!) {
+        signUp(
+          name: $name,
+          account:$account,
+          email:$email,
+          publicKey: $publicKey,
+          password: $password,
+          userType: $userType) {
+          user {
+            name
+          }
+            token
+        }
+      }
+      """
+
+      %{
+        "data" => %{
+          "signUp" => signUp
+        }
+      } =
+        conn
+        |> get("/api/graph", query: sign_up_query, variables: account_variables)
+        |> json_response(200)
+
+
+      signature_variables = %{
+        "signature" => signature
+      }
+
+      sign_in_query = """
+      mutation($signature: String!) {
+        signInV2(signature: $signature) {
+          user {
+            account
+          }
+        }
+      }
+      """
+
+      %{
+        "data" => %{
+          "signInV2" => user_data
+        }
+      } =
+        conn
+        |> post("/api/graph", query: sign_in_query, variables: signature_variables)
+        |> json_response(200)
+
+      assert user_data["user"]["account"] == @eos_account.name
+
+      assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
+    end
+
     test "valid sign" do
       assert Repo.aggregate(User, :count, :account) == 0
       _user = insert(:user, account: @eos_account.name)
