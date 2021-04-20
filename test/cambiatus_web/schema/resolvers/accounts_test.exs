@@ -5,6 +5,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   use Cambiatus.ApiCase
   import Plug.Test
 
+  alias EosjsAuthWrapper, as: EosWrap
+
   alias Cambiatus.{
     Accounts.User,
     Commune.Transfer,
@@ -180,7 +182,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       conn = conn |> init_test_session(%{}) |> fetch_session() |> put_session(:phrase, phrase)
 
-      {:ok, %{"signature" => signature}} = Ecdsa.sign(phrase, @eos_account.priv_key)
+      {:ok, %{"signature" => signature}} = EosWrap.sign(phrase, @eos_account.priv_key)
 
       signature_variables = %{
         "signature" => signature
@@ -234,13 +236,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
-      {:ok, %{"signature" => signature}} = Ecdsa.sign_with_random(phrase)
+      {:ok, %{"signature" => signature}} = EosWrap.sign_with_random(phrase)
 
       assert Ecdsa.verify_signature(@eos_account.name, signature, phrase) == false
 
       assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth})
-            |> Map.values()
-            |> Enum.member?(@eos_account.name) == true
+             |> Map.values()
+             |> Enum.member?(@eos_account.name) == true
     end
   end
 
