@@ -28,14 +28,11 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Read .tool-versions
-        uses: marocchino/tool-versions-action@v1
-        id: versions
       - name: Set up Elixir
         uses: erlef/setup-elixir@v1
         with:
-          elixir-version: ${{steps.versions.outputs.elixir}}
-          otp-version: ${{steps.versions.outputs.erlang}}
+          elixir-version: '1.11.3'
+          otp-version: '23.2'
       - name: Restore dependencies cache
         uses: actions/cache@v2
         with:
