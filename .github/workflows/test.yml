@@ -35,7 +35,7 @@ jobs:
         uses: erlef/setup-elixir@v1
         with:
           elixir-version: ${{steps.versions.outputs.elixir}}
-          otp-version: ${{ steps.versions.outputs.erlang}}
+          otp-version: ${{steps.versions.outputs.erlang}}
       - name: Restore dependencies cache
         uses: actions/cache@v2
         with:
@@ -53,7 +53,5 @@ jobs:
         run: mix compile --warnings-as-errors --all-warnings
       - name: Run tests
         run: mix test
-      - name: Check Dialyzer
-        run: mix dialyzer
       - name: Check Credo Warnings
         run: mix credo --strict --only warning --ignore Consistency
