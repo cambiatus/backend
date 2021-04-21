@@ -45,16 +45,16 @@ defmodule CambiatusWeb.Resolvers.Notifications do
 
       %{type: "sale_history"} ->
         case Shop.get_order(data.id) do
-            nil ->
-              {:error, "No Order record with the id: #{data.id} found"}
+          nil ->
+            {:error, "No Order record with the id: #{data.id} found"}
 
-            val ->
-              {:ok, val}
+          val ->
+            {:ok, val}
         end
 
-        _ ->
-          {:ok, nil}
-      end
+      _ ->
+        {:ok, nil}
+    end
   end
 
   @doc """

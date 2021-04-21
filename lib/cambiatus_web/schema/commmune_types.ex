@@ -372,8 +372,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   @desc "Accept id as a string or integer"
   scalar :custom_id, description: "Id" do
-    parse &id_parse(&1)
-    serialize &id_serialize(&1)
+    parse(&id_parse(&1))
+    serialize(&id_serialize(&1))
   end
 
   @desc "Claim possible status"

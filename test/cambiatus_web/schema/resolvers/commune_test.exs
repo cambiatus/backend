@@ -369,12 +369,11 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       assert(Repo.aggregate(Transfer, :count, :id) == 1)
 
-      variables =
-        %{
-          "input" => %{
-            "id" => transfer.id
-          }
+      variables = %{
+        "input" => %{
+          "id" => transfer.id
         }
+      }
 
       query = """
       query($input: TransferInput!){
@@ -390,8 +389,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res =
-        conn |> get("/api/graph", query: query, variables: variables)
+      res = conn |> get("/api/graph", query: query, variables: variables)
 
       %{
         "data" => %{

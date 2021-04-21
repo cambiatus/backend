@@ -93,7 +93,7 @@ defmodule Cambiatus.Accounts.Transfers do
     |> Commune.get_transfers_from(args)
   end
 
- @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
+  @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, %{direction: :outgoing} = args) do
     user
     |> query_outgoing_transfers
