@@ -34,13 +34,13 @@ config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.TestAdapter
 config :cambiatus, Cambiatus.Auth.InvitationId,
   salt: "VG6ti1uWCJ9xg6076bslKiV3HChW8F5arCwksiIiLctDXpPL+mAgJUoZ5HRd/Hag"
 
-# config :cambiatus, Cambiatus.Repo,
-#   database: "cambiatus_test",
-#   username: "postgres",
-#   password: "123123123",
-#   hostname: "localhost",
-#   port: "5432",
-#   pool: Ecto.Adapters.SQL.Sandbox
+config :cambiatus, Cambiatus.Repo,
+  database: "cambiatus_test",
+  username: "postgres",
+  password: "postgres",
+  hostname: "localhost",
+  port: "5432",
+  pool: Ecto.Adapters.SQL.Sandbox
 
 config :cambiatus, Cambiatus.Eos, cambiatus_account: "cambiatus"
 
