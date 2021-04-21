@@ -11,13 +11,20 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     Accounts.User,
     Commune.Transfer,
     Auth.Ecdsa,
-    Auth
+    Auth,
+    Auth.SignUp,
+    Auth.Session
   }
 
   @eos_account %{
     priv_key: "5Jhua6LXYtwYS9jWSdYwEHVyfVG3MbitNWMELNBzFGhmdX1UHUy",
     pub_key: "EOS4yryLa548uFLFjbcDuBwRA86ChDLqBcGY68n9Gp4tyS6Uw9ffW",
     name: "nertnertn123"
+  }
+  @valid_params %{
+    public_key: "EOS7xQw4jGivKZYYbfLg4fPg9A7zDRvCfT3kGSuHdWWLDeN1pwcwB",
+    password: "sdfasfdf",
+    user_type: "natural"
   }
   describe "Accounts Resolver" do
     test "collects a user account given the account name" do
@@ -156,78 +163,65 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   end
 
   describe "Accounts Auth" do
-    test "sign up" do
-      assert Repo.aggregate(User, :count, :account) == 0
-      conn = build_conn()
+    test "valid sign up" do
+      _community = insert(:community, %{symbol: "BES"})
+      _invite_user = insert(:user, %{account: "cambiatustes"})
+      attrs = params_for(:user) |> Map.merge(@valid_params)
+      assert {:ok, %{user: user, token: token}} = SignUp.sign_up(attrs, :bypass_eos)
+    end
 
-      account_variables = {
-        "name": "nert",
-        "account": "nertnertt123",
-        "email": "test@gmail.com",
-        "publicKey": "EOS76BxcY69Kmt959YRRC8TdbnftZeMJHV6NSjvy6gJTyKwXZTYfE",
-        "password": "sdfasfdf",
-        "userType": "juridical"
+    test "sign up, update and signout" do
+      _community = insert(:community, %{symbol: "BES"})
+      _invite_user = insert(:user, %{account: "cambiatustes"})
+      attrs = params_for(:user) |> Map.merge(@valid_params)
+
+      assert {:ok, %{user: user, token: token}} = SignUp.sign_up(attrs, :bypass_eos)
+
+      conn = build_conn() |> put_req_header("authorization", "Bearer #{token}")
+
+      account_variables = %{
+        "input" => %{
+          "name" => "changed"
+        }
       }
 
-      sign_up_query = """
-      mutation(
-        $name: String!,
-        $account: String!,
-        $email: String!,
-        $publicKey: String!,
-        $password: String!,
-        $userType: String!) {
-        signUp(
-          name: $name,
-          account:$account,
-          email:$email,
-          publicKey: $publicKey,
-          password: $password,
-          userType: $userType) {
-          user {
-            name
-          }
-            token
+      update_query = """
+      mutation($input: UserUpdateInput!){
+        updateUser(input: $input){
+          name
         }
       }
       """
 
       %{
         "data" => %{
-          "signUp" => signUp
+          "updateUser" => updatedUser
         }
       } =
         conn
-        |> get("/api/graph", query: sign_up_query, variables: account_variables)
+        |> post("/api/graph", query: update_query, variables: account_variables)
         |> json_response(200)
 
+      assert account_variables["input"]["name"] == updatedUser["name"]
 
-      signature_variables = %{
-        "signature" => signature
-      }
-
-      sign_in_query = """
-      mutation($signature: String!) {
-        signInV2(signature: $signature) {
-          user {
-            account
-          }
-        }
+      signout_query = """
+      mutation {
+        signOut
       }
       """
 
-      %{
+
+      assert %{
         "data" => %{
-          "signInV2" => user_data
+          "signOut" => _logout_message
         }
       } =
         conn
-        |> post("/api/graph", query: sign_in_query, variables: signature_variables)
+        |> post("/api/graph", query: signout_query)
         |> json_response(200)
 
-      assert user_data["user"]["account"] == @eos_account.name
+      assert Session.get_user_token(%{account: user.account, filter: :session}) == nil
 
-      assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
     end
 
     test "valid sign" do
@@ -310,7 +304,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
-      {:ok, %{"signature" => signature}} = EosWrap.sign_with_random(phrase)
+      {:ok, %{"signature" => signature}} = EosWrap.sign(phrase, "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3")
 
       assert Ecdsa.verify_signature(@eos_account.name, signature, phrase) == false
 
