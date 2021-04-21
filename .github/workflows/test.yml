@@ -19,7 +19,7 @@ jobs:
       - name: Setup Elixir
         uses: actions/setup-elixir@v1
         with:
-          otp-version: '22.2'
+          otp-version: '23'
           elixir-version: '1.11.3'
 
       - name: Download dependencies
@@ -66,7 +66,7 @@ jobs:
       - name: Setup Elixir
         uses: actions/setup-elixir@v1
         with:
-          otp-version: '22.2'
+          otp-version: '23'
           elixir-version: '1.11.3'
 
       - name: Run all tests
@@ -90,7 +90,7 @@ jobs:
       - name: Setup Elixir
         uses: actions/setup-elixir@v1
         with:
-          otp-version: '22.2'
+          otp-version: '23'
           elixir-version: '1.11.3'
 
       - name: Lint project
