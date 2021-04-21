@@ -35,12 +35,12 @@ jobs:
         elixir-version: '1.11.3'
         otp-version: '23.0.3'
 
-    - name: Restore dependencies cache
-      uses: actions/cache@v2
+    - name: Retrieve PLT Cache
+      uses: actions/cache@v1
+      id: plt-cache
       with:
-        path: deps
-        key: ${{ "\{\{ runner.os }}-mix-${{ hashFiles('**/mix.lock') \}\}" }}
-        restore-keys: ${{ "\{\{ runner.os \}\}" }}-mix-
+        path: priv/plts
+        key: ${{ runner.os }}-${{ matrix.otp }}-${{ matrix.elixir }}-plts-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
 
     - name: Install dependencies
       if: steps.mix-cache.outputs.cache-hit != 'true'
