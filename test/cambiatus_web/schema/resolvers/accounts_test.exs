@@ -210,6 +210,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
       """
 
+      assert Session.get_user_token(%{account: user.account, filter: :session}) != nil
 
       assert %{
         "data" => %{
