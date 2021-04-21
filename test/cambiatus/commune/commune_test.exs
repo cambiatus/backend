@@ -73,7 +73,7 @@ defmodule Cambiatus.CommuneTest do
 
       assert Repo.aggregate(Action, :count, :id) == 1
 
-      assert {:ok, act} = Commune.get_action(action.id)
+      assert {:ok, _} = Commune.get_action(action.id)
     end
   end
 

@@ -12,9 +12,9 @@ defmodule Cambiatus.Eos do
   @callback cambiatus_community() :: binary
   @callback cambiatus_account() :: binary
 
-  @eosrpc_wallet Application.get_env(:cambiatus, :eosrpc_wallet)
-  @eosrpc_helper Application.get_env(:cambiatus, :eosrpc_helper)
-  @eosrpc_chain Application.get_env(:cambiatus, :eosrpc_chain)
+  @eosrpc_wallet Application.compile_env(:cambiatus, :eosrpc_wallet)
+  @eosrpc_helper Application.compile_env(:cambiatus, :eosrpc_helper)
+  @eosrpc_chain Application.compile_env(:cambiatus, :eosrpc_chain)
 
   require Logger
 

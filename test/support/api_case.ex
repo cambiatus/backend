@@ -13,11 +13,13 @@ defmodule Cambiatus.ApiCase do
   alias Ecto.Adapters.SQL.Sandbox
 
   use ExUnit.CaseTemplate
-  use Phoenix.ConnTest
+  import Plug.Conn
+  import Phoenix.ConnTest
 
   using do
     quote do
-      use Phoenix.ConnTest
+      import Plug.Conn
+      import Phoenix.ConnTest
       alias Cambiatus.Repo
 
       import Ecto

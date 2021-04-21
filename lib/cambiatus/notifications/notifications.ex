@@ -144,25 +144,26 @@ defmodule Cambiatus.Notifications do
   """
   @spec notify_claim_approved(integer()) :: {:ok, atom()} | {:error, term}
   def notify_claim_approved(claim_id) do
-    with {:ok, claim} <- Commune.get_claim(claim_id) do
-      loaded_claim =
-        claim
-        |> Repo.preload([:action, :claimer])
+    case Commune.get_claim(claim_id) do
+      {:ok, claim} ->
+        loaded_claim =
+          claim
+          |> Repo.preload([:action, :claimer])
 
-      _ =
-        notify(
-          %{
-            title: "Your claim has been approved",
-            body: loaded_claim.action.description,
-            type: :validation
-          },
-          loaded_claim.claimer
-        )
+        _ =
+          notify(
+            %{
+              title: "Your claim has been approved",
+              body: loaded_claim.action.description,
+              type: :validation
+            },
+            loaded_claim.claimer
+          )
 
-      {:ok, :notified}
-    else
-      v ->
-        {:error, v}
+        {:ok, :notified}
+
+      error ->
+        {:error, error}
     end
   end
 

@@ -234,6 +234,7 @@ defmodule Cambiatus.Commune do
 
   @doc """
   Provided with a profile this collects all transfers belong to the user
+  Given a community this collects all transfers belonging to the community
   """
   def get_transfers(%User{account: account}, pagination_args) do
     Transfer
@@ -241,10 +242,6 @@ defmodule Cambiatus.Commune do
     |> get_transfers_from(pagination_args)
   end
 
-  @doc """
-  Given a community this collects all transfers belonging to the community
-  """
-  @spec get_transfers(map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%Community{symbol: symbol}, pagination_args) do
     Transfer
     |> where([t], t.community_id == ^symbol)
@@ -291,9 +288,10 @@ defmodule Cambiatus.Commune do
   """
   @spec get_community(String.t()) :: {:ok, term()} | {:error, term()}
   def get_community(sym) do
-    with nil <- Repo.get_by(Community, symbol: sym) do
-      {:error, "No community exists with the symbol: #{sym}"}
-    else
+    case Repo.get_by(Community, symbol: sym) do
+      nil ->
+        {:error, "No community exists with the symbol: #{sym}"}
+
       val ->
         {:ok, val}
     end
@@ -461,7 +459,7 @@ defmodule Cambiatus.Commune do
   end
 
   @doc """
-  Returns how many transfers a user has done
+  Get transfer count, depending on a community or an user
   """
   def get_transfers_count(%User{account: account}) do
     query =
@@ -479,9 +477,6 @@ defmodule Cambiatus.Commune do
     end
   end
 
-  @doc """
-  Returns how many transfers has happened on a community
-  """
   def get_transfers_count(%Community{symbol: id}) do
     query =
       from(t in Cambiatus.Commune.Transfer,

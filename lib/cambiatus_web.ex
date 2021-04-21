@@ -21,7 +21,6 @@ defmodule CambiatusWeb do
     quote do
       use Phoenix.Controller, namespace: CambiatusWeb
       import Plug.Conn
-      import CambiatusWeb.Router.Helpers
       import CambiatusWeb.Gettext
     end
   end
@@ -35,7 +34,6 @@ defmodule CambiatusWeb do
       # Import convenience functions from controllers
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
 
-      import CambiatusWeb.Router.Helpers
       import CambiatusWeb.ErrorHelpers
       import CambiatusWeb.Gettext
     end

@@ -14,14 +14,6 @@ defmodule Cambiatus.Validator do
 
   iex> is_email?(false)
   false
-  """
-  @spec is_email?(term) :: Boolean.t()
-  def is_email?(email) when not is_binary(email), do: false
-
-  @doc """
-  Validates email
-
-  ## Examples
 
   iex> is_email?("user@email.com")
   true
@@ -32,6 +24,9 @@ defmodule Cambiatus.Validator do
   iex> is_email?("user@email")
   false
   """
+  @spec is_email?(term) :: Boolean.t()
+  def is_email?(email) when not is_binary(email), do: false
+
   def is_email?(email) when is_binary(email) do
     pattern = ~r/^[A-Za-z0-9._%+-+']+@[A-Za-z0-9.-]+\.[A-Za-z]+$/
     Regex.match?(pattern, email)

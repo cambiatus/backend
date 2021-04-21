@@ -6,7 +6,7 @@ defmodule Cambiatus.Auth.SignUp do
   alias Cambiatus.{Accounts, Eos, Kyc, Accounts.User, Auth.Invitation, Auth}
   alias Cambiatus.Kyc.{Address, KycData}
 
-  @contract Application.get_env(:cambiatus, :contract)
+  @contract Application.compile_env(:cambiatus, :contract)
 
   @doc """
   Signs up a new user.

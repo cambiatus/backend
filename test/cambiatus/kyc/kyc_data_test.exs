@@ -54,7 +54,10 @@ defmodule Cambiatus.KycDataTest do
 
     changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
-    assert(Map.get(changeset, :errors) == [document_type: {"Document type entry is not valid", []}])
+
+    assert(
+      Map.get(changeset, :errors) == [document_type: {"Document type entry is not valid", []}]
+    )
   end
 
   test "changeset is invalid with regular user, using `cedula de identidade`, with invalid document" do
@@ -71,7 +74,12 @@ defmodule Cambiatus.KycDataTest do
 
     changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
-    assert(Map.get(changeset, :errors) == [document: {"Document entry is not valid for cedula_de_identidad", []}])
+
+    assert(
+      Map.get(changeset, :errors) == [
+        document: {"Document entry is not valid for cedula_de_identidad", []}
+      ]
+    )
   end
 
   test "changeset is invalid with regular user, using `dimex`, with invalid document" do
@@ -88,7 +96,10 @@ defmodule Cambiatus.KycDataTest do
 
     changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
-    assert(Map.get(changeset, :errors) == [document: {"Document entry is not valid for dimex", []}])
+
+    assert(
+      Map.get(changeset, :errors) == [document: {"Document entry is not valid for dimex", []}]
+    )
   end
 
   test "changeset is invalid with regular user, using `nite`, with invalid document" do
@@ -105,7 +116,10 @@ defmodule Cambiatus.KycDataTest do
 
     changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
-    assert(Map.get(changeset, :errors) == [document: {"Document entry is not valid for nite", []}])
+
+    assert(
+      Map.get(changeset, :errors) == [document: {"Document entry is not valid for nite", []}]
+    )
   end
 
   test "changeset is invalid with company user, using `mipyme`, with invalid document" do
@@ -122,7 +136,10 @@ defmodule Cambiatus.KycDataTest do
 
     changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
-    assert(Map.get(changeset, :errors) == [document: {"Document entry is not valid for mipyme", []}])
+
+    assert(
+      Map.get(changeset, :errors) == [document: {"Document entry is not valid for mipyme", []}]
+    )
   end
 
   test "changeset is invalid with company user, using `gran empresa`, with invalid document" do
@@ -139,6 +156,11 @@ defmodule Cambiatus.KycDataTest do
 
     changeset = KycData.changeset(%KycData{}, data)
     refute(changeset.valid?)
-    assert(Map.get(changeset, :errors) == [document: {"Document entry is not valid for gran_empresa", []}])
+
+    assert(
+      Map.get(changeset, :errors) == [
+        document: {"Document entry is not valid for gran_empresa", []}
+      ]
+    )
   end
 end

@@ -1,97 +1,47 @@
-on: push
+name: Elixir CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+
+    name: Build and test
+    runs-on: ubuntu-latest
+
+    services:
+      db:
+        image: postgres
+        ports: ['5432:5432']
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            deps
-            _build
-          key: ${{ runner.os }}-mix-${{ hashFiles(format('{0}{1}', github.workspace, '/mix.lock')) }}
-          restore-keys: |
-            ${{ runner.os }}-mix-
-
-      - name: Setup Elixir
-        uses: actions/setup-elixir@v1
-        with:
-          otp-version: '22.2'
-          elixir-version: '1.8.2'
-
-      - name: Download dependencies
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: mix deps.get
-
-      - name: Compile project
-        run: mix compile
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v1
-        with:
-          name: _build
-          path: _build/
-
-      - name: Upload dependencies
-        uses: actions/upload-artifact@v1
-        with:
-          name: deps
-          path: deps
-  test:
-    runs-on: ubuntu-18.04
-    needs: build
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup postgres database
-        uses: harmon758/postgresql-action@v1
-        with:
-          postgresql db: 'cambiatus_test'
-          postgresql user: 'postgres'
-          postgresql password: '123123123'
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: _build
-
-      - name: Download dependencies
-        uses: actions/download-artifact@v1
-        with:
-          name: deps
-
-      - name: Setup Elixir
-        uses: actions/setup-elixir@v1
-        with:
-          otp-version: '22.2'
-          elixir-version: '1.8.2'
-
-      - name: Run all tests
-        run: mix test
-  lint:
-    runs-on: ubuntu-18.04
-    needs: build
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v1
-        with:
-          name: _build
-
-      - name: Download dependencies
-        uses: actions/download-artifact@v1
-        with:
-          name: deps
-
-      - name: Setup Elixir
-        uses: actions/setup-elixir@v1
-        with:
-          otp-version: '22.2'
-          elixir-version: '1.8.2'
-
-      - name: Lint project
-        run: mix credo
+    - uses: actions/checkout@v2
+    - name: Set up Elixir
+      uses: erlef/setup-elixir@885971a72ed1f9240973bd92ab57af8c1aa68f24
+      with:
+        elixir-version: '1.11.3'
+        otp-version: '23'
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+    - name: Install dependencies
+      run: mix deps.get
+    - name: Check Formatting
+      run: mix format --check-formatted    
+    - name: Check Credo Warnings
+      run: mix credo --strict --only warning
+    - name: Run tests
+      run: mix test

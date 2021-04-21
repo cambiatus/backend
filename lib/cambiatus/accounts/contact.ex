@@ -58,7 +58,9 @@ defmodule Cambiatus.Accounts.Contact do
     if ExPhoneNumber.is_possible_number?(phone_number) do
       changeset
     else
-      add_error(changeset, :external_id, "invalid phone number", additional: "parsed number #{phone_number.national_number}")
+      add_error(changeset, :external_id, "invalid phone number",
+        additional: "parsed number #{phone_number.national_number}"
+      )
     end
   end
 end

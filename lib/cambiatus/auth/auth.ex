@@ -13,7 +13,8 @@ defmodule Cambiatus.Auth do
     Repo
   }
 
-  @contract Application.get_env(:cambiatus, :contract)
+  @contract Application.compile_env(:cambiatus, :contract)
+
   # @doc """
   # Login logic for Cambiatus.
 
@@ -171,10 +172,10 @@ defmodule Cambiatus.Auth do
       {:error, "User don't belong to the community"}
     else
       # Check if there are existing invitations already
-      with %Invitation{} = invitation <-
-             Repo.get_by(Invitation, community_id: cmm_id, creator_id: c_id) do
-        {:ok, invitation}
-      else
+      case Repo.get_by(Invitation, community_id: cmm_id, creator_id: c_id) do
+        %Invitation{} = invitation ->
+          {:ok, invitation}
+
         nil ->
           %Invitation{}
           |> Invitation.changeset(attrs)

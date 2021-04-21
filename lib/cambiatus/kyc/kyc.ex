@@ -68,7 +68,7 @@ defmodule Cambiatus.Kyc do
   or inserts new Address if the user hasn't filled it yet.
   """
   @spec upsert_address(User.t(), map()) :: {:ok, Address.t()} | {:error, binary()}
-  def upsert_address(%{account: account},  params) do
+  def upsert_address(%{account: account}, params) do
     address_entry =
       case Repo.get_by(Address, account_id: account) do
         nil -> %Address{account_id: account}

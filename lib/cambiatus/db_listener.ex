@@ -64,11 +64,6 @@ defmodule Cambiatus.DbListener do
   @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info(details, state)
 
-  @doc """
-  Callback to handle notification events from the database
-  Whenever a notification is received we out to run publish an to a GraphQL subscription so actors
-  that are listening can take the correct actions
-  """
   def handle_info({:notification, _pid, _ref, "sales_changed", payload}, _state) do
     with {:ok, data} <- Jason.decode(payload, keys: :atoms),
          :ok <- Absinthe.Subscription.publish(Endpoint, data.record, sales_operation: "*") do
@@ -79,9 +74,6 @@ defmodule Cambiatus.DbListener do
     end
   end
 
-  @doc """
-  Callback to handle transfer activity notifications from the database
-  """
   def handle_info({:notification, _, _, "transfers_changed", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          {:ok, record} <- format_record(Transfer, record),
@@ -124,38 +116,31 @@ defmodule Cambiatus.DbListener do
     end
   end
 
-  @doc """
-  Callback to handle sale_history table activity.
-  It will trigger database notifications handled by this function
-  """
   def handle_info({:notification, _pid, _ref, "sale_history_changed", payload}, _state) do
-    with {:ok, data} <- Jason.decode(payload, keys: :atoms) do
-      # After the notification has been sent, save it on the notification history table
-      %{
-        recipient_id: data.record.to_id,
-        type: "sale_history",
-        payload: payload
-      }
-      |> Notifications.create_notification_history()
+    case Jason.decode(payload, keys: :atoms) do
+      {:ok, data} ->
+        # After the notification has been sent, save it on the notification history table
+        %{
+          recipient_id: data.record.to_id,
+          type: "sale_history",
+          payload: payload
+        }
+        |> Notifications.create_notification_history()
 
-      %{
-        recipient_id: data.record.from_id,
-        type: "sale_history",
-        payload: payload
-      }
-      |> Notifications.create_notification_history()
+        %{
+          recipient_id: data.record.from_id,
+          type: "sale_history",
+          payload: payload
+        }
+        |> Notifications.create_notification_history()
 
-      {:noreply, :event_handled}
-    else
+        {:noreply, :event_handled}
+
       err ->
         log_sentry_error(err)
     end
   end
 
-  @doc """
-  Call back to handle claims table additions, This call back will decode the claim data
-  collect the claim's action and hand that over to the Notifications context to send notifications
-  """
   def handle_info({:notification, _, _, "claims_changed", payload}, _state) do
     with {:ok, %{record: record, operation: "INSERT"}} <- Jason.decode(payload, keys: :atoms),
          {:ok, action} <- Commune.get_action(record.action_id),
@@ -172,10 +157,6 @@ defmodule Cambiatus.DbListener do
     end
   end
 
-  @doc """
-  Callback to handle check table additions and updates. This will decode the check data
-  collect the check's claim and hand that over to the notifications context to send out notifications
-  """
   def handle_info({:notification, _, _, "check_added", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          {:ok, claim} <- Commune.get_claim(record.claim_id),
@@ -187,10 +168,6 @@ defmodule Cambiatus.DbListener do
     end
   end
 
-  @doc """
-  Callback to publish a GraphQL subscription whenever a new community is added to the database
-  will publish to the community's symbol topic
-  """
   def handle_info({:notification, _pid, _ref, "community_created", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          :ok <- Absinthe.Subscription.publish(Endpoint, record, newcommunity: record.symbol) do
@@ -201,10 +178,6 @@ defmodule Cambiatus.DbListener do
     end
   end
 
-  @doc """
-  Callback to publish GraphQL subscription whenever a new notificaiton is added to the database
-  will publish to the persons notifications
-  """
   def handle_info({:notification, _pid, _ref, "notifications_updated", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
          :ok <- Notifications.update_unread(record.recipient_id) do
@@ -215,9 +188,6 @@ defmodule Cambiatus.DbListener do
     end
   end
 
-  @doc """
-  Callback to handle broacasting of mint information whenever a new issue of a currency occurs
-  """
   def handle_info({:notification, _pid, _ref, "mints_modified", payload}, _state) do
     with {:ok, %{record: mint}} <- Jason.decode(payload, keys: :atoms),
          {:ok, :notified} <- Notifications.notify_mintee(mint) do
@@ -236,7 +206,6 @@ defmodule Cambiatus.DbListener do
     end
   end
 
-  @doc false
   @spec log_sentry_error(term) :: Sentry.send_result()
   def log_sentry_error(error) do
     case error do
