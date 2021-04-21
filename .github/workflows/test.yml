@@ -46,9 +46,9 @@ jobs:
         run: mix deps.get
       - name: Check Formatting
         run: mix format --check-formatted
-      - name: Check Compile Warnings
-        run: mix compile --warnings-as-errors --all-warnings
+      # - name: Check Compile Warnings
+        # run: mix compile --warnings-as-errors --all-warnings
       - name: Run tests
         run: mix test
       - name: Check Credo Warnings
-        run: mix credo --strict --only warning --ignore Consistency
+        run: mix credo --strict --only warning

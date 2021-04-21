@@ -2,6 +2,7 @@
 
 # Backend :wave:
 
+[![Elixir CI](https://github.com/cambiatus/backend/actions/workflows/test.yml/badge.svg)](https://github.com/cambiatus/backend/actions/workflows/test.yml)
 
 ### New Organizations for the planet regeneration. Clear Objectives. Impactful Collaboration.
 
@@ -150,7 +151,3 @@ Here one way of how to not commit changes related to your local database connect
 - Here is our [Smart Contract (EOS)](https://github.com/cambiatus/contracts) repo. We use EOS which is an awesome blockchain and uses C++ as language to play with!
 
 - Our [wiki](https://cambiatus.github.io/) page has several development resources to help you during your collaboration.
-
-## License
-
-- TBD
