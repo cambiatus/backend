@@ -26,14 +26,18 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
+    strategy:
+      matrix:
+        elixir: [1.11.3]
+        otp: [23]
+
     steps:
     - uses: actions/checkout@v2
-
-    - name: Set up Elixir
+    - name: Setup elixir
       uses: actions/setup-elixir@v1
       with:
-        elixir-version: '1.11.3'
-        otp-version: '23.0.3'
+        elixir-version: ${{ matrix.elixir }} # Define the elixir version [required]
+        otp-version: ${{ matrix.otp }} # Define the OTP version [required]      
 
     - name: Retrieve PLT Cache
       uses: actions/cache@v1
