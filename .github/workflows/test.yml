@@ -6,12 +6,10 @@ on:
   pull_request:
     branches: [ master ]
 
-env:
-  MIX_ENV: test
-
 jobs:
-  test:
-    name: Build and Test
+  build:
+
+    name: Build and test
     runs-on: ubuntu-latest
 
     services:
@@ -27,28 +25,23 @@ jobs:
           --health-retries 5
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Set up Elixir
-        uses: erlef/setup-elixir@v1
-        with:
-          elixir-version: '1.11.3'
-          otp-version: '23.2'
-      - name: Restore dependencies cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            deps
-            _build
-            priv/plts
-          key: ${{ runner.os }}-mix-v1-${{ hashFiles('**/mix.lock') }}
-          restore-keys: ${{ runner.os }}-mix-v1-
-      - name: Install dependencies
-        run: mix deps.get
-      - name: Check Formatting
-        run: mix format --check-formatted
-      # - name: Check Compile Warnings
-        # run: mix compile --warnings-as-errors --all-warnings
-      - name: Run tests
-        run: mix test
-      - name: Check Credo Warnings
-        run: mix credo --strict --only warning
+    - uses: actions/checkout@v2
+    - name: Set up Elixir
+      uses: erlef/setup-elixir@885971a72ed1f9240973bd92ab57af8c1aa68f24
+      with:
+        elixir-version: '1.11.3'
+        otp-version: '23'
+    - name: Restore dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: deps
+        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
+        restore-keys: ${{ runner.os }}-mix-
+    - name: Install dependencies
+      run: mix deps.get
+    - name: Check Formatting
+      run: mix format --check-formatted    
+    - name: Check Credo Warnings
+      run: mix credo --strict --only warning
+    - name: Run tests
+      run: mix test
