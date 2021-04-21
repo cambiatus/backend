@@ -37,6 +37,26 @@ defmodule Cambiatus.Auth.SignUp do
     end
   end
 
+  def sign_up(params, :bypass_eos) do
+    params
+    |> validate_all()
+    |> create_user()
+    |> create_kyc()
+    |> invite_user()
+    |> case do
+      {:error, _} = error ->
+        error
+
+      {:error, _, _} = error ->
+        error
+
+      _result ->
+        user = Accounts.get_user(params.account)
+        session_token = Auth.create_session(user)
+        {:ok, %{user: user, token: session_token}}
+    end
+  end
+
   @doc """
   Validates the given params. Depending on the structure do different validations
   """
