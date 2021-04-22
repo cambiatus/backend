@@ -164,4 +164,8 @@ defmodule CambiatusWeb.Resolvers.Commune do
       }) do
     Commune.complete_objective(current_user, id)
   end
+
+  def domain_available(_, %{domain: domain}, _) do
+    {:ok, %{exists: Commune.domain_available(domain)}}
+  end
 end

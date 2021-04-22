@@ -112,7 +112,6 @@ defmodule Cambiatus.Factory do
       supply: sequence(:supply, &"#{&1}.767"),
       max_supply: sequence(:max_supply, &"#{&1}.9809"),
       min_balance: sequence(:mix_balance, &"#{&1}.87"),
-      precision: 0,
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),

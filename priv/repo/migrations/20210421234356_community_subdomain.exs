@@ -5,7 +5,6 @@ defmodule Cambiatus.Repo.Migrations.CommunitySubdomain do
     alter table(:communities) do
       remove(:precision)
       add(:subdomain, :string)
-      # add(:subdomain, references(:subdomains, column: :name, type: :string, null: true))
     end
   end
 
