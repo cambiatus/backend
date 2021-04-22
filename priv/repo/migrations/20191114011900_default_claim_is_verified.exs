@@ -5,6 +5,5 @@ defmodule Cambiatus.Repo.Migrations.DefaultClaimIsVerified do
     alter table(:claims) do
       modify(:is_verified, :bool, default: false)
     end
-
   end
 end

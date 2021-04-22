@@ -5,11 +5,11 @@ defmodule Cambiatus.Repo.Migrations.RecreateMaterializedViewForSales do
   use Ecto.Migration
 
   def up do
-    execute """
+    execute("""
     DROP MATERIALIZED VIEW IF EXISTS available_sales;
-    """
+    """)
 
-    execute """
+    execute("""
     CREATE MATERIALIZED VIEW available_sales AS
       SELECT
         id,
@@ -27,12 +27,12 @@ defmodule Cambiatus.Repo.Migrations.RecreateMaterializedViewForSales do
         created_at
       FROM sales
       WHERE is_deleted = false
-    """
+    """)
   end
 
   def down do
-    execute """
+    execute("""
     DROP MATERIALIZED VIEW IF EXISTS available_sales;
-    """
+    """)
   end
 end

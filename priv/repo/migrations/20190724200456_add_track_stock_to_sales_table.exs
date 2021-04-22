@@ -6,7 +6,7 @@ defmodule Cambiatus.Repo.Migrations.AddTrackStockToSalesTable do
 
   def change do
     alter table(:sales) do
-      add :track_stock, :boolean, default: true, null: false
+      add(:track_stock, :boolean, default: true, null: false)
     end
   end
 end
