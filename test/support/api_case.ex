@@ -29,8 +29,9 @@ defmodule Cambiatus.ApiCase do
       @endpoint CambiatusWeb.Endpoint
 
       defp auth_user(conn, user) do
-        token = Auth.create_session(user)
+        token = Auth.create_session(user, "test")
         put_req_header(conn, "authorization", "Bearer #{token}")
+        |> put_req_header("user-agent", "Test agent")
       end
     end
   end

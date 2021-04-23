@@ -5,7 +5,10 @@ defmodule CambiatusWeb.InviteControllerTest do
   alias Cambiatus.Auth
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    updated_conn = conn
+                  |> put_req_header("accept", "application/json")
+                  |> put_req_header("user-agent", "Test agent")
+    {:ok, conn: updated_conn}
   end
 
   describe "Invitations" do
@@ -45,8 +48,8 @@ defmodule CambiatusWeb.InviteControllerTest do
       insert(:network, %{account: user, community: community})
 
       body = %{"community_id" => community.symbol, "creator_id" => user.account}
-      conn = post(conn, invite_path(conn, :invite), body)
-      assert %{"id" => first_id} = json_response(conn, 200)["data"]
+      first_conn = post(conn, invite_path(conn, :invite), body)
+      assert %{"id" => first_id} = json_response(first_conn, 200)["data"]
 
       # Second invite creation
       conn = post(conn, invite_path(conn, :invite), body)

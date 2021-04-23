@@ -1034,7 +1034,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
         }
       """
 
-      res = conn |> get("/api/graph", query: query)
+      res = conn |> put_req_header("user-agent", "Test agent") |> get("/api/graph", query: query)
       %{"data" => %{"invite" => found_invite}} = json_response(res, 200)
 
       assert(invite.creator_id == found_invite["creator"]["account"])

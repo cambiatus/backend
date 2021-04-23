@@ -16,16 +16,24 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     Auth.Session
   }
 
+
+  setup %{conn: conn} do
+    updated_conn = put_req_header(conn, "user-agent", "Test agent")
+    {:ok, conn: updated_conn}
+  end
+
   @eos_account %{
     priv_key: "5Jhua6LXYtwYS9jWSdYwEHVyfVG3MbitNWMELNBzFGhmdX1UHUy",
     pub_key: "EOS4yryLa548uFLFjbcDuBwRA86ChDLqBcGY68n9Gp4tyS6Uw9ffW",
     name: "nertnertn123"
   }
+
   @valid_params %{
     public_key: "EOS7xQw4jGivKZYYbfLg4fPg9A7zDRvCfT3kGSuHdWWLDeN1pwcwB",
     password: "sdfasfdf",
     user_type: "natural"
   }
+
   describe "Accounts Resolver" do
     test "collects a user account given the account name" do
       assert Repo.aggregate(User, :count, :account) == 0
@@ -170,14 +178,14 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert {:ok, %{user: user, token: token}} = SignUp.sign_up(attrs, :bypass_eos)
     end
 
-    test "sign up, update and signout" do
+    test "sign up, update and signout", %{conn: conn} do
       _community = insert(:community, %{symbol: "BES"})
       _invite_user = insert(:user, %{account: "cambiatustes"})
       attrs = params_for(:user) |> Map.merge(@valid_params)
 
       assert {:ok, %{user: user, token: token}} = SignUp.sign_up(attrs, :bypass_eos)
 
-      conn = build_conn() |> put_req_header("authorization", "Bearer #{token}")
+      conn = conn |> put_req_header("authorization", "Bearer #{token}")
 
       account_variables = %{
         "input" => %{
@@ -225,10 +233,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
     end
 
-    test "valid sign" do
+    test "valid sign", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       _user = insert(:user, account: @eos_account.name)
-      conn = build_conn()
 
       account_variables = %{
         "account" => @eos_account.name
@@ -273,6 +280,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         }
       } =
         conn
+        |> put_req_header("user-agent", "Test agent")
         |> post("/api/graph", query: sign_in_query, variables: signature_variables)
         |> json_response(200)
 
@@ -281,10 +289,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
     end
 
-    test "invalid sign" do
+    test "invalid sign", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       _user = insert(:user, account: @eos_account.name)
-      conn = build_conn()
 
       account_variables = %{
         "account" => @eos_account.name
