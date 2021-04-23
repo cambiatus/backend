@@ -289,6 +289,119 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
     end
 
+    test "multi user session", %{conn: conn} do
+      assert Repo.aggregate(User, :count, :account) == 0
+      _user = insert(:user, account: @eos_account.name)
+
+      account_variables = %{
+        "account" => @eos_account.name
+      }
+
+      auth_session_query = """
+      query($account: String!){
+        genAuth(account: $account)
+      }
+      """
+
+      %{
+        "data" => %{
+          "genAuth" => phrase
+        }
+      } =
+        conn
+        |> get("/api/graph", query: auth_session_query, variables: account_variables)
+        |> json_response(200)
+
+      conn = conn |> init_test_session(%{}) |> fetch_session() |> put_session(:phrase, phrase)
+
+      {:ok, %{"signature" => signature}} = EosWrap.sign(phrase, @eos_account.priv_key)
+
+      signature_variables = %{
+        "signature" => signature
+      }
+
+      sign_in_query = """
+      mutation($signature: String!) {
+        signInV2(signature: $signature) {
+          user {
+            account
+          }
+        }
+      }
+      """
+
+      %{
+        "data" => %{
+          "signInV2" => user_data
+        }
+      } =
+        conn
+        |> put_req_header("user-agent", "Test agent")
+        |> post("/api/graph", query: sign_in_query, variables: signature_variables)
+        |> json_response(200)
+
+      assert user_data["user"]["account"] == @eos_account.name
+
+      assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
+
+      conn = conn |> put_req_header("user-agent", "New browser")
+
+      account_variables = %{
+        "account" => @eos_account.name
+      }
+
+      auth_session_query = """
+      query($account: String!){
+        genAuth(account: $account)
+      }
+      """
+
+      %{
+        "data" => %{
+          "genAuth" => phrase
+        }
+      } =
+        conn
+        |> get("/api/graph", query: auth_session_query, variables: account_variables)
+        |> json_response(200)
+
+      conn = conn |> init_test_session(%{}) |> fetch_session() |> put_session(:phrase, phrase)
+
+      {:ok, %{"signature" => signature}} = EosWrap.sign(phrase, @eos_account.priv_key)
+
+      signature_variables = %{
+        "signature" => signature
+      }
+
+      sign_in_query = """
+      mutation($signature: String!) {
+        signInV2(signature: $signature) {
+          user {
+            account
+          }
+        }
+      }
+      """
+
+      %{
+        "data" => %{
+          "signInV2" => user_data
+        }
+      } =
+        conn
+        |> put_req_header("user-agent", "New browser")
+        |> post("/api/graph", query: sign_in_query, variables: signature_variables)
+        |> json_response(200)
+
+      assert user_data["user"]["account"] == @eos_account.name
+
+      num_session = %{account: @eos_account.name, filter: :session}
+                    |> Auth.Session.get_all_user_token()
+                    |> length()
+
+      assert num_session == 2
+    end
+
     test "invalid sign", %{conn: conn} do
       assert Repo.aggregate(User, :count, :account) == 0
       _user = insert(:user, account: @eos_account.name)
