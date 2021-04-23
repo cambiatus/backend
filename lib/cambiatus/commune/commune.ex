@@ -621,6 +621,6 @@ defmodule Cambiatus.Commune do
   end
 
   def domain_available(domain) do
-    Repo.get(Subdomain, domain) != nil
+    Repo.get_by(Subdomain, name: domain) != nil
   end
 end
