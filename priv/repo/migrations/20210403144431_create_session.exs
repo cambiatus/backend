@@ -14,11 +14,12 @@ defmodule Cambiatus.Repo.Migrations.CreateSession do
 
       add(:phrase, :string)
       add(:token, :binary)
+      add(:user_agent, :string)
       add(:context, :context_type, null: false)
 
       timestamps(updated_at: false)
     end
 
-    create(unique_index(:user_tokens, [:user_id, :context], name: :unique_context))
+    create(unique_index(:user_tokens, [:user_id, :context, :user_agent], name: :unique_context))
   end
 end
