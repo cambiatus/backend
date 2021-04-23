@@ -83,7 +83,7 @@ defmodule Cambiatus.Auth.Session do
   def create_session({:error, _} = err), do: err
 
   def create_session(user, user_agent) do
-    token = AuthToken.gen_token(%{account: user.account})
+    token = AuthToken.gen_token(%{account: user.account, user_agent: user_agent})
 
     %UserToken{}
     |> UserToken.changeset(%{token: token, context: "session", user_agent: user_agent}, user)
@@ -100,6 +100,14 @@ defmodule Cambiatus.Auth.Session do
       select: [:context, :user_id, :token]
     )
     |> Repo.one()
+  end
+
+  def get_all_user_token(%{account: account, filter: :session}) do
+    from("user_tokens",
+      where: [context: "session", user_id: ^account],
+      select: [:context, :user_id, :token]
+    )
+    |> Repo.all()
   end
 
   def get_user_token(%{token: token, filter: :session}) do
@@ -124,6 +132,13 @@ defmodule Cambiatus.Auth.Session do
       select: [:context, :user_id, :token, :phrase]
     )
     |> Repo.one()
+  end
+
+  def delete_user_token(%{token: token, filter: :session}) do
+    from("user_tokens",
+      where: [context: "session", token: ^token]
+    )
+    |> Repo.delete_all()
   end
 
   def delete_user_token(%{account: account, filter: :session}) do

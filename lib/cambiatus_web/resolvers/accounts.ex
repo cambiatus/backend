@@ -93,8 +93,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_out(_, _, %{context: %{current_user: user}}) do
-    with {1, nil} <- Auth.delete_user_token(%{account: user.account, filter: :session}) do
+  def sign_out(_, _, %{context: %{token: token}}) do
+    with {1, nil} <- Auth.delete_user_token(%{token: token, filter: :session}) do
       {:ok, "Logged out"}
     else
       _error -> {:error, "Unable to sign out"}
