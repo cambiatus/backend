@@ -38,9 +38,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def get_auth_session(_, %{account: account}, _) do
+  def get_auth_session(_, %{account: account}, %{context: %{user_agent: user_agent}}) do
+
     with %User{} = user <- Accounts.get_user(account),
-         {:ok, phrase} <- Auth.gen_auth_phrase(user) do
+         {:ok, phrase} <- Auth.gen_auth_phrase(user, user_agent) do
       {:ok, phrase}
     else
       nil -> {:error, "Account not found"}
@@ -58,10 +59,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in(_, %{signature: signature}, %{context: context}) do
-    phrase = context.phrase
-
-    with {:ok, {user, token}} <- Auth.verify_signature(phrase, signature) do
+  def sign_in(_, %{signature: signature}, %{context: %{phrase: phrase, user_agent: user_agent}}) do
+    with {:ok, {user, token}} <- Auth.verify_signature(phrase, signature, user_agent) do
       {:ok, %{user: user, token: token}}
     else
       {:error, _details} = error -> error
@@ -78,7 +77,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_up(_, args, _) do
+  def sign_up(_, args, %{context: %{user_agent: user_agent}}) do
     case SignUp.sign_up(args) do
       {:error, reason, details} ->
         Sentry.capture_message("Sign up failed", extra: %{error: reason, details: details})
@@ -89,14 +88,12 @@ defmodule CambiatusWeb.Resolvers.Accounts do
         {:error, message: "Couldn't create user", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
-        session_token = Auth.create_session(user)
+        session_token = Auth.create_session(user, user_agent)
         {:ok, %{user: user, token: session_token}}
     end
   end
 
-  def sign_out(_, _, %{context: context}) do
-    %{current_user: user} = context
-
+  def sign_out(_, _, %{context: %{current_user: user}}) do
     with {1, nil} <- Auth.delete_user_token(%{account: user.account, filter: :session}) do
       {:ok, "Logged out"}
     else

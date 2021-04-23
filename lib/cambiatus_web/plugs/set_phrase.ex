@@ -1,8 +1,6 @@
 defmodule CambiatusWeb.Plugs.SetPhrase do
   @moduledoc """
-  Plug used together with GraphQL to quickly add the current logged user on the resolvers data
-
-  This allows to get the user based on the token sent as Authorization header
+  Set phrase and user agent in context
   """
 
   @behaviour Plug
@@ -12,7 +10,7 @@ defmodule CambiatusWeb.Plugs.SetPhrase do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = conn |> get_phrase() |> update_context()
+    context = conn |> get_phrase() |> set_user_agent() |> update_context()
     Absinthe.Plug.put_options(conn, context: context)
   end
 
@@ -24,6 +22,12 @@ defmodule CambiatusWeb.Plugs.SetPhrase do
       nil -> {conn, %{}}
       phrase -> {conn, %{phrase: phrase}}
     end
+  end
+
+  defp set_user_agent({conn, context}) do
+    user_agent = conn |> get_req_header("user-agent") |> hd
+    updated_context = context |> Map.put(:user_agent, user_agent)
+    {conn, updated_context}
   end
 
   defp update_context({conn, context}) do

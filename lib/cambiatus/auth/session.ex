@@ -14,19 +14,15 @@ defmodule Cambiatus.Auth.Session do
     Auth.Phrase
   }
 
-  def create_phrase(user) do
-    if get_user_token(%{account: user.account, filter: :session}) do
-      {:error, "Session already exists"}
-    else
-      phrase = Phrase.generate()
+  def create_phrase(user, user_agent) do
+    phrase = Phrase.generate()
 
-      %UserToken{}
-      |> UserToken.changeset(%{phrase: phrase, context: "auth"}, user)
-      |> Repo.insert()
-      |> case do
-        {:ok, _} -> {:ok, phrase}
-        {:error, _err} -> {:error, "Phrase exists already"}
-      end
+    %UserToken{}
+    |> UserToken.changeset(%{phrase: phrase, context: "auth", user_agent: user_agent}, user)
+    |> Repo.insert()
+    |> case do
+      {:ok, _} -> {:ok, phrase}
+      {:error, _err} -> {:error, "Phrase exists already"}
     end
   end
 
@@ -72,10 +68,10 @@ defmodule Cambiatus.Auth.Session do
   def verify_signature_helper(nil, _phrase, _signature) do
     {:error, "No phrase found"}
   end
-  def verify_signature_helper(%{user_id: account}, phrase, signature) do
+  def verify_signature_helper(%{user_id: account}, phrase, signature, user_agent) do
     if Ecdsa.verify_signature(account, signature, phrase) do
       user = Accounts.get_user(account)
-      token = create_session(user)
+      token = create_session(user, user_agent)
       delete_user_token(%{account: account, filter: :auth})
 
       {:ok, {user, token}}
@@ -86,11 +82,11 @@ defmodule Cambiatus.Auth.Session do
 
   def create_session({:error, _} = err), do: err
 
-  def create_session(user) do
+  def create_session(user, user_agent) do
     token = AuthToken.gen_token(%{account: user.account})
 
     %UserToken{}
-    |> UserToken.changeset(%{token: token, context: "session"}, user)
+    |> UserToken.changeset(%{token: token, context: "session", user_agent: user_agent}, user)
     |> Repo.insert()
     |> case do
       {:ok, _} -> token

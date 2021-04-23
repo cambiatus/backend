@@ -46,9 +46,9 @@ defmodule Cambiatus.Auth do
     |> netlink(invitation_id)
   end
 
-  def gen_auth_phrase(user) do
+  def gen_auth_phrase(user, user_agent) do
     user
-    |> Session.create_phrase()
+    |> Session.create_phrase(user_agent)
   end
 
   def verify(token) do
@@ -57,13 +57,13 @@ defmodule Cambiatus.Auth do
     |> Session.get_account_from_token()
   end
 
-  def verify_signature(phrase, signature) do
+  def verify_signature(phrase, signature, user_agent) do
     %{phrase: phrase, filter: :auth}
     |> Session.get_user_token()
-    |> Session.verify_signature_helper(phrase, signature)
+    |> Session.verify_signature_helper(phrase, signature, user_agent)
   end
 
-  def create_session(user), do: Session.create_session(user)
+  def create_session(user, user_agent), do: Session.create_session(user, user_agent)
 
   def delete_user_token(args), do: Session.delete_user_token(args)
 
