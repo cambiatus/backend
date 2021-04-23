@@ -28,7 +28,7 @@ defmodule Cambiatus.Commune.Community do
     field(:created_eos_account, :string)
     field(:created_at, :utc_datetime)
 
-    field(:subdomain, :string)
+    belongs_to(:subdomain, Subdomain)
 
     # Features
     field(:has_objectives, :boolean, default: true)
@@ -45,9 +45,9 @@ defmodule Cambiatus.Commune.Community do
     has_many(:mints, Mint, foreign_key: :community_id)
   end
 
-  @required_fields ~w(symbol creator name description inviter_reward invited_reward subdomain)a
-  @optional_fields ~w(logo type supply max_supply min_balance issuer created_block
-  created_tx created_at created_eos_account)a
+  @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
+  @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id
+   created_block created_tx created_at created_eos_account)a
 
   @doc false
   def changeset(%Community{} = community, attrs) do

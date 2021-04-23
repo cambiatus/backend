@@ -6,8 +6,9 @@ defmodule Cambiatus.Commune.Subdomain do
 
   alias Cambiatus.Commune.Subdomain
 
-  @primary_key {:name, :string, autogenerate: false}
   schema "subdomains" do
+    field(:name, :string)
+
     timestamps()
   end
 

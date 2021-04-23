@@ -20,17 +20,19 @@ defmodule Cambiatus.Repo.Migrations.SubdomainInitialFill do
   end
 
   def insert_subdomain(%{name: name} = community) do
-    {:ok, _} =
+    {:ok, subdomain} =
       %Subdomain{}
       |> Subdomain.changeset(%{name: gen_subdomain(name)})
       |> Repo.insert()
 
-    community
+    {community, subdomain}
   end
 
-  def update_community(%{name: name} = community) do
+  def update_community({%{name: name} = community, subdomain}) do
     community
-    |> Community.changeset(%{subdomain: gen_subdomain(name)})
+    |> Repo.preload(:subdomain)
+    |> Community.changeset(%{})
+    |> Ecto.Changeset.put_assoc(:subdomain, subdomain)
     |> Repo.update!()
   end
 

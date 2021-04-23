@@ -4,14 +4,14 @@ defmodule Cambiatus.Repo.Migrations.CommunitySubdomain do
   def up do
     alter table(:communities) do
       remove(:precision)
-      add(:subdomain, :string)
+      add(:subdomain_id, references(:subdomains))
     end
   end
 
   def down do
     alter table(:communities) do
       add(:precision, :integer)
-      remove(:subdomain)
+      remove(:subdomain_id)
     end
   end
 end

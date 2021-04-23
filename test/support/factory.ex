@@ -15,6 +15,7 @@ defmodule Cambiatus.Factory do
     Commune.Community,
     Commune.Claim,
     Commune.Network,
+    Commune.Subdomain,
     Repo,
     Commune.Mint,
     Commune.Objective,
@@ -104,7 +105,7 @@ defmodule Cambiatus.Factory do
       symbol: sequence(:symbol, &"symbol-#{&1}"),
       creator: sequence(:creator, &"creator-#{&1}"),
       logo: sequence(:logo, &"logo-#{&1}"),
-      name: sequence(:name, &"shop-name#{&1}"),
+      name: sequence(:name, &"community-name#{&1}"),
       description: sequence(:description, &"desc-#{&1}"),
       inviter_reward: sequence(:mix_balance, &"#{&1}.78"),
       invited_reward: sequence(:mix_balance, &"#{&1}.78"),
@@ -325,5 +326,11 @@ defmodule Cambiatus.Factory do
     query
     |> Repo.all()
     |> Enum.random()
+  end
+
+  def subdomain_factory() do
+    %Subdomain{
+      name: sequence(:name, &"#{&1}.cambiatus.io")
+    }
   end
 end
