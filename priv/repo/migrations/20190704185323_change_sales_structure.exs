@@ -7,18 +7,18 @@ defmodule Cambiatus.Repo.Migrations.ChangeSalesStructure do
 
   def change do
     alter table(:sales) do
-      remove :rate
+      remove(:rate)
 
-      add :is_deleted, :boolean, default: false
-      add :deleted_at, :utc_datetime
+      add(:is_deleted, :boolean, default: false)
+      add(:deleted_at, :utc_datetime)
     end
 
-    create index(:sales, [:is_deleted])
+    create(index(:sales, [:is_deleted]))
 
-    rename table(:shop_ratings), :shop_id, to: :sale_id
+    rename(table(:shop_ratings), :shop_id, to: :sale_id)
 
     alter table(:shop_ratings) do
-      modify :rating, :string
+      modify(:rating, :string)
     end
   end
 end

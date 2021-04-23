@@ -74,6 +74,13 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
       resolve(&Commune.get_invitation/3)
     end
+
+    field :domain_available, :exists do
+      arg(:domain, non_null(:string))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Commune.domain_available/3)
+    end
   end
 
   @desc "Community Subscriptions on Cambiatus"
@@ -210,7 +217,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:supply, :float)
     field(:max_supply, :float)
     field(:min_balance, :float)
-    field(:precision, non_null(:integer))
+
+    field(:subdomain, :string)
 
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
@@ -362,6 +370,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   object :invite do
     field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
     field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Commune))
+  end
+
+  object :exists do
+    field(:exists, :boolean)
   end
 
   @desc "Action verification types"

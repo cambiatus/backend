@@ -1,14 +1,8 @@
 defmodule Cambiatus.Commune.Community do
   @moduledoc false
 
-  alias Cambiatus.{
-    Commune.Community,
-    Commune.Network,
-    Commune.Mint,
-    Commune.Objective,
-    Shop.Product,
-    Commune.Transfer
-  }
+  alias Cambiatus.Commune.{Community, Network, Mint, Objective, Transfer, Subdomain}
+  alias Cambiatus.Shop.Product
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -28,12 +22,13 @@ defmodule Cambiatus.Commune.Community do
     field(:max_supply, :float)
     field(:min_balance, :float)
     field(:issuer, :string)
-    field(:precision, :integer)
 
     field(:created_block, :integer)
     field(:created_tx, :string)
     field(:created_eos_account, :string)
     field(:created_at, :utc_datetime)
+
+    belongs_to(:subdomain, Subdomain)
 
     # Features
     field(:has_objectives, :boolean, default: true)
@@ -51,8 +46,8 @@ defmodule Cambiatus.Commune.Community do
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
-  @optional_fields ~w(logo type supply max_supply min_balance issuer precision created_block
-  created_tx created_at created_eos_account)a
+  @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id
+   created_block created_tx created_at created_eos_account)a
 
   @doc false
   def changeset(%Community{} = community, attrs) do

@@ -18,7 +18,7 @@ defmodule Cambiatus.Repo.Migrations.NewCommunityTrigger do
     """)
   end
 
-  def down do 
+  def down do
     execute("DROP TRIGGER IF EXISTS #{@trigger} ON #{@table}")
   end
 end

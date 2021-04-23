@@ -2,7 +2,7 @@ defmodule Cambiatus.Repo.Migrations.AddAvailableSalesView do
   use Ecto.Migration
 
   def up do
-    execute """
+    execute("""
     CREATE MATERIALIZED VIEW available_sales AS
       SELECT
         id,
@@ -21,9 +21,9 @@ defmodule Cambiatus.Repo.Migrations.AddAvailableSalesView do
       FROM sales
       WHERE is_deleted = false
         AND units > 0;
-    """
+    """)
 
-    execute """
+    execute("""
     CREATE OR REPLACE FUNCTION refresh_available_sales()
     RETURNS trigger AS $$
     BEGIN
@@ -31,28 +31,28 @@ defmodule Cambiatus.Repo.Migrations.AddAvailableSalesView do
       RETURN NULL;
     END;
     $$ LANGUAGE plpgsql;
-    """
+    """)
 
-    execute """
+    execute("""
     CREATE TRIGGER refresh_available_sales_trigger
     AFTER INSERT OR UPDATE OR DELETE
     ON sales
     FOR EACH STATEMENT
     EXECUTE PROCEDURE refresh_available_sales();
-    """
+    """)
   end
 
   def down do
-    execute """
+    execute("""
     DROP MATERIALIZED VIEW IF EXISTS available_sales;
-    """
+    """)
 
-    execute """
+    execute("""
     DROP FUNCTION IF EXISTS refresh_available_sales() CASCADE;
-    """
+    """)
 
-    execute """
+    execute("""
     DROP TRIGGER IF EXISTS refresh_available_sales_trigger ON sales;
-    """
+    """)
   end
 end

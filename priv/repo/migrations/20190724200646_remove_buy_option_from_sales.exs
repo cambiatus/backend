@@ -3,7 +3,7 @@ defmodule Cambiatus.Repo.Migrations.RemoveBuyOptionFromSales do
 
   def change do
     alter table(:sales) do
-      remove :is_buy
+      remove(:is_buy)
     end
   end
 end

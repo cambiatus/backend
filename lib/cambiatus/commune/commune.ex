@@ -16,7 +16,8 @@ defmodule Cambiatus.Commune do
     Network,
     Objective,
     Transfer,
-    Validator
+    Validator,
+    Subdomain
   }
 
   @spec data :: Dataloader.Ecto.t()
@@ -617,5 +618,9 @@ defmodule Cambiatus.Commune do
       error ->
         error
     end
+  end
+
+  def domain_available(domain) do
+    Repo.get_by(Subdomain, name: domain) != nil
   end
 end
