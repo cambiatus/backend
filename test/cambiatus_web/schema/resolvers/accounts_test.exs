@@ -12,8 +12,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     Commune.Transfer,
     Auth.Ecdsa,
     Auth,
-    Auth.SignUp,
-    Auth.Session
+    Auth.Session,
+    Auth.UserToken
   }
 
   setup %{conn: conn} do
@@ -25,12 +25,6 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     priv_key: "5Jhua6LXYtwYS9jWSdYwEHVyfVG3MbitNWMELNBzFGhmdX1UHUy",
     pub_key: "EOS4yryLa548uFLFjbcDuBwRA86ChDLqBcGY68n9Gp4tyS6Uw9ffW",
     name: "nertnertn123"
-  }
-
-  @valid_params %{
-    public_key: "EOS7xQw4jGivKZYYbfLg4fPg9A7zDRvCfT3kGSuHdWWLDeN1pwcwB",
-    password: "sdfasfdf",
-    user_type: "natural"
   }
 
   describe "Accounts Resolver" do
@@ -170,19 +164,103 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   end
 
   describe "Accounts Auth" do
-    test "valid sign up" do
+    test "valid sign up", %{conn: conn} do
       _community = insert(:community, %{symbol: "BES"})
       _invite_user = insert(:user, %{account: "cambiatustes"})
-      attrs = params_for(:user) |> Map.merge(@valid_params)
-      assert {:ok, %{user: user, token: token}} = SignUp.sign_up(attrs, :bypass_eos)
+
+      variables = %{
+        name: "nert",
+        account: "nertnertt124",
+        email: "test@gmail.com",
+        publicKey: "EOS7xQw4jGivKZYYbfLg4fPg9A7zDRvCfT3kGSuHdWWLDeN1pwcwB",
+        password: "sdfasfdf",
+        userType: "juridical"
+      }
+
+      query = """
+      mutation(
+        $name: String!,
+        $account: String!,
+        $email: String!,
+        $publicKey: String!,
+        $password: String!,
+        $userType: String!) {
+      signUp(
+        name: $name,
+        account:$account,
+        email:$email,
+        publicKey: $publicKey,
+        password: $password,
+        userType: $userType) {
+          user {
+            name
+          }
+          token
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "signUp" => sign_up_data
+        }
+      } = json_response(res, 200)
+
+      assert variables.name == sign_up_data["user"]["name"]
+      assert %UserToken{} = Session.get_session(user_id: variables.account)
     end
 
     test "sign up, update and signout", %{conn: conn} do
       _community = insert(:community, %{symbol: "BES"})
       _invite_user = insert(:user, %{account: "cambiatustes"})
-      attrs = params_for(:user) |> Map.merge(@valid_params)
 
-      assert {:ok, %{user: user, token: token}} = SignUp.sign_up(attrs, :bypass_eos)
+      variables = %{
+        name: "nert",
+        account: "nertnertt124",
+        email: "test@gmail.com",
+        publicKey: "EOS7xQw4jGivKZYYbfLg4fPg9A7zDRvCfT3kGSuHdWWLDeN1pwcwB",
+        password: "sdfasfdf",
+        userType: "juridical"
+      }
+
+      query = """
+      mutation(
+        $name: String!,
+        $account: String!,
+        $email: String!,
+        $publicKey: String!,
+        $password: String!,
+        $userType: String!) {
+      signUp(
+        name: $name,
+        account:$account,
+        email:$email,
+        publicKey: $publicKey,
+        password: $password,
+        userType: $userType) {
+          user {
+            name
+            account
+          }
+          token
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "signUp" => sign_up_data
+        }
+      } = json_response(res, 200)
+
+      token = sign_up_data["token"]
+      user = sign_up_data["user"]
+      assert variables.name == user["name"]
+      assert %UserToken{} = Session.get_session(user_id: user["account"])
 
       conn = conn |> put_req_header("authorization", "Bearer #{token}")
 
@@ -202,22 +280,20 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "updateUser" => updatedUser
+          "updateUser" => updated_user_data
         }
       } =
         conn
         |> post("/api/graph", query: update_query, variables: account_variables)
         |> json_response(200)
 
-      assert account_variables["input"]["name"] == updatedUser["name"]
+      assert account_variables["input"]["name"] == updated_user_data["name"]
 
       signout_query = """
       mutation {
         signOut
       }
       """
-
-      assert Session.get_session(user_id: user.account) != nil
 
       assert %{
                "data" => %{
@@ -228,7 +304,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
                |> post("/api/graph", query: signout_query)
                |> json_response(200)
 
-      assert Session.get_session(user_id: user.account) == nil
+      refute Session.get_session(user_id: user["account"])
     end
 
     test "valid sign", %{conn: conn} do

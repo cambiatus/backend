@@ -87,7 +87,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
         {:error, message: "Couldn't create user", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
-        {:ok, %{token: token}} = Auth.create_session(user, user_agent)
+        %{token: token} = Auth.create_session(user, user_agent)
         {:ok, %{user: user, token: token}}
     end
   end
