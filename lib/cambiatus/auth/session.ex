@@ -1,8 +1,7 @@
 defmodule Cambiatus.Auth.Session do
   @moduledoc "Cambiatus Account Authentication and Signup Manager"
 
-  # @valid_token 2 * 24 * 3600
-  @valid_token 300
+  @valid_token 2 * 24 * 3600
 
   alias CambiatusWeb.AuthToken
 
