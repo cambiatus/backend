@@ -16,7 +16,6 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     Auth.Session
   }
 
-
   setup %{conn: conn} do
     updated_conn = put_req_header(conn, "user-agent", "Test agent")
     {:ok, conn: updated_conn}
@@ -218,19 +217,18 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       }
       """
 
-      assert Session.get_user_token(%{account: user.account, filter: :session}) != nil
+      assert Session.get_session(user_id: user.account) != nil
 
       assert %{
-        "data" => %{
-          "signOut" => _logout_message
-        }
-      } =
-        conn
-        |> post("/api/graph", query: signout_query)
-        |> json_response(200)
+               "data" => %{
+                 "signOut" => _logout_message
+               }
+             } =
+               conn
+               |> post("/api/graph", query: signout_query)
+               |> json_response(200)
 
-      assert Session.get_user_token(%{account: user.account, filter: :session}) == nil
-
+      assert Session.get_session(user_id: user.account) == nil
     end
 
     test "valid sign", %{conn: conn} do
@@ -286,7 +284,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       assert user_data["user"]["account"] == @eos_account.name
 
-      assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
+      assert Auth.Session.get_auth(user_id: @eos_account.name) == nil
     end
 
     test "multi user session", %{conn: conn} do
@@ -342,7 +340,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       assert user_data["user"]["account"] == @eos_account.name
 
-      assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth}) == nil
+      assert Auth.Session.get_auth(user_id: @eos_account.name) == nil
 
       conn = conn |> put_req_header("user-agent", "New browser")
 
@@ -395,9 +393,10 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       assert user_data["user"]["account"] == @eos_account.name
 
-      num_session = %{account: @eos_account.name, filter: :session}
-                    |> Auth.Session.get_all_user_token()
-                    |> length()
+      num_session =
+        [user_id: @eos_account.name]
+        |> Auth.Session.get_all_session()
+        |> length()
 
       assert num_session == 2
     end
@@ -425,11 +424,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         |> get("/api/graph", query: auth_session_query, variables: account_variables)
         |> json_response(200)
 
-      {:ok, %{"signature" => signature}} = EosWrap.sign(phrase, "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3")
+      {:ok, %{"signature" => signature}} =
+        EosWrap.sign(phrase, "5KQwrPbwdL6PhXujxW37FSSQZ1JiwsST4cqQzDeyXtP79zkvFD3")
 
       assert Ecdsa.verify_signature(@eos_account.name, signature, phrase) == false
 
-      assert Auth.Session.get_user_token(%{account: @eos_account.name, filter: :auth})
+      assert Auth.Session.get_auth(user_id: @eos_account.name)
              |> Map.values()
              |> Enum.member?(@eos_account.name) == true
     end

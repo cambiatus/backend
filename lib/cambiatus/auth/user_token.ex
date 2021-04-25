@@ -2,7 +2,7 @@ defmodule Cambiatus.Auth.UserToken do
   @moduledoc false
 
   use Ecto.Schema
-  import Ecto.Changeset
+  import Ecto.{Changeset, Query}
 
   alias Cambiatus.Accounts.User
 
@@ -27,5 +27,17 @@ defmodule Cambiatus.Auth.UserToken do
     |> validate_required(@required_fields)
     |> unique_constraint([:user_id, :context, :user_agent], name: :unique_context)
     |> put_assoc(:user, user)
+  end
+
+  def with_session(query \\ __MODULE__, filter) do
+    query
+    |> where(context: "session")
+    |> where(^filter)
+  end
+
+  def with_auth(query \\ __MODULE__, filter) do
+    query
+    |> where(context: "auth")
+    |> where(^filter)
   end
 end

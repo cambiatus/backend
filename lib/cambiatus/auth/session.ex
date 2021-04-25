@@ -1,14 +1,15 @@
 defmodule Cambiatus.Auth.Session do
   @moduledoc "Cambiatus Account Authentication and Signup Manager"
 
-  @valid_token 2 * 24 * 3600
-
-  import Ecto.Query
+  # @valid_token 2 * 24 * 3600
+  @valid_token 300
 
   alias CambiatusWeb.AuthToken
   alias Cambiatus.Auth.UserToken
+
   alias Cambiatus.{
     Accounts,
+    Accounts.User,
     Repo,
     Auth.Ecdsa,
     Auth.Phrase
@@ -21,62 +22,42 @@ defmodule Cambiatus.Auth.Session do
     |> UserToken.changeset(%{phrase: phrase, context: "auth", user_agent: user_agent}, user)
     |> Repo.insert()
     |> case do
-      {:ok, _} -> {:ok, phrase}
-      {:error, _err} -> {:error, "Phrase exists already"}
+      {:ok, _} ->
+        {:ok, phrase}
+
+      {:error, _err} ->
+        existing_auth = get_auth(user_id: user.account, user_agent: user_agent)
+        {:ok, existing_auth.phrase}
     end
   end
 
   def verify_session_token(token) do
-    %{token: token, filter: :session}
-    |> get_user_token()
-    |> case do
-      user_token when is_map(user_token) ->
-        {AuthToken.verify(user_token.token, @valid_token), user_token}
+    with %UserToken{} = user_token <- get_session(token: token),
+         {:ok, %{account: account}} <- AuthToken.verify(user_token.token, @valid_token) do
+      %{user: Cambiatus.Accounts.get_user(account), token: token}
+    else
+      {:error, _} ->
+        delete_session(token: token)
+        {:error, "Invalid session"}
 
       nil ->
         {:error, "Session not found"}
     end
   end
 
-   def verify_session_token(account, token) do
-    %{account: account, filter: :session}
-    |> get_user_token()
-    |> Map.values()
-    |> Enum.member?(token)
-    |> case do
-      true ->
-        AuthToken.verify(token, @valid_token)
+  def verify_signature_helper(nil, _phrase, _signature, _user_agent),
+    do: {:error, "No phrase found"}
 
-      false ->
-        delete_user_token(%{account: account, filter: :auth})
-        {:error, "Session not found"}
-    end
-  end
-
-  def get_account_from_token({{:ok, _}, user_token}) do
-    Cambiatus.Accounts.get_user(user_token.user_id)
-  end
-
-  def get_account_from_token({{:error, _}, _}) do
-    {:error, "Invalid session"}
-  end
-
-  def get_account_from_token({:error, _}) do
-    {:error, "Invalid session"}
-  end
-
-  def verify_signature_helper(nil, _phrase, _signature) do
-    {:error, "No phrase found"}
-  end
   def verify_signature_helper(%{user_id: account}, phrase, signature, user_agent) do
-    if Ecdsa.verify_signature(account, signature, phrase) do
-      user = Accounts.get_user(account)
-      token = create_session(user, user_agent)
-      delete_user_token(%{account: account, filter: :auth})
-
+    with true <- Ecdsa.verify_signature(account, signature, phrase),
+         %User{} = user <- Accounts.get_user(account),
+         %{token: token} <- create_session(user, user_agent) do
+      delete_auth(phrase: phrase)
       {:ok, {user, token}}
     else
-      {:error, "Invalid signature"}
+      false -> {:error, "Invalid signature"}
+      nil -> {:error, "Account not found"}
+      {:error, _} -> {:error, "Session can not be created"}
     end
   end
 
@@ -89,88 +70,57 @@ defmodule Cambiatus.Auth.Session do
     |> UserToken.changeset(%{token: token, context: "session", user_agent: user_agent}, user)
     |> Repo.insert()
     |> case do
-      {:ok, _} -> token
-      {:error, _err} -> :error
+      {:ok, data} ->
+        data
+
+      {:error, _} ->
+        exist_session = get_session(user_agent: user_agent, user_id: user.account)
+
+        verify_session_token(exist_session.token)
     end
   end
 
-  def get_user_token(%{account: account, filter: :session}) do
-    from("user_tokens",
-      where: [context: "session", user_id: ^account],
-      select: [:context, :user_id, :token]
-    )
+  def get_session(filter) do
+    filter
+    |> UserToken.with_session()
     |> Repo.one()
   end
 
-  def get_all_user_token(%{account: account, filter: :session}) do
-    from("user_tokens",
-      where: [context: "session", user_id: ^account],
-      select: [:context, :user_id, :token]
-    )
+  def get_all_session(filter) do
+    filter
+    |> UserToken.with_session()
     |> Repo.all()
   end
 
-  def get_user_token(%{token: token, filter: :session}) do
-    from("user_tokens",
-      where: [context: "session", token: ^token],
-      select: [:context, :user_id, :token]
-    )
+  def get_auth(filter) do
+    filter
+    |> UserToken.with_auth()
     |> Repo.one()
   end
 
-  def get_user_token(%{phrase: phrase, filter: :auth}) do
-    from("user_tokens",
-      where: [context: "auth", phrase: ^phrase],
-      select: [:context, :user_id, :token, :phrase]
-    )
-    |> Repo.one()
+  def delete_session(filter) do
+    filter
+    |> UserToken.with_session()
+    |> Repo.one!()
+    |> Repo.delete()
   end
 
-  def get_user_token(%{account: account, filter: :auth}) do
-    from("user_tokens",
-      where: [context: "auth", user_id: ^account],
-      select: [:context, :user_id, :token, :phrase]
-    )
-    |> Repo.one()
+  def delete_auth(filter) do
+    filter
+    |> UserToken.with_auth()
+    |> Repo.one!()
+    |> Repo.delete()
   end
 
-  def delete_user_token(%{token: token, filter: :session}) do
-    from("user_tokens",
-      where: [context: "session", token: ^token]
-    )
+  def delete_all_session(filter) do
+    filter
+    |> UserToken.with_session()
     |> Repo.delete_all()
   end
 
-  def delete_user_token(%{account: account, filter: :session}) do
-    from("user_tokens",
-      where: [context: "session", user_id: ^account]
-    )
-    |> Repo.delete_all()
-  end
-
-  def delete_user_token(%{account: account, filter: :auth}) do
-    from("user_tokens",
-      where: [context: "auth", user_id: ^account]
-    )
-    |> Repo.delete_all()
-  end
-
-  def delete_all_user_token() do
-    [:session, :auth]
-    |> Enum.each(&delete_all_user_token(&1))
-  end
-
-  def delete_all_user_token(:auth) do
-    from("user_tokens",
-      where: [context: "auth"]
-    )
-    |> Repo.delete_all()
-  end
-
-  def delete_all_user_token(:session) do
-    from("user_tokens",
-      where: [context: "session"]
-    )
+  def delete_all_auth(filter) do
+    filter
+    |> UserToken.with_auth()
     |> Repo.delete_all()
   end
 end
