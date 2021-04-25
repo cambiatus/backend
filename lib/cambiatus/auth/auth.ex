@@ -10,6 +10,7 @@ defmodule Cambiatus.Auth do
     Repo,
     Auth
   }
+
   alias Cambiatus.Auth.{
     Invitation,
     InvitationId,
@@ -54,18 +55,17 @@ defmodule Cambiatus.Auth do
   def verify(token) do
     token
     |> Session.verify_session_token()
-    |> Session.get_account_from_token()
   end
 
   def verify_signature(phrase, signature, user_agent) do
-    %{phrase: phrase, filter: :auth}
-    |> Session.get_user_token()
+    [phrase: phrase]
+    |> Session.get_auth()
     |> Session.verify_signature_helper(phrase, signature, user_agent)
   end
 
   def create_session(user, user_agent), do: Session.create_session(user, user_agent)
 
-  def delete_user_token(args), do: Session.delete_user_token(args)
+  def delete_session(args), do: Session.delete_session(args)
 
   def netlink({:ok, user}, invitation_id) do
     with {:ok, invitation} <- Auth.get_invitation(invitation_id),

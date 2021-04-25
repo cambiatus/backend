@@ -52,8 +52,8 @@ defmodule Cambiatus.Auth.SignUp do
 
       _result ->
         user = Accounts.get_user(params.account)
-        session_token = Auth.create_session(user, "test")
-        {:ok, %{user: user, token: session_token}}
+        {:ok, %{token: token}} = Auth.create_session(user, "test")
+        {:ok, %{user: user, token: token}}
     end
   end
 

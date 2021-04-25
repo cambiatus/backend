@@ -10,11 +10,11 @@ defmodule CambiatusWeb.Plugs.SetPhrase do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = conn |> get_phrase() |> set_user_agent() |> update_context()
+    context = conn |> get_auth() |> set_user_agent() |> update_context()
     Absinthe.Plug.put_options(conn, context: context)
   end
 
-  defp get_phrase(conn) do
+  defp get_auth(conn) do
     conn
     |> fetch_session()
     |> get_session(:phrase)

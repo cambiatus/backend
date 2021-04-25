@@ -39,7 +39,6 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   def get_auth_session(_, %{account: account}, %{context: %{user_agent: user_agent}}) do
-
     with %User{} = user <- Accounts.get_user(account),
          {:ok, phrase} <- Auth.gen_auth_phrase(user, user_agent) do
       {:ok, phrase}
@@ -88,16 +87,16 @@ defmodule CambiatusWeb.Resolvers.Accounts do
         {:error, message: "Couldn't create user", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
-        session_token = Auth.create_session(user, user_agent)
-        {:ok, %{user: user, token: session_token}}
+        {:ok, %{token: token}} = Auth.create_session(user, user_agent)
+        {:ok, %{user: user, token: token}}
     end
   end
 
   def sign_out(_, _, %{context: %{token: token}}) do
-    with {1, nil} <- Auth.delete_user_token(%{token: token, filter: :session}) do
+    with {:ok, _} <- Auth.delete_session(token: token) do
       {:ok, "Logged out"}
     else
-      _error -> {:error, "Unable to sign out"}
+      {:error, _} -> {:error, "Unable to sign out"}
     end
   end
 
