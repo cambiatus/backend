@@ -5,14 +5,17 @@ defmodule Cambiatus.Auth.Session do
   @valid_token 300
 
   alias CambiatusWeb.AuthToken
-  alias Cambiatus.Auth.UserToken
 
   alias Cambiatus.{
     Accounts,
     Accounts.User,
-    Repo,
-    Auth.Ecdsa,
-    Auth.Phrase
+    Repo
+  }
+
+  alias Cambiatus.Auth.{
+    UserToken,
+    Ecdsa,
+    Phrase
   }
 
   def create_phrase(user, user_agent) do
