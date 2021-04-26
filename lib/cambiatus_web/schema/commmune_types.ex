@@ -86,7 +86,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "Community Preview, public data available for all communities"
     field :community_preview, :community_preview do
-      arg(:symbol, non_null(:string))
+      arg(:symbol, :string)
       arg(:subdomain, :string)
 
       resolve(&Commune.find_community/3)
