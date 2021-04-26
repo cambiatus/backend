@@ -58,8 +58,7 @@ defmodule Cambiatus.Auth do
   end
 
   def verify_signature(phrase, signature, user_agent) do
-    [phrase: phrase]
-    |> Session.get_auth()
+    Session.get_auth(phrase: phrase)
     |> Session.verify_signature_helper(phrase, signature, user_agent)
   end
 

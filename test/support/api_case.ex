@@ -31,7 +31,8 @@ defmodule Cambiatus.ApiCase do
       defp auth_user(conn, user) do
         %{token: token} = Auth.create_session(user, "test")
 
-        put_req_header(conn, "authorization", "Bearer #{token}")
+        conn
+        |> put_req_header("authorization", "Bearer #{token}")
         |> put_req_header("user-agent", "Test agent")
       end
     end
