@@ -34,6 +34,7 @@ defmodule Cambiatus.Commune.Community do
     field(:has_objectives, :boolean, default: true)
     field(:has_shop, :boolean, default: true)
     field(:has_kyc, :boolean, default: false)
+    field(:auto_invite, :boolean, default: false)
 
     has_many(:products, Product, foreign_key: :community_id)
     has_many(:orders, through: [:products, :orders])

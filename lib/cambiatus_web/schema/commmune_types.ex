@@ -21,7 +21,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required] A single community"
     field :community, :community do
-      arg(:symbol, non_null(:string))
+      arg(:symbol, :string)
+      arg(:subdomain, :string)
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.find_community/3)
@@ -75,11 +76,20 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(&Commune.get_invitation/3)
     end
 
+    @desc "[Auth required] Informs if a domain is available or not under Cambiatus"
     field :domain_available, :exists do
       arg(:domain, non_null(:string))
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.domain_available/3)
+    end
+
+    @desc "Community Preview, public data available for all communities"
+    field :community_preview, :community_preview do
+      arg(:symbol, :string)
+      arg(:subdomain, :string)
+
+      resolve(&Commune.find_community/3)
     end
   end
 
@@ -218,7 +228,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:max_supply, :float)
     field(:min_balance, :float)
 
-    field(:subdomain, :string)
+    field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
 
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
@@ -228,6 +238,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_objectives, non_null(:boolean))
     field(:has_shop, non_null(:boolean))
     field(:has_kyc, non_null(:boolean))
+    field(:auto_invite, non_null(:boolean))
 
     connection field(:transfers, node_type: :transfer) do
       resolve(&Commune.get_transfers/3)
@@ -250,6 +261,16 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:order_count, non_null(:integer), resolve: &Commune.get_order_count/3)
     field(:action_count, non_null(:integer), resolve: &Commune.get_action_count/3)
     field(:claim_count, non_null(:integer), resolve: &Commune.get_claim_count/3)
+  end
+
+  @desc "Community Preview data, public data of a community"
+  object :community_preview do
+    field(:symbol, non_null(:string))
+    field(:logo, non_null(:string))
+    field(:name, non_null(:string))
+    field(:description, non_null(:string))
+    field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
+    field(:auto_invite, non_null(:boolean))
   end
 
   @desc "A community objective"
@@ -374,6 +395,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   object :exists do
     field(:exists, :boolean)
+  end
+
+  object :subdomain do
+    field(:name, non_null(:string))
   end
 
   @desc "Action verification types"

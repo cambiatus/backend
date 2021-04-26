@@ -623,4 +623,23 @@ defmodule Cambiatus.Commune do
   def domain_available(domain) do
     Repo.get_by(Subdomain, name: domain) != nil
   end
+
+  def get_community_by_subdomain(subdomain) do
+    query =
+      from(c in Community,
+        join: s in Subdomain,
+        on: c.subdomain_id == s.id,
+        where: s.name == ^subdomain
+      )
+
+    query
+    |> Repo.one()
+    |> case do
+      nil ->
+        {:error, "No community found using the domain #{subdomain}"}
+
+      found ->
+        {:ok, found}
+    end
+  end
 end
