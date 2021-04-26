@@ -238,6 +238,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_objectives, non_null(:boolean))
     field(:has_shop, non_null(:boolean))
     field(:has_kyc, non_null(:boolean))
+    field(:auto_invite, non_null(:boolean))
 
     connection field(:transfers, node_type: :transfer) do
       resolve(&Commune.get_transfers/3)
@@ -269,6 +270,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:name, non_null(:string))
     field(:description, non_null(:string))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
+    field(:auto_invite, non_null(:boolean))
   end
 
   @desc "A community objective"
