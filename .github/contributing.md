@@ -23,10 +23,13 @@ At this point, you're ready to make your changes! Feel free to ask for help; eve
 If a maintainer asks you to "rebase" your PR, they're saying that a lot of code has changed, and that you need to update your branch so it's easier to merge.
 
 ## Before you get started
+0.  The very first step to take before submitting a PR is know what constitutes a good PR. So we encourage you to read these articles before making your PR request:
+    1. [The anatomy of a perfect pull request](https://medium.com/@hugooodias/the-anatomy-of-a-perfect-pull-request-567382bb6067#:~:text=A%20good%20pull%20request%20will,and%20consequently%20the%20product%20development.)
+    2. [How should I write a good pull request?] (https://blog.carbonfive.com/why-write-good-pull-requests/)
+    3. [Pull Request Etiquette](https://gist.github.com/mikepea/863f63d6e37281e329f8)
 1. Fork the repo, this enables you to open PRs and push them.
 2. Work the [setup guide](/.github/setup.md)
-3. Run the test suite MIX_ENV=test mix test. Please note we only accept pull requests with passing tests, and it's awesome to make one pass.
-Small contributions such as fixing spelling errors, where the content is small enough to not be considered intellectual property, can be submitted by a contributor as a patch, without forking the repo. If you find a security vulnerability, do NOT open an issue. Inform the #devs on the discord channel.
+3. Run the test suite `MIX_ENV=test mix test`. Please note we only accept pull requests with passing tests, and it's awesome to make one pass. Small contributions such as fixing spelling errors, where the content is small enough to not be considered intellectual property, can be submitted by a contributor as a patch, without forking the repo. If you find a security vulnerability, do NOT open an issue. Inform the #devs on the discord channel.
 
 Bug reports can be filed using the issue template on this projects github repository, This format enables us to respond quicker and clearly to any bug reports.
 
@@ -39,20 +42,26 @@ Bug reports can be filed using the issue template on this projects github reposi
 ## How to suggest a feature or enhancement
 Many of the features that this backend has today have been added because our users saw the need. Open an issue on our issues list on GitHub which describes the feature you would like to see, why you need it, and how it should work. We tend to prefer that our feature request and enhancements start as issues, formatted this way they make it very clear to the whole community what the aim of the request is and how it will change the work.
 
-
 # Code review process
 
 The core team looks at Pull Requests on a regular basis in a weekly triage meeting that we hold. The meeting is announced in the weekly status updates that are send on Monday mornings.
 After feedback has been given we expect responses within two weeks. After two weeks we may close the pull request if it isn't showing any activity.
 
+## Reviewing changes
+1. Once a pull request is sent, we will assign a member to review your PR.
+2. The reviewer will check for the following items:
+  1. Does the PR solves the issue that's linked to it.
+  2. There is no merge conflicts.
+  3. `mix test` is passing.
+  3. The code has been formatted to our standard.
+  4. `mix credo` issues are resolved.
+
 # Community
 You can chat with the core team on the discord channel linked above. We try to be available on all weekdays.
-
 
 # Deployment
 Oh wow! you are grown now, you even have your very own deployment keys how do you get this to work in the wild?
 Well follow the guide below and you should be having lots of fun soon!
-
 
 We use [distillery](https://hexdocs.pm/distillery/home.html) and docker as our preferred tools for deployment.
 and you can bootstrap on this to get a self contained running version easily as follows:
