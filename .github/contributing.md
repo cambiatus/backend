@@ -48,13 +48,16 @@ The core team looks at Pull Requests on a regular basis in a weekly triage meeti
 After feedback has been given we expect responses within two weeks. After two weeks we may close the pull request if it isn't showing any activity.
 
 ## Reviewing changes
-1. Once a pull request is sent, we will assign a member to review your PR.
-2. The reviewer will check for the following items:
-  1. Does the PR solves the issue that's linked to it.
-  2. There is no merge conflicts.
-  3. `mix test` is passing.
-  3. The code has been formatted to our standard.
-  4. `mix credo` issues are resolved.
+1. Ensure your PR answers the following questions: 
+    1. Summary of the issue being solved. Ideally link to the issue itself.
+    2. How is the issue being solved.
+    3. How can we verify the solution.
+2. Once a pull request is sent, we will assign a member to review your PR.
+3. The reviewer will check for the following items:
+    1. There are no merge conflicts.
+    2. `mix test` is passing.
+    3. The code has been formatted to our standard.
+    4. `mix credo` issues are resolved.
 
 # Community
 You can chat with the core team on the discord channel linked above. We try to be available on all weekdays.
