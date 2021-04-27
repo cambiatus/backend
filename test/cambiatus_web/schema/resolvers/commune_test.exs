@@ -1015,11 +1015,11 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       query = """
         query {
-          invite(input: {id: "#{invite_id}"}) {
+          invite(id: "#{invite_id}") {
             creator {
               account
             }
-            community {
+            communityPreview {
               symbol
             }
           }
@@ -1030,7 +1030,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       %{"data" => %{"invite" => found_invite}} = json_response(res, 200)
 
       assert(invite.creator_id == found_invite["creator"]["account"])
-      assert(invite.community_id == found_invite["community"]["symbol"])
+      assert(invite.community_id == found_invite["communityPreview"]["symbol"])
     end
   end
 end

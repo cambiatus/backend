@@ -113,6 +113,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_community_by_subdomain(subdomain)
   end
 
+  def find_community(%Cambiatus.Auth.Invitation{} = invite, _, _) do
+    {:ok, invite.community}
+  end
+
   @doc """
   Collects all transfers from a community
   """
@@ -163,7 +167,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
 
   @doc "Collect an invite"
   @spec get_invitation(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
-  def get_invitation(_, %{input: %{id: id}}, _) do
+  def get_invitation(_, %{id: id}, _) do
     Auth.get_invitation(id)
   end
 

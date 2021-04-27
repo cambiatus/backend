@@ -71,7 +71,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "An invite"
     field :invite, :invite do
-      arg(:input, non_null(:invite_input))
+      arg(:id, non_null(:string))
 
       resolve(&Commune.get_invitation/3)
     end
@@ -82,14 +82,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.domain_available/3)
-    end
-
-    @desc "Community Preview, public data available for all communities"
-    field :community_preview, :community_preview do
-      arg(:symbol, :string)
-      arg(:subdomain, :string)
-
-      resolve(&Commune.find_community/3)
     end
   end
 
@@ -194,11 +186,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:validator, :string)
   end
 
-  @desc "Input to collect an invite"
-  input_object :invite_input do
-    field(:id, :string)
-  end
-
   @desc "A mint object in Cambiatus"
   object :mint do
     field(:memo, :string)
@@ -269,6 +256,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:logo, non_null(:string))
     field(:name, non_null(:string))
     field(:description, non_null(:string))
+    field(:has_objectives, non_null(:boolean))
+    field(:has_shop, non_null(:boolean))
+    field(:has_kyc, non_null(:boolean))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
     field(:auto_invite, non_null(:boolean))
   end
@@ -389,7 +379,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
   @desc "A community invite"
   object :invite do
-    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
+    field(:community_preview, non_null(:community_preview), resolve: &Commune.find_community/3)
+
     field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Commune))
   end
 
