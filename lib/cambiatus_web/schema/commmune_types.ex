@@ -83,6 +83,14 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       middleware(Middleware.Authenticate)
       resolve(&Commune.domain_available/3)
     end
+
+    @desc "Community Preview, public data available for all communities"
+    field :community_preview, :community_preview do
+      arg(:symbol, :string)
+      arg(:subdomain, :string)
+
+      resolve(&Commune.find_community/3)
+    end
   end
 
   @desc "Community Subscriptions on Cambiatus"
