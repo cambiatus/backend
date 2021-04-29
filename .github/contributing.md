@@ -49,21 +49,20 @@ The core team looks at Pull Requests on a regular basis in a weekly triage meeti
 After feedback has been given we expect responses within two weeks. After two weeks we may close the pull request if it isn't showing any activity.
 
 ## PR review in detail
-1. Ensure your PR answers the following questions: 
+1. The purpose of PR description is to provide all the necessary information so the reviewer can **thoroughly** and **effectively** review the code. Ensure your PR answers the following questions: 
     1. Summary of the issue being solved. Ideally a link to the issue that's being solved.
     2. How is the issue being solved.
     3. How can we verify the solution.
-2. Once a pull request is sent, we will assign a member to review your PR.
-3. The reviewer will check for the following items:
-    1. There are no merge conflicts.
-    2. CI/CD workflow passes all test: `mix test`, `mix credo` and `mix format --check-formatted`.
-    3. The issue is resolved.
-4. If the criteria for the PR passes it will get merged to into `master`.
+2. Prior to creating a PR ensure there are no merge conflicts.
+3. Once a pull request is sent, we will assign a member to review your PR.
+4. The reviewer will check for the following items:
+    1. CI/CD workflow passes all test.
+    2. Verify the solution based on PR description.
+5. At this stage the PR is ready for integration test. We will test the PR on our [staging server](staging.cambiatus.io). If the integration test passes then the PR is ready to be merged into `master` and tested on `production`.
 
 # Releases
-1. After a PR has been merged into `master`. We will push the change to our [staging server](staging.cambiatus.io) to conduct our integration test.
-2. If the integration test passes then will push the change to `production` sever and conduct a final test.
-3. If all test passes, then we are live!
+1. If the integration test passes then will push the change to `production` or `demo` sever and conduct a final test.
+2. If all test passes, then we are live!
 
 # Community
 You can chat with the core team on the discord channel linked above. We try to be available on all weekdays.
