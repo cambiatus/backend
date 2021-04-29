@@ -25,6 +25,7 @@ defmodule CambiatusWeb.Schema do
   end
 
   import_types(Absinthe.Type.Custom)
+  import_types(Absinthe.Plug.Types)
   import_types(__MODULE__.AccountTypes)
   import_types(__MODULE__.CommuneTypes)
   import_types(__MODULE__.NotificationTypes)

@@ -1,14 +1,14 @@
 defmodule CambiatusWeb.UploadController do
   use CambiatusWeb, :controller
 
-  alias Cambiatus.Upload
+  alias Cambiatus.Upload.Uploader
 
   def save(conn, params) do
     with %{path: file_path, content_type: content_type} <- Map.get(params, "file"),
-         %{path: file_path} <- Upload.resize(file_path, 1200, 1200, in_place: true),
+         %{path: file_path} <- Uploader.resize(file_path, 1200, 1200, in_place: true),
          file_info <- File.lstat!(file_path),
          file_contents <- File.read!(file_path),
-         {:ok, url} <- Upload.save(file_info, content_type, file_contents) do
+         {:ok, url} <- Uploader.save(file_info, content_type, file_contents) do
       conn
       |> put_status(200)
       |> json(%{

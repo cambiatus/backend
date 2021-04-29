@@ -3,6 +3,7 @@ defmodule Cambiatus.Commune.Community do
 
   alias Cambiatus.Commune.{Community, Network, Mint, Objective, Transfer, Subdomain}
   alias Cambiatus.Shop.Product
+  alias Cambiatus.Upload.Photo
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -13,8 +14,6 @@ defmodule Cambiatus.Commune.Community do
     field(:logo, :string)
     field(:name, :string)
     field(:description, :string)
-    field(:inviter_reward, :float)
-    field(:invited_reward, :float)
 
     # Token configurations
     field(:type, :string)
@@ -24,9 +23,15 @@ defmodule Cambiatus.Commune.Community do
     field(:issuer, :string)
 
     # Configurations
+    field(:inviter_reward, :float)
+    field(:invited_reward, :float)
     field(:website, :string)
     field(:auto_invite, :boolean, default: false)
     belongs_to(:subdomain, Subdomain)
+
+    many_to_many(:photos, Photo,
+     join_through: "communities_photos",
+     join_keys: [community_id: :symbol, photo_id: :id])
 
     field(:created_block, :integer)
     field(:created_tx, :string)

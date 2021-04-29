@@ -181,4 +181,9 @@ defmodule CambiatusWeb.Resolvers.Commune do
   def domain_available(_, %{domain: domain}, _) do
     {:ok, %{exists: Commune.domain_available(domain)}}
   end
+
+  def add_photos(x, %{symbol: symbol}, %{context: %{current_user: current_user}}) do
+    require IEx; IEx.pry
+    Commune.add_photos(current_user, symbol)
+  end
 end

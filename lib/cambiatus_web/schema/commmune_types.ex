@@ -130,6 +130,15 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       middleware(Middleware.Authenticate)
       resolve(&Commune.complete_objective/3)
     end
+
+    @desc "[Auth required - Admin only] Adds photos of a community"
+    field :add_community_photos, :community do
+      arg(:symbol, :string)
+      arg(:photos, non_null(list_of(:upload)))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Commune.add_photos/3)
+    end
   end
 
   @desc "Input to complete an objective"
@@ -216,6 +225,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:description, non_null(:string))
     field(:inviter_reward, non_null(:float))
     field(:invited_reward, non_null(:float))
+    field(:photos, list_of(:photo), resolve: dataloader(Cambiatus.Commune))
 
     field(:type, :string)
     field(:issuer, :string)
@@ -272,6 +282,12 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:auto_invite, non_null(:boolean))
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:website, :string)
+    field(:photos, list_of(:photo))
+  end
+
+  @desc "A photo"
+  object :photo do
+    field(:url, :string)
   end
 
   @desc "A community objective"
