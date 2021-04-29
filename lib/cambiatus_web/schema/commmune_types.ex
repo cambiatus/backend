@@ -223,6 +223,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:max_supply, :float)
     field(:min_balance, :float)
 
+    field(:website, :string)
+    field(:auto_invite, non_null(:boolean))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
 
     field(:created_block, non_null(:integer))
@@ -233,7 +235,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_objectives, non_null(:boolean))
     field(:has_shop, non_null(:boolean))
     field(:has_kyc, non_null(:boolean))
-    field(:auto_invite, non_null(:boolean))
 
     connection field(:transfers, node_type: :transfer) do
       resolve(&Commune.get_transfers/3)
@@ -270,6 +271,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
     field(:auto_invite, non_null(:boolean))
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
+    field(:website, :string)
   end
 
   @desc "A community objective"
