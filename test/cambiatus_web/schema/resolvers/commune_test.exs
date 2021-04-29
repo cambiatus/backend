@@ -979,8 +979,9 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       """
 
       res = conn |> get("/api/graph", query: query_analysis, variables: params)
-      %{"data" => %{"claimsAnalysis" => cs}} = json_response(res, 200)
-      claim_action_ids = cs["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
+      %{"data" => %{"claimsAnalysis" => _}} = json_response(res, 200)
+      # %{"data" => %{"claimsAnalysis" => cs}} = json_response(res, 200)
+      # claim_action_ids = cs["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
       # Make sure pending is only one
       # assert Enum.count(claim_action_ids) == 1
@@ -1015,11 +1016,11 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       query = """
         query {
-          invite(input: {id: "#{invite_id}"}) {
+          invite(id: "#{invite_id}") {
             creator {
               account
             }
-            community {
+            communityPreview {
               symbol
             }
           }
@@ -1030,7 +1031,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       %{"data" => %{"invite" => found_invite}} = json_response(res, 200)
 
       assert(invite.creator_id == found_invite["creator"]["account"])
-      assert(invite.community_id == found_invite["community"]["symbol"])
+      assert(invite.community_id == found_invite["communityPreview"]["symbol"])
     end
   end
 end
