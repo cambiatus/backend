@@ -269,6 +269,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_kyc, non_null(:boolean))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
     field(:auto_invite, non_null(:boolean))
+    field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
   end
 
   @desc "A community objective"
