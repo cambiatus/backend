@@ -30,7 +30,7 @@ If a maintainer asks you to "rebase" your PR, they're saying that a lot of code 
 2. Work the [setup guide](/.github/setup.md)
 3. Run the test suite `MIX_ENV=test mix test`. Please note we only accept pull requests with passing tests, and it's awesome to make one pass. Small contributions such as fixing spelling errors, where the content is small enough not be considered intellectual property, can be submitted by a contributor as a patch, without forking the repo. 
 
-If you find a security vulnerability, do NOT open an issue. Inform the #devs on the discord channel.
+If you find a security vulnerability, we **urge** you to open an issue!
 
 Bug reports can be filed using the issue template on this projects github repository, This format enables us to respond quicker and clearly to any bug reports.
 
@@ -55,10 +55,10 @@ After feedback has been given we expect responses within two weeks. After two we
     3. How can we verify the solution.
 2. Prior to creating a PR ensure there are no merge conflicts.
 3. Once a pull request is sent, we will assign a member to review your PR.
-4. The reviewer will check for the following items:
+4. A reviewer will check and verify the changes purposed by the PR. He/she will look for the following items:
     1. CI/CD workflow passes all test.
     2. Verify the solution based on PR description.
-5. At this stage the PR is ready for integration test. We will test the PR on our [staging server](staging.cambiatus.io). If the integration test passes then the PR is ready to be merged into `master` and tested on `production`.
+5. Once the PR has been validated and approvded by the reviewer, the next step is to get approval from our QA team. We will test the PR on our [staging server](staging.cambiatus.io). If the integration test passes then the PR is ready to be merged into `master` and tested on `production`.
 
 # Releases
 1. If the integration test passes then will push the change to `production` or `demo` sever and conduct a final test.
