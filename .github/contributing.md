@@ -28,7 +28,7 @@ If a maintainer asks you to "rebase" your PR, they're saying that a lot of code 
     3. [Pull Request Etiquette](https://gist.github.com/mikepea/863f63d6e37281e329f8)
 1. Fork the repo, this enables you to open PRs and push them.
 2. Work the [setup guide](/.github/setup.md)
-3. Run the test suite `MIX_ENV=test mix test`. Please note we only accept pull requests with passing tests, and it's awesome to make one pass. Small contributions such as fixing spelling errors, where the content is small enough not be considered intellectual property, can be submitted by a contributor as a patch, without forking the repo. 
+3. Run the test suite `mix test`. Please note we only accept pull requests with passing tests, and it's awesome to make one pass. Small contributions such as fixing spelling errors, where the content is small enough not be considered intellectual property, can be submitted by a contributor as a patch, without forking the repo. 
 
 If you find a security vulnerability, we **urge** you to open an issue!
 
@@ -53,7 +53,7 @@ After feedback has been given we expect responses within two weeks. After two we
     1. Summary of the issue being solved. Ideally a link to the issue that's being solved.
     2. How is the issue being solved.
     3. How can we verify the solution.
-2. Prior to creating a PR ensure there are no merge conflicts.
+2. Prior to creating a PR ensure there are no merge conflicts (for draft and [WIP] PR this is temporarily omitted).
 3. Once a pull request is sent, we will assign a member to review your PR.
 4. A reviewer will check and verify the changes purposed by the PR. He/she will look for the following items:
     1. CI/CD workflow passes all test.
