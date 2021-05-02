@@ -27,11 +27,6 @@ defmodule CambiatusWeb.UploadController do
         conn
         |> put_status(500)
         |> json(%{error: err})
-
-      error ->
-        require IEx
-        IEx.pry()
-        error
     end
   end
 end
