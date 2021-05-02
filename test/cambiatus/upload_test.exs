@@ -26,7 +26,7 @@ defmodule Cambiatus.UploadTest do
 
     %{
       @gif_header => :ok,
-      @pdf_header => :error,
+      @pdf_header => :ok,
       "" => :error
     }
     |> Enum.each(fn {input, exp} ->

@@ -38,17 +38,25 @@ defmodule Cambiatus.Upload.Uploader do
       {:ok, {:image, _}} ->
         :ok
 
+      {:ok, {:application, :pdf}} ->
+        :ok
+
       _ ->
-        {:error, "File is not an image"}
+        {:error, "File is not an image or PDF"}
     end
   end
 
-  def resize(imagePath, width, height, opts \\ []) do
-    imagePath
+  def resize(_, _, _, _, opts \\ [])
+  def resize(file_path, "application/pdf", _, _, _), do: %{path: file_path}
+
+  def resize(image_path, _content_type, width, height, opts) do
+    image_path
     |> Mogrify.open()
     |> Mogrify.resize_to_limit(~s(#{width}x#{height}))
     |> Mogrify.save(opts)
   end
+
+  # def resize(_, _, _, ) do
 
   @doc """
   Saves a file

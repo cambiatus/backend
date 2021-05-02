@@ -1,11 +1,14 @@
 defmodule CambiatusWeb.UploadController do
+  @moduledoc false
+
   use CambiatusWeb, :controller
 
   alias Cambiatus.Upload.Uploader
 
   def save(conn, params) do
     with %{path: file_path, content_type: content_type} <- Map.get(params, "file"),
-         %{path: file_path} <- Uploader.resize(file_path, 1200, 1200, in_place: true),
+         %{path: file_path} <-
+           Uploader.resize(file_path, content_type, 1200, 1200, in_place: true),
          file_info <- File.lstat!(file_path),
          file_contents <- File.read!(file_path),
          {:ok, url} <- Uploader.save(file_info, content_type, file_contents) do
@@ -24,6 +27,11 @@ defmodule CambiatusWeb.UploadController do
         conn
         |> put_status(500)
         |> json(%{error: err})
+
+      error ->
+        require IEx
+        IEx.pry()
+        error
     end
   end
 end

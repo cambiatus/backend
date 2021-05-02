@@ -6,20 +6,13 @@ defmodule Cambiatus.Repo.Migrations.AddPhotosAndWebsite do
       add(:website, :string)
     end
 
-    create table(:photos) do
-      add(:url, :string, null: false)
-
-      add(:user_id, references(:users, column: :account, type: :string))
-      timestamps()
-    end
-
     create table(:communities_photos) do
       add(:community_id, references(:communities, column: :symbol, type: :string))
-      add(:photo_id, references(:photos))
+      add(:url, :string, null: false)
 
       timestamps()
     end
 
-    create unique_index(:communities_photos, [:community_id, :photo_id])
+    create(unique_index(:communities_photos, [:community_id, :url]))
   end
 end

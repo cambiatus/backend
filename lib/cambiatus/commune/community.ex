@@ -1,9 +1,9 @@
 defmodule Cambiatus.Commune.Community do
   @moduledoc false
 
-  alias Cambiatus.Commune.{Community, Network, Mint, Objective, Transfer, Subdomain}
+  alias Cambiatus.Commune.{Community, Network, Mint, Objective, Transfer, Subdomain, Upload}
   alias Cambiatus.Shop.Product
-  alias Cambiatus.Upload.Photo
+  alias Cambiatus.Repo
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -27,11 +27,6 @@ defmodule Cambiatus.Commune.Community do
     field(:invited_reward, :float)
     field(:website, :string)
     field(:auto_invite, :boolean, default: false)
-    belongs_to(:subdomain, Subdomain)
-
-    many_to_many(:photos, Photo,
-     join_through: "communities_photos",
-     join_keys: [community_id: :symbol, photo_id: :id])
 
     field(:created_block, :integer)
     field(:created_tx, :string)
@@ -43,6 +38,8 @@ defmodule Cambiatus.Commune.Community do
     field(:has_shop, :boolean, default: true)
     field(:has_kyc, :boolean, default: false)
 
+    belongs_to(:subdomain, Subdomain)
+
     has_many(:products, Product, foreign_key: :community_id)
     has_many(:orders, through: [:products, :orders])
     has_many(:transfers, Transfer, foreign_key: :community_id)
@@ -51,6 +48,7 @@ defmodule Cambiatus.Commune.Community do
     has_many(:objectives, Objective, foreign_key: :community_id)
     has_many(:actions, through: [:objectives, :actions])
     has_many(:mints, Mint, foreign_key: :community_id)
+    has_many(:uploads, Upload, foreign_key: :community_id, on_replace: :delete)
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
@@ -62,5 +60,15 @@ defmodule Cambiatus.Commune.Community do
     community
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+  end
+
+  def save_photos(%Community{} = community, urls) do
+    uploads = Enum.map(urls, &%Upload{url: &1})
+
+    community
+    |> Repo.preload([:uploads, :subdomain])
+    |> changeset(%{})
+    |> Ecto.Changeset.put_assoc(:uploads, uploads)
+    |> Repo.update()
   end
 end
