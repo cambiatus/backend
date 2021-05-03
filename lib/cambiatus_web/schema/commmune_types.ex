@@ -133,7 +133,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required - Admin only] Adds photos of a community"
     field :add_community_photos, :community do
-      arg(:symbol, :string)
+      arg(:symbol, non_null(:string))
       arg(:urls, non_null(list_of(non_null(:string))))
 
       middleware(Middleware.Authenticate)

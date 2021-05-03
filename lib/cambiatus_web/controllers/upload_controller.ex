@@ -3,7 +3,7 @@ defmodule CambiatusWeb.UploadController do
 
   use CambiatusWeb, :controller
 
-  alias Cambiatus.Upload.Uploader
+  alias Cambiatus.File.Uploader
 
   def save(conn, params) do
     with %{path: file_path, content_type: content_type} <- Map.get(params, "file"),

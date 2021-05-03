@@ -3,7 +3,7 @@ defmodule Cambiatus.UploadTest do
   Unit tests for the upload module
   """
   use Cambiatus.DataCase
-  alias Cambiatus.Upload.Uploader
+  alias Cambiatus.File.Uploader
 
   # We use this header to fool the application into thinking we're giving it a GIF image.
   # Pretend it's this one https://i.imgur.com/0Y1xISa.gif

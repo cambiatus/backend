@@ -1,4 +1,4 @@
-defmodule Cambiatus.Upload.Uploader do
+defmodule Cambiatus.File.Uploader do
   @moduledoc "Handles file uploading"
 
   @s3_client Application.compile_env(:cambiatus, :s3_client, ExAws)
