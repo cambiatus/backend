@@ -24,7 +24,7 @@
 
 ## General Information
 
-Welcome to the Application that serves as one of the backends for the Cambiatus Ecosystem, One of the backends since this is the one that contains the data in a manner than is easy to index and search.
+Welcome to the Application that serves as one of the backends for the Cambiatus Ecosystem. One of the backend since this is the one that contains the data in a manner than is easy to index and search.
 
 In the context of the diagram below which is a high level view of how the data flows in our application this application serves as the datastore using a Postgres db and as the API using Phoenix running a Graphql Server
 
@@ -62,6 +62,7 @@ Here is our [GraphQL wiki](https://cambiatus.github.io/onboarding.md) page
 - Postgres main [documentation](https://www.postgresql.org/docs/) page
    
 - EOS Blockchain main [documentation](https://developers.eos.io/welcome/latest/overview/index) page
+   ## TODO fix link
    - Here is [our documentation](eos.md) on how we use EOS blockchain
 
 ## Development Environment Setup
@@ -120,7 +121,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## Contributing
 
-When you are ready to make your first contribution please check out our [Contribution guide](/.github/contributing.md), this will get your up to speed on where and how to start.
+When you are ready to make your first contribution please check out our [contribution guide](/.github/contributing.md), this will get your up to speed on where and how to start.
 
 Once done with the contributing guide, here are some developing tips to help you:
 		
