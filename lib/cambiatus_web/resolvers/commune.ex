@@ -16,7 +16,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
   Fetches a single transfer
   """
   @spec get_transfer(map(), map(), map()) :: {:ok, Transfer.t()} | {:error, term}
-  def get_transfer(_, %{input: %{id: id}}, _) do
+  def get_transfer(_,  %{id: id}, _) do
     Commune.get_transfer(id)
   end
 

@@ -369,15 +369,9 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       assert(Repo.aggregate(Transfer, :count, :id) == 1)
 
-      variables = %{
-        "input" => %{
-          "id" => transfer.id
-        }
-      }
-
       query = """
-      query($input: TransferInput!){
-        transfer(input: $input) {
+      query {
+        transfer(id: #{transfer.id}) {
           id
           from {
             account
@@ -389,7 +383,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn |> get("/api/graph", query: query, variables: variables)
+      res = conn |> get("/api/graph", query: query)
 
       %{
         "data" => %{
@@ -679,13 +673,9 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       product = insert(:product)
 
-      variables = %{
-        "id" => product.id
-      }
-
       query = """
-      query($id: Int!) {
-        product(id: $id) {
+      query {
+        product(id: #{product.id}) {
           id
           title
           description
@@ -694,7 +684,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn |> get("/api/graph", query: query, variables: variables)
+      res = conn |> get("/api/graph", query: query)
 
       %{
         "data" => %{
