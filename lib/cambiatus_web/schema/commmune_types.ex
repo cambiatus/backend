@@ -63,7 +63,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required] A single Transfer"
     field :transfer, :transfer do
-      arg(:input, non_null(:transfer_input))
+      arg(:id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.get_transfer/3)
@@ -130,6 +130,15 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       middleware(Middleware.Authenticate)
       resolve(&Commune.complete_objective/3)
     end
+
+    @desc "[Auth required - Admin only] Adds photos of a community"
+    field :add_community_photos, :community do
+      arg(:symbol, non_null(:string))
+      arg(:urls, non_null(list_of(non_null(:string))))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Commune.add_photos/3)
+    end
   end
 
   @desc "Input to complete an objective"
@@ -163,11 +172,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "Params for filtering Claim Analysis"
   input_object(:claim_analysis_filter) do
     field(:direction, :direction)
-  end
-
-  @desc "Input for run transfer"
-  input_object :transfer_input do
-    field(:id, non_null(:custom_id))
   end
 
   @desc "Input to collect a claim"
@@ -216,6 +220,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:description, non_null(:string))
     field(:inviter_reward, non_null(:float))
     field(:invited_reward, non_null(:float))
+    field(:uploads, list_of(:upload), resolve: dataloader(Cambiatus.Commune))
 
     field(:type, :string)
     field(:issuer, :string)
@@ -223,6 +228,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:max_supply, :float)
     field(:min_balance, :float)
 
+    field(:website, :string)
+    field(:auto_invite, non_null(:boolean))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
 
     field(:created_block, non_null(:integer))
@@ -233,7 +240,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_objectives, non_null(:boolean))
     field(:has_shop, non_null(:boolean))
     field(:has_kyc, non_null(:boolean))
-    field(:auto_invite, non_null(:boolean))
 
     connection field(:transfers, node_type: :transfer) do
       resolve(&Commune.get_transfers/3)
@@ -269,6 +275,14 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_kyc, non_null(:boolean))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
     field(:auto_invite, non_null(:boolean))
+    field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
+    field(:website, :string)
+    field(:uploads, list_of(:upload), resolve: dataloader(Cambiatus.Commune))
+  end
+
+  @desc "A photo"
+  object :upload do
+    field(:url, :string)
   end
 
   @desc "A community objective"
@@ -406,12 +420,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     value(:claimable, as: "claimable", description: "An action that needs be mannually verified")
   end
 
-  @desc "Accept id as a string or integer"
-  scalar :custom_id, description: "Id" do
-    parse(&id_parse(&1))
-    serialize(&id_serialize(&1))
-  end
-
   @desc "Claim possible status"
   enum :claim_status do
     value(:approved, as: "approved")
@@ -424,8 +432,4 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     value(:asc, description: "Ascending order")
     value(:desc, description: "Descending order")
   end
-
-  defp id_parse(input) when is_bitstring(input.value), do: {:ok, String.to_integer(input.value)}
-  defp id_parse(input) when is_integer(input.value), do: {:ok, input.value}
-  defp id_serialize(id), do: id
 end

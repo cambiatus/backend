@@ -9,6 +9,7 @@ defmodule Cambiatus.Application do
     children = [
       Cambiatus.Repo,
       Cambiatus.DbListener,
+      {Phoenix.PubSub, name: Cambiatus.PubSub},
       CambiatusWeb.Endpoint,
       {Absinthe.Subscription, [CambiatusWeb.Endpoint]}
     ]

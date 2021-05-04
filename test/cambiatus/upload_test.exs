@@ -3,6 +3,7 @@ defmodule Cambiatus.UploadTest do
   Unit tests for the upload module
   """
   use Cambiatus.DataCase
+  alias Cambiatus.File.Uploader
 
   # We use this header to fool the application into thinking we're giving it a GIF image.
   # Pretend it's this one https://i.imgur.com/0Y1xISa.gif
@@ -17,7 +18,7 @@ defmodule Cambiatus.UploadTest do
     }
     |> Enum.each(fn {input, exp} ->
       test "Uploading #{input / 1_000_000}MB should result in #{exp}" do
-        result = Cambiatus.Upload.save(%File.Stat{size: unquote(input)}, "image/gif", @gif_header)
+        result = Uploader.save(%File.Stat{size: unquote(input)}, "image/gif", @gif_header)
 
         assert {unquote(exp), _} = result
       end
@@ -25,12 +26,12 @@ defmodule Cambiatus.UploadTest do
 
     %{
       @gif_header => :ok,
-      @pdf_header => :error,
+      @pdf_header => :ok,
       "" => :error
     }
     |> Enum.each(fn {input, exp} ->
       test "The header #{input} should result in #{exp}" do
-        result = Cambiatus.Upload.save(%File.Stat{size: 1_000_000}, "image/gif", unquote(input))
+        result = Uploader.save(%File.Stat{size: 1_000_000}, "image/gif", unquote(input))
 
         assert {unquote(exp), _} = result
       end
