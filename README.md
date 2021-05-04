@@ -38,6 +38,8 @@ CRUD actions however creation and updating happens as a result of events that tr
 
 The intention down the line is to make this database a write only database in an Event Sourced structure which will enable us to replay events and give us much more observability.
 
+For a more in-depth look at our application lifecycle, checkout [this documentation](/.github/deep-dive.md).
+
 ## Technologies
 
 Here we have information on the type of technologies we use on our project, enjoy!
@@ -63,7 +65,6 @@ Here is our [GraphQL wiki](https://cambiatus.github.io/onboarding.md) page
 - Postgres main [documentation](https://www.postgresql.org/docs/) page
    
 - EOS Blockchain main [documentation](https://developers.eos.io/welcome/latest/overview/index) page
-   ## TODO fix link
    - Here is [our documentation](eos.md) on how we use EOS blockchain
 
 ## Development Environment Setup
