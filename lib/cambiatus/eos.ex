@@ -55,7 +55,7 @@ defmodule Cambiatus.Eos do
             push_create_account_transaction(account, public_key, public_key)
 
           :error ->
-            {:errror, :wallet_error}
+            {:error, :wallet_error}
         end
     end
   end
