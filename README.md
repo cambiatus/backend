@@ -29,6 +29,7 @@ Welcome to the Application that serves as one of the backends for the Cambiatus 
 In the context of the diagram below which is a high level view of how the data flows in our application this application serves as the datastore using a Postgres db and as the API using Phoenix running a Graphql Server
 
 ## Dataflow
+
 <img src='https://i.imgur.com/MFfGOe3.png' height='492' alt='Cambiatus Data Flow' />
 
 At a high level this is a database that is synced to events on an blockchain which then presents a Graphql API that makes
@@ -131,7 +132,7 @@ Once done with the contributing guide, here are some developing tips to help you
 
    - Another critical formatting command is `mix format`, which formats a specific file according to the Elixir language formatting rules command. There are IDE specific extensions and settings that you could use to have automated formatting. Here is one [Elixir vscode](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls) example for this.
 		
-**Files To Not Commit Changes**
+**Files Not To Commit**
 
 Changes related to local Postgres database credentials must not be commited to the repo
 
