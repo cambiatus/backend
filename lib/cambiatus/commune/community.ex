@@ -1,8 +1,9 @@
 defmodule Cambiatus.Commune.Community do
   @moduledoc false
 
-  alias Cambiatus.Commune.{Community, Network, Mint, Objective, Transfer, Subdomain}
+  alias Cambiatus.Commune.{Community, Network, Mint, Objective, Transfer, Subdomain, Upload}
   alias Cambiatus.Shop.Product
+  alias Cambiatus.Repo
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -13,8 +14,6 @@ defmodule Cambiatus.Commune.Community do
     field(:logo, :string)
     field(:name, :string)
     field(:description, :string)
-    field(:inviter_reward, :float)
-    field(:invited_reward, :float)
 
     # Token configurations
     field(:type, :string)
@@ -23,18 +22,23 @@ defmodule Cambiatus.Commune.Community do
     field(:min_balance, :float)
     field(:issuer, :string)
 
+    # Configurations
+    field(:inviter_reward, :float)
+    field(:invited_reward, :float)
+    field(:website, :string)
+    field(:auto_invite, :boolean, default: false)
+
     field(:created_block, :integer)
     field(:created_tx, :string)
     field(:created_eos_account, :string)
     field(:created_at, :utc_datetime)
 
-    belongs_to(:subdomain, Subdomain)
-
     # Features
     field(:has_objectives, :boolean, default: true)
     field(:has_shop, :boolean, default: true)
     field(:has_kyc, :boolean, default: false)
-    field(:auto_invite, :boolean, default: false)
+
+    belongs_to(:subdomain, Subdomain)
 
     has_many(:products, Product, foreign_key: :community_id)
     has_many(:orders, through: [:products, :orders])
@@ -44,10 +48,11 @@ defmodule Cambiatus.Commune.Community do
     has_many(:objectives, Objective, foreign_key: :community_id)
     has_many(:actions, through: [:objectives, :actions])
     has_many(:mints, Mint, foreign_key: :community_id)
+    has_many(:uploads, Upload, foreign_key: :community_id, on_replace: :delete)
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
-  @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id
+  @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id website
    created_block created_tx created_at created_eos_account)a
 
   @doc false
@@ -55,5 +60,15 @@ defmodule Cambiatus.Commune.Community do
     community
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
+  end
+
+  def save_photos(%Community{} = community, urls) do
+    uploads = Enum.map(urls, &%Upload{url: &1})
+
+    community
+    |> Repo.preload([:uploads, :subdomain])
+    |> changeset(%{})
+    |> Ecto.Changeset.put_assoc(:uploads, uploads)
+    |> Repo.update()
   end
 end

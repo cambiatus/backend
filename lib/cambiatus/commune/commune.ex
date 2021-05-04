@@ -620,6 +620,25 @@ defmodule Cambiatus.Commune do
     end
   end
 
+  def add_photos(current_user, symbol, urls) do
+    case get_community(symbol) do
+      {:ok, community} ->
+        if community.creator == current_user.account do
+          community
+          |> Community.save_photos(urls)
+          |> case do
+            {:ok, _} = success -> success
+            {:error, _} = error -> error
+          end
+        else
+          {:error, "Unauthorized"}
+        end
+
+      {:error, _} = error ->
+        error
+    end
+  end
+
   def domain_available(domain) do
     Repo.get_by(Subdomain, name: domain) != nil
   end

@@ -47,16 +47,15 @@ defmodule Cambiatus.Mixfile do
       {:ex_phone_number, "~> 0.2"},
 
       # Phoenix
-      {:phoenix, "~> 1.4.0"},
-      {:phoenix_pubsub, "~> 1.1"},
+      {:phoenix, "~> 1.5.3"},
+      {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
 
       # Absinthe Packages
-      {:absinthe, "~> 1.4"},
-      {:absinthe_ecto, "~> 0.1.3"},
-      {:absinthe_plug, "~> 1.4.0"},
-      {:absinthe_phoenix, "~> 1.4.0"},
-      {:absinthe_relay, "~> 1.4.6"},
+      {:absinthe, "~> 1.6"},
+      {:absinthe_plug, "~> 1.5.0"},
+      {:absinthe_phoenix, "~> 2.0"},
+      {:absinthe_relay, "~> 1.5.0"},
       {:dataloader, "~> 1.0.0"},
 
       # EOS/Blockchain Packages
@@ -69,8 +68,9 @@ defmodule Cambiatus.Mixfile do
       {:plug_cowboy, "~> 2.3"},
 
       # AWS Packages
-      {:ex_aws, "~> 2.1.9"},
+      {:ex_aws, "~> 2.2.1"},
       {:ex_aws_s3, "~> 2.1"},
+      {:configparser_ex, "~> 4.0"},
 
       # Push Notification Packages
       {:web_push_encryption,
