@@ -56,8 +56,6 @@ defmodule Cambiatus.File.Uploader do
     |> Mogrify.save(opts)
   end
 
-  # def resize(_, _, _, ) do
-
   @doc """
   Saves a file
   """
