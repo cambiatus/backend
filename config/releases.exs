@@ -34,6 +34,9 @@ config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
 config :eosrpc, EOSRPC.Chain, url: System.get_env("EOSIO_URL")
 config :eosrpc, EOSRPC.Helper, symbol: System.get_env("EOSIO_SYMBOL") || "EOS"
 
+config :cambiatus, :graphql_secret, System.get_env("GRAPHQL_SECRET")
+config :cambiatus, :auth_salt, System.get_env("USER_SALT")
+
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
   environment_name: :prod,
