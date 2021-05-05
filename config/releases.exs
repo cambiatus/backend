@@ -15,7 +15,7 @@ config :cambiatus, CambiatusWeb.Endpoint,
   root: ".",
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: CambiatusWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Cambiatus.PubSub, adapter: Phoenix.PubSub.PG2]
+  pubsub_server: Cambiatus.PubSub
 
 config :cambiatus, Cambiatus.Mailer,
   adapter: Bamboo.SendGridAdapter,
