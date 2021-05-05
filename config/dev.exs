@@ -32,7 +32,6 @@ config :cambiatus, :eosrpc_wallet, EOSRPC.Wallet
 config :cambiatus, :eosrpc_helper, EOSRPC.Helper
 config :cambiatus, :eosrpc_chain, EOSRPC.Chain
 config :cambiatus, :contract, Cambiatus.Eos
-config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
 
 config :cambiatus, :graphql_secret, "d8Ed.-qfhj7"
 config :cambiatus, :auth_salt, "AVPLxwEAbi4Ff9Lw1IiBKZWYazWVafxm4PWs1WdXboaOt9galg6v8U4bPaSMjAtO"

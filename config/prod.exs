@@ -19,17 +19,10 @@ config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.SendGridAdapter
 
 config :cambiatus, :ipfs, conn: %{host: System.get_env("IPFS_URL"), port: 5001}
 
-config :cambiatus, Cambiatus.Chat.ApiHttp,
-  chat_base_url: System.get_env("CHAT_BASE_URL"),
-  chat_token: System.get_env("CHAT_TOKEN"),
-  chat_user_id: System.get_env("CHAT_USER_ID"),
-  chat_user_role: System.get_env("CHAT_USER_ROLE")
-
 config :cambiatus, :eosrpc_wallet, EOSRPC.Wallet
 config :cambiatus, :eosrpc_helper, EOSRPC.Helper
 config :cambiatus, :eosrpc_chain, EOSRPC.Chain
 config :cambiatus, :contract, Cambiatus.Eos
-config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
 
 config :cambiatus, :graphql_secret, System.get_env("GRAPHQL_SECRET")
 config :cambiatus, :auth_salt, System.get_env("USER_SALT")

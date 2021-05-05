@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: System.get_env("EOSIO_WALLET_NAME") || "default",
@@ -17,12 +17,6 @@ config :cambiatus, CambiatusWeb.Endpoint,
   render_errors: [view: CambiatusWeb.ErrorView, accepts: ~w(json)],
   pubsub: [name: Cambiatus.PubSub, adapter: Phoenix.PubSub.PG2]
 
-config :cambiatus, Cambiatus.Chat.ApiHttp,
-  chat_base_url: System.get_env("CHAT_BASE_URL"),
-  chat_token: System.get_env("CHAT_TOKEN"),
-  chat_user_id: System.get_env("CHAT_USER_ID"),
-  chat_user_role: System.get_env("CHAT_USER_ROLE")
-
 config :cambiatus, Cambiatus.Mailer,
   adapter: Bamboo.SendGridAdapter,
   api_key: System.get_env("SENDGRID_KEY")
@@ -39,8 +33,6 @@ config :cambiatus, Cambiatus.Repo,
 config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
 config :eosrpc, EOSRPC.Chain, url: System.get_env("EOSIO_URL")
 config :eosrpc, EOSRPC.Helper, symbol: System.get_env("EOSIO_SYMBOL") || "EOS"
-
-config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
 
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
