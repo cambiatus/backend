@@ -104,7 +104,7 @@ defmodule Cambiatus.Mixfile do
         strip_beams: false,
         quiet: false
       ],
-      prod: [
+      cambiatus: [
         include_executables_for: [:unix],
         include_erts: true,
         strip_beams: true,

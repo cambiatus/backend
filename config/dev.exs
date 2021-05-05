@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :cambiatus, CambiatusWeb.Endpoint,
   http: [port: 4000, protocol_options: [idle_timeout: 30_000]],
