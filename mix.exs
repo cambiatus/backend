@@ -91,7 +91,13 @@ defmodule Cambiatus.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.drop --quiet", "ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: [
+        "ecto.drop --quiet",
+        "ecto.create --quiet",
+        "ecto.migrate --quiet",
+        "run priv/repo/country_seeds.exs",
+        "test"
+      ]
     ]
   end
 
