@@ -79,7 +79,6 @@ defmodule Cambiatus.Mixfile do
 
       # Dev only
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:edeliver, "~> 1.6"},
 
       # Test Only
       {:ex_machina, "~> 2.3", only: :test},

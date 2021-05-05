@@ -18,6 +18,14 @@ defmodule Cambiatus.Release do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
+  def seed() do
+    load_app()
+    seed_script = Application.app_dir(:cambiatus, "priv/repo/seeds.exs")
+
+    IO.puts("Running seeds")
+    Code.eval_file(seed_script)
+  end
+
   defp repos do
     Application.fetch_env!(@app, :ecto_repos)
   end
