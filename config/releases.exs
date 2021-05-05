@@ -1,4 +1,4 @@
-use Mix.Config
+import Config
 
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: System.get_env("EOSIO_WALLET_NAME") || "default",
@@ -15,13 +15,7 @@ config :cambiatus, CambiatusWeb.Endpoint,
   root: ".",
   secret_key_base: System.get_env("SECRET_KEY_BASE"),
   render_errors: [view: CambiatusWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: Cambiatus.PubSub, adapter: Phoenix.PubSub.PG2]
-
-config :cambiatus, Cambiatus.Chat.ApiHttp,
-  chat_base_url: System.get_env("CHAT_BASE_URL"),
-  chat_token: System.get_env("CHAT_TOKEN"),
-  chat_user_id: System.get_env("CHAT_USER_ID"),
-  chat_user_role: System.get_env("CHAT_USER_ROLE")
+  pubsub_server: Cambiatus.PubSub
 
 config :cambiatus, Cambiatus.Mailer,
   adapter: Bamboo.SendGridAdapter,
@@ -40,7 +34,8 @@ config :eosrpc, EOSRPC.Wallet, url: System.get_env("EOSIO_WALLET_URL")
 config :eosrpc, EOSRPC.Chain, url: System.get_env("EOSIO_URL")
 config :eosrpc, EOSRPC.Helper, symbol: System.get_env("EOSIO_SYMBOL") || "EOS"
 
-config :cambiatus, :chat_api, Cambiatus.Chat.ApiHttp
+config :cambiatus, :graphql_secret, System.get_env("GRAPHQL_SECRET")
+config :cambiatus, :auth_salt, System.get_env("USER_SALT")
 
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",

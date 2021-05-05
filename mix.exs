@@ -4,13 +4,14 @@ defmodule Cambiatus.Mixfile do
   def project do
     [
       app: :cambiatus,
-      version: "1.7.8",
+      version: "2.0.0",
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      releases: releases()
     ]
   end
 
@@ -78,10 +79,6 @@ defmodule Cambiatus.Mixfile do
 
       # Dev only
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:edeliver, "~> 1.6"},
-      {:rename, "~> 0.1.0", only: :dev},
-      {:distillery, "~> 2.0", runtime: false},
-      {:dialyxir, "~> 1.0", only: :dev, runtime: false},
 
       # Test Only
       {:ex_machina, "~> 2.3", only: :test},
@@ -94,7 +91,30 @@ defmodule Cambiatus.Mixfile do
     [
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
-      test: ["ecto.drop --quiet", "ecto.create --quiet", "ecto.migrate --quiet", "test"]
+      test: [
+        "ecto.drop --quiet",
+        "ecto.create --quiet",
+        "ecto.migrate --quiet",
+        "run priv/repo/country_seeds.exs",
+        "test"
+      ]
+    ]
+  end
+
+  defp releases do
+    [
+      dev: [
+        include_executables_for: [:unix],
+        include_erts: true,
+        strip_beams: false,
+        quiet: false
+      ],
+      cambiatus: [
+        include_executables_for: [:unix],
+        include_erts: true,
+        strip_beams: true,
+        quiet: false
+      ]
     ]
   end
 end

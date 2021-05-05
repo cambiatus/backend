@@ -24,14 +24,13 @@ defmodule Cambiatus.Kyc.AddressTest do
 
   test "changeset is invalid with unsupported country" do
     address_2 = insert(:address)
-    new_country = insert(:country)
+    new_country = insert(:country, name: "Not Costa Rica")
     changeset_2 = Address.changeset(address_2, %{country_id: new_country.id})
     refute(changeset_2.valid?)
 
     assert(
       Map.get(changeset_2, :errors) == [
-        state_id: {"don't belong to country", []},
-        country_id: {"We only support 'Costa Rica'", []}
+        state_id: {"don't belong to country", []}
       ]
     )
   end
@@ -46,7 +45,7 @@ defmodule Cambiatus.Kyc.AddressTest do
   test "changeset is invalid wth the wrong state" do
     address = build(:address)
 
-    another_country = insert(:country)
+    another_country = insert(:country, name: "Not Costa Rica")
     another_state = insert(:state, %{country: another_country})
 
     params = %{
@@ -77,7 +76,7 @@ defmodule Cambiatus.Kyc.AddressTest do
   test "changeset is invalid wth the wrong city" do
     address = build(:address)
 
-    another_country = insert(:country)
+    another_country = insert(:country, name: "Brazil")
     another_state = insert(:state, %{country: another_country})
     another_city = insert(:city, %{state: another_state})
 
@@ -108,7 +107,7 @@ defmodule Cambiatus.Kyc.AddressTest do
   test "changeset is invalid with the wrong neighborhood" do
     address = build(:address)
 
-    another_country = insert(:country)
+    another_country = insert(:country, name: "Another Country")
     another_state = insert(:state, %{country: another_country})
     another_city = insert(:city, %{state: another_state})
     another_neighborhood = insert(:neighborhood, %{city: another_city})

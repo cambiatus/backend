@@ -1,7 +1,7 @@
 IO.puts("Running Seeds...")
 
 # Insert Cambiatus user
-data = %{account: "cambiatus"}
+data = %{account: "cambiatusadm", email: "support@cambiatus.com", name: "Cambiatus Admin"}
 changeset = Cambiatus.Accounts.User.changeset(%Cambiatus.Accounts.User{}, data)
 {:ok, _} = Cambiatus.Repo.insert(changeset)
 

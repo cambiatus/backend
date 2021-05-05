@@ -41,8 +41,7 @@ defmodule Cambiatus.DbListener do
   """
   @spec init(list()) :: {:ok, list()} | {:stop, term()}
   def init(opts) do
-    with {:ok, _pid, _ref} <- Repo.listen("sales_changed"),
-         {:ok, _pid, _ref} <- Repo.listen("transfers_changed"),
+    with {:ok, _pid, _ref} <- Repo.listen("transfers_changed"),
          {:ok, _pid, _ref} <- Repo.listen("sale_history_changed"),
          {:ok, _pid, _ref} <- Repo.listen("claims_changed"),
          {:ok, _pid, _ref} <- Repo.listen("check_added"),
@@ -63,16 +62,6 @@ defmodule Cambiatus.DbListener do
   """
   @spec handle_info(tuple(), term()) :: callback_return()
   def handle_info(details, state)
-
-  def handle_info({:notification, _pid, _ref, "sales_changed", payload}, _state) do
-    with {:ok, data} <- Jason.decode(payload, keys: :atoms),
-         :ok <- Absinthe.Subscription.publish(Endpoint, data.record, sales_operation: "*") do
-      {:noreply, :event_handled}
-    else
-      err ->
-        log_sentry_error(err)
-    end
-  end
 
   def handle_info({:notification, _, _, "transfers_changed", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
