@@ -68,72 +68,20 @@ After feedback has been given we expect responses within two weeks. After two we
 You can chat with the core team on the discord channel linked above. We try to be available on all weekdays.
 
 # Deployment
-Oh wow! you are grown now, you even have your very own deployment keys how do you get this to work in the wild?
-Well follow the guide below and you should be having lots of fun soon!
+Deployment is very straight forward in Cambiatus. We use standard Elixir releases so you'll need just some quick steps:
 
-We use [distillery](https://hexdocs.pm/distillery/home.html) and docker as our preferred tools for deployment.
-and you can bootstrap on this to get a self contained running version easily as follows:
-
-1. You can build a docker image of the version you want by running `make build` in the project's root folder this
-invokes a make file that builds a constainer image of a release.
-2. You can then run `make push` to upload this image to a registry, if using a different registry rather than the cambiatus one you may need to modify the make file with your own details
-3. Ensure to have docker authenticated as your work through this
+1. On the server, `cd` to `~/apps/backend`
+2. Release the app: `MIX_ENV=prod mix release cambiatus`
+3. Reset PM2: `pm2 delete backend && pm2 start ecosystem.config.js --env production --update-env && pm2 logs backend`
 
 
-## Server
+## Cambiatus App operations on the server
 
-Once built and now you intend to run it on a server you can run the following commands
+As any [releasable](https://elixir-lang.org/getting-started/mix-otp/config-and-releases.html) Elixir app, you'll get a few commands, trsf Elixir's docs if you need more information.
 
-  * `~/cambiatus/cambiatus/bin/cambiatus remote_console` to attach to the running process
-  * `~/cambiatus/cambiatus/bin/cambiatus foreground` to run it and keep the output locked to the current session
-  * `~/cambiatus/cambiatus/bin/cambiatus start` to start it on the background
-  * `~/cambiatus/cambiatus/bin/cambiatus console` for a IEx session
-
-To run migrations you can run:
-
-  * `~/cambiatus/cambiatus/bin/cambiatus migrate` For running migrations
-  * `~/cambiatus/cambiatus/bin/cambiatus seed` For adding seeding
-	* Note these are now run automatically when starting a release
-
-## To use Docker outide of our make script
-
-### Build image
-```
-docker build -t 'cambiatus/backend:latest' .
-```
-
-The default env will be development, if you want to build it for `prod`:
-
-```
-docker build -t 'cambiatus/backend:latest' --build-arg "MIX_ENV=prod" .
-```
-
-### Run image
-`docker run -t 'cambiatus/backend:latest'`
-
-If you are running in `prod` env you'll also need to set the database env variables:
-
-```sh
-docker run -e "DB_HOST=example.host" -e "DB_PORT=5432" -e "DB_USER=user" -e "DB_PASSWORD=123" -e "BESPIRAL_WALLET_PASSWORD=kw123" -t 'cambiatus/backend:latest'
-# OR
-docker run --env-file=env_file_path -t 'cambiatus/backend:latest'
-```
-
-If you are using docker-compose:
-
-```yml
-version: '3'
-
-services:
-  x:
-    image: 'someimage:latest'
-    env_file: env_file_path
-    -- or
-    environment:
-      - BESPIRAL_WALLET_PASSWORD=123
-      - DB_HOST=example.host
-      - DB_PORT=5432
-      - DB_USER=user
-```
+Useful migrations commands:
+  * `~/apps/backend/_build/prod/rel/cambiatus/bin/cambiatus eval "Cambiatus.Release.migrate()"` to migrate
+  * `~/apps/backend/_build/prod/rel/cambiatus/bin/cambiatus eval "Cambiatus.Release.rollback(Cambiatus.Repo, 1)"` to rollback 1 step
+  * `~/apps/backend/_build/prod/rel/cambiatus/bin/cambiatus eval "Cambiatus.Release.seed()"` to seed
 
 
