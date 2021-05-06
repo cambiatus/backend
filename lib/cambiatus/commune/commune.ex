@@ -12,6 +12,7 @@ defmodule Cambiatus.Commune do
     Action,
     Check,
     Community,
+    CommunityPhotos,
     Claim,
     Network,
     Objective,
@@ -79,6 +80,11 @@ defmodule Cambiatus.Commune do
     Claim
     |> Claim.by_community(community_id)
     |> Claim.newer_first()
+  end
+
+  def query(CommunityPhotos, _params) do
+    CommunityPhotos
+    |> order_by([cp], desc: cp.inserted_at)
   end
 
   def query(queryable, _params) do

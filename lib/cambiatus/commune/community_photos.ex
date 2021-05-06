@@ -1,4 +1,4 @@
-defmodule Cambiatus.Commune.Upload do
+defmodule Cambiatus.Commune.CommunityPhotos do
   @moduledoc """
   Upload model for the uploads table
   """
@@ -6,7 +6,7 @@ defmodule Cambiatus.Commune.Upload do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias Cambiatus.Commune.{Community, Upload}
+  alias Cambiatus.Commune.{Community, CommunityPhotos}
 
   @url_regex ~r/ https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)/
 
@@ -20,7 +20,7 @@ defmodule Cambiatus.Commune.Upload do
   @required_fields ~w(url community_id)a
   @optional_fields ~w()a
 
-  def changeset(%Upload{} = upload, attrs) do
+  def changeset(%CommunityPhotos{} = upload, attrs) do
     upload
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
