@@ -11,7 +11,7 @@ defmodule CambiatusWeb.SubscriptionCase do
 
   using do
     quote do
-      use Phoenix.ChannelTest
+      import Phoenix.ChannelTest
 
       use Absinthe.Phoenix.SubscriptionTest,
         schema: CambiatusWeb.Schema
