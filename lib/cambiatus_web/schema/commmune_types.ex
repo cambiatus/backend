@@ -283,6 +283,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "A photo"
   object :upload do
     field(:url, non_null(:string))
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, non_null(:naive_datetime))
   end
 
   @desc "A community objective"
