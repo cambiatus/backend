@@ -53,8 +53,11 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_up(_, args, _) do
-    case SignUp.sign_up(args) do
+  def sign_up(_, args, %{context: %{domain: domain}}) do
+    args
+    |> Map.merge(%{domain: domain})
+    |> SignUp.sign_up()
+    |> case do
       {:error, reason, details} ->
         Sentry.capture_message("Sign up failed", extra: %{error: reason, details: details})
         {:error, message: reason, details: details}
@@ -63,10 +66,13 @@ defmodule CambiatusWeb.Resolvers.Accounts do
         Sentry.capture_message("Sign up failed", extra: %{error: reason})
         {:error, message: "Couldn't create user", details: Cambiatus.Error.from(reason)}
 
-      {:ok, user} ->
+      {:ok, user} when not is_nil(user) ->
         {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
     end
   end
+
+  def sign_up(_, _, _),
+    do: {:error, message: "Couldn't create user", details: Cambiatus.Error.from("Error")}
 
   @doc """
   Collects transfers belonging to the given user according various criteria, provided in `args`.

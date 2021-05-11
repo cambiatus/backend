@@ -3,7 +3,7 @@ defmodule Cambiatus.Auth.SignUp do
   Module responsible for SignUp
   """
 
-  alias Cambiatus.{Accounts, Commune, Eos, Kyc, Accounts.User, Auth.Invitation, Auth}
+  alias Cambiatus.{Accounts, Commune, Kyc, Accounts.User, Auth.Invitation, Auth}
   alias Cambiatus.Kyc.{Address, KycData}
 
   @contract Application.compile_env(:cambiatus, :contract)
@@ -140,8 +140,8 @@ defmodule Cambiatus.Auth.SignUp do
     domain
     |> Commune.get_community_by_subdomain()
     |> case do
-      {:error, _reason} = error ->
-        error
+      {:error, _reason} ->
+        {:error, "Invalid origin: #{domain}"}
 
       {:ok, _found} ->
         params
@@ -152,7 +152,7 @@ defmodule Cambiatus.Auth.SignUp do
   def create_eos_account({:error, _, _} = error), do: error
 
   def create_eos_account(%{account: account, public_key: public_key} = params) do
-    case Eos.create_account(public_key, account) do
+    case @contract.create_account(public_key, account) do
       {:ok, _} ->
         params
 
@@ -231,13 +231,19 @@ defmodule Cambiatus.Auth.SignUp do
     end
   end
 
-  def invite_user(%{account: account} = params) do
-    case @contract.netlink(account, @contract.cambiatus_account()) do
-      {:ok, %{transaction_id: _txid}} ->
-        params
+  def invite_user(%{account: account, domain: domain} = params) do
+    with {:ok, community} <- Commune.get_community_by_subdomain(domain),
+         {true, _} <- {community.auto_invite, community},
+         {:ok, %{transaction_id: _txid}} <-
+           @contract.netlink(account, community.creator, community.symbol, "natural") do
+      params
+    else
+      {false, community} ->
+        {:error,
+         "Sorry we can't add you to this community: #{community.symbol}, as it don't allow for auto invites, please provide an invitation"}
 
       _ ->
-        {:error, :netlink_failed}
+        {:error, "Sorry we can't sign you up"}
     end
   end
 end
