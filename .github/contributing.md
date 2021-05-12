@@ -64,8 +64,6 @@ After feedback has been given we expect responses within two weeks. After two we
 1. If the integration test passes then will push the change to `production` or `demo` sever and conduct a final test.
 2. If all test passes, then we are live!
 
-# Community
-You can chat with the core team on the discord channel linked above. We try to be available on all weekdays.
 
 # Deployment
 Deployment is very straight forward in Cambiatus. We use standard Elixir releases so you'll need just some quick steps:
