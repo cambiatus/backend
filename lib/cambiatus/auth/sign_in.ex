@@ -14,7 +14,6 @@ defmodule Cambiatus.Auth.SignIn do
 
   # We check our demux/postgres database to see if have a entry for this user.
   # """
-
   def sign_in(account, password, domain: domain) do
     with {:ok, community} <- Commune.get_community_by_subdomain(domain),
          {true, _} <- {community.auto_invite, community},

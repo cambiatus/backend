@@ -136,7 +136,6 @@ defmodule Cambiatus.Auth.SignUp do
   def validate(params, :kyc), do: params
 
   def validate(%{domain: domain} = params, :domain) do
-    # 1. Find community by domain
     domain
     |> Commune.get_community_by_subdomain()
     |> case do
