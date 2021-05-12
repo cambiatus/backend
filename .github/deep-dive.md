@@ -21,20 +21,19 @@ When learning a new concept it's always great to walkthrough an example. By doin
 Our [frontend](https://github.com/cambiatus/frontend) is a static application built using Elm; the frontend sends *transactions* and triggers *actions* on the blockchain using [eosjs](https://github.com/EOSIO/eosjs) library. 
 
 #### Difference between action and transaction?
-Here is a great explaintation of what action and transcation is in EOS: "An action is a unity of code to be executed inside a transaction. A transaction is a set of one or more actions which will execute or fail completely. A transaction cannot execute partially." [source](https://forum.ivanontech.com/t/reading-assignment-eos-basics/3085/6)
+Here is a great explaintation of what action and transcation is in EOS: "An action is a unit of code to be executed inside a transaction. A transaction is a set of one or more actions which will execute or fail completely. A transaction cannot execute partially." [source](https://forum.ivanontech.com/t/reading-assignment-eos-basics/3085/6)
 
-### Creating a new community
+### Trigger community creation
 Let's say we want to create a new community called `0,TST`. In order to do so we need to do the following steps:
-1. Compose a transaction data
+1. Compose a transaction for the `create` community action
 2. Sign and send the transaction to the blockchain
 
-A transaction data has the following structure
-
+A transaction has the following structure
 ```
 {
   account: "cambiatus.cm",
   name: "create",
-  authorization: [{ actor: "henriquebuss", permission: "active" }],
+  authorization: [{ actor: "janedoe", permission: "active" }],
   data: {
     cmm_asset: 0 TST
     creator: janedoe12334
@@ -43,26 +42,13 @@ A transaction data has the following structure
   }
 }
 ```
-* Account is either cambiatus.cm or cambiatus.tk, depending on if your transaction is related to a community (.cm) or a token (.tk).
-* Name is the actual name of the transaction/action you want to perform (it's scoped to the account)
-* Authorization just says what user is doing the transaction (it's the accountname on our app)
+* **Account** - The account that is associated to the blockchain. It's either `cambiatus.cm` or `cambiatus.tk`, depending on if your transaction is related to a community (.cm) or a token (.tk).
+* **Name** - is the action you want to perform.
+* **Authorization** - A mapping of an actor and their permission level. Permission define what actions an actor can perform on the blockchain.
+* **data** - set of data required by the action. Smart contracts define actions and their arguments, for example you can review all `ACTION` defined by our [community](https://github.com/cambiatus/contracts/blob/57b0fc896f8d710f774d5b5f862bc33c0fe4a890/community/community.hpp#L165) and [token](https://github.com/cambiatus/contracts/blob/57b0fc896f8d710f774d5b5f862bc33c0fe4a890/token/token.hpp#L50) contracts.
 
-#### Difference between community and token
+## Adding new block to the blockchain
 
-
-You can see what data each transaction needs on the [contracts repo](https://github.com/cambiatus/contracts). There are contracts for community and token (these are the name of the directories on the repo), and you can open the .hpp file under those directories and look at the ACTIONs to see what's available and what each one needs
-
-After we push a transaction, we just get a transactionId back, not the community, so we have two options:
-If the data we're dealing with doesn't have any "computed" fields (such as a new id), we can assume the data we sent is valid, so we don't need anything back from the backend. This happens when we're just updating a community, for example
-If we do need some computed field, such as when the user creates a new action (which will have a new id), we don't really have a reliable solution right now. We just reload the page, query the backend again and hope the transaction is there already. Good news is @Lucca thinks we can create a Graphql subscription for this (see here)
-
-You can also see the available actions on the blockchain through bloks:
-community
- token
-Just go to the Contract tab, and then you can see the Tables, Actions and ABI
-
-
-2. Transactions is verified and added to blockchain
 
 3. Event source is notified of the update
 Action reader listens for updated data in blockchain. Passes the data to Action watchter.
@@ -73,13 +59,16 @@ Action watcher sends the parsed data to action handler which pushes the data to 
 5. Frontend queries for updated data
 The frontend queries for the update data and displays the result
 
-## Creating Community
 
+After we push a transaction, we just get a transactionId back, not the community, so we have two options:
+If the data we're dealing with doesn't have any "computed" fields (such as a new id), we can assume the data we sent is valid, so we don't need anything back from the backend. This happens when we're just updating a community, for example
+If we do need some computed field, such as when the user creates a new action (which will have a new id), we don't really have a reliable solution right now. We just reload the page, query the backend again and hope the transaction is there already. Good news is @Lucca thinks we can create a Graphql subscription for this (see here)
 
+You can also see the available actions on the blockchain through bloks:
+community
+ token
+Just go to the Contract tab, and then you can see the Tables, Actions and ABI
 
-## Pushing Community to EOS Blockchain
-
-## Querying and Displaying Community
 
 # Resources
 * https://medium.com/eosio/introducing-demux-deterministic-databases-off-chain-verified-by-the-eosio-blockchain-bd860c49b017
