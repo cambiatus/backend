@@ -46,7 +46,7 @@ config :phoenix, :stacktrace_depth, 25
 config :cambiatus, :ipfs, conn: {}
 
 config :eosrpc, EOSRPC.Wallet, url: "http://127.0.0.1:8900/v1/wallet"
-config :eosrpc, EOSRPC.Chain, url: "http://staging.cambiatus.io/v1/chain"
+config :eosrpc, EOSRPC.Chain, url: "https://staging.cambiatus.io/v1/chain"
 config :eosrpc, EOSRPC.Helper, symbol: "SYS"
 
 # Configure Notifications Adapter

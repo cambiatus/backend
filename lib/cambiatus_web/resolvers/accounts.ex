@@ -4,7 +4,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   use this to resolve any queries and mutations for Accounts
   """
 
-  alias Cambiatus.{Accounts, Auth, Auth.SignUp}
+  alias Cambiatus.{Accounts, Auth.SignUp, Auth.SignIn}
   alias Cambiatus.Accounts.{User, Transfers}
 
   @doc """
@@ -34,7 +34,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, _) do
-    case Auth.sign_in(account, password, invitation_id) do
+    case SignIn.sign_in(account, password, invitation_id) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
@@ -44,7 +44,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   def sign_in(_, %{account: account, password: password}, _) do
-    case Auth.sign_in(account, password) do
+    case SignIn.sign_in(account, password) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
