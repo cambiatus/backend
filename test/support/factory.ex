@@ -116,7 +116,9 @@ defmodule Cambiatus.Factory do
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
-      created_at: NaiveDateTime.utc_now()
+      created_at: NaiveDateTime.utc_now(),
+      subdomain: build(:subdomain),
+      auto_invite: true
     }
   end
 

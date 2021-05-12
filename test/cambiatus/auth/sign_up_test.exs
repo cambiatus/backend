@@ -113,12 +113,17 @@ defmodule Cambiatus.Auth.SignUpTest do
 
   describe "Different SignUp routes: " do
     setup do
-      insert(:community, %{symbol: "BES"})
+      creator = insert(:user)
 
-      :ok
+      community =
+        :community
+        |> insert(%{creator: creator.account})
+        |> Repo.preload(:subdomain)
+
+      {:ok, %{community: community}}
     end
 
-    test "sign_up/1 with minimum params" do
+    test "sign_up/1 with minimum params", %{community: community} do
       new_user = build(:user)
       _inviter = insert(:user, %{account: "cambiatustes"})
       kyc = build(:kyc_data)
@@ -128,7 +133,8 @@ defmodule Cambiatus.Auth.SignUpTest do
         account: new_user.account,
         email: new_user.email,
         public_key: "EOS75St6RFmFyXLBnUwheC4H2YTf6tL38saGWiRW1UkdRopERhE7j",
-        user_type: kyc.user_type
+        user_type: kyc.user_type,
+        domain: community.subdomain.name
       }
 
       assert {:ok, %User{}} = SignUp.sign_up(params)
@@ -179,8 +185,7 @@ defmodule Cambiatus.Auth.SignUpTest do
       assert {:error, :invalid_user_type} == SignUp.sign_up(p4)
     end
 
-    test "sign_up/1 with invitation" do
-      community = insert(:community)
+    test "sign_up/1 with invitation", %{community: community} do
       invite = insert(:invitation, %{community: community})
       user = build(:user)
 
@@ -190,7 +195,8 @@ defmodule Cambiatus.Auth.SignUpTest do
         account: user.account,
         public_key: "EOS75St6RFmFyXLBnUwheC4H2YTf6tL38saGWiRW1UkdRopERhE7j",
         user_type: "natural",
-        invitation_id: InvitationId.encode(invite.id)
+        invitation_id: InvitationId.encode(invite.id),
+        domain: community.subdomain.name
       }
 
       assert {:ok, %User{}} = SignUp.sign_up(params)
@@ -226,8 +232,7 @@ defmodule Cambiatus.Auth.SignUpTest do
       assert {:error, :invitation_not_found} = SignUp.sign_up(params)
     end
 
-    test "sign_up/1 with invitation, KYC and address" do
-      community = insert(:community)
+    test "sign_up/1 with invitation, KYC and address", %{community: community} do
       invite = insert(:invitation, %{community: community})
       user = build(:user)
       kyc = build(:kyc_data)
@@ -240,6 +245,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         public_key: "EOS75St6RFmFyXLBnUwheC4H2YTf6tL38saGWiRW1UkdRopERhE7j",
         user_type: kyc.user_type,
         invitation_id: InvitationId.encode(invite.id),
+        domain: community.subdomain.name,
         kyc: %{
           user_type: kyc.user_type,
           document: kyc.document,
@@ -265,8 +271,7 @@ defmodule Cambiatus.Auth.SignUpTest do
       assert found_kyc.account_id == user.account
     end
 
-    test "sign_up/1 with KYC" do
-      _community = insert(:community)
+    test "sign_up/1 with KYC", %{community: community} do
       _inviter = insert(:user, %{account: "cambiatustes"})
       user = build(:user)
       kyc = build(:kyc_data)
@@ -283,7 +288,8 @@ defmodule Cambiatus.Auth.SignUpTest do
           document_type: kyc.document_type,
           phone: kyc.phone,
           country_id: kyc.country.id
-        }
+        },
+        domain: community.subdomain.name
       }
 
       if kyc.user_type == "juridical" do
@@ -293,8 +299,7 @@ defmodule Cambiatus.Auth.SignUpTest do
       end
     end
 
-    test "sign_up/1 with Address" do
-      _community = insert(:community)
+    test "sign_up/1 with Address", %{community: community} do
       _inviter = insert(:user, %{account: "cambiatustes"})
       user = build(:user)
       address = build(:address)
@@ -305,6 +310,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         account: user.account,
         public_key: "EOS75St6RFmFyXLBnUwheC4H2YTf6tL38saGWiRW1UkdRopERhE7j",
         user_type: "natural",
+        domain: community.subdomain.name,
         address: %{
           account_id: address.account.account,
           street: address.street,

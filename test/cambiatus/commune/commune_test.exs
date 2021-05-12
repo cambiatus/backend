@@ -24,12 +24,16 @@ defmodule Cambiatus.CommuneTest do
 
     test "list_communities/0 returns all communities" do
       community = insert(:community)
-      assert Commune.list_communities() == {:ok, [community]}
+      {:ok, [found_community]} = Commune.list_communities()
+      assert found_community.symbol == community.symbol
+      assert found_community.description == community.description
     end
 
     test "get_community!/1 returns the community with given symbol" do
       community = insert(:community)
-      assert Commune.get_community!(community.symbol) == community
+      found_community = Commune.get_community!(community.symbol)
+      assert found_community.symbol == community.symbol
+      assert found_community.description == community.description
     end
 
     test "create_community/1 with valid data creates a community" do
@@ -50,7 +54,7 @@ defmodule Cambiatus.CommuneTest do
     test "update_community/2 with invalid data returns error changeset" do
       community = insert(:community)
       assert {:error, %Ecto.Changeset{}} = Commune.update_community(community, @invalid_attrs)
-      assert community == Commune.get_community!(community.symbol)
+      assert community.symbol == Commune.get_community!(community.symbol).symbol
     end
 
     test "delete_community/1 deletes the community" do
@@ -162,7 +166,8 @@ defmodule Cambiatus.CommuneTest do
       change = %{is_completed: true}
       assert {:ok, %Objective{} = objective} = Commune.update_objective(objective, change)
       {:ok, found_objective} = Commune.get_objective(objective.id)
-      assert objective == Repo.preload(found_objective, [:creator, :community])
+      assert objective.id == found_objective.id
+      assert objective.is_completed == found_objective.is_completed
     end
   end
 
