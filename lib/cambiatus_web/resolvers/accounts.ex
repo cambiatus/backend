@@ -34,7 +34,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, _) do
-    case SignIn.sign_in(account, password, invitation_id) do
+    case SignIn.sign_in(account, password, invitation_id: invitation_id) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
@@ -43,8 +43,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in(_, %{account: account, password: password}, _) do
-    case SignIn.sign_in(account, password) do
+  def sign_in(_, %{account: account, password: password}, %{context: %{domain: domain}}) do
+    case SignIn.sign_in(account, password, domain: domain) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 

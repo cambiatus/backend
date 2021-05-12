@@ -4,7 +4,6 @@ defmodule Cambiatus.Auth do
   import Ecto.Query
 
   alias Cambiatus.Auth.{Invitation, InvitationId}
-
   alias Cambiatus.{Accounts.User, Commune.Network, Repo}
 
   @doc """

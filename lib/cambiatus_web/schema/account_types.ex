@@ -138,7 +138,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_block, :integer)
     field(:created_at, :string)
     field(:created_eos_account, :string)
-    field(:network, list_of(:network))
+    field(:network, list_of(:network), resolve: dataloader(Cambiatus.Commune))
 
     field(:address, :address, resolve: dataloader(Cambiatus.Kyc))
     field(:kyc, :kyc_data, resolve: dataloader(Cambiatus.Kyc))
