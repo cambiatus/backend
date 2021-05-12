@@ -16,6 +16,7 @@ defmodule Cambiatus.Commune.Community do
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   @primary_key {:symbol, :string, autogenerate: false}
   schema "communities" do
@@ -79,5 +80,11 @@ defmodule Cambiatus.Commune.Community do
     |> changeset(%{})
     |> Ecto.Changeset.put_assoc(:uploads, uploads)
     |> Repo.update()
+  end
+
+  def by_subdomain(query \\ Community, subdomain) do
+    query
+    |> join(:left, [c], s in assoc(c, :subdomain))
+    |> where([c, s], s.name == ^subdomain)
   end
 end

@@ -32,4 +32,10 @@ defmodule Cambiatus.Error do
 
     %Error{type: :unhandled_error, message: other}
   end
+
+  defimpl Jason.Encoder, for: Cambiatus.Error do
+    def encode(value, opts) do
+      Jason.Encode.map(Map.take(value, [:type, :message]), opts)
+    end
+  end
 end

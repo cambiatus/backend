@@ -97,6 +97,11 @@ defmodule Cambiatus.Mixfile do
         "ecto.migrate --quiet",
         "run priv/repo/country_seeds.exs",
         "test"
+      ],
+      check: [
+        "compile --warnings-as-errors --all warnings",
+        "format --check-formatted",
+        "credo"
       ]
     ]
   end

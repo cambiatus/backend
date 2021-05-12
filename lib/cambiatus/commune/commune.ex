@@ -650,14 +650,8 @@ defmodule Cambiatus.Commune do
   end
 
   def get_community_by_subdomain(subdomain) do
-    query =
-      from(c in Community,
-        join: s in Subdomain,
-        on: c.subdomain_id == s.id,
-        where: s.name == ^subdomain
-      )
-
-    query
+    Community
+    |> Community.by_subdomain(subdomain)
     |> Repo.one()
     |> case do
       nil ->
