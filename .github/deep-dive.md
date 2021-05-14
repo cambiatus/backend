@@ -6,8 +6,8 @@
 - **[Resources](#Resources)**
 
 # Architecture Overview
-Cambiatus is a DApp (decentralized application) that leverages [EOS](https://training.eos.io/) blockchain protocol, here are few resource to checkout if you are new to DApp, [[1]](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/), [[2]](https://medium.com/proof-systems/a-dapp-is-not-a-protocol-824411a55582).
-Even though blockchain brings many benefits to an applicaiton it also has its limitations. The major limitation of blockchain is the ability to query and fetch data in a timely manner. In order to over come this limitation we took a hybrid approach: we store all data on the blockchain and replicate partial data on a traditional database. With this approach we gain the benefits of blockchain - security and immutability of our data; efficient and user friendly retrival of our data from a traditional database.
+Cambiatus is a DApp (decentralized application) that leverages the [EOS](https://training.eos.io/) blockchain protocol. Here are a few resources to checkout if you are new to DApp, [What is a Dapp](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/), [A Dapp is not a protocol](https://medium.com/proof-systems/a-dapp-is-not-a-protocol-824411a55582).
+Even though blockchain brings many benefits to an applicaiton it also has its limitations. The major limitation of blockchain is the ability to query and fetch data in a timely manner. In order to over come this limitation we took a hybrid approach: we store all data on the blockchain and replicate partial data on a traditional database. With this approach we gain the benefits of blockchain - security and immutability of our data - and the benefits of traditional databases - efficient and user friendly retrieval of data.
 
 Here is an overview of the architecutre. We'll go more into detail in the next section.
 
@@ -32,7 +32,7 @@ Here is a great explaintation of what action and transcation mean in context of 
 > "An action is a unit of code to be executed inside a transaction. A transaction is a set of one or more actions which will execute or fail completely." [source](https://forum.ivanontech.com/t/reading-assignment-eos-basics/3085/6)
 
 ### Sending action
-Let's say we want to create a new community called `0,TST`. In order to do so we need to do the following steps:
+Let's say we want to create a new community identified by the symbol `0,TST`. In order to do so we need to do the following steps:
 
 1. Compose a transaction for the `create` community `action`
 2. Sign and send the transaction to the blockchain
@@ -44,10 +44,10 @@ A transaction has the following structure
   name: "create",
   authorization: [{ actor: "janedoe", permission: "active" }],
   data: {
-    cmm_asset: 0 TST
-    creator: janedoe12334
-    name: TESTCOM
-    description: A test community
+    cmm_asset: "0 TST",
+    creator: "janedoe12334",
+    name: "TESTCOM",
+    description: "A test community"
   }
 }
 ```
@@ -82,9 +82,9 @@ Once an action has been pushed to the blockchain, we *optimistically assume* tha
 ## Updating community
 The process for updating a community is similar to **[creating a new community](#Creating-a-new-community)** the only difference is how we react once we have pushed the transaction to the blockchain.
 
-After we push a transaction, on a successful operation we recieve a `transactionId` this indicated that our data got added to the blockchain. 
+After we push a transaction, on a successful operation we receive a `transactionId`, which indicates that our data has been added to the blockchain. 
 
-Or our transacction can fail. It can fail because of two reasons:
+Or our transaction can fail. It can fail for two reasons:
 1. Invalid permission
 2. Missing/invalid data passed
 
