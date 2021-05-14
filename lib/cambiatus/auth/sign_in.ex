@@ -13,21 +13,50 @@ defmodule Cambiatus.Auth.SignIn do
   # Login logic for Cambiatus.
 
   # We check our demux/postgres database to see if have a entry for this user.
-  # """
+  # # """
+  # def sign_in(account, password, domain: domain) do
+  #   with {:ok, community} <- Commune.get_community_by_subdomain(domain),
+  #        {true, _} <- {community.auto_invite, community},
+  #        %User{} = user <- Accounts.get_user(account),
+  #        true <- Accounts.verify_pass(account, password),
+  #        {:ok, _} <- netlink(user, community) do
+  #     {:ok, user}
+  #   else
+  #     {:error, _reason} = error ->
+  #       error
+
+  #     {false, community} ->
+  #       {:error,
+  #        "Sorry we can't add you to this community: #{community.symbol}, as it don't allow for auto invites, please provide an invitation"}
+
+  #     nil ->
+  #       {:error, "Account not found"}
+
+  #     false ->
+  #       {:error, "Invalid password"}
+  #   end
+  # end
+
   def sign_in(account, password, domain: domain) do
-    with {:ok, community} <- Commune.get_community_by_subdomain(domain),
-         {true, _} <- {community.auto_invite, community},
+    with {:ok, %Community{} = community} <- Commune.get_community_by_subdomain(domain),
          %User{} = user <- Accounts.get_user(account),
-         true <- Accounts.verify_pass(account, password),
-         {:ok, _} <- netlink(user, community) do
-      {:ok, user}
+         true <- Accounts.verify_pass(account, password) do
+      case {community.auto_invite, Commune.is_community_member?(community.symbol, account)} do
+        # Community has auto invite and user is not in yet
+        {true, false} ->
+          netlink(user, community)
+
+        # Already a member, nothing new to do
+        {_, true} ->
+          {:ok, user}
+
+        {false, false} ->
+          {:error,
+           "Sorry we can't add you to this community: #{community.symbol}, as it don't allow for auto invites, please provide an invitation"}
+      end
     else
       {:error, _reason} = error ->
         error
-
-      {false, community} ->
-        {:error,
-         "Sorry we can't add you to this community: #{community.symbol}, as it don't allow for auto invites, please provide an invitation"}
 
       nil ->
         {:error, "Account not found"}

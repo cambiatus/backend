@@ -10,10 +10,8 @@ defmodule CambiatusWeb.Plugs.GetOrigin do
   def init(opts), do: opts
 
   def call(conn, _) do
-    IO.puts("Here its the value of conn #{inspect(conn)}")
-
     conn
-    |> get_req_header("origin")
+    |> get_req_header("community-domain")
     |> get_domain()
     |> case do
       "" ->
