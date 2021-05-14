@@ -11,7 +11,7 @@ Even though blockchain brings many benefits to an applicaiton it also has its li
 
 Here is an overview of the architecutre. We'll go more into detail in the next section.
 
-![Application overview](./backend/.github/cambiatus_data_flow.png)
+![Application overview](https://raw.githubusercontent.com/cambiatus/backend/architecture-deep-dive/.github/cambiatus_data_flow.png)
 
 # Flow of cambiatus data 
 In this section we'll explore how our data flows through our application. Here are the objectives for this section:
@@ -67,7 +67,7 @@ Click on the website below and click on the `contract` tab to see what actions a
 ### Adding new block to the blockchain
 Once the transaction has been pushed to the blockchain then it would get verified and added to the blockchain. The diagram below demonstrates the process of adding a block to EOS blockchain.
 
-![Block addition to EOS blockchain](./backend/.github/block_addition.png)
+![Block addition to EOS blockchain](https://raw.githubusercontent.com/cambiatus/backend/architecture-deep-dive/.github/block_addition.png)
 
 ### Emitting new blocks to the database
 The new community has been added to the blockchain! However, we sill need to send the data to our database so our frontend could fetch and display it to the user. We can accompolish this by leveraging an event driven library developed by EOS called [demux-js](https://github.com/EOSIO/demux-js-eos).
