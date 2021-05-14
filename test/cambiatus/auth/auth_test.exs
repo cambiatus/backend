@@ -1,41 +1,16 @@
 defmodule Cambiatus.AuthTest do
   use Cambiatus.DataCase
 
-  alias Cambiatus.{
-    Auth,
-    Auth.InvitationId
-  }
-
-  describe "authentication Sign in" do
-    setup :valid_community_and_user
-
-    test "successful sign in", %{user: user} do
-      assert {:ok, u} = Auth.sign_in(user.account, "pass")
-      assert u.account == user.account
-    end
-
-    test "non existing user sign_in" do
-      assert Auth.sign_in("nonexisting", "") == {:error, :not_found}
-    end
-
-    test "sign in with invitation" do
-      community = insert(:community)
-      user = insert(:user)
-      another_user = insert(:user)
-      invitation = insert(:invitation, %{community: community, creator: user})
-      invitation_id = InvitationId.encode(invitation.id)
-
-      assert {:ok, u} = Auth.sign_in(another_user.account, "pass", invitation_id)
-      assert u.account == another_user.account
-    end
-  end
+  alias Cambiatus.{Auth, Auth.InvitationId}
 
   describe "invitations" do
     setup :valid_community_and_user
 
     test "list_invitations/0 returns all invitations" do
       invitation = insert(:invitation)
-      assert Auth.list_invitations() == [invitation]
+      [found_invitation] = Auth.list_invitations()
+
+      assert found_invitation.id == invitation.id
     end
 
     test "get_invitation!/1 returns the invitation with given id" do

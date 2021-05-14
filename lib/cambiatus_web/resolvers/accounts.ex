@@ -4,7 +4,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   use this to resolve any queries and mutations for Accounts
   """
 
-  alias Cambiatus.{Accounts, Auth, Auth.SignUp}
+  alias Cambiatus.{Accounts, Auth.SignUp, Auth.SignIn}
   alias Cambiatus.Accounts.{User, Transfers}
 
   @doc """
@@ -34,7 +34,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, _) do
-    case Auth.sign_in(account, password, invitation_id) do
+    case SignIn.sign_in(account, password, invitation_id: invitation_id) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
@@ -43,8 +43,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in(_, %{account: account, password: password}, _) do
-    case Auth.sign_in(account, password) do
+  def sign_in(_, %{account: account, password: password}, %{context: %{domain: domain}}) do
+    case SignIn.sign_in(account, password, domain: domain) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
@@ -53,8 +53,11 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_up(_, args, _) do
-    case SignUp.sign_up(args) do
+  def sign_up(_, args, %{context: %{domain: domain}}) do
+    args
+    |> Map.merge(%{domain: domain})
+    |> SignUp.sign_up()
+    |> case do
       {:error, reason, details} ->
         Sentry.capture_message("Sign up failed", extra: %{error: reason, details: details})
         {:error, message: reason, details: details}
@@ -63,10 +66,13 @@ defmodule CambiatusWeb.Resolvers.Accounts do
         Sentry.capture_message("Sign up failed", extra: %{error: reason})
         {:error, message: "Couldn't create user", details: Cambiatus.Error.from(reason)}
 
-      {:ok, user} ->
+      {:ok, user} when not is_nil(user) ->
         {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
     end
   end
+
+  def sign_up(_, _, _),
+    do: {:error, message: "Couldn't create user", details: Cambiatus.Error.from("Error")}
 
   @doc """
   Collects transfers belonging to the given user according various criteria, provided in `args`.

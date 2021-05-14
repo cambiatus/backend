@@ -220,7 +220,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:description, non_null(:string))
     field(:inviter_reward, non_null(:float))
     field(:invited_reward, non_null(:float))
-    field(:uploads, list_of(:upload), resolve: dataloader(Cambiatus.Commune))
+    field(:uploads, non_null(list_of(non_null(:upload))), resolve: dataloader(Cambiatus.Commune))
 
     field(:type, :string)
     field(:issuer, :string)
@@ -277,12 +277,14 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:auto_invite, non_null(:boolean))
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:website, :string)
-    field(:uploads, list_of(:upload), resolve: dataloader(Cambiatus.Commune))
+    field(:uploads, non_null(list_of(non_null(:upload))), resolve: dataloader(Cambiatus.Commune))
   end
 
   @desc "A photo"
   object :upload do
-    field(:url, :string)
+    field(:url, non_null(:string))
+    field(:inserted_at, :naive_datetime)
+    field(:updated_at, non_null(:naive_datetime))
   end
 
   @desc "A community objective"

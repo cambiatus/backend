@@ -64,5 +64,22 @@ After feedback has been given we expect responses within two weeks. After two we
 1. If the integration test passes then will push the change to `production` or `demo` sever and conduct a final test.
 2. If all test passes, then we are live!
 
-# Community
-You can chat with the core team on the discord channel linked above. We try to be available on all weekdays.
+
+# Deployment
+Deployment is very straight forward in Cambiatus. We use standard Elixir releases so you'll need just some quick steps:
+
+1. On the server, `cd` to `~/apps/backend`
+2. Release the app: `MIX_ENV=prod mix release cambiatus`
+3. Reset PM2: `pm2 delete backend && pm2 start ecosystem.config.js --env production --update-env && pm2 logs backend`
+
+
+## Cambiatus App operations on the server
+
+As any [releasable](https://elixir-lang.org/getting-started/mix-otp/config-and-releases.html) Elixir app, you'll get a few commands, trsf Elixir's docs if you need more information.
+
+Useful migrations commands:
+  * `~/apps/backend/_build/prod/rel/cambiatus/bin/cambiatus eval "Cambiatus.Release.migrate()"` to migrate
+  * `~/apps/backend/_build/prod/rel/cambiatus/bin/cambiatus eval "Cambiatus.Release.rollback(Cambiatus.Repo, 1)"` to rollback 1 step
+  * `~/apps/backend/_build/prod/rel/cambiatus/bin/cambiatus eval "Cambiatus.Release.seed()"` to seed
+
+

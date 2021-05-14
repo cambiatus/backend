@@ -105,7 +105,7 @@ defmodule Cambiatus.Kyc.KycData do
 
   def validate_document_by_document_type(changeset) do
     country_id = get_field(changeset, :country_id)
-    country = Repo.get(Country, country_id)
+    %Country{} = country = Repo.get(Country, country_id)
 
     validate_document_by_document_type(changeset, country.name)
   end

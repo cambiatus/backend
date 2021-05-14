@@ -12,6 +12,7 @@ defmodule Cambiatus.Commune do
     Action,
     Check,
     Community,
+    CommunityPhotos,
     Claim,
     Network,
     Objective,
@@ -79,6 +80,11 @@ defmodule Cambiatus.Commune do
     Claim
     |> Claim.by_community(community_id)
     |> Claim.newer_first()
+  end
+
+  def query(CommunityPhotos, _params) do
+    CommunityPhotos
+    |> order_by([cp], desc: cp.inserted_at)
   end
 
   def query(queryable, _params) do
@@ -644,14 +650,8 @@ defmodule Cambiatus.Commune do
   end
 
   def get_community_by_subdomain(subdomain) do
-    query =
-      from(c in Community,
-        join: s in Subdomain,
-        on: c.subdomain_id == s.id,
-        where: s.name == ^subdomain
-      )
-
-    query
+    Community
+    |> Community.by_subdomain(subdomain)
     |> Repo.one()
     |> case do
       nil ->

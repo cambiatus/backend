@@ -1,12 +1,22 @@
 defmodule Cambiatus.Commune.Community do
   @moduledoc false
 
-  alias Cambiatus.Commune.{Community, Network, Mint, Objective, Transfer, Subdomain, Upload}
+  alias Cambiatus.Commune.{
+    Community,
+    Network,
+    Mint,
+    Objective,
+    Transfer,
+    Subdomain,
+    CommunityPhotos
+  }
+
   alias Cambiatus.Shop.Product
   alias Cambiatus.Repo
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   @primary_key {:symbol, :string, autogenerate: false}
   schema "communities" do
@@ -48,7 +58,7 @@ defmodule Cambiatus.Commune.Community do
     has_many(:objectives, Objective, foreign_key: :community_id)
     has_many(:actions, through: [:objectives, :actions])
     has_many(:mints, Mint, foreign_key: :community_id)
-    has_many(:uploads, Upload, foreign_key: :community_id, on_replace: :delete)
+    has_many(:uploads, CommunityPhotos, foreign_key: :community_id, on_replace: :delete)
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
@@ -63,12 +73,18 @@ defmodule Cambiatus.Commune.Community do
   end
 
   def save_photos(%Community{} = community, urls) do
-    uploads = Enum.map(urls, &%Upload{url: &1})
+    uploads = Enum.map(urls, &%CommunityPhotos{url: &1})
 
     community
     |> Repo.preload([:uploads, :subdomain])
     |> changeset(%{})
     |> Ecto.Changeset.put_assoc(:uploads, uploads)
     |> Repo.update()
+  end
+
+  def by_subdomain(query \\ Community, subdomain) do
+    query
+    |> join(:left, [c], s in assoc(c, :subdomain))
+    |> where([c, s], s.name == ^subdomain)
   end
 end

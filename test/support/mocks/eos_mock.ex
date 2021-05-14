@@ -7,6 +7,10 @@ defmodule Cambiatus.EosMock do
   @cambiatus_community "BES"
   @cambiatus_account "cambiatustes"
 
+  def create_account(_public_key, _account) do
+    {:ok, %{}}
+  end
+
   def netlink(new_user, inviter, community \\ @cambiatus_community, user_type \\ "natural") do
     {:ok, _network} =
       Commune.create_network(%{

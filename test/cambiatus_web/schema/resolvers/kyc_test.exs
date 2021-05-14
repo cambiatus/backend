@@ -80,7 +80,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
     end
 
     test "updates address for the given account" do
-      address = insert(:address)
+      address = insert(:address, %{zip: @zip, street: @street})
       user = address.account
       conn = build_conn() |> auth_user(user)
 
@@ -125,7 +125,7 @@ defmodule CambiatusWeb.Schema.Resolvers.KycTest do
 
       variables = %{
         "inputAddress" => %{
-          "country_id" => "1",
+          "country_id" => new_kyc.country.id,
           "state_id" => "1",
           "city_id" => "1",
           "neighborhood_id" => "1",

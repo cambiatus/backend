@@ -59,15 +59,10 @@ defmodule Cambiatus.Kyc.Address do
 
     case Repo.get(Country, country_id) do
       nil ->
-        changeset
-        |> add_error(:country_id, "Country not found")
+        add_error(changeset, :country_id, "Country not found")
 
-      country ->
-        if country.name == "Costa Rica" do
-          changeset
-        else
-          add_error(changeset, :country_id, "We only support 'Costa Rica'")
-        end
+      _country ->
+        changeset
     end
   end
 
