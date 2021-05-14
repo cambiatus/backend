@@ -12,6 +12,7 @@
 - [Blog](https://medium.com/cambiatus)
 - [Communities](https://www.cambiatus.com/pilots)
 - [FAQs](https://www.cambiatus.com/faq2)
+- [Architecture & Data Flow](/.github/deep-dive.md)
 
 ## Table of Contents
 
@@ -37,8 +38,6 @@ it simpler to consume the information from the blockchain. At the moment this is
 CRUD actions however creation and updating happens as a result of events that trigger writes and updates to our database.
 
 The intention down the line is to make this database a write only database in an Event Sourced structure which will enable us to replay events and give us much more observability.
-
-For a more in-depth look at our application lifecycle, checkout [this documentation](/.github/deep-dive.md).
 
 ## Technologies
 
