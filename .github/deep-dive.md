@@ -1,9 +1,9 @@
 # Table of Contents
 - **[Architecture Overview](#Architecture-Overview)**
-- **[Flow of cambiatus data](##Flow-of-cambiatus-data)**
-  - **[Creating a new community](##Creating-a-new-community)**
-  - **[Updating community](##Updating-community)**
-- **[Resources](##Resources)**
+- **[Flow of cambiatus data](#Flow-of-cambiatus-data)**
+  - **[Creating a new community](#Creating-a-new-community)**
+  - **[Updating community](#Updating-community)**
+- **[Resources](#Resources)**
 
 # Architecture Overview
 Cambiatus is a DApp (decentralized application) that leverages [EOS](https://training.eos.io/) blockchain protocol, here are few resource to checkout if you are new to DApp, [[1]](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/), [[2]](https://medium.com/proof-systems/a-dapp-is-not-a-protocol-824411a55582).
