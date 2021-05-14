@@ -1,31 +1,40 @@
 # Table of Contents
+- **[Architecture Overview](#Architecture-Overview)**
+- **[Flow of cambiatus data](##Flow-of-cambiatus-data)**
+  - **[Creating a new community](##Creating-a-new-community)**
+  - **[Updating community](##Updating-community)**
+- **[Resources](##Resources)**
 
-# Application Overview
-Cambiatus is a DApp (decentralized application) that leverags [EOS](https://training.eos.io/) blockchain protocol, here are few resource to checkout if you are new to DApp, [[1]](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/), [[2]](https://medium.com/proof-systems/a-dapp-is-not-a-protocol-824411a55582).
-
-Even though blockchain brings many benefits to an applicaiton it also has its limitations. The major limitation of blockchain is the ability to query and fetch data in a timely manner. In order to over come this limitation we utilize a hybrid: we store all data on the blockchain and replicate partial data on a traditional database. With this approach we gain the benefits of blockchain - security and immutable of our data; efficient and user friendly retrival of our data from a traditional database.
+# Architecture Overview
+Cambiatus is a DApp (decentralized application) that leverages [EOS](https://training.eos.io/) blockchain protocol, here are few resource to checkout if you are new to DApp, [[1]](https://www.freecodecamp.org/news/what-is-a-dapp-a-guide-to-ethereum-dapps/), [[2]](https://medium.com/proof-systems/a-dapp-is-not-a-protocol-824411a55582).
+Even though blockchain brings many benefits to an applicaiton it also has its limitations. The major limitation of blockchain is the ability to query and fetch data in a timely manner. In order to over come this limitation we took a hybrid approach: we store all data on the blockchain and replicate partial data on a traditional database. With this approach we gain the benefits of blockchain - security and immutability of our data; efficient and user friendly retrival of our data from a traditional database.
 
 Here is an overview of the architecutre. We'll go more into detail in the next section.
 
-<img src='https://i.imgur.com/MFfGOe3.png' height='492' alt='Cambiatus Data Flow' />
+![Application overview](./backend/.github/cambiatus_data_flow.png)
 
-# Lifecycle
-In this section we'll explore our architecture in more detail. Here are the objectives for this section:
+# Flow of cambiatus data 
+In this section we'll explore how our data flows through our application. Here are the objectives for this section:
+
 * Understand the interaction between frontend and blockchain
-* The transferring of data from blockchain to the database
+* Transferring of data from blockchain to database
 * Retrival and displaying of the data
 
-When learning a new concept it's always great to walkthrough an example. By doing so it will connect abstract ideas to implementation. For this section and future ones we'll use the example of *creating a new community*.
+When learning a new concept it's always great to use aexamples, so we'll walkthrough two use cases:
+- **[Creating a new community](#Creating-a-new-community)**
+- **[Updating community](#Updating-community)**
 
-## Frontend interaction with the blockchain
+## Creating a new community
 Our [frontend](https://github.com/cambiatus/frontend) is a static application built using Elm; the frontend sends *transactions* and triggers *actions* on the blockchain using [eosjs](https://github.com/EOSIO/eosjs) library. 
 
 #### Difference between action and transaction?
-Here is a great explaintation of what action and transcation is in EOS: "An action is a unit of code to be executed inside a transaction. A transaction is a set of one or more actions which will execute or fail completely. A transaction cannot execute partially." [source](https://forum.ivanontech.com/t/reading-assignment-eos-basics/3085/6)
+Here is a great explaintation of what action and transcation mean in context of EOS:
+> "An action is a unit of code to be executed inside a transaction. A transaction is a set of one or more actions which will execute or fail completely." [source](https://forum.ivanontech.com/t/reading-assignment-eos-basics/3085/6)
 
-### Trigger community creation
+### Sending action
 Let's say we want to create a new community called `0,TST`. In order to do so we need to do the following steps:
-1. Compose a transaction for the `create` community action
+
+1. Compose a transaction for the `create` community `action`
 2. Sign and send the transaction to the blockchain
 
 A transaction has the following structure
@@ -42,34 +51,43 @@ A transaction has the following structure
   }
 }
 ```
-* **Account** - The account that is associated to the blockchain. It's either `cambiatus.cm` or `cambiatus.tk`, depending on if your transaction is related to a community (.cm) or a token (.tk).
-* **Name** - is the action you want to perform.
-* **Authorization** - A mapping of an actor and their permission level. Permission define what actions an actor can perform on the blockchain.
+
+* **account** - The account that is associated to the blockchain. It's either `cambiatus.cm` or `cambiatus.tk`, depending on if your transaction is related to a community (.cm) or a token (.tk).
+* **name** - is the action you want to perform.
+* **authorization** - A mapping of an actor and their permission level. Permission define what actions an actor can perform on the blockchain.
 * **data** - set of data required by the action. Smart contracts define actions and their arguments, for example you can review all `ACTION` defined by our [community](https://github.com/cambiatus/contracts/blob/57b0fc896f8d710f774d5b5f862bc33c0fe4a890/community/community.hpp#L165) and [token](https://github.com/cambiatus/contracts/blob/57b0fc896f8d710f774d5b5f862bc33c0fe4a890/token/token.hpp#L50) contracts.
 
-## Adding new block to the blockchain
+The code that sends the action to the blockchain can be [found here](https://github.com/cambiatus/frontend/blob/16908faf461329c2f165c0bd47ca69aa7371a95e/src/index.js#L450)
 
+#### Available Community and Token actions
+Click on the website below and click on the `contract` tab to see what actions and datas are available for `cambiatus.cm` or `cambiatus.tk`. 
+* [cambiatus.cm](https://local.bloks.io/account/cambiatus.cm?nodeUrl=http%3A%2F%2Fstaging.cambiatus.io&coreSymbol=SYS&systemDomain=eosio&loadContract=true&tab=Tables&account=cambiatus.cm&scope=cambiatus.cm&limit=100)
+* [cambiatus.tk](https://local.bloks.io/account/cambiatus.tk?nodeUrl=http%3A%2F%2Fstaging.cambiatus.io&coreSymbol=SYS&systemDomain=eosio)
 
-3. Event source is notified of the update
-Action reader listens for updated data in blockchain. Passes the data to Action watchter.
+### Adding new block to the blockchain
+Once the transaction has been pushed to the blockchain then it would get verified and added to the blockchain. The diagram below demonstrates the process of adding a block to EOS blockchain.
 
-4. Event source updates database with the new data
-Action watcher sends the parsed data to action handler which pushes the data to the database
+![Block addition to EOS blockchain](./backend/.github/block_addition.png)
 
-5. Frontend queries for updated data
-The frontend queries for the update data and displays the result
+### Emitting new blocks to the database
+The new community has been added to the blockchain! However, we sill need to send the data to our database so our frontend could fetch and display it to the user. We can accompolish this by leveraging an event driven library developed by EOS called [demux-js](https://github.com/EOSIO/demux-js-eos).
 
+#### How demux-js works
+1. The `Action Reader` listens for any changes in blockchain. When it detects a change it will pass the data to the `Action Watcher`.
+2. `Action Watcher` triggers the `Action Handler`, which in turn updates our database with the data retrieved from the blockchain.
 
-After we push a transaction, we just get a transactionId back, not the community, so we have two options:
-If the data we're dealing with doesn't have any "computed" fields (such as a new id), we can assume the data we sent is valid, so we don't need anything back from the backend. This happens when we're just updating a community, for example
-If we do need some computed field, such as when the user creates a new action (which will have a new id), we don't really have a reliable solution right now. We just reload the page, query the backend again and hope the transaction is there already. Good news is @Lucca thinks we can create a Graphql subscription for this (see here)
+### Updating frontend with the new data
+Once an action has been pushed to the blockchain, we *optimistically assume* that data has trickled down to our database. The current method is very unreliable for querying for the data; however, we are looking to leverage Graphql subscription for this [see here](https://github.com/cambiatus/backend/issues/148).
 
-You can also see the available actions on the blockchain through bloks:
-community
- token
-Just go to the Contract tab, and then you can see the Tables, Actions and ABI
+## Updating community
+The process for updating a community is similar to **[creating a new community](#Creating-a-new-community)** the only difference is how we react once we have pushed the transaction to the blockchain.
 
+After we push a transaction, on a successful operation we recieve a `transactionId` this indicated that our data got added to the blockchain. 
+
+Or our transacction can fail. It can fail because of two reasons:
+1. Invalid permission
+2. Missing/invalid data passed
 
 # Resources
-* https://medium.com/eosio/introducing-demux-deterministic-databases-off-chain-verified-by-the-eosio-blockchain-bd860c49b017
-
+1. [Overview of demux-js](https://medium.com/eosio/introducing-demux-deterministic-databases-off-chain-verified-by-the-eosio-blockchain-bd860c49b017)
+2. [Overview of EOS](https://training.eos.io/courses/introduction-to-eosio-non-technical) 
