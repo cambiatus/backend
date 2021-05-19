@@ -44,7 +44,8 @@ defmodule Cambiatus.Auth.SignIn do
       case {community.auto_invite, Commune.is_community_member?(community.symbol, account)} do
         # Community has auto invite and user is not in yet
         {true, false} ->
-          netlink(user, community)
+          {:ok, _txid} = netlink(user, community)
+          {:ok, user}
 
         # Already a member, nothing new to do
         {_, true} ->
