@@ -9,34 +9,10 @@ defmodule Cambiatus.Auth.SignIn do
 
   @contract Application.compile_env(:cambiatus, :contract)
 
-  # @doc """
-  # Login logic for Cambiatus.
-
-  # We check our demux/postgres database to see if have a entry for this user.
-  # # """
-  # def sign_in(account, password, domain: domain) do
-  #   with {:ok, community} <- Commune.get_community_by_subdomain(domain),
-  #        {true, _} <- {community.auto_invite, community},
-  #        %User{} = user <- Accounts.get_user(account),
-  #        true <- Accounts.verify_pass(account, password),
-  #        {:ok, _} <- netlink(user, community) do
-  #     {:ok, user}
-  #   else
-  #     {:error, _reason} = error ->
-  #       error
-
-  #     {false, community} ->
-  #       {:error,
-  #        "Sorry we can't add you to this community: #{community.symbol}, as it don't allow for auto invites, please provide an invitation"}
-
-  #     nil ->
-  #       {:error, "Account not found"}
-
-  #     false ->
-  #       {:error, "Invalid password"}
-  #   end
-  # end
-
+  @doc """
+  Login logic for Cambiatus.
+  We check our demux/postgres database to see if have a entry for this user.
+  """
   def sign_in(account, password, domain: domain) do
     with {:ok, %Community{} = community} <- Commune.get_community_by_subdomain(domain),
          %User{} = user <- Accounts.get_user(account),
@@ -67,9 +43,6 @@ defmodule Cambiatus.Auth.SignIn do
     end
   end
 
-  @doc """
-  Login logic for Cambiatus when signing in with an invitationId
-  """
   def sign_in(account, password, invitation_id: invitation_id) do
     case Accounts.get_user(account) do
       nil ->
