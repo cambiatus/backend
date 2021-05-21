@@ -22,13 +22,13 @@ defmodule Cambiatus.Accounts do
   Returns a user when given their `account` string
   """
   @spec get_account_profile(String.t()) :: {:ok, map()} | {:error, String.t()}
-  def get_account_profile(acct) do
-    case Repo.get_by(User, account: acct) do
+  def get_account_profile(account) do
+    case Repo.get_by(User, account: account) do
       nil ->
-        {:error, "No user exists with #{acct} as their account"}
+        {:error, "No user exists with #{account} as their account"}
 
-      val ->
-        {:ok, val}
+      user ->
+        {:ok, user}
     end
   end
 

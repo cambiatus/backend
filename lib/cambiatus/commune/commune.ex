@@ -399,7 +399,17 @@ defmodule Cambiatus.Commune do
   end
 
   def list_community_network(community_id) do
-    Repo.all(from(n in Network, where: n.community_id == ^community_id))
+    community_id
+    |> Network.by_community()
+    |> Repo.all()
+  end
+
+  def is_community_member?(community_id, account) do
+    Network
+    |> Network.by_community(community_id)
+    |> Network.by_user(account)
+    |> Repo.all()
+    |> Enum.any?()
   end
 
   def community_validators(community_id) do

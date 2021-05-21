@@ -53,6 +53,12 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
+  def sign_in(_, _, _) do
+    {:error,
+     message: "Couldn't signIn, domain or invitation required",
+     details: Cambiatus.Error.from("Error")}
+  end
+
   def sign_up(_, args, %{context: %{domain: domain}}) do
     args
     |> Map.merge(%{domain: domain})
@@ -71,8 +77,11 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_up(_, _, _),
-    do: {:error, message: "Couldn't create user", details: Cambiatus.Error.from("Error")}
+  def sign_up(_, _, _) do
+    {:error,
+     message: "Couldn't create user, domain or invitation required",
+     details: Cambiatus.Error.from("Error")}
+  end
 
   @doc """
   Collects transfers belonging to the given user according various criteria, provided in `args`.

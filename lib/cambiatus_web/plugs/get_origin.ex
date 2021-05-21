@@ -11,7 +11,7 @@ defmodule CambiatusWeb.Plugs.GetOrigin do
 
   def call(conn, _) do
     conn
-    |> get_req_header("origin")
+    |> get_req_header("community-domain")
     |> get_domain()
     |> case do
       "" ->
