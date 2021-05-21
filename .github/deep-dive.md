@@ -11,7 +11,7 @@ Even though blockchain brings many benefits to an applicaiton it also has its li
 
 Here is an overview of the architecutre. We'll go more into detail in the next section.
 
-![Application overview](https://raw.githubusercontent.com/cambiatus/backend/architecture-deep-dive/.github/cambiatus_data_flow.png)
+<img src='https://lucid.app/publicSegments/view/7655c9e8-d9ad-4d1f-8da1-46a110e255e4/image.png' height='400' alt='Cambiatus Data Flow' />
 
 # Flow of cambiatus data 
 In this section we'll explore how our data flows through our application. Here are the objectives for this section:
