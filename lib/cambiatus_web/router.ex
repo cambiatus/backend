@@ -46,11 +46,8 @@ defmodule CambiatusWeb.Router do
     pipe_through(:api)
 
     get("/health_check", HealthCheckController, :index)
-
     post("/upload", UploadController, :save)
-
     get("/chain/info", ChainController, :info)
-
     post("/invite", InviteController, :invite)
   end
 end

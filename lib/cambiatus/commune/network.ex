@@ -3,9 +3,10 @@ defmodule Cambiatus.Commune.Network do
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Commune.Community
+  alias Cambiatus.Commune.{Community, Network}
 
   schema "network" do
     field(:created_block, :integer)
@@ -29,5 +30,15 @@ defmodule Cambiatus.Commune.Network do
     |> foreign_key_constraint(:community_id)
     |> foreign_key_constraint(:account_id)
     |> foreign_key_constraint(:invited_by_id)
+  end
+
+  def by_community(query \\ Network, community_id) do
+    query
+    |> where([n], n.community_id == ^community_id)
+  end
+
+  def by_user(query \\ Network, account) do
+    query
+    |> where([n], n.account_id == ^account)
   end
 end
