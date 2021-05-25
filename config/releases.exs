@@ -21,8 +21,6 @@ config :cambiatus, Cambiatus.Mailer,
   adapter: Bamboo.SendGridAdapter,
   api_key: System.get_env("SENDGRID_KEY")
 
-config :cambiatus, :ipfs, conn: %{host: System.get_env("IPFS_URL"), port: 5001}
-
 config :cambiatus, Cambiatus.Repo,
   database: System.get_env("DB_NAME"),
   username: System.get_env("DB_USER"),

@@ -25,7 +25,10 @@ config :cambiatus, Cambiatus.Auth.InvitationId, salt: "default-salt"
 
 config :tesla, adapter: Tesla.Adapter.Hackney
 
-config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.LocalAdapter
+# config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.LocalAdapter
+config :cambiatus, Cambiatus.Mailer,
+  adapter: Bamboo.SendGridAdapter,
+  api_key: "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"
 
 # Configure mockable modules
 config :cambiatus, :eosrpc_wallet, EOSRPC.Wallet
@@ -36,14 +39,16 @@ config :cambiatus, :contract, Cambiatus.Eos
 config :cambiatus, :graphql_secret, "d8Ed.-qfhj7"
 config :cambiatus, :auth_salt, "AVPLxwEAbi4Ff9Lw1IiBKZWYazWVafxm4PWs1WdXboaOt9galg6v8U4bPaSMjAtO"
 
+config :stripity_stripe,
+  api_key:
+    "sk_test_51IqlvGI889tZZyCEvvvrdf1z46IpDZkt5LJI1NKUVZsdv9xtGZIEfHl87sQK1WgSQ7yjrrn5mkqOZ3PsCKiekACz00L7DPedPU"
+
 config :logger, :console,
   # Do not include metadata nor timestamps in development logs
   format: "[$level] $message\n"
 
 # Set a higher stacktrace during development.
 config :phoenix, :stacktrace_depth, 25
-
-config :cambiatus, :ipfs, conn: {}
 
 config :eosrpc, EOSRPC.Wallet, url: "http://127.0.0.1:8900/v1/wallet"
 config :eosrpc, EOSRPC.Chain, url: "https://staging.cambiatus.io/v1/chain"

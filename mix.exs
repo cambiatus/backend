@@ -47,6 +47,9 @@ defmodule Cambiatus.Mixfile do
       {:mogrify, "~> 0.8.0"},
       {:ex_phone_number, "~> 0.2"},
 
+      # Payments
+      {:stripity_stripe, "~> 2.0"},
+
       # Phoenix
       {:phoenix, "~> 1.5.3"},
       {:phoenix_pubsub, "~> 2.0"},
@@ -60,7 +63,6 @@ defmodule Cambiatus.Mixfile do
       {:dataloader, "~> 1.0.0"},
 
       # EOS/Blockchain Packages
-      {:ipfs, "~> 0.1.0"},
       {:eosrpc, "~> 0.6.2"},
       {:hashids, "~> 2.0"},
 
@@ -74,8 +76,7 @@ defmodule Cambiatus.Mixfile do
       {:configparser_ex, "~> 4.0"},
 
       # Push Notification Packages
-      {:web_push_encryption,
-       git: "https://github.com/danhper/elixir-web-push-encryption.git", ref: "97297fd3db"},
+      {:web_push_encryption, "~> 0.3.0"},
 
       # Dev only
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
