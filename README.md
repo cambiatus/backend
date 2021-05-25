@@ -31,7 +31,7 @@ In the context of the diagram below which is a high level view of how the data f
 
 ## Dataflow
 
-<img src='https://i.imgur.com/MFfGOe3.png' height='492' alt='Cambiatus Data Flow' />
+<img src='https://lucid.app/publicSegments/view/7655c9e8-d9ad-4d1f-8da1-46a110e255e4/image.png' height='400' alt='Cambiatus Data Flow' />
 
 At a high level this is a database that is synced to events on an blockchain which then presents a Graphql API that makes
 it simpler to consume the information from the blockchain. At the moment this is a normal database with the the usual
