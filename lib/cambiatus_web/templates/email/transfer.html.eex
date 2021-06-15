@@ -1,0 +1,372 @@
+<center
+  class="wrapper"
+  data-link-color="#F99D33"
+  data-body-style="font-size:16px; color:#000; background-color:#FFFFFF;"
+>
+  <div class="webkit">
+    <table
+      cellpadding="0"
+      cellspacing="0"
+      border="0"
+      width="100%"
+      class="wrapper"
+      bgcolor="#FFFFFF"
+    >
+      <tr>
+        <td valign="top" bgcolor="#FFFFFF" width="100%">
+          <table
+            width="100%"
+            role="content-container"
+            class="outer"
+            align="center"
+            cellpadding="0"
+            cellspacing="0"
+            border="0"
+          >
+            <tr>
+              <td width="100%">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                  <tr>
+                    <td>
+                      <!--[if mso]>
+    <center>
+    <table><tr><td width="600">
+  <![endif]-->
+                      <table
+                        width="100%"
+                        cellpadding="0"
+                        cellspacing="0"
+                        border="0"
+                        style="width:100%; max-width:600px;"
+                        align="center"
+                      >
+                        <tr>
+                          <td
+                            role="modules-container"
+                            style="padding:0px 0px 0px 0px; color:#000; text-align:left;"
+                            bgcolor="#FFFFFF"
+                            width="100%"
+                            align="left"
+                          >
+                            <table
+                              class="module preheader preheader-hide"
+                              role="module"
+                              data-type="preheader"
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              width="100%"
+                              style="display: none !important; mso-hide: all; visibility: hidden; opacity: 0; color: transparent; height: 0; width: 0;"
+                            >
+                              <tr>
+                                <td role="module-content">
+                                  <p>
+                                    Hey, you received <%= Cambiatus.Eos.format_amount(@transfer.amount, @transfer.community_id) %>
+                                  </p>
+                                </td>
+                              </tr>
+                            </table>
+                            <table
+                              class="module"
+                              role="module"
+                              data-type="spacer"
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              width="100%"
+                              style="table-layout: fixed;"
+                              data-muid="3be30e02-7e69-4bd1-abbf-9d11b9ba4d08"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="padding:0px 0px 30px 0px;"
+                                    role="module-content"
+                                    bgcolor=""
+                                  ></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              class="wrapper"
+                              role="module"
+                              data-type="image"
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              width="100%"
+                              style="table-layout: fixed;"
+                              data-muid="3f9f6f8f-c0c6-42fa-8c8f-c6d0812c6e7b"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="font-size:6px; line-height:10px; padding:0px 0px 0px 0px;"
+                                    valign="top"
+                                    align="center"
+                                  >
+                                    <img class="max-width" border="0"
+                                    style="display:block; color:#000000;
+                                    text-decoration:none; font-size:16px;"
+                                    width="80" alt=""
+                                    data-proportionally-constrained="true"
+                                    data-responsive="false"
+                                    src="<%= @transfer.community.logo%>"
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              class="module"
+                              role="module"
+                              data-type="spacer"
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              width="100%"
+                              style="table-layout: fixed;"
+                              data-muid="ea0eb539-4771-4d67-a126-6c0bd8f3ce2d"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="padding:0px 0px 30px 0px;"
+                                    role="module-content"
+                                    bgcolor=""
+                                  ></td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              class="module"
+                              role="module"
+                              data-type="text"
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              width="100%"
+                              style="table-layout: fixed;"
+                              data-muid="6cb3e2be-2193-498e-bbad-6809b8504609"
+                              data-mc-module-version="2019-10-22"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="padding:18px 0px 18px 0px; line-height:22px; text-align:inherit;"
+                                    height="100%"
+                                    valign="top"
+                                    bgcolor=""
+                                    role="module-content"
+                                  >
+                                    <div>
+                                      <div style="text-align: center">
+                                        <span style="font-size: 24px"
+                                          >Hello, </span
+                                        ><span style="font-size: 24px"
+                                          ><strong
+                                            ><%= @transfer.to.name %></strong
+                                          ></span
+                                        >
+                                      </div>
+                                      <div></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              class="module"
+                              role="module"
+                              data-type="text"
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              width="100%"
+                              style="table-layout: fixed;"
+                              data-muid="54cf1123-62ee-4def-b5b4-7d8cc1aacb6c"
+                              data-mc-module-version="2019-10-22"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="padding:40px 0px 32px 0px; line-height:28px; text-align:inherit; background-color:#F8F8F8;"
+                                    height="100%"
+                                    valign="top"
+                                    bgcolor="#F8F8F8"
+                                    role="module-content"
+                                  >
+                                    <div>
+                                      <div
+                                        style="font-family: inherit; text-align: center"
+                                      >
+                                        <span
+                                          style="font-size: 36px; color: #8acc9e"
+                                          ><strong>
+                                          <%= Cambiatus.Eos.format_amount(@transfer.amount, @transfer.community_id) %>
+                                            </strong
+                                          ></span
+                                        >
+                                      </div>
+                                      <div
+                                        style="font-family: inherit; text-align: center"
+                                      >
+                                        You received <%= @transfer.community_id |> String.split(",") |> Enum.reverse |> hd %>
+                                      </div>
+                                      <div></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              class="module"
+                              role="module"
+                              data-type="text"
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              width="100%"
+                              style="table-layout: fixed;"
+                              data-muid="231c6eee-03f3-4c98-8e2e-cbed8c9b7437"
+                              data-mc-module-version="2019-10-22"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="padding:24px 0px 18px 0px; line-height:28px; text-align:inherit;"
+                                    height="100%"
+                                    valign="top"
+                                    bgcolor=""
+                                    role="module-content"
+                                  >
+                                    <div>
+                                      <div
+                                        style="font-family: inherit; text-align: center"
+                                      >
+                                        <span style="color: #666666"
+                                          >Sent by </span
+                                        ><span style="color: #666666"
+                                          ><strong
+                                            ><%= @transfer.from.name %>
+                                          </strong></span
+                                        ><span style="color: #666666"
+                                          >at <%= Calendar.strftime(@transfer.created_at, "%d/%m/%Y %H:%M:%S") %>,</span
+                                        >
+                                      </div>
+                                      <div
+                                        style="font-family: inherit; text-align: center"
+                                      >
+                                        <span style="color: #666666"
+                                          >more details on app.</span
+                                        >
+                                      </div>
+                                      <div></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              class="module"
+                              data-role="module-button"
+                              data-type="button"
+                              role="module"
+                              style="table-layout:fixed;"
+                              width="100%"
+                              data-muid="57d66219-52b8-41bd-99e3-d2494dd1ba36"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    align="center"
+                                    bgcolor=""
+                                    class="outer-td"
+                                    style="padding:24px 0px 32px 0px;"
+                                  >
+                                    <table
+                                      border="0"
+                                      cellpadding="0"
+                                      cellspacing="0"
+                                      class="wrapper-mobile"
+                                      style="text-align:center;"
+                                    >
+                                      <tbody>
+                                        <tr>
+                                          <td
+                                            align="center"
+                                            bgcolor="#F99D33"
+                                            class="inner-td"
+                                            style="border-radius:6px; font-size:16px; text-align:center; background-color:inherit;"
+                                          >
+                                            <a
+                                              href="http://<%= @transfer.community.subdomain.name%>/transfer/<%= @transfer.id %>"
+                                              style="background-color:#F99D33; border:1px solid #F99D33; border-color:#F99D33; border-radius:40px; border-width:1px; color:#ffffff; display:inline-block; font-size:16px; font-weight:normal; letter-spacing:0px; line-height:normal; padding:12px 16px 14px 16px; text-align:center; text-decoration:none; border-style:solid; width:180px;"
+                                              target="_blank"
+                                              >Go to app</a
+                                            >
+                                          </td>
+                                        </tr>
+                                      </tbody>
+                                    </table>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <table
+                              class="module"
+                              role="module"
+                              data-type="text"
+                              border="0"
+                              cellpadding="0"
+                              cellspacing="0"
+                              width="100%"
+                              style="table-layout: fixed;"
+                              data-muid="dd8eadac-e9ed-4e85-a2f6-ca9a9923962b"
+                              data-mc-module-version="2019-10-22"
+                            >
+                              <tbody>
+                                <tr>
+                                  <td
+                                    style="padding:32px 0px 24px 0px; line-height:22px; text-align:inherit; background-color:#17181A;"
+                                    height="100%"
+                                    valign="top"
+                                    bgcolor="#17181A"
+                                    role="module-content"
+                                  >
+                                    <div>
+                                      <div
+                                        style="font-family: inherit; text-align: center"
+                                      >
+                                        <span
+                                          style="caret-color: rgb(0, 0, 0); font-style: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; text-align: start; text-indent: 0px; text-transform: none; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration: none; white-space: pre-wrap; color: #ffffff"
+                                          >© <%= Calendar.strftime(DateTime.now!("Etc/UTC"), "%Y") %> Cambiatus by Satisfied Vagabonds LLC</span>
+                                      </div>
+                                      <div></div>
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      </table>
+                      <!--[if mso]>
+                                  </td>
+                                </tr>
+                              </table>
+                            </center>
+                            <![endif]-->
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+</center>

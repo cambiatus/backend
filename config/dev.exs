@@ -25,7 +25,8 @@ config :cambiatus, Cambiatus.Auth.InvitationId, salt: "default-salt"
 
 config :tesla, adapter: Tesla.Adapter.Hackney
 
-config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.LocalAdapter
+config :cambiatus, Cambiatus.Mailer, adapter: Swoosh.Adapters.Local
+config :swoosh, serve_mailbox: true, preview_port: 4001
 
 # Configure mockable modules
 config :cambiatus, :eosrpc_wallet, EOSRPC.Wallet
@@ -42,8 +43,6 @@ config :logger, :console,
 
 # Set a higher stacktrace during development.
 config :phoenix, :stacktrace_depth, 25
-
-config :cambiatus, :ipfs, conn: {}
 
 config :eosrpc, EOSRPC.Wallet, url: "http://127.0.0.1:8900/v1/wallet"
 config :eosrpc, EOSRPC.Chain, url: "https://staging.cambiatus.io/v1/chain"

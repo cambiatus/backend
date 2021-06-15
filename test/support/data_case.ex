@@ -13,6 +13,7 @@ defmodule Cambiatus.DataCase do
   use ExUnit.CaseTemplate
 
   alias Ecto.Adapters.SQL.Sandbox
+  alias Cambiatus.Commune.Subdomain
 
   using do
     quote do
@@ -51,6 +52,11 @@ defmodule Cambiatus.DataCase do
   end
 
   def valid_community_and_user(_context) do
+    {:ok, subdomain} =
+      %Subdomain{}
+      |> Subdomain.changeset(%{name: "test.cambiatus.io"})
+      |> Cambiatus.Repo.insert()
+
     community_params = %{
       symbol: "BES",
       issuer: "cambiatustes",
@@ -63,7 +69,8 @@ defmodule Cambiatus.DataCase do
       inviter_reward: 0.0,
       invited_reward: 0.0,
       allow_subcommunity: true,
-      subcommunity_price: 0.0
+      subcommunity_price: 0.0,
+      subdomain_id: subdomain.id
     }
 
     {:ok, community} = Cambiatus.Commune.create_community(community_params)

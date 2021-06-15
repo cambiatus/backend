@@ -18,7 +18,7 @@ defmodule Cambiatus.Mixfile do
   def application do
     [
       mod: {Cambiatus.Application, []},
-      extra_applications: [:sentry, :logger, :runtime_tools, :bamboo, :plug, :magic_number]
+      extra_applications: [:sentry, :logger, :runtime_tools, :plug, :magic_number]
     ]
   end
 
@@ -39,13 +39,19 @@ defmodule Cambiatus.Mixfile do
       {:poolboy, ">= 0.0.0"},
       {:timex, "~> 3.4"},
       {:poison, "~> 3.0"},
-      {:bamboo, "~> 1.1"},
       {:hackney,
        github: "benoitc/hackney", override: true, ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"},
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
       {:mogrify, "~> 0.8.0"},
+
+      # Formatters
       {:ex_phone_number, "~> 0.2"},
+      {:number, "~> 1.0"},
+
+      # Email capabilities
+      {:swoosh, "~> 1.0"},
+      {:phoenix_swoosh, "~> 0.3"},
 
       # Phoenix
       {:phoenix, "~> 1.5.3"},
@@ -60,7 +66,6 @@ defmodule Cambiatus.Mixfile do
       {:dataloader, "~> 1.0.0"},
 
       # EOS/Blockchain Packages
-      {:ipfs, "~> 0.1.0"},
       {:eosrpc, "~> 0.6.2"},
       {:hashids, "~> 2.0"},
 
@@ -74,8 +79,7 @@ defmodule Cambiatus.Mixfile do
       {:configparser_ex, "~> 4.0"},
 
       # Push Notification Packages
-      {:web_push_encryption,
-       git: "https://github.com/danhper/elixir-web-push-encryption.git", ref: "97297fd3db"},
+      {:web_push_encryption, "~> 0.3.0"},
 
       # Dev only
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},

@@ -69,6 +69,7 @@ defmodule Cambiatus.Commune.Community do
   def changeset(%Community{} = community, attrs) do
     community
     |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_assoc(:subdomain, with: &Subdomain.changeset/2)
     |> validate_required(@required_fields)
   end
 
