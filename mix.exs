@@ -49,9 +49,6 @@ defmodule Cambiatus.Mixfile do
       {:ex_phone_number, "~> 0.2"},
       {:number, "~> 1.0"},
 
-      # Payments
-      {:stripity_stripe, "~> 2.0"},
-
       # Email capabilities
       {:swoosh, "~> 1.0"},
       {:phoenix_swoosh, "~> 0.3"},
