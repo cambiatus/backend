@@ -25,7 +25,8 @@ config :cambiatus, Cambiatus.Auth.InvitationId, salt: "default-salt"
 
 config :tesla, adapter: Tesla.Adapter.Hackney
 
-config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.LocalAdapter
+config :cambiatus, Cambiatus.Mailer, adapter: Swoosh.Adapters.Local
+config :swoosh, serve_mailbox: true, preview_port: 4001
 
 # Configure mockable modules
 config :cambiatus, :eosrpc_wallet, EOSRPC.Wallet
@@ -35,8 +36,6 @@ config :cambiatus, :contract, Cambiatus.Eos
 
 config :cambiatus, :graphql_secret, "d8Ed.-qfhj7"
 config :cambiatus, :auth_salt, "AVPLxwEAbi4Ff9Lw1IiBKZWYazWVafxm4PWs1WdXboaOt9galg6v8U4bPaSMjAtO"
-
-config :stripity_stripe, api_key: ""
 
 config :logger, :console,
   # Do not include metadata nor timestamps in development logs

@@ -18,7 +18,7 @@ defmodule Cambiatus.Mixfile do
   def application do
     [
       mod: {Cambiatus.Application, []},
-      extra_applications: [:sentry, :logger, :runtime_tools, :bamboo, :plug, :magic_number]
+      extra_applications: [:sentry, :logger, :runtime_tools, :plug, :magic_number]
     ]
   end
 
@@ -39,7 +39,6 @@ defmodule Cambiatus.Mixfile do
       {:poolboy, ">= 0.0.0"},
       {:timex, "~> 3.4"},
       {:poison, "~> 3.0"},
-      {:bamboo, "~> 1.1"},
       {:hackney,
        github: "benoitc/hackney", override: true, ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"},
       {:uuid, "~> 1.1"},
@@ -49,6 +48,10 @@ defmodule Cambiatus.Mixfile do
 
       # Payments
       {:stripity_stripe, "~> 2.0"},
+
+      # Email capabilities
+      {:swoosh, "~> 1.0"},
+      {:phoenix_swoosh, "~> 0.3"},
 
       # Phoenix
       {:phoenix, "~> 1.5.3"},

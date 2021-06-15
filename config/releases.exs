@@ -17,10 +17,6 @@ config :cambiatus, CambiatusWeb.Endpoint,
   render_errors: [view: CambiatusWeb.ErrorView, accepts: ~w(json)],
   pubsub_server: Cambiatus.PubSub
 
-config :cambiatus, Cambiatus.Mailer,
-  adapter: Bamboo.SendGridAdapter,
-  api_key: System.get_env("SENDGRID_KEY")
-
 config :cambiatus, Cambiatus.Repo,
   database: System.get_env("DB_NAME"),
   username: System.get_env("DB_USER"),
