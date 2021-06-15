@@ -24,7 +24,7 @@ defmodule CambiatusWeb.Email do
     new()
     |> from("no-reply@cambiatus.com")
     |> to(transfer.to.email)
-    |> subject("TEST TRANSFER")
+    |> subject("You received a new transfer on #{transfer.community.name}")
     |> render_body("transfer.html", %{transfer: transfer})
     |> Mailer.deliver()
   end

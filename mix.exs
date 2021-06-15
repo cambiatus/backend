@@ -44,7 +44,10 @@ defmodule Cambiatus.Mixfile do
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
       {:mogrify, "~> 0.8.0"},
+
+      # Formatters
       {:ex_phone_number, "~> 0.2"},
+      {:number, "~> 1.0"},
 
       # Payments
       {:stripity_stripe, "~> 2.0"},

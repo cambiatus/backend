@@ -61,7 +61,7 @@
                               <tr>
                                 <td role="module-content">
                                   <p>
-                                    Hey, you received complementary currency
+                                    Hey, you received <%= Cambiatus.Eos.format_amount(@transfer.amount, @transfer.community_id) %>
                                   </p>
                                 </td>
                               </tr>
@@ -201,15 +201,16 @@
                                       >
                                         <span
                                           style="font-size: 36px; color: #8acc9e"
-                                          ><strong
-                                            ><%= @transfer.amount %></strong
+                                          ><strong>
+                                          <%= Cambiatus.Eos.format_amount(@transfer.amount, @transfer.community_id) %>
+                                            </strong
                                           ></span
                                         >
                                       </div>
                                       <div
                                         style="font-family: inherit; text-align: center"
                                       >
-                                        You received complementary currency
+                                        You received <%= @transfer.community_id |> String.split(",") |> Enum.reverse |> hd %>
                                       </div>
                                       <div></div>
                                     </div>
@@ -341,9 +342,7 @@
                                       >
                                         <span
                                           style="caret-color: rgb(0, 0, 0); font-style: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; text-align: start; text-indent: 0px; text-transform: none; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration: none; white-space: pre-wrap; color: #ffffff"
-                                          >© 2020 Cambiatus by Satisfied
-                                          Vagabonds LLC</span
-                                        >
+                                          >© <%= Calendar.strftime(DateTime.now!("Etc/UTC"), "%Y") %> Cambiatus by Satisfied Vagabonds LLC</span>
                                       </div>
                                       <div></div>
                                     </div>
