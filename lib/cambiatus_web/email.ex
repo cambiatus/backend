@@ -22,7 +22,7 @@ defmodule CambiatusWeb.Email do
     transfer = Repo.preload(transfer, [:from, :to, [community: :subdomain]])
 
     new()
-    |> from("no-reply@cambiatus.com")
+    |> from({"#{transfer.community.name} - Cambiatus", "no-reply@cambiatus.com"})
     |> to(transfer.to.email)
     |> subject("You received a new transfer on #{transfer.community.name}")
     |> render_body("transfer.html", %{transfer: transfer})
