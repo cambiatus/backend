@@ -28,12 +28,12 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.get_claim(id)
   end
 
-  def get_claims_analysis_history(
+  def get_analyzed_claims(
         _,
         %{community_id: community_id} = args,
         %{context: %{current_user: current_user}}
       ) do
-    query = Commune.claim_analysis_history_query(community_id, current_user.account)
+    query = Commune.analyzed_claims_query(community_id, current_user.account)
 
     query =
       if Map.has_key?(args, :filter) do
@@ -41,16 +41,13 @@ defmodule CambiatusWeb.Resolvers.Commune do
         |> Map.get(:filter)
         |> Enum.reduce(query, fn
           {:claimer, claimer}, query ->
-            query
-            |> Claim.with_claimer(claimer)
+            Claim.with_claimer(query, claimer)
 
           {:status, status}, query ->
-            query
-            |> Claim.with_status(status)
+            Claim.with_status(query, status)
 
           {:direction, direction}, query ->
-            query
-            |> Claim.ordered(direction)
+            Claim.ordered(query, direction)
         end)
       else
         query
@@ -59,22 +56,24 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
   end
 
-  def get_claims_analysis(_, %{community_id: community_id} = args, %{
+  def get_pending_claims(_, %{community_id: community_id} = args, %{
         context: %{current_user: current_user}
       }) do
-    query = Commune.claim_analysis_query(community_id, current_user.account)
+    query = Commune.pending_claims_query(community_id, current_user.account)
 
     query =
       if Map.has_key?(args, :filter) do
         args
         |> Map.get(:filter)
         |> Enum.reduce(query, fn
+          {:claimer, claimer}, query ->
+            Claim.with_claimer(query, claimer)
+
           {:direction, direction}, query ->
             Claim.ordered(query, direction)
         end)
       else
-        query
-        |> Claim.ordered(:desc)
+        Claim.ordered(query, :desc)
       end
 
     Connection.from_query(query, &Cambiatus.Repo.all/1, args)
