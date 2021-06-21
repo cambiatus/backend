@@ -222,20 +222,17 @@ defmodule Cambiatus.Commune do
 
   ## Params
   * community_id: String with the community symbol
-  * account: String. User account
+  * account: String. account from the user that voted already
   """
   @spec analyzed_claims_query(term, term) :: Ecto.Query.t()
   def analyzed_claims_query(community_id, account) do
-    from(c in Claim,
-      join: a in Action,
-      on: a.id == c.action_id,
-      join: o in Objective,
-      on: o.id == a.objective_id,
-      join: v in Validator,
-      on: v.action_id == c.action_id,
-      where: o.community_id == ^community_id,
-      where: v.validator_id == ^account
-    )
+    Claim
+    |> join(:left, [c], a in assoc(c, :action))
+    |> join(:left, [c, a], o in assoc(a, :objective))
+    |> join(:left, [c, a], v in Validator, on: v.action_id == c.action_id)
+    |> join(:inner, [c], ch in assoc(c, :checks))
+    |> where([_, _, o], o.community_id == ^community_id)
+    |> where([_, _, _, ch], ch.validator_id == ^account)
   end
 
   @doc """
