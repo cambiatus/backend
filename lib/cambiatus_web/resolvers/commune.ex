@@ -34,6 +34,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
         %{context: %{current_user: current_user}}
       ) do
     query = Commune.analyzed_claims_query(community_id, current_user.account)
+    count = Claim.count(query)
 
     query =
       if Map.has_key?(args, :filter) do
@@ -50,16 +51,25 @@ defmodule CambiatusWeb.Resolvers.Commune do
             Claim.ordered(query, direction)
         end)
       else
-        query
+        Claim.ordered(query, :desc)
       end
 
-    Connection.from_query(query, &Cambiatus.Repo.all/1, args)
+    query
+    |> Connection.from_query(&Cambiatus.Repo.all/1, args)
+    |> case do
+      {:ok, result} ->
+        {:ok, Map.put(result, :count, Cambiatus.Repo.one(count))}
+
+      default ->
+        default
+    end
   end
 
   def get_pending_claims(_, %{community_id: community_id} = args, %{
         context: %{current_user: current_user}
       }) do
     query = Commune.pending_claims_query(community_id, current_user.account)
+    count = Claim.count(query)
 
     query =
       if Map.has_key?(args, :filter) do
@@ -76,7 +86,15 @@ defmodule CambiatusWeb.Resolvers.Commune do
         Claim.ordered(query, :desc)
       end
 
-    Connection.from_query(query, &Cambiatus.Repo.all/1, args)
+    query
+    |> Connection.from_query(&Cambiatus.Repo.all/1, args)
+    |> case do
+      {:ok, result} ->
+        {:ok, Map.put(result, :count, Cambiatus.Repo.one(count))}
+
+      default ->
+        default
+    end
   end
 
   @doc """

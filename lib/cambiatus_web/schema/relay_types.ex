@@ -21,6 +21,8 @@ defmodule CambiatusWeb.Schema.RelayTypes do
   end
 
   connection node_type: :claim do
+    field(:count, :integer)
+
     edge do
     end
   end
