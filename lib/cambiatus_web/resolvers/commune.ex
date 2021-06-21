@@ -79,6 +79,9 @@ defmodule CambiatusWeb.Resolvers.Commune do
           {:claimer, claimer}, query ->
             Claim.with_claimer(query, claimer)
 
+          {:status, status}, query ->
+            Claim.with_status(query, status)
+
           {:direction, direction}, query ->
             Claim.ordered(query, direction)
         end)
