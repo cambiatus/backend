@@ -955,7 +955,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       query_analysis = """
       query($communityId: String!) {
-        claimsAnalysis(first: #{@num}, communityId: $communityId) {
+        pendingClaims(first: #{@num}, communityId: $communityId) {
           edges {
             node {
               id
@@ -969,16 +969,11 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       """
 
       res = conn |> get("/api/graph", query: query_analysis, variables: params)
-      %{"data" => %{"claimsAnalysis" => _}} = json_response(res, 200)
-      # %{"data" => %{"claimsAnalysis" => cs}} = json_response(res, 200)
-      # claim_action_ids = cs["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
-
-      # Make sure pending is only one
-      # assert Enum.count(claim_action_ids) == 1
+      %{"data" => %{"pendingClaims" => _}} = json_response(res, 200)
 
       query_history = """
       query($communityId: String!) {
-        claimsAnalysisHistory(first: #{@num}, communityId: $communityId) {
+        analyzedClaims(first: #{@num}, communityId: $communityId) {
           edges {
             node {
               id
@@ -992,7 +987,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       """
 
       res = conn |> get("/api/graph", query: query_history, variables: params)
-      %{"data" => %{"claimsAnalysisHistory" => ch}} = json_response(res, 200)
+      %{"data" => %{"analyzedClaims" => ch}} = json_response(res, 200)
       claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
       # but we should have both claims on the history

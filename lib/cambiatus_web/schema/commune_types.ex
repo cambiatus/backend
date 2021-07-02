@@ -29,20 +29,20 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     end
 
     @desc "[Auth required] A list of claims"
-    connection field(:claims_analysis, node_type: :claim) do
+    connection field(:pending_claims, node_type: :claim) do
       arg(:community_id, non_null(:string))
-      arg(:filter, :claim_analysis_filter)
+      arg(:filter, :claims_filter)
 
       middleware(Middleware.Authenticate)
-      resolve(&Commune.get_claims_analysis/3)
+      resolve(&Commune.get_pending_claims/3)
     end
 
-    connection field(:claims_analysis_history, node_type: :claim) do
+    connection field(:analyzed_claims, node_type: :claim) do
       arg(:community_id, non_null(:string))
-      arg(:filter, :claim_analysis_history_filter)
+      arg(:filter, :claims_filter)
 
       middleware(Middleware.Authenticate)
-      resolve(&Commune.get_claims_analysis_history/3)
+      resolve(&Commune.get_analyzed_claims/3)
     end
 
     @desc "[Auth required] A single claim"
@@ -162,15 +162,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:id, non_null(:integer))
   end
 
-  @desc "Params for filtering Claim Analysis History"
-  input_object(:claim_analysis_history_filter) do
+  @desc "Params for filtering Claims"
+  input_object(:claims_filter) do
     field(:claimer, :string)
     field(:status, :string)
-    field(:direction, :direction)
-  end
-
-  @desc "Params for filtering Claim Analysis"
-  input_object(:claim_analysis_filter) do
     field(:direction, :direction)
   end
 
