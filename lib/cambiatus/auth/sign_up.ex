@@ -43,6 +43,8 @@ defmodule Cambiatus.Auth.SignUp do
   """
   def set_sentry(params) do
     Sentry.Context.set_extra_context(params)
+
+    params
   end
 
   @doc """
