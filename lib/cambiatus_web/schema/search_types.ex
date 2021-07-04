@@ -31,5 +31,11 @@ defmodule CambiatusWeb.Schema.SearchTypes do
       arg(:query, :string)
       resolve(dataloader(Cambiatus.Commune))
     end
+
+    field(:members, non_null(list_of(non_null(:user)))) do
+      arg(:query, :string)
+
+      resolve(dataloader(Cambiatus.Accounts))
+    end
   end
 end

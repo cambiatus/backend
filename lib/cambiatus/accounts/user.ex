@@ -4,6 +4,7 @@ defmodule Cambiatus.Accounts.User do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import Ecto.Query
 
   alias Cambiatus.{Auth.Invitation, Notifications.PushSubscription, Repo}
   alias Cambiatus.Accounts.{Contact, User}
@@ -65,10 +66,19 @@ defmodule Cambiatus.Accounts.User do
 
   def assoc_contacts(changeset, attrs) do
     if Map.has_key?(attrs, :contacts) do
-      changeset
-      |> put_assoc(:contacts, Map.get(attrs, :contacts))
+      put_assoc(changeset, :contacts, Map.get(attrs, :contacts))
     else
       changeset
     end
+  end
+
+  def search(query \\ User, q) do
+    query
+    |> where([u], fragment("?.name @@ plainto_tsquery(?)", u, ^q))
+    |> or_where([u], fragment("?.account @@ plainto_tsquery(?)", u, ^q))
+    |> or_where([u], fragment("?.bio @@ plainto_tsquery(?)", u, ^q))
+    |> or_where([u], ilike(u.name, ^"%#{q}%"))
+    |> or_where([u], ilike(u.account, ^"%#{q}%"))
+    |> or_where([u], ilike(u.bio, ^"%#{q}%"))
   end
 end
