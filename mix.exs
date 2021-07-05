@@ -70,7 +70,7 @@ defmodule Cambiatus.Mixfile do
       {:hashids, "~> 2.0"},
 
       # Sentry
-      {:sentry, "~> 6.4"},
+      {:sentry, "8.0.0"},
       {:plug_cowboy, "~> 2.3"},
 
       # AWS Packages
