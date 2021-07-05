@@ -77,8 +77,10 @@ defmodule Cambiatus.Accounts.User do
     |> where([u], fragment("?.name @@ plainto_tsquery(?)", u, ^q))
     |> or_where([u], fragment("?.account @@ plainto_tsquery(?)", u, ^q))
     |> or_where([u], fragment("?.bio @@ plainto_tsquery(?)", u, ^q))
+    |> or_where([u], fragment("?.email @@ plainto_tsquery(?)", u, ^q))
     |> or_where([u], ilike(u.name, ^"%#{q}%"))
     |> or_where([u], ilike(u.account, ^"%#{q}%"))
     |> or_where([u], ilike(u.bio, ^"%#{q}%"))
+    |> or_where([u], ilike(u.email, ^"%#{q}%"))
   end
 end
