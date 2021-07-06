@@ -52,18 +52,15 @@ defmodule Cambiatus.Commune.Claim do
   end
 
   def newer_first(query \\ Claim) do
-    query
-    |> order_by([c], desc: c.created_at)
+    query |> ordered(:desc)
   end
 
   def with_claimer(query \\ Claim, claimer) do
-    query
-    |> where(claimer_id: ^claimer)
+    query |> where(claimer_id: ^claimer)
   end
 
   def with_status(query \\ Claim, status) do
-    query
-    |> where(status: ^status)
+    query |> where(status: ^status)
   end
 
   def ordered(query \\ Claim, direction \\ :asc)
