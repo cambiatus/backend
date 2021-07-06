@@ -68,8 +68,8 @@ defmodule Cambiatus.Commune.Transfer do
 
   def on_day(query \\ Transfer, date) do
     datetime = to_datetime(date)
-    # a day contains 24 * 60 * 60 seconds
-    datetime_a_day_after = DateTime.add(datetime, 86_400, :second)
+    # add a day
+    datetime_a_day_after = date |> Date.add(1) |> to_datetime()
 
     query
     |> where([t], t.created_at >= ^datetime)
