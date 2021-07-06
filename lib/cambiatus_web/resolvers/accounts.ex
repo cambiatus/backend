@@ -4,8 +4,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   use this to resolve any queries and mutations for Accounts
   """
 
+  alias Absinthe.Relay.Connection
   alias Cambiatus.{Accounts, Auth.SignUp, Auth.SignIn}
-  alias Cambiatus.Accounts.{User, Transfers}
+  alias Cambiatus.Accounts.User
+  alias Cambiatus.Commune.Transfer
 
   @doc """
   Collects profile info
@@ -88,16 +90,56 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   """
   @spec get_transfers(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%User{} = user, args, _) do
-    case Transfers.get_transfers(user, args) do
-      {:ok, transfers} ->
-        result =
-          transfers
-          |> Map.put(:parent, user)
+    # Default query, sorted and with current user as participant
+    query =
+      Transfer
+      |> Transfer.with_user(user.account)
 
-        {:ok, result}
+    query =
+      if Map.has_key?(args, :filter) do
+        args
+        |> Map.get(:filter)
+        |> Enum.reduce(query, fn
+          {:date, date}, query ->
+            Transfer.on_day(query, date)
 
-      {:error, reason} ->
-        {:error, reason}
+          {:direction, direction}, query ->
+            Enum.reduce(direction, query, fn
+              {:direction, :receiving}, query ->
+                Transfer.received_by(query, user.account)
+
+              {:direction, :sending}, query ->
+                Transfer.sent_by(query, user.account)
+
+              {:other_account, another_account}, query ->
+                case Map.get(direction, :direction) do
+                  :receiving ->
+                    Transfer.sent_by(query, another_account)
+
+                  :sending ->
+                    Transfer.received_by(query, another_account)
+                end
+            end)
+
+          {:community_id, community_id}, query ->
+            Transfer.on_community(query, community_id)
+        end)
+      else
+        query
+      end
+
+    count = Transfer.count(query)
+
+    query
+    # Add sorting after counting
+    |> Transfer.newer_first()
+    |> Connection.from_query(&Cambiatus.Repo.all/1, args)
+    |> case do
+      {:ok, result} ->
+        {:ok, Map.put(result, :count, Cambiatus.Repo.one(count))}
+
+      default ->
+        default
     end
   end
 

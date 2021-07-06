@@ -101,10 +101,18 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:external_id, :string)
   end
 
+  input_object(:transfer_direction) do
+    field(:other_account, :string, description: "Optional other account on the transfer")
+
+    field(:direction, non_null(:transfer_direction_value),
+      description: "If the user is receiving or sending the transaction"
+    )
+  end
+
   @desc "The direction of the transfer"
-  enum(:transfer_direction) do
-    value(:incoming, description: "User's incoming transfers.")
-    value(:outgoing, description: "User's outgoing transfers.")
+  enum(:transfer_direction_value) do
+    value(:sending, description: "User's sent transfers.")
+    value(:receiving, description: "User's received transfers.")
   end
 
   @desc "Session object, contains the user and a token used to authenticate requests"
@@ -167,15 +175,22 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     connection field(:transfers, node_type: :transfer) do
-      arg(:direction, :transfer_direction)
+      arg(:filter, :transfer_filter, description: "Optional Filters for querying transfers")
 
-      arg(:second_party_account, :string,
-        description: "Account name of the other participant of the transfer."
-      )
-
-      arg(:date, :date, description: "The date of the transfer in `yyyy-mm-dd` format.")
       resolve(&AccountsResolver.get_transfers/3)
     end
+  end
+
+  input_object :transfer_filter do
+    field(:date, :date, description: "The date of the transfer in `yyyy-mm-dd` format.")
+
+    field(:direction, :transfer_direction,
+      description: "If the user is receiving or sending the transaction"
+    )
+
+    field(:community_id, :string,
+      description: "optional filter for querying transfers from a community"
+    )
   end
 
   @desc """
