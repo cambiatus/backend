@@ -18,7 +18,7 @@ defmodule Cambiatus.Mixfile do
   def application do
     [
       mod: {Cambiatus.Application, []},
-      extra_applications: [:sentry, :logger, :runtime_tools, :plug, :magic_number]
+      extra_applications: [:runtime_tools, :plug, :magic_number]
     ]
   end
 
