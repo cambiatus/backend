@@ -31,7 +31,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     end
 
     @desc "Public product query, mainly used to preview a sale"
-    field(:product_preview, :product_preview) do
+    field(:product_preview, non_null(:product_preview)) do
       arg(:id, non_null(:integer))
 
       resolve(&Shop.get_product/3)
