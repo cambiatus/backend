@@ -759,8 +759,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       query($account: String!) {
         user(account: $account) {
           transfers(first: #{fetch}) {
-            totalCount
-            fetchedCount
+            count
             edges {
               node {
                 from_id
@@ -780,15 +779,13 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
         "data" => %{
           "user" => %{
             "transfers" => %{
-              "totalCount" => total_count,
-              "fetchedCount" => fetched_count
+              "count" => total_count
             }
           }
         }
       } = json_response(res, 200)
 
       assert total_count == @num * 2
-      assert fetched_count == fetch
       assert Repo.aggregate(Transfer, :count, :id) == @num * 3
     end
 
@@ -850,8 +847,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       query($symbol: String!) {
         community(symbol: $symbol) {
           transfers(first: #{fetch}) {
-            totalCount
-            fetchedCount
+            count
             edges {
               node {
                 from_id
@@ -871,15 +867,13 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
         "data" => %{
           "community" => %{
             "transfers" => %{
-              "totalCount" => total_count,
-              "fetchedCount" => fetched_count
+              "count" => total_count
             }
           }
         }
       } = json_response(res, 200)
 
       assert total_count == @num
-      assert fetched_count == fetch
       assert Repo.aggregate(Transfer, :count, :id) == @num * 2
     end
 
