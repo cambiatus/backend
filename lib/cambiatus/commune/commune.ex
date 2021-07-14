@@ -230,7 +230,6 @@ defmodule Cambiatus.Commune do
     |> join(:left, [c], a in assoc(c, :action))
     |> join(:left, [c, a], o in assoc(a, :objective))
     |> join(:left, [c, a], v in Validator, on: v.action_id == c.action_id)
-    |> join(:inner, [c], ch in assoc(c, :checks))
     |> where([_, _, o], o.community_id == ^community_id)
     |> where([_, _, _, ch], ch.validator_id == ^account)
   end
