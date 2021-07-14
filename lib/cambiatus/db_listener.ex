@@ -140,7 +140,7 @@ defmodule Cambiatus.DbListener do
       {:noreply, :event_handled}
     else
       {:ok, %{record: record, operation: "UPDATE"}} ->
-        if record.is_verified do
+        if record.status == "approved" do
           Notifications.notify_claim_approved(record.id)
         end
 

@@ -26,7 +26,7 @@ defmodule Cambiatus.Commune.Claim do
     field(:created_at, :utc_datetime)
   end
 
-  @required_fields ~w(is_verified action_id claimer_id created_block created_tx created_eos_account created_at)a
+  @required_fields ~w(action_id status claimer_id created_block created_tx created_eos_account created_at)a
   @optional_fields ~w(proof_photo proof_code)a
 
   @spec changeset(Claim.t(), map()) :: Ecto.Changeset.t()
