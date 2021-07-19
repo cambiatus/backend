@@ -102,9 +102,9 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   end
 
   input_object(:transfer_direction) do
-    field(:other_account, :string, description: "Optional other account on the transfer")
+    field(:other_account, non_null(:string), description: "Optional other account on the transfer")
 
-    field(:direction, :transfer_direction_value,
+    field(:direction, non_null(:transfer_direction_value),
       description: "If the user is receiving or sending the transaction"
     )
   end
