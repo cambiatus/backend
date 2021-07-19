@@ -112,12 +112,16 @@ defmodule CambiatusWeb.Resolvers.Accounts do
                 Transfer.sent_by(query, user.account)
 
               {:other_account, another_account}, query ->
-                case Map.get(direction, :direction) do
-                  :receiving ->
-                    Transfer.sent_by(query, another_account)
+                if Map.has_key?(direction, :direction) do
+                  case Map.get(direction, :direction) do
+                    :receiving ->
+                      Transfer.sent_by(query, another_account)
 
-                  :sending ->
-                    Transfer.received_by(query, another_account)
+                    :sending ->
+                      Transfer.received_by(query, another_account)
+                  end
+                else
+                  Transfer.with_user(another_account)
                 end
             end)
 
