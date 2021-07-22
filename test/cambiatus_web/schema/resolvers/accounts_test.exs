@@ -20,9 +20,9 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query = """
       query($account: String!){
         user(account: $account) {
-        account
-        avatar
-        bio
+          account
+          avatar
+          bio
         }
       }
       """
@@ -54,9 +54,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query($account: String!) {
         user(account: $account) {
           account
-          address {
-            zip
-          }
+          address { zip }
         }
       }
       """
@@ -88,9 +86,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query($account: String!){
         user(account: $account) {
           account
-          kyc {
-            userType
-          }
+          kyc { userType }
         }
       }
       """
@@ -147,8 +143,8 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert Repo.aggregate(User, :count, :account) == 0
       assert Repo.aggregate(Transfer, :count, :id) == 0
 
-      utc_today = NaiveDateTime.utc_now()
-      utc_yesterday = NaiveDateTime.add(utc_today, -(24 * 60 * 60))
+      utc_today = DateTime.utc_now()
+      utc_yesterday = DateTime.add(utc_today, 24 * 60 * 60)
 
       user1 = insert(:user, %{account: "user1"})
       user2 = insert(:user, %{account: "user2"})
@@ -172,18 +168,21 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         :variables => %{
           # tests are based on the `user1` profile
           "account" => user1.account,
-          "first" => Enum.count(transfers),
-          :first => Enum.count(transfers)
+          first: Enum.count(transfers)
         }
       }
     end
 
-    test "incoming transfers", %{variables: variables} do
+    test "receiving transfers", %{variables: variables} do
       query = """
         query ($account: String!) {
           user(account: $account) {
-            transfers(first: #{variables.first}, direction: INCOMING) {
-              fetchedCount
+            transfers(
+              first: #{variables.first},
+              filter: {
+                direction: { direction: RECEIVING }
+              }) {
+              count
             }
           }
         }
@@ -198,7 +197,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "user" => %{
             "transfers" => %{
-              "fetchedCount" => user1_incoming_transfers_count
+              "count" => user1_incoming_transfers_count
             }
           }
         }
@@ -214,8 +213,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query = """
         query ($account: String!) {
           user(account: $account) {
-            transfers(first: #{variables.first}, direction: OUTGOING) {
-              fetchedCount
+            transfers(
+              first: #{variables.first},
+              filter: {
+                direction: { direction: SENDING }
+              }) {
+              count
             }
           }
         }
@@ -227,7 +230,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "user" => %{
             "transfers" => %{
-              "fetchedCount" => user1_outgoing_transfers_count
+              "count" => user1_outgoing_transfers_count
             }
           }
         }
@@ -244,8 +247,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query = """
         query ($account: String!) {
           user(account: $account) {
-            transfers(first: #{variables.first}, date: "#{today_date}") {
-              fetchedCount
+            transfers(
+              first: #{variables.first},
+              filter: {
+               date: "#{today_date}"
+              }) {
+              count
             }
           }
         }
@@ -257,7 +264,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "user" => %{
             "transfers" => %{
-              "fetchedCount" => user1_today_transfers_count
+              "count" => user1_today_transfers_count
             }
           }
         }
@@ -266,7 +273,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user1_today_transfers_count == 3
     end
 
-    test "incoming transfers for the date", %{variables: variables} do
+    test "receiving transfers for the date", %{variables: variables} do
       today_date = Date.to_string(Date.utc_today())
 
       user = insert(:user)
@@ -275,8 +282,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query = """
         query ($account: String!) {
           user(account: $account) {
-           transfers(first: #{variables.first}, direction: INCOMING, date: "#{today_date}") {
-              fetchedCount
+           transfers(
+             first: #{variables.first},
+             filter: {
+              direction: { direction: RECEIVING },
+              date: "#{today_date}"
+             }) {
+              count
             }
           }
         }
@@ -288,7 +300,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "user" => %{
             "transfers" => %{
-              "fetchedCount" => user1_today_incoming_transfers_count
+              "count" => user1_today_incoming_transfers_count
             }
           }
         }
@@ -306,8 +318,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       query = """
         query ($account: String!) {
           user(account: $account) {
-            transfers(first: #{variables.first}, direction: OUTGOING, date: "#{today_date}") {
-              fetchedCount
+            transfers(
+              first: #{variables.first},
+              filter: {
+                direction: { direction: SENDING },
+                date: "#{today_date}"
+              }) {
+              count
             }
           }
         }
@@ -319,7 +336,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "user" => %{
             "transfers" => %{
-              "fetchedCount" => user1_today_outgoing_transfers_count
+              "count" => user1_today_outgoing_transfers_count
             }
           }
         }
@@ -328,7 +345,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user1_today_outgoing_transfers_count == 2
     end
 
-    test "incoming transfers for the date from user2 to user1", %{
+    test "receiving transfers for the date from user2 to user1", %{
       users: _users,
       variables: variables
     } do
@@ -342,11 +359,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
           user(account: $account) {
             transfers(
               first: #{variables.first},
-              direction: INCOMING,
-              secondPartyAccount: "user2",
-              date: "#{today_date}"
+              filter: {
+                direction: {direction: RECEIVING, otherAccount: "user2"},
+                date: "#{today_date}"
+              }
             ) {
-              fetchedCount
+              count
               edges {
                 node {
                   from {
@@ -368,7 +386,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "user" => %{
             "transfers" => %{
-              "fetchedCount" => transfers_from_user2_to_user1_for_today_count,
+              "count" => transfers_from_user2_to_user1_for_today_count,
               "edges" => collected_transfers
             }
           }
@@ -399,11 +417,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
           user(account: $account) {
             transfers(
               first: #{variables.first},
-              direction: OUTGOING,
-              secondPartyAccount: "user2",
-              date: "#{today_date}"
+              filter: {
+                direction: {direction: SENDING, otherAccount: "user2"},
+                date: "#{today_date}"
+              }
             ) {
-              fetchedCount
+              count
               edges {
                 node {
                   from {
@@ -425,7 +444,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         "data" => %{
           "user" => %{
             "transfers" => %{
-              "fetchedCount" => transfers_from_user1_to_user2_for_today_count,
+              "count" => transfers_from_user1_to_user2_for_today_count,
               "edges" => collected_transfers
             }
           }

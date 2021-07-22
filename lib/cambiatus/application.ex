@@ -14,6 +14,8 @@ defmodule Cambiatus.Application do
       {Absinthe.Subscription, [CambiatusWeb.Endpoint]}
     ]
 
+    Logger.add_backend(Sentry.LoggerBackend)
+
     opts = [strategy: :one_for_one, name: Cambiatus.Supervisor]
     Supervisor.start_link(children, opts)
   end

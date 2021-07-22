@@ -29,6 +29,13 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       middleware(Middleware.Authenticate)
       resolve(&Shop.get_product/3)
     end
+
+    @desc "Public product query, mainly used to preview a sale"
+    field(:product_preview, non_null(:product_preview)) do
+      arg(:id, non_null(:integer))
+
+      resolve(&Shop.get_product/3)
+    end
   end
 
   @desc "Shop mutations"
@@ -60,6 +67,19 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:created_at, non_null(:datetime))
 
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
+  end
+
+  object(:product_preview) do
+    field(:id, non_null(:integer))
+    field(:creator_id, non_null(:string))
+    field(:title, non_null(:string))
+    field(:description, non_null(:string))
+    field(:price, non_null(:float))
+    field(:image, :string)
+
+    field(:community_id, non_null(:string))
+
+    field(:community, non_null(:community_preview), resolve: dataloader(Cambiatus.Commune))
   end
 
   @desc "An Order"

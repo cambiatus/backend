@@ -143,10 +143,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
   @spec get_transfers(map(), map(), map()) :: {:ok, list(map())} | {:error, String.t()}
   def get_transfers(%Community{} = community, args, _) do
     {:ok, transfers} = Commune.get_transfers(community, args)
+    {:ok, count} = Commune.get_transfers_count(community)
 
-    result =
-      transfers
-      |> Map.put(:parent, community)
+    result = Map.put(transfers, :parent, community)
+    result = Map.put(result, :count, count)
 
     {:ok, result}
   end

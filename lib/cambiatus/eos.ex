@@ -32,7 +32,18 @@ defmodule Cambiatus.Eos do
       {:error, %{body: %{"error" => %{"code" => 3_120_007}}}} ->
         :ok
 
-      {:error, _error} ->
+      {:error, :econnrefused} ->
+        Sentry.capture_message("Can't reach wallet via http",
+          extra: %{wallet_name: cambiatus_wallet()}
+        )
+
+        :error
+
+      {:error, error} ->
+        Sentry.capture_message("Something went wrong while unlocking wallet",
+          extra: %{error: error}
+        )
+
         :error
     end
   end

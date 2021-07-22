@@ -3,12 +3,13 @@ defmodule CambiatusWeb.Router do
 
   use CambiatusWeb, :router
   use Plug.ErrorHandler
-  use Sentry.Plug
+  use Sentry.PlugCapture
 
   pipeline :api do
     plug(:accepts, ["json"])
     plug(CambiatusWeb.Plugs.SetCurrentUser)
     plug(CambiatusWeb.Plugs.GetOrigin)
+    plug(Sentry.PlugContext)
   end
 
   pipeline :browser do

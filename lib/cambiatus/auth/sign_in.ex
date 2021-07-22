@@ -14,6 +14,8 @@ defmodule Cambiatus.Auth.SignIn do
   We check our demux/postgres database to see if have a entry for this user.
   """
   def sign_in(account, password, domain: domain) do
+    Sentry.Context.set_extra_context(%{account: account, domain: domain})
+
     with {:ok, %Community{} = community} <- Commune.get_community_by_subdomain(domain),
          %User{} = user <- Accounts.get_user(account),
          true <- Accounts.verify_pass(account, password) do
@@ -44,6 +46,8 @@ defmodule Cambiatus.Auth.SignIn do
   end
 
   def sign_in(account, password, invitation_id: invitation_id) do
+    Sentry.Context.set_extra_context(%{account: account, invitation_id: invitation_id})
+
     case Accounts.get_user(account) do
       nil ->
         {:error, :not_found}
