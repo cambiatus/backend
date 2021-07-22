@@ -940,7 +940,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       insert(:check, %{claim: claim1, validator: verifier2, is_verified: true})
 
       # Claim 2 with no validations
-      _claim2 = insert(:claim, %{claimer: claimer, action: action1})
+      _claim2 = insert(:claim, %{claimer: claimer, action: action1, status: "pending"})
 
       # Collect all validator's claims for analysis
       params = %{
@@ -984,8 +984,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       %{"data" => %{"analyzedClaims" => ch}} = json_response(res, 200)
       claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
-      # but we should have both claims on the history
-      assert Enum.count(claim_history_ids) == 2
+      # We should only show the completed one
+      assert Enum.count(claim_history_ids) == 1
     end
 
     test "collect a single invitation", %{conn: conn} do

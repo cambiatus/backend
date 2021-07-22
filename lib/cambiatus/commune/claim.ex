@@ -63,6 +63,12 @@ defmodule Cambiatus.Commune.Claim do
     query |> where(status: ^status)
   end
 
+  def analyzed(query \\ Claim) do
+    query
+    |> where(status: "approved")
+    |> or_where(status: "rejected")
+  end
+
   def ordered(query \\ Claim, direction \\ :asc)
   def ordered(query, :asc), do: query |> order_by([a], a.created_at)
   def ordered(query, :desc), do: query |> order_by([a], desc: a.created_at)
