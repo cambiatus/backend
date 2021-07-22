@@ -232,7 +232,6 @@ defmodule Cambiatus.Commune do
     |> join(:left, [c, a], v in Validator, on: v.action_id == c.action_id)
     |> where([_, _, o], o.community_id == ^community_id)
     |> where([_, _, _, ch], ch.validator_id == ^account)
-    |> where([c], c.status == "approved" or c.status == "rejected")
   end
 
   @doc """
