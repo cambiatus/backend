@@ -984,8 +984,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       %{"data" => %{"analyzedClaims" => ch}} = json_response(res, 200)
       claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
-      # We should only show the completed one
-      assert Enum.count(claim_history_ids) == 1
+      # but we should have both claims on the history
+      assert Enum.count(claim_history_ids) == 2
     end
 
     test "collect a single invitation", %{conn: conn} do
