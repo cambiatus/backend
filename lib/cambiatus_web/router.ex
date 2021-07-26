@@ -19,7 +19,7 @@ defmodule CambiatusWeb.Router do
     scope "/dev" do
       pipe_through([:browser])
 
-      forward("/mailbox", Bamboo.SentEmailViewerPlug)
+      forward("/mailbox", Plug.Swoosh.MailboxPreview)
     end
   end
 

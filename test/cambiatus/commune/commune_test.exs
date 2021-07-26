@@ -17,7 +17,8 @@ defmodule Cambiatus.CommuneTest do
       inviter_reward: 0.0,
       invited_reward: 0.0,
       allow_subcommunity: true,
-      subcommunity_price: 0.0
+      subcommunity_price: 0.0,
+      subdomain: %{name: "test.cambiatus.io"}
     }
     @update_attrs %{name: "some updated name"}
     @invalid_attrs %{symbol: nil}

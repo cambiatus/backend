@@ -69,4 +69,6 @@ defmodule Cambiatus.Commune.Claim do
   def ordered(query \\ Claim, direction \\ :asc)
   def ordered(query, :asc), do: query |> order_by([a], a.created_at)
   def ordered(query, :desc), do: query |> order_by([a], desc: a.created_at)
+
+  def count(query \\ Claim), do: select(query, [claim], count(claim.id))
 end

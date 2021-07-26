@@ -98,6 +98,9 @@ defmodule Cambiatus.DbListener do
       }
       |> Notifications.create_notification_history()
 
+      # Trigger email delivery as well
+      CambiatusWeb.Email.transfer(record)
+
       {:noreply, :event_handled}
     else
       err ->

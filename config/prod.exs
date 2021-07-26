@@ -11,14 +11,6 @@ config :cambiatus, CambiatusWeb.Endpoint,
 # Do not print debug messages in production
 config :logger, level: :info
 
-config :cambiatus, Cambiatus.Mailer,
-  adapter: Bamboo.SendGridAdapter,
-  api_key: System.get_env("SENDGRID_KEY")
-
-config :cambiatus, Cambiatus.Mailer, adapter: Bamboo.SendGridAdapter
-
-config :cambiatus, :ipfs, conn: %{host: System.get_env("IPFS_URL"), port: 5001}
-
 config :cambiatus, :eosrpc_wallet, EOSRPC.Wallet
 config :cambiatus, :eosrpc_helper, EOSRPC.Helper
 config :cambiatus, :eosrpc_chain, EOSRPC.Chain

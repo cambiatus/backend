@@ -1,7 +1,7 @@
 defmodule Cambiatus.Mailer do
   @moduledoc "Module responsible for mailing helpers"
 
-  use Bamboo.Mailer, otp_app: :cambiatus
+  use Swoosh.Mailer, otp_app: :cambiatus
 
   def sender do
     :cambiatus

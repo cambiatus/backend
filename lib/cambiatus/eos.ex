@@ -18,6 +18,8 @@ defmodule Cambiatus.Eos do
 
   require Logger
 
+  import Number.Currency
+
   @spec unlock_wallet() :: atom()
   def unlock_wallet() do
     cambiatus_wallet()
@@ -162,6 +164,13 @@ defmodule Cambiatus.Eos do
     end
   end
 
+  def format_amount(amount, symbol) do
+    [precision_string, symbol_code] = String.split(symbol, ",")
+    precision = String.to_integer(precision_string)
+
+    number_to_currency(amount, unit: symbol_code, precision: precision, format: "%n")
+  end
+
   def build_asset(symbol) do
     [precision_string, symbol_code] = symbol |> String.split(",")
     precision = String.to_integer(precision_string)
@@ -175,13 +184,8 @@ defmodule Cambiatus.Eos do
 
   @spec parse_symbol(binary) :: {float, binary}
   def parse_symbol(asset) do
-    {amount, symbol} =
-      asset
-      |> Float.parse()
-
-    symbol =
-      symbol
-      |> String.slice(1..-1)
+    {amount, symbol} = Float.parse(asset)
+    symbol = String.slice(symbol, 1..-1)
 
     {amount, symbol}
   end

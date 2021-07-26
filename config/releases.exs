@@ -17,12 +17,6 @@ config :cambiatus, CambiatusWeb.Endpoint,
   render_errors: [view: CambiatusWeb.ErrorView, accepts: ~w(json)],
   pubsub_server: Cambiatus.PubSub
 
-config :cambiatus, Cambiatus.Mailer,
-  adapter: Bamboo.SendGridAdapter,
-  api_key: System.get_env("SENDGRID_KEY")
-
-config :cambiatus, :ipfs, conn: %{host: System.get_env("IPFS_URL"), port: 5001}
-
 config :cambiatus, Cambiatus.Repo,
   database: System.get_env("DB_NAME"),
   username: System.get_env("DB_USER"),
@@ -36,6 +30,11 @@ config :eosrpc, EOSRPC.Helper, symbol: System.get_env("EOSIO_SYMBOL") || "EOS"
 
 config :cambiatus, :graphql_secret, System.get_env("GRAPHQL_SECRET")
 config :cambiatus, :auth_salt, System.get_env("USER_SALT")
+
+config :cambiatus, Cambiatus.Mailer,
+  sender_email: "no-reply@cambiatus.com",
+  adapter: Swoosh.Adapters.Sendinblue,
+  api_key: System.get_env("SENDINBLUE_KEY")
 
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
