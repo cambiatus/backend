@@ -373,7 +373,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
-    field(:community, :community)
+    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
     field(:account, :user, resolve: dataloader(Cambiatus.Accounts))
     field(:invited_by, :string)
   end
