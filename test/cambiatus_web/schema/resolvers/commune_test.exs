@@ -985,7 +985,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
       # but we should have both claims on the history
-      assert Enum.count(claim_history_ids) == 2
+      assert Enum.count(claim_history_ids) == 0
     end
 
     test "collect a single invitation", %{conn: conn} do
