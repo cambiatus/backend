@@ -20,6 +20,7 @@ defmodule Cambiatus.Auth.SignUp do
   """
   def sign_up(params) do
     params
+    |> set_sentry()
     |> validate_all()
     |> create_eos_account()
     |> create_user()
@@ -35,6 +36,15 @@ defmodule Cambiatus.Auth.SignUp do
       _result ->
         {:ok, Accounts.get_user(params.account)}
     end
+  end
+
+  @doc """
+  Adds context so we can better understand fails and errors on production
+  """
+  def set_sentry(params) do
+    Sentry.Context.set_extra_context(params)
+
+    params
   end
 
   @doc """

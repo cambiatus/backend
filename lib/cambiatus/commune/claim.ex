@@ -26,7 +26,7 @@ defmodule Cambiatus.Commune.Claim do
     field(:created_at, :utc_datetime)
   end
 
-  @required_fields ~w(is_verified action_id claimer_id created_block created_tx created_eos_account created_at)a
+  @required_fields ~w(action_id status claimer_id created_block created_tx created_eos_account created_at)a
   @optional_fields ~w(proof_photo proof_code)a
 
   @spec changeset(Claim.t(), map()) :: Ecto.Changeset.t()
@@ -52,18 +52,15 @@ defmodule Cambiatus.Commune.Claim do
   end
 
   def newer_first(query \\ Claim) do
-    query
-    |> order_by([c], desc: c.created_at)
+    query |> ordered(:desc)
   end
 
   def with_claimer(query \\ Claim, claimer) do
-    query
-    |> where(claimer_id: ^claimer)
+    query |> where(claimer_id: ^claimer)
   end
 
   def with_status(query \\ Claim, status) do
-    query
-    |> where(status: ^status)
+    query |> where(status: ^status)
   end
 
   def ordered(query \\ Claim, direction \\ :asc)

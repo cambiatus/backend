@@ -12,6 +12,10 @@ defmodule Cambiatus.Accounts do
   @spec data :: Dataloader.Ecto.t()
   def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
 
+  def query(User, %{query: query}) do
+    User.search(User, query)
+  end
+
   def query(queryable, _params), do: queryable
 
   def verify_pass(_account, password) do
@@ -47,11 +51,7 @@ defmodule Cambiatus.Accounts do
         select: u
       )
 
-    {
-      :ok,
-      profiles
-      |> Repo.all()
-    }
+    {:ok, Repo.all(profiles)}
   end
 
   @doc """

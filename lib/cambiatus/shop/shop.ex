@@ -48,12 +48,19 @@ defmodule Cambiatus.Shop do
   end
 
   def get_product(id) do
-    product = Repo.get(Product, id)
+    Product
+    |> Repo.get(id)
+    |> case do
+      nil ->
+        nil
 
-    if product.is_deleted do
-      nil
-    else
-      product
+      product ->
+        # Handle soft delete as nil
+        if product.is_deleted do
+          nil
+        else
+          product
+        end
     end
   end
 
