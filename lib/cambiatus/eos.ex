@@ -175,11 +175,11 @@ defmodule Cambiatus.Eos do
     end
   end
 
-  def format_amount(amount, symbol) do
+  def format_amount(amount, symbol, format \\ "%n") do
     [precision_string, symbol_code] = String.split(symbol, ",")
     precision = String.to_integer(precision_string)
 
-    number_to_currency(amount, unit: symbol_code, precision: precision, format: "%n")
+    number_to_currency(amount, unit: symbol_code, precision: precision, format: format)
   end
 
   def build_asset(symbol) do

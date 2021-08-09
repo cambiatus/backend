@@ -5,13 +5,8 @@ defmodule Cambiatus.DbListener do
   use GenServer
   require Logger
 
-  alias Cambiatus.{
-    Accounts,
-    Commune,
-    Commune.Transfer,
-    Notifications,
-    Repo
-  }
+  alias Cambiatus.{Accounts, Commune, Notifications, Repo}
+  alias Cambiatus.Commune.{Claim, Transfer}
 
   alias CambiatusWeb.Endpoint
 
@@ -141,6 +136,13 @@ defmodule Cambiatus.DbListener do
     else
       {:ok, %{record: record, operation: "UPDATE"}} ->
         if record.status == "approved" do
+          claim =
+            Claim
+            |> Repo.get(record.id)
+            |> Repo.preload(action: [objective: [community: :subdomain]])
+            |> Repo.preload(:claimer)
+
+          CambiatusWeb.Email.claim(claim)
           Notifications.notify_claim_approved(record.id)
         end
 

@@ -3,7 +3,7 @@ defmodule CambiatusWeb.Email do
 
   import Swoosh.Email
 
-  use Phoenix.Swoosh, view: CambiatusWeb.EmailView, layout: {CambiatusWeb.LayoutView, :email}
+  use Phoenix.Swoosh, view: CambiatusWeb.EmailView
 
   alias Cambiatus.{Mailer, Repo}
 
@@ -26,6 +26,15 @@ defmodule CambiatusWeb.Email do
     |> to(transfer.to.email)
     |> subject("You received a new transfer on #{transfer.community.name}")
     |> render_body("transfer.html", %{transfer: transfer})
+    |> Mailer.deliver()
+  end
+
+  def claim(claim) do
+    new()
+    |> from({"#{claim.action.objective.community.name} - Cambiatus", "no-reply@cambiatus.com"})
+    |> to(claim.claimer.email)
+    |> subject("Your claim was approved!")
+    |> render_body("claim.html", %{claim: claim})
     |> Mailer.deliver()
   end
 
