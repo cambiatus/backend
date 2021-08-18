@@ -50,5 +50,7 @@ defmodule CambiatusWeb.Router do
     post("/upload", UploadController, :save)
     get("/chain/info", ChainController, :info)
     post("/invite", InviteController, :invite)
+
+    post("/paypal", PaypalController, :index)
   end
 end
