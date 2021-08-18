@@ -6,8 +6,7 @@ defmodule CambiatusWeb.PaypalController do
   use CambiatusWeb, :controller
 
   def index(conn, params) do
-    IO.inspect("Params ", params)
-
-    text(conn, "OK")
+    IO.inspect(params)
+    conn |> text("OK")
   end
 end
