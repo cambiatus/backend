@@ -44,7 +44,7 @@ config :cambiatus, Cambiatus.Fiat.Paypal,
   url: "https://api-m.paypal.com",
   email: "julienlucca-buyer@gmail.com",
   client: "AVulA1r97Wj4LCYbtMHagwC5XcvNlAD2iZSZSzWJq6eUX03rsVmOnQFVhZf6p0JCokWGVo9sJAJmF2xS",
-  secret: "EPCsvR3LUphfnrZTOiKRREqysOrFn4JWHP3tP1iqZ6hZ5rDrxifcYQoMipWu2BBmuUdJ9VRE-SdHMffj",
+  secret: "EPCsvR3LUphfnrZTOiKRREqysOrFn4JWHP3tP1iqZ6hZ5rDrxifcYQoMipWu2BBmuUdJ9VRE-SdHMffj"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
