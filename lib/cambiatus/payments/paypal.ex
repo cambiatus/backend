@@ -1,4 +1,4 @@
-defmodule Cambiatus.Fiat.Paypal do
+defmodule Cambiatus.Payments.Paypal do
   @moduledoc """
   PayPal API wrapper
   """
