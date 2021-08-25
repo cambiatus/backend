@@ -32,6 +32,7 @@ defmodule CambiatusWeb.Schema do
   import_types(__MODULE__.KycTypes)
   import_types(__MODULE__.ShopTypes)
   import_types(__MODULE__.SearchTypes)
+  import_types(__MODULE__.PaymentTypes)
 
   query do
     import_fields(:account_queries)
@@ -40,6 +41,7 @@ defmodule CambiatusWeb.Schema do
     import_fields(:address_queries)
     import_fields(:shop_queries)
     import_fields(:search_queries)
+    import_fields(:payment_queries)
   end
 
   mutation do
@@ -48,6 +50,7 @@ defmodule CambiatusWeb.Schema do
     import_fields(:kyc_mutations)
     import_fields(:commune_mutations)
     import_fields(:shop_mutations)
+    import_fields(:payment_mutations)
   end
 
   subscription do
