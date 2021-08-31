@@ -26,6 +26,7 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
   end
 
   object(:contribution) do
+    field(:id, non_null(:string))
     field(:amount, non_null(:float))
     field(:currency, non_null(:currency_type))
     field(:payment_method, non_null(:payment_method_type))
