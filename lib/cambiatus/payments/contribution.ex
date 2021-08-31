@@ -21,12 +21,20 @@ defmodule Cambiatus.Payments.Contribution do
   schema "contributions" do
     field(:amount, :float)
 
-    field(:currency, Ecto.Enum, values: [:USD, :BRL, :CRC, :BTC, :ETH, :EOS])
-    field(:payment_method, Ecto.Enum, values: [:paypal, :bitcoin, :ethereum, :eos])
-    field(:status, Ecto.Enum, values: [:created, :captured, :approved, :rejected, :failed])
+    field(:currency, Ecto.Enum, values: [:USD, :BRL, :CRC, :BTC, :ETH, :EOS], default: :USD)
+
+    field(:payment_method, Ecto.Enum,
+      values: [:paypal, :bitcoin, :ethereum, :eos],
+      default: :paypal
+    )
+
+    field(:status, Ecto.Enum,
+      values: [:created, :captured, :approved, :rejected, :failed],
+      default: :created
+    )
 
     belongs_to(:community, Community, references: :symbol, type: :string)
-    belongs_to(:account, User, references: :account, type: :string)
+    belongs_to(:user, User, references: :account, type: :string)
 
     has_many(:contribution_payment_callbacks, ContributionPaymentCallback)
     has_many(:payment_callbacks, through: [:contribution_payment_callbacks, :payment_callback])
@@ -34,7 +42,7 @@ defmodule Cambiatus.Payments.Contribution do
     timestamps()
   end
 
-  @required_fields ~w(community_id account_id amount currency payment_method status)a
+  @required_fields ~w(community_id user_id amount currency payment_method status)a
   @optional_fields ~w()a
 
   def changeset(%__MODULE__{} = contribution, params) do

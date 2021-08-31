@@ -4,11 +4,11 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
   """
 
   use Absinthe.Schema.Notation
-  alias CambiatusWeb.Schema.Middleware
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Payment, as: PaymentResolver
+  alias CambiatusWeb.Schema.Middleware
 
   object :payment_queries do
   end
@@ -31,17 +31,17 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
     field(:payment_method, non_null(:payment_method_type))
     field(:status, non_null(:contribution_status_type))
 
-    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Accounts))
+    field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
     field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
   end
 
   enum(:currency_type) do
-    value(:usd, description: "US dollars")
-    value(:brl, description: "Brazil Reais")
-    value(:crc, description: "Costa Rica Colones")
-    value(:btc, description: "Bitcoin")
-    value(:eth, description: "Ethereum")
-    value(:eos, description: "EOS")
+    value(:USD, description: "US dollars")
+    value(:BRL, description: "Brazil Reais")
+    value(:CRC, description: "Costa Rica Colones")
+    value(:BTC, description: "Bitcoin")
+    value(:ETH, description: "Ethereum")
+    value(:EOS, description: "EOS")
   end
 
   enum(:payment_method_type) do

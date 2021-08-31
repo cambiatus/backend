@@ -12,12 +12,12 @@ defmodule Cambiatus.Repo.Migrations.Contributions do
 
     create table(:contributions, primary_key: false) do
       add(:id, :uuid, primary_key: true)
-      add(:community_id, references(:communities, column: :symbol, type: :string))
-      add(:account_id, references(:users, column: :account, type: :string))
-      add(:amount, :float)
-      add(:currency, :currency, default: "USD")
-      add(:payment_method, :payment_method, default: "paypal")
-      add(:status, :contribution_status, default: "created")
+      add(:community_id, references(:communities, column: :symbol, type: :string, null: false))
+      add(:user_id, references(:users, column: :account, type: :string, null: false))
+      add(:amount, :float, null: false)
+      add(:currency, :currency, default: "USD", null: false)
+      add(:payment_method, :payment_method, default: "paypal", null: false)
+      add(:status, :contribution_status, default: "created", null: false)
 
       timestamps()
     end

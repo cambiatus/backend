@@ -5,7 +5,17 @@ defmodule CambiatusWeb.Resolvers.Payment do
 
   alias Cambiatus.Payments
 
-  def create_contribution(_, params, %{context: current_user}) do
-    Payments.create_contribution(Map.merge(params, %{user: current_user}))
+  def create_contribution(_, params, %{context: %{current_user: current_user}}) do
+    params
+    |> Map.merge(%{user_id: current_user.account})
+    |> Payments.create_contribution()
+    |> case do
+      {:ok, _} = success ->
+        success
+
+      {:error, changeset} ->
+        {:error,
+         message: "Couldn't create contribution", details: Cambiatus.Error.from(changeset)}
+    end
   end
 end
