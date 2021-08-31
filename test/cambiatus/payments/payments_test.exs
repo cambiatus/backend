@@ -2,7 +2,6 @@ defmodule Cambiatus.PaymentsTest do
   use Cambiatus.DataCase
 
   alias Cambiatus.Payments
-  alias Cambiatus.Payments.Contribution
 
   describe "contributions" do
     test "list_contributions/0 returns all contributions" do

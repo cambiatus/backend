@@ -44,9 +44,6 @@ defmodule Cambiatus.Payments.Contribution do
     |> validate_payment_method()
   end
 
-  # def validate_payment_method(%{valid?: false, errors: [payment_method: _]} = changeset),
-  #   do: changeset
-
   def validate_payment_method(%{valid?: false} = changeset), do: changeset
 
   def validate_payment_method(%{valid?: true} = changeset) do
