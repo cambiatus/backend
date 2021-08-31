@@ -11,7 +11,6 @@ defmodule Cambiatus.Payments.PaymentCallback do
 
   schema "payment_callbacks" do
     field(:payload, :map)
-    field(:payment_method, Ecto.Enum, values: [:paypal, :bitcoin, :ethereum, :eos])
     field(:status, :string)
     field(:external_id, :string)
 

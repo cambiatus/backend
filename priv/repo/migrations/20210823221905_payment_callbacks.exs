@@ -4,12 +4,6 @@ defmodule Cambiatus.Repo.Migrations.PaymentCallbacks do
   def change do
     create table(:payment_callbacks) do
       add(:payload, :map, comment: "Payload received from external service as a callback")
-
-      add(:payment_method, :payment_method,
-        default: "paypal",
-        comment: "Source that process the payment"
-      )
-
       add(:status, :string, comment: "Status parsed from provider")
       add(:external_id, :string)
 
