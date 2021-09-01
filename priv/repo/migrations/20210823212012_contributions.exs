@@ -11,13 +11,39 @@ defmodule Cambiatus.Repo.Migrations.Contributions do
     )
 
     create table(:contributions, primary_key: false) do
-      add(:id, :uuid, primary_key: true)
+      add(:id, :uuid,
+        primary_key: true,
+        comment:
+          "ID representing the contribution. Its an UUID to make sure its unique across our envs"
+      )
+
       add(:community_id, references(:communities, column: :symbol, type: :string, null: false))
       add(:user_id, references(:users, column: :account, type: :string, null: false))
-      add(:amount, :float, null: false)
-      add(:currency, :currency, default: "USD", null: false)
-      add(:payment_method, :payment_method, default: "paypal", null: false)
-      add(:status, :contribution_status, default: "created", null: false)
+
+      add(:amount, :float,
+        null: false,
+        comment:
+          "Amount of the contribution, since we support multiple currencies, we use a float point."
+      )
+
+      add(:currency, :currency,
+        default: "USD",
+        null: false,
+        comment: "Typed currency, using ISO format"
+      )
+
+      add(:payment_method, :payment_method,
+        default: "paypal",
+        null: false,
+        comment: "Payment method used, typed with the integrations we got"
+      )
+
+      add(:status, :contribution_status,
+        default: "created",
+        null: false,
+        comment:
+          "Internal status of the transaction to our system, may not represent outside state"
+      )
 
       timestamps()
     end
