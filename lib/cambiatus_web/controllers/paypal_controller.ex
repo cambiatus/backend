@@ -5,8 +5,13 @@ defmodule CambiatusWeb.PaypalController do
 
   use CambiatusWeb, :controller
 
+  alias Cambiatus.Payments
+
   def index(conn, params) do
-    IO.inspect(params)
-    conn |> text("OK")
+    if Payments.create_payment_callback(%{payload: params}) do
+      conn |> text("OK")
+    else
+      Sentry.capture_message("Something went wrong while saving Paypal payload", extra: params)
+    end
   end
 end

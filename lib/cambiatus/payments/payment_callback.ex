@@ -17,7 +17,7 @@ defmodule Cambiatus.Payments.PaymentCallback do
     timestamps()
   end
 
-  @required_fields ~w(payload payment_method status external_id)a
+  @required_fields ~w(payload status external_id)a
   @optional_fields ~w()a
 
   def changeset(%__MODULE__{} = callback, params) do
