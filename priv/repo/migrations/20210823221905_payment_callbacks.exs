@@ -3,14 +3,18 @@ defmodule Cambiatus.Repo.Migrations.PaymentCallbacks do
 
   def change do
     create table(:payment_callbacks) do
-      add(:payload, :map, comment: "Payload received from external service as a callback")
-      add(:external_id, :string, comment: "Indexed external ID to help identify the callback")
+      add(:payload, :map,
+        null: false,
+        comment: "Payload received from external service as a callback"
+      )
 
       add(:processed, :boolean,
         default: false,
+        null: false,
         comment: "Flag that informs if the callback was already processed by the system"
       )
 
+      add(:external_id, :string, comment: "Indexed external ID to help identify the callback")
       timestamps()
     end
 

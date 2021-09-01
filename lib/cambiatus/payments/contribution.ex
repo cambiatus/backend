@@ -52,6 +52,7 @@ defmodule Cambiatus.Payments.Contribution do
     |> validate_payment_method()
   end
 
+  # If it is invalid at this point, don't keep validating
   def validate_payment_method(%{valid?: false} = changeset), do: changeset
 
   def validate_payment_method(%{valid?: true} = changeset) do

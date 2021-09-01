@@ -11,14 +11,14 @@ defmodule Cambiatus.Payments.PaymentCallback do
 
   schema "payment_callbacks" do
     field(:payload, :map)
-    field(:status, :string)
+    field(:processed, :boolean, default: false)
     field(:external_id, :string)
 
     timestamps()
   end
 
-  @required_fields ~w(payload status external_id)a
-  @optional_fields ~w()a
+  @required_fields ~w(payload processed)a
+  @optional_fields ~w(external_id)a
 
   def changeset(%__MODULE__{} = callback, params) do
     callback
