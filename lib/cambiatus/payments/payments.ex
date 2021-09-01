@@ -18,7 +18,7 @@ defmodule Cambiatus.Payments do
 
   def create_payment_callback(attrs \\ %{}) do
     %PaymentCallback{}
-    |> PaymentCallback.changeset()
+    |> PaymentCallback.changeset(attrs)
     |> Repo.insert()
   end
 end
