@@ -352,7 +352,7 @@ defmodule Cambiatus.Factory do
       payment_method: sequence(:payment_method, [:paypal, :bitcoin, :ethereum, :eos]),
       status: sequence(:status, [:created, :captured, :approved, :rejected, :failed]),
       community: build(:community),
-      account: build(:user)
+      user: build(:user)
     }
   end
 end
