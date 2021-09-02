@@ -5,13 +5,17 @@ defmodule Cambiatus.Application do
 
   require Logger
 
+  alias Cambiatus.{Repo, DbListener, PubSub}
+  alias CambiatusWeb.Endpoint
+
   def start(_type, _args) do
     children = [
-      Cambiatus.Repo,
-      Cambiatus.DbListener,
-      {Phoenix.PubSub, name: Cambiatus.PubSub},
-      CambiatusWeb.Endpoint,
-      {Absinthe.Subscription, [CambiatusWeb.Endpoint]}
+      Repo,
+      DbListener,
+      Endpoint,
+      {Phoenix.PubSub, name: PubSub},
+      {Absinthe.Subscription, [Endpoint]},
+      {Oban, oban_config()}
     ]
 
     Logger.add_backend(Sentry.LoggerBackend)
@@ -25,5 +29,9 @@ defmodule Cambiatus.Application do
   def config_change(changed, _new, removed) do
     CambiatusWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def oban_config do
+    Application.fetch_env!(:cambiatus, Oban)
   end
 end

@@ -40,6 +40,11 @@ config :sentry,
   included_environments: ~w(prod staging dev),
   environment_name: Mix.env()
 
+config :cambiatus, Oban,
+  repo: Cambiatus.Repo,
+  plugins: [Oban.Plugins.Pruner],
+  queues: [default: 10, events: 50, media: 20]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

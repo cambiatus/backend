@@ -81,6 +81,9 @@ defmodule Cambiatus.Mixfile do
       # Push Notification Packages
       {:web_push_encryption, "~> 0.3.0"},
 
+      # Background processing
+      {:oban, "~> 2.8"},
+
       # Dev only
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
 
