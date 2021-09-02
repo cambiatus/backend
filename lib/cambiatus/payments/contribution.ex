@@ -37,7 +37,10 @@ defmodule Cambiatus.Payments.Contribution do
     belongs_to(:user, User, references: :account, type: :string)
 
     has_many(:contribution_payment_callbacks, ContributionPaymentCallback)
-    has_many(:payment_callbacks, through: [:contribution_payment_callbacks, :payment_callback])
+
+    has_many(:payment_callbacks,
+      through: [:contribution_payment_callbacks, :payment_callback]
+    )
 
     timestamps()
   end

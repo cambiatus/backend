@@ -2,12 +2,14 @@ defmodule Cambiatus.Payments.PaymentCallback do
   @moduledoc """
   Ecto model that holds external services callbacks
 
-  Those callbacks may change the status of their origin entity, could be a shop buy or a community contribution, or other source.
+  Those callbacks may change the status of their origin entic |> Repo.preload(:payment_callbacks)ty, could be a shop buy or a community contribution, or other source.
   """
 
   use Ecto.Schema
 
   import Ecto.Changeset
+
+  @foreign_key_type :binary_id
 
   schema "payment_callbacks" do
     field(:payload, :map)
@@ -15,6 +17,8 @@ defmodule Cambiatus.Payments.PaymentCallback do
     field(:external_id, :string)
 
     timestamps()
+
+    belongs_to(:contribution, Cambiatus.Payments.Contribution)
   end
 
   @required_fields ~w(payload processed)a
