@@ -10,6 +10,16 @@ defmodule Cambiatus.Payments do
     {:ok, Repo.all(Contribution)}
   end
 
+  def get_contribution(id) do
+    case Repo.get(Contribution, id) do
+      nil ->
+        {:error, "No contribution with id: #{id} found"}
+
+      found_contribution ->
+        {:ok, found_contribution}
+    end
+  end
+
   def create_contribution(attrs \\ %{}) do
     %Contribution{}
     |> Contribution.changeset(attrs)
