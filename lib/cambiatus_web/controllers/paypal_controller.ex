@@ -8,7 +8,7 @@ defmodule CambiatusWeb.PaypalController do
   alias Cambiatus.Payments
 
   def index(conn, params) do
-    case Payments.create_payment_callback(%{payload: params}) do
+    case Payments.schedule_payment_callback_worker(params) do
       {:ok, _} ->
         text(conn, "OK")
 

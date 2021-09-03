@@ -43,7 +43,7 @@ config :sentry,
 config :cambiatus, Oban,
   repo: Cambiatus.Repo,
   plugins: [Oban.Plugins.Pruner],
-  queues: [default: 10, events: 50, media: 20]
+  queues: [contribution_paypal: 50]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
