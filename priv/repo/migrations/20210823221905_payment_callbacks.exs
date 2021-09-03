@@ -18,9 +18,9 @@ defmodule Cambiatus.Repo.Migrations.PaymentCallbacks do
       timestamps()
     end
 
-    create table(:contributions_payment_callbacks, primary_key: false) do
-      add(:contribution_id, references(:contributions, type: :uuid, primary_key: true))
-      add(:payment_callback_id, references(:payment_callbacks, primary_key: true))
+    create table(:contributions_payment_callbacks) do
+      add(:contribution_id, references(:contributions, type: :uuid))
+      add(:payment_callback_id, references(:payment_callbacks))
 
       timestamps()
     end

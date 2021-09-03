@@ -14,7 +14,7 @@ defmodule Cambiatus.Payments.Contribution do
 
   alias Cambiatus.Commune.Community
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Payments.ContributionPaymentCallback
+  alias Cambiatus.Payments.{ContributionPaymentCallback, PaymentCallback}
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
@@ -36,10 +36,9 @@ defmodule Cambiatus.Payments.Contribution do
     belongs_to(:community, Community, references: :symbol, type: :string)
     belongs_to(:user, User, references: :account, type: :string)
 
-    has_many(:contribution_payment_callbacks, ContributionPaymentCallback)
-
-    has_many(:payment_callbacks,
-      through: [:contribution_payment_callbacks, :payment_callback]
+    many_to_many(:payment_callbacks, PaymentCallback,
+      join_through: ContributionPaymentCallback,
+      unique: true
     )
 
     timestamps()

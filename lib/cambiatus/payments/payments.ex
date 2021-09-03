@@ -4,7 +4,7 @@ defmodule Cambiatus.Payments do
   """
 
   alias Cambiatus.Repo
-  alias Cambiatus.Payments.Contribution
+  alias Cambiatus.Payments.{Contribution, PaymentCallback}
   alias Cambiatus.Workers.ContributionPaypalWorker
 
   def list_contributions do
@@ -31,6 +31,12 @@ defmodule Cambiatus.Payments do
     contribution
     |> Contribution.changeset(attrs)
     |> Repo.update()
+  end
+
+  def create_payment_callback(attrs \\ %{}) do
+    %PaymentCallback{}
+    |> PaymentCallback.changeset(attrs)
+    |> Repo.insert()
   end
 
   def schedule_payment_callback_worker(attrs \\ %{}) do
