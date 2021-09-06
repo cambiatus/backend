@@ -16,7 +16,6 @@ defmodule Cambiatus.Payments.PaymentCallback do
   schema "payment_callbacks" do
     field(:payload, :map)
     field(:processed, :boolean, default: false)
-    field(:external_id, :string)
 
     timestamps()
 
@@ -24,7 +23,7 @@ defmodule Cambiatus.Payments.PaymentCallback do
   end
 
   @required_fields ~w(payload processed)a
-  @optional_fields ~w(external_id)a
+  @optional_fields ~w()a
 
   def changeset(%__MODULE__{} = callback, params) do
     callback

@@ -14,7 +14,6 @@ defmodule Cambiatus.Repo.Migrations.PaymentCallbacks do
         comment: "Flag that informs if the callback was already processed by the system"
       )
 
-      add(:external_id, :string, comment: "Indexed external ID to help identify the callback")
       timestamps()
     end
 
