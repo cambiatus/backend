@@ -13,7 +13,7 @@ defmodule Cambiatus.Payments.ContributionTest do
       currency: "BRL",
       status: "created",
       community_id: community.symbol,
-      account_id: user.account
+      user_id: user.account
     }
 
     %{params: params}
