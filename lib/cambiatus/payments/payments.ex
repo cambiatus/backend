@@ -7,6 +7,18 @@ defmodule Cambiatus.Payments do
   alias Cambiatus.Payments.{Contribution, PaymentCallback}
   alias Cambiatus.Workers.ContributionPaypalWorker
 
+  @spec data(any) :: Dataloader.Ecto.t()
+  def data(params \\ %{}) do
+    Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+  end
+
+  def query(Contribution, _) do
+    Contribution
+    |> Contribution.approved()
+  end
+
+  def query(queryable, _params), do: queryable
+
   def list_contributions do
     {:ok, Repo.all(Contribution)}
   end

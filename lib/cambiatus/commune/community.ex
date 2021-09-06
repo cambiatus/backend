@@ -11,6 +11,8 @@ defmodule Cambiatus.Commune.Community do
     CommunityPhotos
   }
 
+  alias Cambiatus.Payments.Contribution
+
   alias Cambiatus.Shop.Product
   alias Cambiatus.Repo
 
@@ -59,6 +61,7 @@ defmodule Cambiatus.Commune.Community do
     has_many(:actions, through: [:objectives, :actions])
     has_many(:mints, Mint, foreign_key: :community_id)
     has_many(:uploads, CommunityPhotos, foreign_key: :community_id, on_replace: :delete)
+    has_many(:contributions, Contribution, foreign_key: :community_id)
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward)a

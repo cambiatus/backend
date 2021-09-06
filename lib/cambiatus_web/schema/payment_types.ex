@@ -4,12 +4,14 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
   """
 
   use Absinthe.Schema.Notation
+  use Absinthe.Relay.Schema.Notation, :classic
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Payment, as: PaymentResolver
   alias CambiatusWeb.Schema.Middleware
 
+  @desc "Queries to payment stuff, like Paypal and crypto processing"
   object :payment_queries do
   end
 

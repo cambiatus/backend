@@ -5,12 +5,14 @@ defmodule Cambiatus.Accounts do
 
   import Ecto.Query
 
-  alias Cambiatus.Accounts.{User}
-  alias Cambiatus.Commune.Transfer
   alias Cambiatus.Repo
+  alias Cambiatus.Accounts.User
+  alias Cambiatus.Commune.Transfer
 
   @spec data :: Dataloader.Ecto.t()
-  def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+  def data(params \\ %{}) do
+    Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+  end
 
   def query(User, %{query: query}) do
     User.search(User, query)

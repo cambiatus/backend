@@ -88,4 +88,8 @@ defmodule Cambiatus.Payments.Contribution do
   def from_user(query \\ __MODULE__, account) do
     where(query, [c], c.account_id == ^account)
   end
+
+  def approved(query \\ __MODULE__) do
+    where(query, [c], c.status == :approved)
+  end
 end
