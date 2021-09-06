@@ -10,7 +10,7 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
     unique: [period: 120]
 
   alias Cambiatus.{Payments, Repo}
-  alias Cambiatus.Payments.PaymentCallback
+  alias Cambiatus.Payments.{Contribution, PaymentCallback}
   alias Ecto.Multi
 
   def perform(%Oban.Job{args: %{"body" => attrs} = _args}) do
@@ -27,7 +27,7 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
         |> Multi.run(:contribution, fn repo, %{payment_callback: payment_callback} ->
           contribution
           |> Repo.preload(:payment_callbacks)
-          |> Ecto.Changeset.change()
+          |> process_paypal(attrs)
           |> Ecto.Changeset.put_assoc(:payment_callbacks, [payment_callback])
           |> repo.update()
         end)
@@ -45,7 +45,27 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
     end
   end
 
-  # process body
-  # Find related contribution
-  # associate and insert data
+  def process_paypal(contribution, %{
+        "event_type" => event_type,
+        "resource" => %{"id" => external_id}
+      }) do
+    event_type
+    |> case do
+      "PAYMENT.CAPTURE.COMPLETED" ->
+        :approved
+
+      "PAYMENT.CAPTURE.DENIED" ->
+        :rejected
+
+      _ ->
+        {:error, "can't process paypal event"}
+    end
+    |> case do
+      {:error, _} ->
+        Contribution.changeset(contribution, %{status: :paypal_error})
+
+      new_status ->
+        Contribution.changeset(contribution, %{status: new_status, external_id: external_id})
+    end
+  end
 end

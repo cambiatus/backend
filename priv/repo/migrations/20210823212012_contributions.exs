@@ -45,6 +45,11 @@ defmodule Cambiatus.Repo.Migrations.Contributions do
           "Internal status of the transaction to our system, may not represent outside state"
       )
 
+      add(:external_id, :string,
+        null: true,
+        comment: "Indexed external ID to help track the contribution in our frontends"
+      )
+
       timestamps()
     end
   end

@@ -33,6 +33,8 @@ defmodule Cambiatus.Payments.Contribution do
       default: :created
     )
 
+    field(:external_id, :string)
+
     belongs_to(:community, Community, references: :symbol, type: :string)
     belongs_to(:user, User, references: :account, type: :string)
 
@@ -45,7 +47,7 @@ defmodule Cambiatus.Payments.Contribution do
   end
 
   @required_fields ~w(community_id user_id amount currency payment_method status)a
-  @optional_fields ~w()a
+  @optional_fields ~w(external_id)a
 
   def changeset(%__MODULE__{} = contribution, params) do
     contribution
