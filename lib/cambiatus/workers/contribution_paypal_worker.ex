@@ -58,14 +58,14 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
         :rejected
 
       _ ->
-        {:error, "can't process paypal event"}
+        {:error, "can't process paypal event with id #{external_id}"}
     end
     |> case do
       {:error, _} ->
         Contribution.changeset(contribution, %{status: :paypal_error})
 
       new_status ->
-        Contribution.changeset(contribution, %{status: new_status, external_id: external_id})
+        Contribution.changeset(contribution, %{status: new_status})
     end
   end
 end
