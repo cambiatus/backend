@@ -15,6 +15,7 @@ defmodule Cambiatus.Payments do
   def query(Contribution, _) do
     Contribution
     |> Contribution.approved()
+    |> Contribution.newer_first()
   end
 
   def query(queryable, _params), do: queryable

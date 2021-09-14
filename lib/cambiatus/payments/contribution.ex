@@ -93,4 +93,8 @@ defmodule Cambiatus.Payments.Contribution do
   def approved(query \\ __MODULE__) do
     where(query, [c], c.status == :approved)
   end
+
+  def newer_first(query \\ __MODULE__) do
+    order_by(query, [c], desc: c.inserted_at)
+  end
 end
