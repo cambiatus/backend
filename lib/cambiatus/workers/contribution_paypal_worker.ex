@@ -14,10 +14,23 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
   alias Ecto.Multi
 
   def perform(%Oban.Job{args: %{"payment_callback_id" => payment_callback_id}}) do
-    payment_callback = Repo.get(PaymentCallback, payment_callback_id)
-
-    payment_callback.payload
+    PaymentCallback
+    |> Repo.get(payment_callback_id)
+    |> digest_payment_callback()
     |> case do
+      {:ok, _} ->
+        :ok
+
+      {:error, _} = error ->
+        error
+
+      {:error, _, %{valid?: false}} ->
+        {:error, :invalid_changeset}
+    end
+  end
+
+  def digest_payment_callback(%PaymentCallback{payload: payload} = payment_callback) do
+    case payload do
       %{"resource" => %{"invoice_id" => contribution_id}} = attrs ->
         {:ok, contribution} = Payments.get_contribution(contribution_id)
         contribution = Repo.preload(contribution, :payment_callbacks)
@@ -38,13 +51,6 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
           PaymentCallback.changeset(payment_callback, %{processed: true})
         )
         |> Repo.transaction()
-        |> case do
-          {:ok, _} ->
-            :ok
-
-          {:error, _, %{valid?: false}} ->
-            {:error, :invalid_changeset}
-        end
 
       _ ->
         {:error, "Can't find invoice_id"}
