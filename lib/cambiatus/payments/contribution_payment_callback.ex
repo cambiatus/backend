@@ -1,4 +1,6 @@
 defmodule Cambiatus.Payments.ContributionPaymentCallback do
+  @moduledoc false
+
   use Ecto.Schema
 
   import Ecto.Changeset

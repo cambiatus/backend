@@ -8,10 +8,10 @@ defmodule CambiatusWeb.PaypalController do
   alias Cambiatus.Payments
 
   def index(conn, params) do
-    case Payments.schedule_payment_callback_worker(params) do
-      {:ok, _} ->
-        text(conn, "OK")
-
+    with {:ok, payment_callback} <- Payments.create_payment_callback(%{payload: params}),
+         {:ok, _} <- Payments.schedule_payment_callback_worker(payment_callback.id) do
+      text(conn, "OK")
+    else
       {:error, error} ->
         Sentry.capture_message("Something went wrong while saving Paypal payload",
           extra: %{params: params, error: error}

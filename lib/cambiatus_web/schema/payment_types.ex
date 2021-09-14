@@ -34,6 +34,9 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
     field(:payment_method, non_null(:payment_method_type))
     field(:status, non_null(:contribution_status_type))
 
+    field(:inserted_at, non_null(:naive_datetime))
+    field(:updated_at, non_null(:naive_datetime))
+
     field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
     field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
   end

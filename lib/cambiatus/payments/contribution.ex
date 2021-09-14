@@ -38,7 +38,8 @@ defmodule Cambiatus.Payments.Contribution do
 
     many_to_many(:payment_callbacks, PaymentCallback,
       join_through: ContributionPaymentCallback,
-      unique: true
+      unique: true,
+      on_replace: :delete
     )
 
     timestamps()
@@ -61,25 +62,25 @@ defmodule Cambiatus.Payments.Contribution do
     currency = get_field(changeset, :currency)
     payment_method = get_field(changeset, :payment_method)
 
-    unless validate_currency_payment_method(currency, payment_method) do
+    if is_payment_method_valid?(currency, payment_method) do
+      changeset
+    else
       add_error(
         changeset,
         :payment_method,
         "Payment method #{payment_method} is invalid for currency #{currency}"
       )
-    else
-      changeset
     end
   end
 
-  def validate_currency_payment_method(currency, payment_method)
-  def validate_currency_payment_method(:USD, :paypal), do: true
-  def validate_currency_payment_method(:BRL, :paypal), do: true
-  def validate_currency_payment_method(:CRC, :paypal), do: true
-  def validate_currency_payment_method(:BTC, :bitcoin), do: true
-  def validate_currency_payment_method(:ETH, :ethereum), do: true
-  def validate_currency_payment_method(:EOS, :eos), do: true
-  def validate_currency_payment_method(_, _), do: false
+  def is_payment_method_valid?(currency, payment_method)
+  def is_payment_method_valid?(:USD, :paypal), do: true
+  def is_payment_method_valid?(:BRL, :paypal), do: true
+  def is_payment_method_valid?(:CRC, :paypal), do: true
+  def is_payment_method_valid?(:BTC, :bitcoin), do: true
+  def is_payment_method_valid?(:ETH, :ethereum), do: true
+  def is_payment_method_valid?(:EOS, :eos), do: true
+  def is_payment_method_valid?(_, _), do: false
 
   def from_community(query \\ __MODULE__, community_id) do
     where(query, [c], c.community_id == ^community_id)

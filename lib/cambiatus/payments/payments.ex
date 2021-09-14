@@ -51,8 +51,8 @@ defmodule Cambiatus.Payments do
     |> Repo.insert()
   end
 
-  def schedule_payment_callback_worker(attrs \\ %{}) do
-    %{body: attrs}
+  def schedule_payment_callback_worker(payment_callback_id) do
+    %{payment_callback_id: payment_callback_id}
     |> ContributionPaypalWorker.new()
     |> Oban.insert()
   end

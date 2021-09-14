@@ -13,31 +13,37 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
   alias Cambiatus.Payments.{Contribution, PaymentCallback}
   alias Ecto.Multi
 
-  def perform(%Oban.Job{args: %{"body" => attrs} = _args}) do
-    case attrs do
-      %{"resource" => %{"invoice_id" => contribution_id}} ->
-        {:ok, contribution} = Payments.get_contribution(contribution_id)
+  def perform(%Oban.Job{args: %{"payment_callback_id" => payment_callback_id}}) do
+    payment_callback = Repo.get(PaymentCallback, payment_callback_id)
 
-        payment_callback_changeset =
-          %PaymentCallback{}
-          |> PaymentCallback.changeset(%{payload: attrs})
+    payment_callback.payload
+    |> case do
+      %{"resource" => %{"invoice_id" => contribution_id}} = attrs ->
+        {:ok, contribution} = Payments.get_contribution(contribution_id)
+        contribution = Repo.preload(contribution, :payment_callbacks)
 
         Multi.new()
-        |> Multi.insert(:payment_callback, payment_callback_changeset)
-        |> Multi.run(:contribution, fn repo, %{payment_callback: payment_callback} ->
+        |> Multi.run(:contribution, fn repo, _ ->
           contribution
           |> Repo.preload(:payment_callbacks)
           |> process_paypal(attrs)
-          |> Ecto.Changeset.put_assoc(:payment_callbacks, [payment_callback])
+          |> Ecto.Changeset.put_assoc(
+            :payment_callbacks,
+            [payment_callback] ++ contribution.payment_callbacks
+          )
           |> repo.update()
         end)
+        |> Multi.update(
+          :set_processed,
+          PaymentCallback.changeset(payment_callback, %{processed: true})
+        )
         |> Repo.transaction()
         |> case do
           {:ok, _} ->
             :ok
 
           {:error, _, %{valid?: false}} ->
-            {:error, :changeset_invalid}
+            {:error, :invalid_changeset}
         end
 
       _ ->
