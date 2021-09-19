@@ -1,0 +1,41 @@
+---
+- name: Add cambiatus group
+  group:
+    name: '{{ cambiatus_app_group }}'
+    gid: '{{ cambiatus_app_group_gid }}'
+    state: present
+
+- name: Add cambiatus user
+  user:
+    name: '{{ cambiatus_app_user }}'
+    group: '{{ cambiatus_app_group }}'
+    system: yes
+    home: '{{ cambiatus_home_dir }}'
+    uid: '{{ cambiatus_app_user_uid }}'
+    state: present
+
+- name: Push env vars
+  template:
+    src: default.j2
+    dest: /etc/default/cambiatus
+    owner: '{{ cambiatus_app_user }}'
+    mode: '600'
+
+- name: Create cambiatus systemd service file
+  template:
+    src: service.j2
+    dest: '/lib/systemd/system/{{ cambiatus_app_name }}.service'
+
+- name: sync packages
+  synchronize:
+    src: '{{ local_build_path }}'
+    recursive: yes
+    dest: '{{ cambiatus_home_dir }}'
+
+- name: change owner
+  file:
+    path: '{{ cambiatus_home_dir }}'
+    owner: '{{ cambiatus_app_user }}'
+    group: '{{ cambiatus_app_group }}'
+    recurse: yes
+

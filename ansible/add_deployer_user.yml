@@ -1,0 +1,43 @@
+- hosts: web, nginx
+  become: true
+  vars:
+    - ansible_ssh_user: ubuntu
+    - ansible_ssh_private_key_file: ~/.ssh/new-cambiatus-prod.pem
+
+  tasks:
+    - name: Create Developers Group
+      group:
+        name: developers
+        state: present
+
+    - name: Create users
+      user:
+        name: '{{ item.name }}'
+        shell: /bin/bash
+        groups: '{{ item.groups }}'
+      with_items:
+        - '{{ developers_users }}'
+
+    - name: Add users key
+      authorized_key:
+        user: '{{ item.name }}'
+        key: "{{ item.ssh_key }}"
+      with_items:
+        - '{{ developers_users }}'
+
+    - name: Allow 'sudo' group to have passwordless sudo
+      lineinfile:
+        dest: /etc/sudoers
+        state: present
+        regexp: '^%sudo'
+        line: '%sudo ALL=(ALL) NOPASSWD: ALL'
+        validate: 'visudo -cf %s'
+
+    - name: Allow developers to tail syslog
+      lineinfile:
+        path: /etc/sudoers.d/developers
+        line: '%developers ALL=NOPASSWD: /bin/tail -*f /var/log/syslog'
+        state: present
+        mode: 0440
+        create: yes
+        validate: 'visudo -cf %s'

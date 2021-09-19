@@ -1,0 +1,26 @@
+- hosts: backend
+  name: Setup ntp and configure basic security
+  become: yes
+  roles:
+    - common
+
+- hosts: 127.0.0.1
+  become: no
+  name: Build app
+  roles:
+    - build
+
+- hosts: backend
+  become: yes
+  name: Install web app
+  roles:
+    - web
+
+- hosts: backend
+  become: yes
+  name: Restart backend
+  tasks:
+    - name: Restart
+      systemd:
+        state: restarted
+        name: '{{ cambiatus_app_name }}'

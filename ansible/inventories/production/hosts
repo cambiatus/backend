@@ -1,0 +1,18 @@
+[web]
+34.236.244.129 process_number=3 private_ip=172.31.4.57 natus_hostname=app1
+3.231.58.51 process_number=3 private_ip=172.31.14.130 natus_hostname=app2
+
+[nginx]
+18.205.1.218 natus_hostname=nginx
+
+[wallet]
+3.219.247.240 private_ip=172.31.0.23 natus_hostname=wallet
+
+[natus:children]
+web
+nginx
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_user=deployer
+ansible_ssh_private_key_file=~/.ssh/natus_prod.pem

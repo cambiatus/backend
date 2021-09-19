@@ -1,0 +1,10 @@
+[web]
+3.85.42.56 process_number=3 private_ip=172.31.35.159
+
+[backend:children]
+web
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_user=ubuntu
+ansible_ssh_private_key_file=~/.ssh/new-cambiatus-prod.pem

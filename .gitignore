@@ -24,3 +24,7 @@ bespiral-platform.iml
 .ssh-tunnel.sh
 
 .elixir_ls/
+
+ansible/.roles
+
+ansible/*.retry

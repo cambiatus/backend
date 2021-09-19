@@ -4,7 +4,7 @@ defmodule Cambiatus.Mixfile do
   def project do
     [
       app: :cambiatus,
-      version: "2.0.0",
+      version: System.get_env("APP_VERSION") || "2.0.0",
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),

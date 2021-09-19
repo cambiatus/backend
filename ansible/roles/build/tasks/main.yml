@@ -1,0 +1,9 @@
+- name: build project
+  local_action: shell bin/build.sh
+  args:
+    chdir: ..
+  environment:
+    MIX_ENV: prod
+    LC_ALL: en_US.UTF-8
+    LANG: en_US.UTF-8
+    LANGUAGE: en_US.UTF-8

@@ -1,0 +1,24 @@
+[Unit]
+Description=cambiatus Web App
+After=network.target
+
+[Service]
+Type=simple
+TimeoutSec=120
+RestartSec=5
+Restart=on-failure
+User={{ cambiatus_app_user }}
+Group={{ cambiatus_app_group }}
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier={{ cambiatus_app_name }}
+
+Environment=HOME={{ cambiatus_home_dir }}
+EnvironmentFile=/etc/default/{{ cambiatus_app_name }}
+WorkingDirectory={{ cambiatus_home_dir }}
+
+ExecStart={{ cambiatus_home_dir }}/cambiatus/bin/cambiatus start
+ExecStop={{ cambiatus_home_dir }}/cambiatus/bin/cambiatus stop
+
+[Install]
+WantedBy=multi-user.target

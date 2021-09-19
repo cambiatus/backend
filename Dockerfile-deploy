@@ -1,0 +1,24 @@
+FROM ubuntu:20.04
+
+ARG ERLANG_PACKAGE=erlang-solutions_2.0_all.deb
+ARG ERLANG_URL=https://packages.erlang-solutions.com/$ERLANG_PACKAGE
+ARG NODE_VERSION=14
+ARG NODE_URL=https://deb.nodesource.com/setup_$NODE_VERSION.x
+ENV DEBIAN_FRONTEND=noninteractive
+ARG DEPENDENCIES_PACKAGES="wget curl gnupg locales locales-all openssh-client \
+  dh-make build-essential autoconf autotools-dev devscripts fakeroot bzip2 \
+  ca-certificates procps pkg-config gnupg libdistro-info-perl inotify-tools \
+  postgresql-client vim  rsync software-properties-common"
+
+RUN apt-get update && apt-get install -y $DEPENDENCIES_PACKAGES
+RUN wget $ERLANG_URL && dpkg -i $ERLANG_PACKAGE
+RUN curl -sL $NODE_URL | bash -
+RUN apt-add-repository --yes --update ppa:ansible/ansible
+RUN apt-get install -y ansible nodejs esl-erlang elixir
+
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+
+WORKDIR /srv/backend
+ADD . /srv/backend

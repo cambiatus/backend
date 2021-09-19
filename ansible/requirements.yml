@@ -1,0 +1,7 @@
+---
+- src: geerlingguy.ntp
+  version: 2.3.0
+
+- src: geerlingguy.security
+  version: 2.0.1
+

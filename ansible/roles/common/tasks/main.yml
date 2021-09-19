@@ -1,0 +1,9 @@
+---
+- name: update apt
+  apt:
+    update_cache: yes
+
+- name: Add friendly hostname
+  hostname:
+    name: "{{ hostvars[inventory_hostname]['cambiatus_hostname'] }}"
+  when: cambiatus_environment == 'production'
