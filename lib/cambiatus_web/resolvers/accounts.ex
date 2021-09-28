@@ -150,4 +150,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   def get_analysis_count(%User{} = user, _, _) do
     Accounts.get_analysis_count(user)
   end
+
+  def get_contribution_count(%User{} = user, _, _) do
+    Accounts.get_contribution_count(user)
+  end
 end

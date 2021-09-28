@@ -104,6 +104,22 @@ defmodule Cambiatus.Accounts do
     end
   end
 
+  def get_contribution_count(user) do
+    query =
+      from(c in Cambiatus.Payments.Contribution,
+        where: c.user_id == ^user.account,
+        select: count(c.id)
+      )
+
+    case Repo.one(query) do
+      nil ->
+        {:ok, 0}
+
+      count ->
+        {:ok, count}
+    end
+  end
+
   @doc """
   Creates a user.
   """

@@ -163,6 +163,10 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:analysis_count, non_null(:integer), resolve: &AccountsResolver.get_analysis_count/3)
 
+    field(:contribution_count, non_null(:integer),
+      resolve: &AccountsResolver.get_contribution_count/3
+    )
+
     field(:claims, non_null(list_of(non_null(:claim)))) do
       arg(:community_id, :string)
       resolve(dataloader(Cambiatus.Commune))
