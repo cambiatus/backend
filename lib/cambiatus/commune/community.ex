@@ -11,7 +11,7 @@ defmodule Cambiatus.Commune.Community do
     CommunityPhotos
   }
 
-  alias Cambiatus.Payments.Contribution
+  alias Cambiatus.Payments.{Contribution, ContributionConfiguration}
 
   alias Cambiatus.Shop.Product
   alias Cambiatus.Repo
@@ -51,6 +51,7 @@ defmodule Cambiatus.Commune.Community do
     field(:has_kyc, :boolean, default: false)
 
     belongs_to(:subdomain, Subdomain)
+    belongs_to(:contribution_configuration, ContributionConfiguration)
 
     has_many(:products, Product, foreign_key: :community_id)
     has_many(:orders, through: [:products, :orders])
@@ -73,6 +74,7 @@ defmodule Cambiatus.Commune.Community do
     community
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_assoc(:subdomain, with: &Subdomain.changeset/2)
+    |> cast_assoc(:contribution_configuration, with: &ContributionConfiguration.changeset/2)
     |> validate_required(@required_fields)
   end
 

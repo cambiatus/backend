@@ -227,6 +227,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:auto_invite, non_null(:boolean))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
 
+    field(:contribution_configuration, :contribution_config,
+      resolve: dataloader(Cambiatus.Commune)
+    )
+
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))

@@ -41,6 +41,13 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
     field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
   end
 
+  object(:contribution_config) do
+    field(:accepted_currencies, non_null(list_of(non_null(:currency_type))))
+    field(:paypal_account, :string)
+    field(:thank_you_title, :string)
+    field(:thank_you_description, :string)
+  end
+
   enum(:currency_type) do
     value(:USD, description: "US dollars")
     value(:BRL, description: "Brazil Reais")
