@@ -92,7 +92,6 @@ defmodule Cambiatus.Accounts do
     query =
       from(c in Cambiatus.Commune.Check,
         where: c.validator_id == ^user.account,
-        where: c.status == :approved,
         select: count(c.validator_id)
       )
 
