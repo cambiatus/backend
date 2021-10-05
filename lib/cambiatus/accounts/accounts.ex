@@ -92,6 +92,7 @@ defmodule Cambiatus.Accounts do
     query =
       from(c in Cambiatus.Commune.Check,
         where: c.validator_id == ^user.account,
+        where: c.status == :approved,
         select: count(c.validator_id)
       )
 
@@ -104,12 +105,20 @@ defmodule Cambiatus.Accounts do
     end
   end
 
-  def get_contribution_count(user) do
+  def get_contribution_count(user, community_id \\ nil) do
     query =
       from(c in Cambiatus.Payments.Contribution,
         where: c.user_id == ^user.account,
+        where: c.status == :approved,
         select: count(c.id)
       )
+
+    query =
+      if is_nil(community_id) do
+        query
+      else
+        where(query, [c], c.community_id == ^community_id)
+      end
 
     case Repo.one(query) do
       nil ->
