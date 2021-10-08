@@ -36,7 +36,7 @@ defmodule Cambiatus.Repo.Migrations.News do
       timestamps()
     end
 
-    create table(:news_receipt) do
+    create table(:news_receipts) do
       add(:news_id, references(:news))
       add(:user_id, references(:users, column: :account, type: :string))
       add(:reactions, {:array, :string}, comment: "Reactions to the text")
