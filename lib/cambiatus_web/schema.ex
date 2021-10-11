@@ -50,6 +50,7 @@ defmodule CambiatusWeb.Schema do
     import_fields(:kyc_mutations)
     import_fields(:commune_mutations)
     import_fields(:shop_mutations)
+    import_fields(:social_mutations)
   end
 
   subscription do

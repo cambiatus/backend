@@ -8,6 +8,23 @@ defmodule CambiatusWeb.Schema.SocialTypes do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
+  alias CambiatusWeb.Resolvers.Social
+  alias CambiatusWeb.Schema.Middleware
+
+  @desc "News data mutations"
+  object :social_mutations do
+    @descr "test"
+    field :news, :news do
+      arg(:title, non_null(:string))
+      arg(:description, non_null(:string))
+      arg(:community_id, non_null(:string))
+      arg(:scheduling, :datetime)
+
+      middleware(Middleware.Authenticate)
+      resolve(&Social.news/3)
+    end
+  end
+
   @desc "A news on Cambiatus"
   object :news do
     field(:title, non_null(:string))
