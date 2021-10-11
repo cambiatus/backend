@@ -49,9 +49,9 @@ defmodule Cambiatus.Commune.Community do
     field(:has_shop, :boolean, default: true)
     field(:has_kyc, :boolean, default: false)
 
-    #Social
+    # Social
     field(:has_news, :boolean, default: false)
-    has_one(:highlighted_news, News)
+    has_one(:highlighted_news, News, foreign_key: :community_id)
 
     belongs_to(:subdomain, Subdomain)
 
