@@ -11,6 +11,7 @@ defmodule Cambiatus.Commune.Community do
     CommunityPhotos
   }
 
+  alias Cambiatus.Social.News
   alias Cambiatus.Shop.Product
   alias Cambiatus.Repo
 
@@ -48,6 +49,10 @@ defmodule Cambiatus.Commune.Community do
     field(:has_shop, :boolean, default: true)
     field(:has_kyc, :boolean, default: false)
 
+    #Social
+    field(:has_news, :boolean, default: false)
+    has_one(:highlighted_news, News)
+
     belongs_to(:subdomain, Subdomain)
 
     has_many(:products, Product, foreign_key: :community_id)
@@ -61,9 +66,9 @@ defmodule Cambiatus.Commune.Community do
     has_many(:uploads, CommunityPhotos, foreign_key: :community_id, on_replace: :delete)
   end
 
-  @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
+  @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a
   @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id website
-   created_block created_tx created_at created_eos_account)a
+   created_block created_tx created_at created_eos_account highlighted_news)a
 
   @doc false
   def changeset(%Community{} = community, attrs) do

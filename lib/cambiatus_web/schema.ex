@@ -32,6 +32,7 @@ defmodule CambiatusWeb.Schema do
   import_types(__MODULE__.KycTypes)
   import_types(__MODULE__.ShopTypes)
   import_types(__MODULE__.SearchTypes)
+  import_types(__MODULE__.SocialTypes)
 
   query do
     import_fields(:account_queries)

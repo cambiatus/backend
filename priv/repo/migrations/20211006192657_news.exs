@@ -51,7 +51,7 @@ defmodule Cambiatus.Repo.Migrations.News do
           "Flag that indicates if the community has enabled news. Its possible to have old news and disable this option anyway (non destructive)"
       )
 
-      add(:highlighted_news, references(:news),
+      add(:highlighted_news_id, references(:news),
         comment: "The current highlighted news from the community"
       )
     end
