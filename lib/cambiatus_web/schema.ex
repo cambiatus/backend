@@ -7,7 +7,7 @@ defmodule CambiatusWeb.Schema do
   use Absinthe.Schema
   use Absinthe.Relay.Schema, :classic
 
-  alias Cambiatus.{Accounts, Commune, Kyc, Shop}
+  alias Cambiatus.{Accounts, Commune, Kyc, Shop, Social}
 
   def context(ctx) do
     loader =
@@ -16,6 +16,7 @@ defmodule CambiatusWeb.Schema do
       |> Dataloader.add_source(Accounts, Accounts.data())
       |> Dataloader.add_source(Kyc, Kyc.data())
       |> Dataloader.add_source(Shop, Shop.data())
+      |> Dataloader.add_source(Social, Social.data())
 
     Map.put(ctx, :loader, loader)
   end

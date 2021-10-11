@@ -237,7 +237,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_kyc, non_null(:boolean))
 
     field(:has_news, non_null(:boolean))
-    field(:highlighted_news, :news)
+    field(:highlighted_news, :news, resolve: dataloader(Cambiatus.Social))
 
     connection field(:transfers, node_type: :transfer) do
       resolve(&Commune.get_transfers/3)
