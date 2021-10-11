@@ -415,6 +415,15 @@ defmodule Cambiatus.Commune do
     |> Enum.any?()
   end
 
+  def is_community_admin?(community_id, account) do
+    Community
+    |> Repo.get(community_id)
+    |> case do
+      nil -> false
+      community -> community.creator == account
+    end
+  end
+
   def community_validators(community_id) do
     query =
       from(u in User,
