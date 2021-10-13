@@ -47,7 +47,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required] A single claim"
     field :claim, non_null(:claim) do
-      arg(:input, non_null(:claim_input))
+      arg(:id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.get_claim/3)
@@ -55,7 +55,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required] A single objective"
     field :objective, :objective do
-      arg(:input, non_null(:objective_input))
+      arg(:id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.get_objective/3)
@@ -157,21 +157,11 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:symbol, non_null(:string))
   end
 
-  @desc "Input object to collect a single Objective"
-  input_object :objective_input do
-    field(:id, non_null(:integer))
-  end
-
   @desc "Params for filtering Claims"
   input_object(:claims_filter) do
     field(:claimer, :string)
     field(:status, :string)
     field(:direction, :direction)
-  end
-
-  @desc "Input to collect a claim"
-  input_object :claim_input do
-    field(:id, non_null(:integer))
   end
 
   @desc "Input to collect a user's transfers"

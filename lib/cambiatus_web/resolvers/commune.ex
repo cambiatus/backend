@@ -24,7 +24,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
   Fetches a claim
   """
   @spec get_claim(map(), map(), map()) :: {:ok, Claim.t()} | {:error, term}
-  def get_claim(_, %{input: %{id: id}}, _) do
+  def get_claim(_, %{id: id}, _) do
     Commune.get_claim(id)
   end
 
@@ -104,7 +104,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
   Fetch a objective
   """
   @spec get_objective(map(), map(), map()) :: {:ok, map()} | {:error, term}
-  def get_objective(_, %{input: params}, _) do
+  def get_objective(_, params, _) do
     Commune.get_objective(params.id)
   end
 

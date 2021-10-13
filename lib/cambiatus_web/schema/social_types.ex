@@ -8,7 +8,6 @@ defmodule CambiatusWeb.Schema.SocialTypes do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
-
   @desc "A news on Cambiatus"
   object :news do
     field(:title, non_null(:string))
