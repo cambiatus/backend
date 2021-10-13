@@ -57,6 +57,7 @@ defmodule Cambiatus.Commune.Community do
 
     has_many(:products, Product, foreign_key: :community_id)
     has_many(:orders, through: [:products, :orders])
+    has_many(:news, News, foreign_key: :community_id)
     has_many(:transfers, Transfer, foreign_key: :community_id)
     has_many(:network, Network, foreign_key: :community_id)
     has_many(:members, through: [:network, :account])
@@ -68,7 +69,7 @@ defmodule Cambiatus.Commune.Community do
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a
   @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id website
-   created_block created_tx created_at created_eos_account highlighted_news)a
+   created_block created_tx created_at created_eos_account)a
 
   @doc false
   def changeset(%Community{} = community, attrs) do
