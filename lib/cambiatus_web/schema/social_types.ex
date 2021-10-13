@@ -21,10 +21,20 @@ defmodule CambiatusWeb.Schema.SocialTypes do
       middleware(Middleware.Authenticate)
       resolve(&Social.news/3)
     end
+
+    @desc "[Auth required] News mutation, that allows for creating and updating news on a community"
+    field :upsert_news_receipt, :news_receipt do
+      arg(:news_id, non_null(:integer))
+      arg(:reactions, list_of(non_null(:string)))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Social.upsert_news_receipt/3)
+    end
   end
 
   @desc "A news on Cambiatus"
   object :news do
+    field(:id, non_null(:integer))
     field(:title, non_null(:string))
     field(:description, non_null(:string))
     field(:scheduling, :datetime)
@@ -34,7 +44,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
   end
 
   object :news_receipt do
-    field(:reaction, non_null(list_of(non_null(:string))))
+    field(:reactions, non_null(list_of(non_null(:string))))
     field(:user, non_null(:user))
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))

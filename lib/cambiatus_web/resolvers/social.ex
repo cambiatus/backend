@@ -19,4 +19,19 @@ defmodule CambiatusWeb.Resolvers.Social do
         {:ok, news}
     end
   end
+
+  def upsert_news_receipt(_, params, %{context: %{current_user: current_user}}) do
+    reactions = Map.get(params, :reactions, [])
+    news_id = Map.get(params, :news_id)
+
+    Social.upsert_news_receipt(news_id, current_user.account, reactions)
+    |> case do
+      {:error, reason} ->
+        Sentry.capture_message("News Receipt upsert failed", extra: %{error: reason})
+        {:error, message: "Could not upsert news receipt", details: Cambiatus.Error.from(reason)}
+
+      {:ok, receipt} ->
+        {:ok, receipt}
+    end
+  end
 end
