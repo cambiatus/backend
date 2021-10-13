@@ -4,7 +4,7 @@ defmodule Cambiatus.SocialTest do
   alias Cambiatus.Social
   alias Cambiatus.Social.News
 
-  describe "news" do
+  describe "create_news/1" do
     setup :valid_community_and_user
 
     @valid_attrs %{
@@ -18,7 +18,9 @@ defmodule Cambiatus.SocialTest do
       scheduling: DateTime.utc_now() |> DateTime.add(3600, :second)
     }
 
-    test "create a valid news with scheduling", %{user: user, community: community} do
+    test "create a valid news with scheduling", %{user: user} do
+      community = insert(:community, has_news: true, creator: user.account)
+
       params =
         Map.merge(@valid_attrs_with_scheduling, %{
           user_id: user.account,
@@ -45,9 +47,11 @@ defmodule Cambiatus.SocialTest do
     end
 
     test "returns error if the user is not the community admin", %{
-      community: community,
+      user: user,
       another_user: another_user
     } do
+      community = insert(:community, has_news: true, creator: user.account)
+
       params =
         Map.merge(@valid_attrs, %{community_id: community.symbol, user_id: another_user.account})
 
@@ -60,7 +64,9 @@ defmodule Cambiatus.SocialTest do
       )
     end
 
-    test "returns error when scheduling is earlier than now", %{user: user, community: community} do
+    test "returns error when scheduling is earlier than now", %{user: user} do
+      community = insert(:community, has_news: true, creator: user.account)
+
       params =
         Map.merge(@valid_attrs, %{
           community_id: community.symbol,
@@ -73,6 +79,26 @@ defmodule Cambiatus.SocialTest do
       assert(
         Map.get(changeset, :errors) == [
           scheduling: {"is invalid", []}
+        ]
+      )
+    end
+
+    test "returns error when community has_news is not enabled", %{
+      user: user,
+      community: community
+    } do
+      params =
+        Map.merge(@valid_attrs_with_scheduling, %{
+          user_id: user.account,
+          community_id: community.symbol
+        })
+
+      assert community.has_news == false
+      assert {:error, changeset} = Social.create_news(params)
+
+      assert(
+        Map.get(changeset, :errors) == [
+          community_id: {"news is not enabled", []}
         ]
       )
     end

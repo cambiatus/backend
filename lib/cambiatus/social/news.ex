@@ -29,6 +29,7 @@ defmodule Cambiatus.Social.News do
     |> validate_required(@required_fields)
     |> validate_admin()
     |> validate_scheduling()
+    |> validate_news_enabled()
   end
 
   def validate_admin(changeset) do
@@ -53,6 +54,21 @@ defmodule Cambiatus.Social.News do
       else
         add_error(changeset, :scheduling, "is invalid")
       end
+    end
+  end
+
+  def validate_news_enabled(changeset) do
+    community_id = get_field(changeset, :community_id)
+
+    Commune.get_community(community_id)
+    |> case do
+      {:ok, community} ->
+        if Map.get(community, :has_news),
+          do: changeset,
+          else: add_error(changeset, :community_id, "news is not enabled")
+
+      {:error, _} ->
+        add_error(changeset, :community_id, "does not exist")
     end
   end
 end

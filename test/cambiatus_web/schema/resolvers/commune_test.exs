@@ -887,7 +887,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       query = """
       query {
-        claim(input:{id: #{claim.id}}) {
+        claim(id: #{claim.id}) {
           id
           createdAt
         }
