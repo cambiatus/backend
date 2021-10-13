@@ -15,6 +15,7 @@ defmodule Cambiatus.Social do
     News
     |> order_by([n], desc: n.inserted_at)
   end
+
   def query(queryable, _params) do
     queryable
   end
