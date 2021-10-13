@@ -22,6 +22,7 @@ defmodule Cambiatus.Social.NewsReceipt do
     |> cast(params, @required_fields)
     |> foreign_key_constraint(:news_id)
     |> foreign_key_constraint(:user_id)
+    |> unique_constraint([:user_id, :news_id])
     |> validate_required(@required_fields)
   end
 end

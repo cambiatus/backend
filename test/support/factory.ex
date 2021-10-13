@@ -29,7 +29,9 @@ defmodule Cambiatus.Factory do
     Kyc.City,
     Kyc.Neighborhood,
     Notifications.NotificationHistory,
-    Notifications.PushSubscription
+    Notifications.PushSubscription,
+    Social.News,
+    Social.NewsReceipt
   }
 
   def user_factory do
@@ -335,6 +337,23 @@ defmodule Cambiatus.Factory do
   def subdomain_factory() do
     %Subdomain{
       name: sequence(:name, &"#{&1}.cambiatus.io")
+    }
+  end
+
+  def news_factory do
+    %News{
+      title: "News title",
+      description: "News description",
+      community: build(:community, has_news: true),
+      user: build(:user)
+    }
+  end
+
+  def news_receipt_factory do
+    %NewsReceipt{
+      user: build(:user),
+      news: build(:news),
+      reactions: [":laugh:", ":joy:"]
     }
   end
 end

@@ -7,6 +7,7 @@ defmodule Cambiatus.Social do
 
   alias Cambiatus.Repo
   alias Cambiatus.Social.News
+  alias Cambiatus.Social.NewsReceipt
 
   @spec data :: Dataloader.Ecto.t()
   def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
@@ -24,5 +25,17 @@ defmodule Cambiatus.Social do
     %News{}
     |> News.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def upsert_news_receipt(news_id, user_account, reactions \\ []) do
+    params = %{news_id: news_id, user_id: user_account, reactions: reactions}
+
+    Repo.get_by(NewsReceipt, news_id: news_id, user_id: user_account)
+    |> case do
+      nil -> %NewsReceipt{}
+      receipt -> receipt
+    end
+    |> NewsReceipt.changeset(params)
+    |> Repo.insert_or_update()
   end
 end

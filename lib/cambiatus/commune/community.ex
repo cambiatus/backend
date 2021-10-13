@@ -51,8 +51,8 @@ defmodule Cambiatus.Commune.Community do
 
     # Social
     field(:has_news, :boolean, default: false)
-    has_one(:highlighted_news, News, foreign_key: :community_id)
 
+    belongs_to(:highlighted_news, News)
     belongs_to(:subdomain, Subdomain)
 
     has_many(:products, Product, foreign_key: :community_id)
@@ -69,7 +69,7 @@ defmodule Cambiatus.Commune.Community do
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a
   @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id website
-   created_block created_tx created_at created_eos_account)a
+   created_block created_tx created_at created_eos_account highlighted_news_id)a
 
   @doc false
   def changeset(%Community{} = community, attrs) do

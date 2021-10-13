@@ -3,6 +3,7 @@ defmodule Cambiatus.SocialTest do
 
   alias Cambiatus.Social
   alias Cambiatus.Social.News
+  alias Cambiatus.Social.NewsReceipt
 
   describe "create_news/1" do
     setup :valid_community_and_user
@@ -101,6 +102,47 @@ defmodule Cambiatus.SocialTest do
           community_id: {"news is not enabled", []}
         ]
       )
+    end
+  end
+
+  describe "upsert_news_receipt/3" do
+    test "when all params are correct, creates a news receipt successfully" do
+      user = insert(:user)
+      news = insert(:news)
+      reactions = [":laugh:", ":joy:"]
+
+      assert {:ok, %NewsReceipt{} = receipt} =
+               Social.upsert_news_receipt(news.id, user.account, reactions)
+
+      assert receipt.news_id == news.id
+      assert receipt.user_id == user.account
+      assert receipt.reactions == [":laugh:", ":joy:"]
+    end
+
+    test "when all has no reactions in params, creates a news receipt with empty reactions" do
+      user = insert(:user)
+      news = insert(:news)
+
+      assert {:ok, %NewsReceipt{} = receipt} = Social.upsert_news_receipt(news.id, user.account)
+      assert receipt.news_id == news.id
+      assert receipt.user_id == user.account
+      assert receipt.reactions == []
+    end
+
+    test "when there is a receipt with same user and news, updates the reactions" do
+      news_receipt = insert(:news_receipt, reactions: [":joy:"])
+      new_reactions = [":joy:", ":smile:", ":laugh:"]
+
+      assert {:ok, %NewsReceipt{} = receipt} =
+               Social.upsert_news_receipt(
+                 news_receipt.news_id,
+                 news_receipt.user_id,
+                 new_reactions
+               )
+
+      assert receipt.news_id == news_receipt.news_id
+      assert receipt.user_id == news_receipt.user_id
+      assert receipt.reactions == [":joy:", ":smile:", ":laugh:"]
     end
   end
 end
