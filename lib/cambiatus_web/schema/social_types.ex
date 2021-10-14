@@ -6,6 +6,8 @@ defmodule CambiatusWeb.Schema.SocialTypes do
   use Absinthe.Schema.Notation
   use Absinthe.Relay.Schema.Notation, :classic
 
+  import Absinthe.Resolution.Helpers, only: [dataloader: 1]
+
   alias CambiatusWeb.Resolvers.Social
   alias CambiatusWeb.Schema.Middleware
 
@@ -23,7 +25,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
     end
 
     @desc "[Auth required] Mark news as read, creating a new news_receipt without reactions"
-    field :mark_news_as_read, :news_receipt do
+    field :read, :news_receipt do
       arg(:news_id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
@@ -46,14 +48,14 @@ defmodule CambiatusWeb.Schema.SocialTypes do
     field(:title, non_null(:string))
     field(:description, non_null(:string))
     field(:scheduling, :datetime)
-    field(:user, non_null(:user))
+    field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
   end
 
   object :news_receipt do
     field(:reactions, non_null(list_of(non_null(:string))))
-    field(:user, non_null(:user))
+    field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
   end
