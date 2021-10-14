@@ -119,12 +119,13 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
     response = json_response(res, 200)
 
     assert %{
-      "data" => %{
-        "news" => %{
-          "description" => "News description",
-          "title" => "News title",
-          "reactions" => "{}"
-        }
-      }} = response
+             "data" => %{
+               "news" => %{
+                 "description" => "News description",
+                 "title" => "News title",
+                 "reactions" => "{}"
+               }
+             }
+           } = response
   end
 end
