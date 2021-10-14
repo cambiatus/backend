@@ -145,4 +145,47 @@ defmodule Cambiatus.SocialTest do
       assert receipt.reactions == [":joy:", ":smile:", ":laugh:"]
     end
   end
+
+  describe "get_news_reactions/1" do
+    test "returns a map where key is the reaction and value is the number of reactions" do
+      news = insert(:news)
+
+      insert(:news_receipt, news: news, reactions: ["a", "b"])
+      insert(:news_receipt, news: news, reactions: ["a", "c"])
+      insert(:news_receipt, news: news, reactions: ["b", "c"])
+      insert(:news_receipt, news: news, reactions: ["b"])
+      insert(:news_receipt, news: news, reactions: ["b", "d"])
+
+      response = Social.get_news_reactions(news.id)
+
+      assert response == %{"a" => 2, "b" => 4, "c" => 2, "d" => 1}
+    end
+
+    test "returns an empty map if news has no reactions" do
+      news = insert(:news)
+
+      response = Social.get_news_reactions(news.id)
+
+      assert response == %{}
+    end
+
+    test "returns an empty map if news does not exist" do
+      response = Social.get_news_reactions(1234)
+
+      assert response == %{}
+    end
+
+    test "returns only reactions from given news" do
+      news = insert(:news)
+      news2 = insert(:news)
+
+      insert(:news_receipt, news: news, reactions: ["a", "b"])
+      insert(:news_receipt, news: news, reactions: ["b", "c"])
+      insert(:news_receipt, news: news2, reactions: ["a", "c"])
+
+      response = Social.get_news_reactions(news.id)
+
+      assert response == %{"a" => 1, "b" => 2, "c" => 1}
+    end
+  end
 end

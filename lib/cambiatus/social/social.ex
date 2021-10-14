@@ -38,4 +38,17 @@ defmodule Cambiatus.Social do
     |> NewsReceipt.changeset(params)
     |> Repo.insert_or_update()
   end
+
+  def get_news_reactions(news_id) do
+    NewsReceipt
+    |> NewsReceipt.from_news(news_id)
+    |> Repo.all()
+    |> Enum.reduce(%{}, &sum_reactions/2)
+  end
+
+  defp sum_reactions(%{reactions: reactions}, %{} = acc) do
+    reacts = Enum.into(reactions, %{}, &{&1, 1})
+
+    Map.merge(acc, reacts, fn _k, v1, v2 -> v1 + v2 end)
+  end
 end
