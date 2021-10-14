@@ -42,6 +42,7 @@ defmodule CambiatusWeb.Schema do
     import_fields(:address_queries)
     import_fields(:shop_queries)
     import_fields(:search_queries)
+    import_fields(:social_queries)
   end
 
   mutation do

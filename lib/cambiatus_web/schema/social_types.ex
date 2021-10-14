@@ -11,6 +11,16 @@ defmodule CambiatusWeb.Schema.SocialTypes do
   alias CambiatusWeb.Resolvers.Social
   alias CambiatusWeb.Schema.Middleware
 
+  @desc "News query"
+  object :social_queries do
+    @desc "Get one news"
+    field(:news, :news) do
+      arg(:news_id, non_null(:integer))
+
+      resolve(&Social.get_news/3)
+    end
+  end
+
   @desc "News data mutations"
   object :social_mutations do
     @desc "[Auth required] News mutation, that allows for creating and updating news on a community"
@@ -51,6 +61,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
     field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
+    field(:reactions, :string, resolve: &Social.get_reactions/3)
   end
 
   object :news_receipt do

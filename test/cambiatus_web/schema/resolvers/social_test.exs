@@ -99,4 +99,32 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
              }
            } = response
   end
+
+  test "get news by id" do
+    news = insert(:news)
+    user = insert(:user)
+    conn = build_conn() |> auth_user(user)
+
+    query = """
+    query{
+      news(newsID: #{news.id}){
+        title
+        description
+        reactions
+      }
+    }
+    """
+
+    res = post(conn, "/api/graph", query: query)
+    response = json_response(res, 200)
+
+    assert %{
+      "data" => %{
+        "news" => %{
+          "description" => "News description",
+          "title" => "News title",
+          "reactions" => "{}"
+        }
+      }} = response
+  end
 end
