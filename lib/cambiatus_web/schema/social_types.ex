@@ -22,13 +22,21 @@ defmodule CambiatusWeb.Schema.SocialTypes do
       resolve(&Social.news/3)
     end
 
-    @desc "[Auth required] News mutation, that allows for creating and updating news on a community"
-    field :upsert_news_receipt, :news_receipt do
+    @desc "[Auth required] Mark news as read, creating a new news_receipt without reactions"
+    field :mark_news_as_read, :news_receipt do
       arg(:news_id, non_null(:integer))
-      arg(:reactions, list_of(non_null(:string)))
 
       middleware(Middleware.Authenticate)
-      resolve(&Social.upsert_news_receipt/3)
+      resolve(&Social.mark_news_as_read/3)
+    end
+
+    @desc "[Auth required] Add or update reactions from user in a news through news_receipt"
+    field :react_to_news, :news_receipt do
+      arg(:news_id, non_null(:integer))
+      arg(:reactions, non_null(list_of(non_null(:string))))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Social.update_reactions/3)
     end
   end
 
