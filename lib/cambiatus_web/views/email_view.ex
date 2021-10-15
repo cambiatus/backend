@@ -5,9 +5,7 @@ defmodule CambiatusWeb.EmailView do
 
   @doc "Renders the transfer email memo from markdown to html"
   def render("transfer.html", %{transfer: transfer}) do
-    {:ok, html, []} =
-      transfer.memo
-      |> Earmark.as_html()
+    {:ok, html, []} = Earmark.as_html(transfer.memo)
 
     html
   end
