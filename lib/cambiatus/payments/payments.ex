@@ -12,9 +12,18 @@ defmodule Cambiatus.Payments do
     Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
   end
 
-  def query(Contribution, _) do
-    Contribution
-    |> Contribution.approved()
+  def query(Contribution, filters) do
+    query =
+      filters
+      |> Enum.reduce(Contribution, fn
+        {:community_id, community_id}, query ->
+          Contribution.from_community(query, community_id)
+
+        {:status, status}, query ->
+          Contribution.with_status(query, status)
+      end)
+
+    query
     |> Contribution.newer_first()
   end
 

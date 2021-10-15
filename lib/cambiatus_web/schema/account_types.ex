@@ -172,6 +172,13 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&AccountsResolver.get_contribution_count/3)
     end
 
+    field(:contributions, non_null(list_of(non_null(:contribution)))) do
+      arg(:community_id, :string)
+      arg(:status, :contribution_status_type)
+
+      resolve(dataloader(Cambiatus.Payments))
+    end
+
     field(:claims, non_null(list_of(non_null(:claim)))) do
       arg(:community_id, :string,
         description:

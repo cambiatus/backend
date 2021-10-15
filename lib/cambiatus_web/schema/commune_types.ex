@@ -256,9 +256,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
 
     @desc "List of contributions this community received"
-    field(:contributions, non_null(list_of(non_null(:contribution))),
-      resolve: dataloader(Cambiatus.Payments)
-    )
+    field(:contributions, non_null(list_of(non_null(:contribution)))) do
+      arg(:status, :contribution_status_type)
+      resolve(dataloader(Cambiatus.Payments))
+    end
 
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
