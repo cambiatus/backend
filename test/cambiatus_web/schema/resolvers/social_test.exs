@@ -138,6 +138,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
     insert(:news_receipt, news: news, reactions: [":smile:", ":eyes:"])
     insert(:news_receipt, news: news, reactions: [":eyes:"])
     user = insert(:user)
+    insert(:network, community: news.community, account: user)
     conn = build_conn() |> auth_user(user)
 
     query = """
@@ -168,5 +169,38 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
                }
              }
            } = response
+  end
+
+  test "get news by id returns error if user is not from community" do
+    news = insert(:news)
+    user = insert(:user)
+    conn = build_conn() |> auth_user(user)
+
+    query = """
+    query{
+      news(newsID: #{news.id}){
+        title
+        description
+        reactions {
+          reaction
+          count
+        }
+      }
+    }
+    """
+
+    res = post(conn, "/api/graph", query: query)
+    response = json_response(res, 200)
+
+    assert %{
+             "data" => %{"news" => nil},
+             "errors" => [
+               %{
+                 "locations" => [%{"column" => 3, "line" => 2}],
+                 "message" => "User unauthorized",
+                 "path" => ["news"]
+               }
+             ]
+           } == response
   end
 end
