@@ -103,6 +103,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
   test "get news by id" do
     news = insert(:news)
     user = insert(:user)
+    insert(:network, community: news.community, account: user)
     conn = build_conn() |> auth_user(user)
 
     query = """

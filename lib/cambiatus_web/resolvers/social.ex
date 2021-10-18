@@ -4,7 +4,7 @@ defmodule CambiatusWeb.Resolvers.Social do
   use this to resolve any queries and mutations for Social
   """
 
-  alias Cambiatus.Social
+  alias Cambiatus.{Commune, Social}
 
   def news(_, params, %{context: %{current_user: current_user}}) do
     params
@@ -56,11 +56,20 @@ defmodule CambiatusWeb.Resolvers.Social do
     end
   end
 
-  def get_news(_, %{news_id: news_id}, _) do
+  def get_news(_, %{news_id: news_id}, %{context: %{current_user: current_user}}) do
     Social.get_news(news_id)
     |> case do
-      nil -> {:error, message: "News not found"}
-      news -> {:ok, news}
+      nil ->
+        {:error, message: "News not found"}
+
+      news ->
+        news.community_id
+        |> Commune.is_community_member?(current_user.account)
+        |> if do
+          {:ok, news}
+        else
+          {:error, message: "User unauthorized"}
+        end
     end
   end
 end
