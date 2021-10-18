@@ -61,7 +61,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
     field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
-    field(:reactions, :string, resolve: &Social.get_reactions/3)
+    field(:reactions, non_null(list_of(:reaction_type)), resolve: &Social.get_reactions/3)
   end
 
   object :news_receipt do
@@ -69,5 +69,10 @@ defmodule CambiatusWeb.Schema.SocialTypes do
     field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
+  end
+
+  object :reaction_type do
+    field(:reaction, non_null(:string))
+    field(:count, non_null(:integer))
   end
 end

@@ -147,7 +147,7 @@ defmodule Cambiatus.SocialTest do
   end
 
   describe "get_news_reactions/1" do
-    test "returns a map where key is the reaction and value is the number of reactions" do
+    test "returns a list of reactions" do
       news = insert(:news)
 
       insert(:news_receipt, news: news, reactions: ["a", "b"])
@@ -158,21 +158,26 @@ defmodule Cambiatus.SocialTest do
 
       response = Social.get_news_reactions(news.id)
 
-      assert response == %{"a" => 2, "b" => 4, "c" => 2, "d" => 1}
+      assert response == [
+               %{reaction: "a", count: 2},
+               %{reaction: "b", count: 4},
+               %{reaction: "c", count: 2},
+               %{reaction: "d", count: 1}
+             ]
     end
 
-    test "returns an empty map if news has no reactions" do
+    test "returns an empty list if news has no reactions" do
       news = insert(:news)
 
       response = Social.get_news_reactions(news.id)
 
-      assert response == %{}
+      assert response == []
     end
 
-    test "returns an empty map if news does not exist" do
+    test "returns an empty list if news does not exist" do
       response = Social.get_news_reactions(1234)
 
-      assert response == %{}
+      assert response == []
     end
 
     test "returns only reactions from given news" do
@@ -185,7 +190,11 @@ defmodule Cambiatus.SocialTest do
 
       response = Social.get_news_reactions(news.id)
 
-      assert response == %{"a" => 1, "b" => 2, "c" => 1}
+      assert response == [
+               %{reaction: "a", count: 1},
+               %{reaction: "b", count: 2},
+               %{reaction: "c", count: 1}
+             ]
     end
   end
 end

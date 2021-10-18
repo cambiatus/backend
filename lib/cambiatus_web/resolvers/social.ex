@@ -50,7 +50,10 @@ defmodule CambiatusWeb.Resolvers.Social do
 
   def get_reactions(%{id: news_id}, _, _) do
     Social.get_news_reactions(news_id)
-    |> Jason.encode()
+    |> case do
+      nil -> {:error, message: "Reactions not found"}
+      reactions -> {:ok, reactions}
+    end
   end
 
   def get_news(_, %{news_id: news_id}, _) do

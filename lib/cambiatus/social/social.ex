@@ -49,6 +49,7 @@ defmodule Cambiatus.Social do
     |> NewsReceipt.from_news(news_id)
     |> Repo.all()
     |> Enum.reduce(%{}, &sum_reactions/2)
+    |> Enum.map(fn {reaction, count} -> %{reaction: reaction, count: count} end)
   end
 
   defp sum_reactions(%{reactions: reactions}, %{} = acc) do

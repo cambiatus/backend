@@ -110,7 +110,10 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
       news(newsID: #{news.id}){
         title
         description
-        reactions
+        reactions {
+          reaction
+          count
+        }
       }
     }
     """
@@ -123,7 +126,44 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
                "news" => %{
                  "description" => "News description",
                  "title" => "News title",
-                 "reactions" => "{}"
+                 "reactions" => []
+               }
+             }
+           } = response
+  end
+
+  test "get news by id with reactions" do
+    news = insert(:news)
+    insert(:news_receipt, news: news, reactions: [":smile:", ":eyes:"])
+    insert(:news_receipt, news: news, reactions: [":eyes:"])
+    user = insert(:user)
+    conn = build_conn() |> auth_user(user)
+
+    query = """
+    query{
+      news(newsID: #{news.id}){
+        title
+        description
+        reactions {
+          reaction
+          count
+        }
+      }
+    }
+    """
+
+    res = post(conn, "/api/graph", query: query)
+    response = json_response(res, 200)
+
+    assert %{
+             "data" => %{
+               "news" => %{
+                 "description" => "News description",
+                 "title" => "News title",
+                 "reactions" => [
+                   %{"count" => 2, "reaction" => ":eyes:"},
+                   %{"count" => 1, "reaction" => ":smile:"}
+                 ]
                }
              }
            } = response
