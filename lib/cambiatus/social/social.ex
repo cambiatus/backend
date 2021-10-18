@@ -8,14 +8,11 @@ defmodule Cambiatus.Social do
   alias Cambiatus.Repo
   alias Cambiatus.Social.News
   alias Cambiatus.Social.NewsReceipt
+  alias Cambiatus.Social.NewsVersion
+  alias Ecto.Multi
 
   @spec data :: Dataloader.Ecto.t()
   def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
-
-  def get_news(news_id) do
-    News
-    |> Repo.get(news_id)
-  end
 
   def query(News, _params) do
     News
@@ -26,10 +23,26 @@ defmodule Cambiatus.Social do
     queryable
   end
 
+  def get_news(news_id) do
+    News
+    |> Repo.get(news_id)
+  end
+
   def create_news(attrs \\ %{}) do
     %News{}
     |> News.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def update_news_with_history(%News{} = news, attrs) do
+    version_params =
+      Map.take(news, [:title, :description, :user_id, :scheduling])
+      |> Map.put(:news_id, news.id)
+
+    Multi.new()
+    |> Multi.update(:news, News.changeset(news, attrs))
+    |> Multi.insert(:version, NewsVersion.changeset(%NewsVersion{}, version_params))
+    |> Repo.transaction()
   end
 
   def upsert_news_receipt(news_id, user_account, reactions \\ []) do

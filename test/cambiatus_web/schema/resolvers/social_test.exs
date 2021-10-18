@@ -1,6 +1,8 @@
 defmodule CambiatusWeb.Resolvers.SocialTest do
   use Cambiatus.ApiCase
 
+  alias Cambiatus.Social.NewsVersion
+
   describe "Social Resolver" do
     test "create news" do
       user = insert(:user, account: "test1234")
@@ -35,6 +37,52 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
                  }
                }
              } = response
+    end
+
+    test "update news should create news version" do
+      community_creator = insert(:user, account: "test1234")
+      community = insert(:community, creator: community_creator.account, has_news: true)
+
+      news =
+        insert(:news,
+          community: community,
+          user: community_creator,
+          title: "Title",
+          description: "Description"
+        )
+
+      conn = build_conn() |> auth_user(community_creator)
+
+      mutation = """
+        mutation {
+          updateNews(id: #{news.id}, title: "New title", description: "New description"){
+            title
+            description
+            user {
+              account
+            }
+            inserted_at
+          }
+        }
+      """
+
+      res = post(conn, "/api/graph", query: mutation)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "updateNews" => %{
+                   "title" => "New title",
+                   "description" => "New description",
+                   "user" => %{"account" => "test1234"},
+                   "inserted_at" => _
+                 }
+               }
+             } = response
+
+      assert %{title: "Title", description: "Description"} =
+               Repo.get_by(NewsVersion, news_id: news.id)
     end
 
     test "mark news as read creating a news_receipt for the user in the news" do

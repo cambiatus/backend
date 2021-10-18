@@ -2,8 +2,7 @@ defmodule Cambiatus.SocialTest do
   use Cambiatus.DataCase
 
   alias Cambiatus.Social
-  alias Cambiatus.Social.News
-  alias Cambiatus.Social.NewsReceipt
+  alias Cambiatus.Social.{News, NewsReceipt, NewsVersion}
 
   describe "create_news/1" do
     setup :valid_community_and_user
@@ -195,6 +194,31 @@ defmodule Cambiatus.SocialTest do
                %{reaction: "b", count: 2},
                %{reaction: "c", count: 1}
              ]
+    end
+  end
+
+  describe "update_news_with_history/1" do
+    test "when input is valid news, updates the news and creates a news_version" do
+      user = insert(:user)
+      community = insert(:community, has_news: true, creator: user.account)
+
+      news =
+        insert(:news, title: "Title", description: "Description", community: community, user: user)
+
+      news_params = %{
+        title: "Updated title",
+        description: "Updated description"
+      }
+
+      {:ok, _} = Social.update_news_with_history(news, news_params)
+
+      updated_news = Repo.get(News, news.id)
+      news_version = Repo.get_by(NewsVersion, news_id: news.id)
+
+      assert updated_news.title == "Updated title"
+      assert updated_news.description == "Updated description"
+      assert news_version.title == "Title"
+      assert news_version.description == "Description"
     end
   end
 end
