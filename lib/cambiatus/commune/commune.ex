@@ -683,4 +683,12 @@ defmodule Cambiatus.Commune do
         {:ok, found}
     end
   end
+
+  def set_highlighted_news(community_id, news_id) do
+    get_community(community_id)
+    |> case do
+      {:ok, community} -> update_community(community, %{highlighted_news_id: news_id})
+      error -> error
+    end
+  end
 end

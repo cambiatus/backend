@@ -80,6 +80,18 @@ defmodule Cambiatus.CommuneTest do
 
       assert {:ok, _} = Commune.get_action(action.id)
     end
+
+    test "set_highlighted_news/2 sets the news as highlighted in community" do
+      community = insert(:community)
+      news = insert(:news)
+
+      assert community.highlighted_news_id == nil
+
+      assert {:ok, %Community{} = community} =
+               Commune.set_highlighted_news(community.symbol, news.id)
+
+      assert community.highlighted_news_id == news.id
+    end
   end
 
   describe "network" do

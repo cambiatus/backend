@@ -6,6 +6,7 @@ defmodule Cambiatus.Social do
   import Ecto.Query
 
   alias Cambiatus.Repo
+  alias Cambiatus.Commune
   alias Cambiatus.Social.News
   alias Cambiatus.Social.NewsReceipt
   alias Cambiatus.Social.NewsVersion
@@ -29,6 +30,25 @@ defmodule Cambiatus.Social do
   end
 
   def create_news(attrs \\ %{}) do
+    scheduling = Map.get(attrs, :scheduling)
+
+    if is_nil(scheduling) do
+      do_create_news(attrs)
+      |> case do
+        {:ok, news} ->
+          Commune.set_highlighted_news(news.community_id, news.id)
+          {:ok, news}
+
+        error ->
+          error
+      end
+    else
+      do_create_news(attrs)
+      # schedule to set as highlight
+    end
+  end
+
+  defp do_create_news(attrs) do
     %News{}
     |> News.changeset(attrs)
     |> Repo.insert()

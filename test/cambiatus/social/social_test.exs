@@ -1,6 +1,7 @@
 defmodule Cambiatus.SocialTest do
   use Cambiatus.DataCase
 
+  alias Cambiatus.Commune
   alias Cambiatus.Social
   alias Cambiatus.Social.{News, NewsReceipt, NewsVersion}
 
@@ -28,6 +29,21 @@ defmodule Cambiatus.SocialTest do
         })
 
       assert {:ok, %News{}} = Social.create_news(params)
+    end
+
+    test "create a valid news without scheduling sets highlighted news in community", %{
+      user: user
+    } do
+      community = insert(:community, has_news: true, creator: user.account)
+
+      params =
+        Map.merge(@valid_attrs, %{
+          user_id: user.account,
+          community_id: community.symbol
+        })
+
+      assert {:ok, %News{} = news} = Social.create_news(params)
+      assert Commune.get_community!(community.symbol).highlighted_news_id == news.id
     end
 
     test "returns error if user is invalid", %{community: community} do
