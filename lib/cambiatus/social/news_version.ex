@@ -2,6 +2,7 @@ defmodule Cambiatus.Social.NewsVersion do
   @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   alias Cambiatus.Accounts.User
   alias Cambiatus.Social.News
@@ -26,5 +27,9 @@ defmodule Cambiatus.Social.NewsVersion do
     |> foreign_key_constraint(:news_id)
     |> foreign_key_constraint(:user_id)
     |> validate_required(@required_fields)
+  end
+
+  def from_news(query \\ NewsVersion, news_id) do
+    where(query, [v], v.news_id == ^news_id)
   end
 end

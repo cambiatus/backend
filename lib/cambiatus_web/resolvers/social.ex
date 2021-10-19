@@ -67,11 +67,9 @@ defmodule CambiatusWeb.Resolvers.Social do
   end
 
   def get_reactions(%{id: news_id}, _, _) do
-    Social.get_news_reactions(news_id)
-    |> case do
-      nil -> {:error, message: "Reactions not found"}
-      reactions -> {:ok, reactions}
-    end
+    reactions = Social.get_news_reactions(news_id)
+
+    {:ok, reactions}
   end
 
   def get_news(_, %{news_id: news_id}, %{context: %{current_user: current_user}}) do
@@ -89,5 +87,11 @@ defmodule CambiatusWeb.Resolvers.Social do
           {:error, message: "User unauthorized"}
         end
     end
+  end
+
+  def get_news_versions(%{id: news_id}, _, _) do
+    versions = Social.get_news_versions(news_id)
+
+    {:ok, versions}
   end
 end

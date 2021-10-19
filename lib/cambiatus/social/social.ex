@@ -57,6 +57,12 @@ defmodule Cambiatus.Social do
     |> Repo.insert_or_update()
   end
 
+  def get_news_versions(news_id) do
+    NewsVersion
+    |> NewsVersion.from_news(news_id)
+    |> Repo.all()
+  end
+
   def get_news_reactions(news_id) do
     NewsReceipt
     |> NewsReceipt.from_news(news_id)

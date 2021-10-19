@@ -221,4 +221,24 @@ defmodule Cambiatus.SocialTest do
       assert news_version.description == "Description"
     end
   end
+
+  describe "get_news_versions/1" do
+    test "returns all versions from news" do
+      news = insert(:news)
+
+      insert(:news_version, news: news)
+      insert(:news_version, news: news)
+      insert(:news_version)
+
+      response = Social.get_news_versions(news.id)
+
+      assert Enum.count(response) == 2
+    end
+
+    test "returns an empty array when there are no versions for the news" do
+      response = Social.get_news_versions(1234)
+
+      assert response == []
+    end
+  end
 end

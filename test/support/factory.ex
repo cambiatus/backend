@@ -31,7 +31,8 @@ defmodule Cambiatus.Factory do
     Notifications.NotificationHistory,
     Notifications.PushSubscription,
     Social.News,
-    Social.NewsReceipt
+    Social.NewsReceipt,
+    Social.NewsVersion
   }
 
   def user_factory do
@@ -354,6 +355,15 @@ defmodule Cambiatus.Factory do
       user: build(:user),
       news: build(:news),
       reactions: [":laugh:", ":joy:"]
+    }
+  end
+
+  def news_version_factory do
+    %NewsVersion{
+      title: "News title",
+      description: "News description",
+      news: build(:news),
+      user: build(:user)
     }
   end
 end

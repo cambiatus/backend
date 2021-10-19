@@ -181,12 +181,14 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
            } = response
   end
 
-  test "get news by id with reactions" do
+  test "get news by id with reactions and versions" do
     news = insert(:news)
+    user = insert(:user)
     insert(:news_receipt, news: news, reactions: [":smile:", ":eyes:"])
     insert(:news_receipt, news: news, reactions: [":eyes:"])
-    user = insert(:user)
     insert(:network, community: news.community, account: user)
+    insert(:news_version, news: news, title: "Hello World")
+    insert(:news_version, news: news, title: "Hi World")
     conn = build_conn() |> auth_user(user)
 
     query = """
@@ -197,6 +199,9 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
         reactions {
           reaction
           count
+        }
+        versions {
+          title
         }
       }
     }
@@ -213,6 +218,10 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
                  "reactions" => [
                    %{"count" => 2, "reaction" => ":eyes:"},
                    %{"count" => 1, "reaction" => ":smile:"}
+                 ],
+                 "versions" => [
+                   %{"title" => "Hello World"},
+                   %{"title" => "Hi World"}
                  ]
                }
              }
