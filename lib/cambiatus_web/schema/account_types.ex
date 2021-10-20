@@ -163,8 +163,28 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:analysis_count, non_null(:integer), resolve: &AccountsResolver.get_analysis_count/3)
 
-    field(:claims, non_null(list_of(non_null(:claim)))) do
+    field(:contribution_count, non_null(:integer)) do
+      arg(:community_id, :string,
+        description:
+          "Optional community filter, filling this will get only contributions from this community"
+      )
+
+      resolve(&AccountsResolver.get_contribution_count/3)
+    end
+
+    field(:contributions, non_null(list_of(non_null(:contribution)))) do
       arg(:community_id, :string)
+      arg(:status, :contribution_status_type)
+
+      resolve(dataloader(Cambiatus.Payments))
+    end
+
+    field(:claims, non_null(list_of(non_null(:claim)))) do
+      arg(:community_id, :string,
+        description:
+          "Optional community filter, filling this will get only claims from this community"
+      )
+
       resolve(dataloader(Cambiatus.Commune))
     end
 

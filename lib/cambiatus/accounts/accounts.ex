@@ -5,12 +5,14 @@ defmodule Cambiatus.Accounts do
 
   import Ecto.Query
 
-  alias Cambiatus.Accounts.{User}
-  alias Cambiatus.Commune.Transfer
   alias Cambiatus.Repo
+  alias Cambiatus.Accounts.User
+  alias Cambiatus.Commune.Transfer
 
   @spec data :: Dataloader.Ecto.t()
-  def data(params \\ %{}), do: Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+  def data(params \\ %{}) do
+    Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
+  end
 
   def query(User, %{query: query}) do
     User.search(User, query)
@@ -99,6 +101,30 @@ defmodule Cambiatus.Accounts do
 
       results ->
         {:ok, results}
+    end
+  end
+
+  def get_contribution_count(user, community_id \\ nil) do
+    query =
+      from(c in Cambiatus.Payments.Contribution,
+        where: c.user_id == ^user.account,
+        where: c.status == :approved,
+        select: count(c.id)
+      )
+
+    query =
+      if is_nil(community_id) do
+        query
+      else
+        where(query, [c], c.community_id == ^community_id)
+      end
+
+    case Repo.one(query) do
+      nil ->
+        {:ok, 0}
+
+      count ->
+        {:ok, count}
     end
   end
 

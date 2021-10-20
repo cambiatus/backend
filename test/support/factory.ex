@@ -7,30 +7,39 @@ defmodule Cambiatus.Factory do
 
   import Ecto.Query
 
-  alias Cambiatus.{
-    Accounts.User,
-    Auth.Invitation,
-    Commune.Action,
-    Commune.Check,
-    Commune.Community,
-    Commune.Claim,
-    Commune.Network,
-    Commune.Subdomain,
-    Repo,
-    Commune.Mint,
-    Commune.Objective,
-    Shop.Product,
-    Commune.Transfer,
-    Commune.Validator,
-    Kyc.KycData,
-    Kyc.Address,
-    Kyc.Country,
-    Kyc.State,
-    Kyc.City,
-    Kyc.Neighborhood,
-    Notifications.NotificationHistory,
-    Notifications.PushSubscription
+  alias Cambiatus.Repo
+  alias Cambiatus.Accounts.User
+  alias Cambiatus.Auth.Invitation
+
+  alias Cambiatus.Commune.{
+    Action,
+    Check,
+    Community,
+    Claim,
+    Network,
+    Subdomain,
+    Mint,
+    Objective,
+    Transfer,
+    Validator
   }
+
+  alias Cambiatus.Kyc.{
+    KycData,
+    Address,
+    Country,
+    State,
+    City,
+    Neighborhood
+  }
+
+  alias Cambiatus.Notifications.{
+    NotificationHistory,
+    PushSubscription
+  }
+
+  alias Cambiatus.Payments.Contribution
+  alias Cambiatus.Shop.Product
 
   def user_factory do
     %User{
@@ -333,6 +342,17 @@ defmodule Cambiatus.Factory do
   def subdomain_factory() do
     %Subdomain{
       name: sequence(:name, &"#{&1}.cambiatus.io")
+    }
+  end
+
+  def contributions_factory() do
+    %Contribution{
+      amount: sequence(:amount, &"#{&1}"),
+      currency: sequence(:currency, [:USD, :BRL, :CRC, :BTC, :ETH, :EOS]),
+      payment_method: sequence(:payment_method, [:paypal, :bitcoin, :ethereum, :eos]),
+      status: sequence(:status, [:created, :captured, :approved, :rejected, :failed]),
+      community: build(:community),
+      user: build(:user)
     }
   end
 end

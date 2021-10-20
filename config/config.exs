@@ -35,10 +35,19 @@ config :cambiatus, Cambiatus.Mailer,
   adapter: Swoosh.Adapters.Sendinblue,
   api_key: System.get_env("SENDINBLUE_KEY")
 
+config :logger,
+  backends: [:console, Sentry.LoggerBackend]
+
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
   included_environments: ~w(prod staging dev),
-  environment_name: Mix.env()
+  environment_name: Mix.env(),
+  root_source_code_paths: [File.cwd!()],
+  enable_source_code_context: true
+
+config :cambiatus, Oban,
+  repo: Cambiatus.Repo,
+  queues: [contribution_paypal: 50]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

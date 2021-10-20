@@ -38,3 +38,8 @@ config :cambiatus, Cambiatus.Repo,
 config :cambiatus, Cambiatus.Eos, cambiatus_account: "cambiatus"
 
 config :cambiatus, Cambiatus.Notifications, adapter: Cambiatus.Notifications.TestAdapter
+
+config :cambiatus, Oban, queues: false, plugins: false
+
+config :sentry,
+  enable_source_code_context: false

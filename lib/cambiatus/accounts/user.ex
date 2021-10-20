@@ -11,6 +11,7 @@ defmodule Cambiatus.Accounts.User do
   alias Cambiatus.Commune.{Network, Claim, Transfer}
   alias Cambiatus.Kyc.{KycData, Address}
   alias Cambiatus.Shop.Product
+  alias Cambiatus.Payments.Contribution
 
   @primary_key {:account, :string, autogenerate: false}
   schema "users" do
@@ -38,6 +39,7 @@ defmodule Cambiatus.Accounts.User do
     has_many(:communities, through: [:network, :community])
     has_many(:invitations, Invitation, foreign_key: :creator_id)
     has_many(:claims, Claim, foreign_key: :claimer_id)
+    has_many(:contributions, Contribution, foreign_key: :user_id)
 
     has_many(:contacts, Contact,
       foreign_key: :user_id,

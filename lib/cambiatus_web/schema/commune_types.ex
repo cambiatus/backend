@@ -227,6 +227,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:auto_invite, non_null(:boolean))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
 
+    field(:contribution_configuration, :contribution_config,
+      resolve: dataloader(Cambiatus.Commune)
+    )
+
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
@@ -250,6 +254,12 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(Cambiatus.Commune))
     field(:members, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Commune))
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
+
+    @desc "List of contributions this community received"
+    field(:contributions, non_null(list_of(non_null(:contribution)))) do
+      arg(:status, :contribution_status_type)
+      resolve(dataloader(Cambiatus.Payments))
+    end
 
     field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
