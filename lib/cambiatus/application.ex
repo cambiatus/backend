@@ -11,7 +11,8 @@ defmodule Cambiatus.Application do
       Cambiatus.DbListener,
       {Phoenix.PubSub, name: Cambiatus.PubSub},
       CambiatusWeb.Endpoint,
-      {Absinthe.Subscription, [CambiatusWeb.Endpoint]}
+      {Absinthe.Subscription, [CambiatusWeb.Endpoint]},
+      {Oban, oban_config()}
     ]
 
     Logger.add_backend(Sentry.LoggerBackend)
@@ -25,5 +26,9 @@ defmodule Cambiatus.Application do
   def config_change(changed, _new, removed) do
     CambiatusWeb.Endpoint.config_change(changed, removed)
     :ok
+  end
+
+  def oban_config do
+    Application.fetch_env!(:cambiatus, Oban)
   end
 end
