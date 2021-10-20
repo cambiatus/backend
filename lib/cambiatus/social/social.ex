@@ -96,4 +96,10 @@ defmodule Cambiatus.Social do
 
     Map.merge(acc, reacts, fn _k, v1, v2 -> v1 + v2 end)
   end
+
+  def today_scheduled_news do
+    News
+    |> News.scheduled_today()
+    |> Repo.all()
+  end
 end

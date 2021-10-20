@@ -41,7 +41,14 @@ config :sentry,
   environment_name: Mix.env()
 
 config :cambiatus, Oban,
-  repo: Cambiatus.Repo
+  repo: Cambiatus.Repo,
+  queues: [scheduled_news: 10],
+  plugins: [
+    {Oban.Plugins.Cron,
+     crontab: [
+       {"@daily", Cambiatus.Workers.ScheduledNewsWorker}
+     ]}
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

@@ -2,6 +2,7 @@ defmodule Cambiatus.Social.News do
   @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   alias Cambiatus.Accounts.User
   alias Cambiatus.Commune
@@ -70,5 +71,11 @@ defmodule Cambiatus.Social.News do
       {:error, _} ->
         add_error(changeset, :community_id, "does not exist")
     end
+  end
+
+  def scheduled_today(query \\ News) do
+    today = Date.utc_today()
+
+    where(query, [n], fragment("?::date", n.scheduling) == ^today)
   end
 end
