@@ -48,6 +48,7 @@ defmodule Cambiatus.Mixfile do
       # Formatters
       {:ex_phone_number, "~> 0.2"},
       {:number, "~> 1.0"},
+      {:earmark, "~> 1.4"},
 
       # Email capabilities
       {:swoosh, "~> 1.0"},

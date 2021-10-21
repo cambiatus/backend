@@ -5,13 +5,16 @@ defmodule Cambiatus.Application do
 
   require Logger
 
+  alias Cambiatus.{Repo, DbListener, PubSub}
+  alias CambiatusWeb.Endpoint
+
   def start(_type, _args) do
     children = [
-      Cambiatus.Repo,
-      Cambiatus.DbListener,
-      {Phoenix.PubSub, name: Cambiatus.PubSub},
-      CambiatusWeb.Endpoint,
-      {Absinthe.Subscription, [CambiatusWeb.Endpoint]},
+      Repo,
+      DbListener,
+      Endpoint,
+      {Phoenix.PubSub, name: PubSub},
+      {Absinthe.Subscription, [Endpoint]},
       {Oban, oban_config()}
     ]
 

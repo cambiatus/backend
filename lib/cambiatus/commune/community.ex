@@ -12,6 +12,8 @@ defmodule Cambiatus.Commune.Community do
   }
 
   alias Cambiatus.Social.News
+  alias Cambiatus.Payments.{Contribution, ContributionConfiguration}
+
   alias Cambiatus.Shop.Product
   alias Cambiatus.Repo
 
@@ -54,6 +56,7 @@ defmodule Cambiatus.Commune.Community do
 
     belongs_to(:highlighted_news, News)
     belongs_to(:subdomain, Subdomain)
+    belongs_to(:contribution_configuration, ContributionConfiguration)
 
     has_many(:products, Product, foreign_key: :community_id)
     has_many(:orders, through: [:products, :orders])
@@ -65,6 +68,7 @@ defmodule Cambiatus.Commune.Community do
     has_many(:actions, through: [:objectives, :actions])
     has_many(:mints, Mint, foreign_key: :community_id)
     has_many(:uploads, CommunityPhotos, foreign_key: :community_id, on_replace: :delete)
+    has_many(:contributions, Contribution, foreign_key: :community_id)
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a
@@ -76,6 +80,7 @@ defmodule Cambiatus.Commune.Community do
     community
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_assoc(:subdomain, with: &Subdomain.changeset/2)
+    |> cast_assoc(:contribution_configuration, with: &ContributionConfiguration.changeset/2)
     |> validate_required(@required_fields)
   end
 
