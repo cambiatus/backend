@@ -13,7 +13,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
 
   @desc "News query"
   object :social_queries do
-    @desc "Get one news"
+    @desc "Get news"
     field(:news, :news) do
       arg(:news_id, non_null(:integer))
 
@@ -23,7 +23,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
 
   @desc "News data mutations"
   object :social_mutations do
-    @desc "[Auth required] News mutation, that allows for creating news on a community"
+    @desc "[Auth required - Admin only] News mutation, that allows for creating news on a community"
     field :news, :news do
       arg(:title, non_null(:string))
       arg(:description, non_null(:string))
@@ -34,7 +34,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
       resolve(&Social.news/3)
     end
 
-    @desc "[Auth required] Mutation to update news"
+    @desc "[Auth required - Admin only] Mutation to update news"
     field :update_news, :news do
       arg(:id, non_null(:integer))
       arg(:title, :string)

@@ -89,9 +89,21 @@ defmodule CambiatusWeb.Resolvers.Social do
     end
   end
 
-  def get_news_versions(%{id: news_id}, _, _) do
-    versions = Social.get_news_versions(news_id)
+  def get_news_versions(%{id: news_id}, _, %{context: %{current_user: current_user}}) do
+    if is_admin?(news_id, current_user) do
+      versions = Social.get_news_versions(news_id)
 
-    {:ok, versions}
+      {:ok, versions}
+    else
+      {:error, message: "Unauthorized"}
+    end
+  end
+
+  defp is_admin?(news_id, current_user) do
+    Social.get_news(news_id)
+    |> case do
+      nil -> false
+      news -> Commune.is_community_admin?(news.community_id, current_user.account)
+    end
   end
 end

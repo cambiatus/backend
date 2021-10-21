@@ -44,7 +44,6 @@ defmodule Cambiatus.Social do
       end
     else
       do_create_news(attrs)
-      # schedule to set as highlight
     end
   end
 

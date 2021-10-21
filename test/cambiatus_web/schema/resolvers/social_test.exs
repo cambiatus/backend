@@ -182,11 +182,12 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
   end
 
   test "get news by id with reactions and versions" do
-    news = insert(:news)
     user = insert(:user)
+    community = insert(:community, creator: user.account)
+    news = insert(:news, user: user, community: community)
     insert(:news_receipt, news: news, reactions: [":smile:", ":eyes:"])
     insert(:news_receipt, news: news, reactions: [":eyes:"])
-    insert(:network, community: news.community, account: user)
+    insert(:network, community: community, account: user)
     insert(:news_version, news: news, title: "Hello World")
     insert(:news_version, news: news, title: "Hi World")
     conn = build_conn() |> auth_user(user)
