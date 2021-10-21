@@ -1044,5 +1044,43 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       assert Repo.get!(Community, community.symbol).has_news == true
     end
+
+    test "updates highlighted news of community" do
+      user = insert(:user)
+
+      community =
+        insert(:community, %{
+          creator: user.account,
+          has_news: true,
+          symbol: "symbol-0",
+          highlighted_news: nil
+        })
+
+      news = insert(:news, %{community: community, user: user})
+
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      mutation {
+        highlightedNews(communityId: "#{community.symbol}", newsID: #{news.id}){
+          symbol
+        }
+      }
+      """
+
+      res = post(conn, "/api/graph", query: query)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "highlightedNews" => %{
+                   "symbol" => "symbol-0"
+                 }
+               }
+             } = response
+
+      assert Repo.get!(Community, community.symbol).highlighted_news_id == news.id
+    end
   end
 end

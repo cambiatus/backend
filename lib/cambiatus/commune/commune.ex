@@ -684,12 +684,40 @@ defmodule Cambiatus.Commune do
     end
   end
 
-  def set_highlighted_news(community_id, news_id) do
-    get_community(community_id)
+  def set_highlighted_news(community_id, news_id, current_user \\ nil) do
+    community_id
+    |> get_community
+    |> check_user_authorization(current_user)
+    |> do_set_highlighted_news(news_id)
     |> case do
-      {:ok, community} -> update_community(community, %{highlighted_news_id: news_id})
-      error -> error
+      {:ok, _} = success -> success
+      {:error, _} = error -> error
     end
+  end
+
+  defp check_user_authorization({:error, _} = error, _) do
+    error
+  end
+
+  defp check_user_authorization({:ok, _} = community, nil) do
+    community
+  end
+
+  defp check_user_authorization({:ok, community} = community_response, current_user) do
+    if community.creator == current_user.account do
+      community_response
+    else
+      {:error, "Unauthorized"}
+    end
+  end
+
+  defp do_set_highlighted_news({:error, _} = error, _) do
+    error
+  end
+
+  defp do_set_highlighted_news({:ok, community}, news_id) do
+    community
+    |> update_community(%{highlighted_news_id: news_id})
   end
 
   def set_has_news(current_user, community_id, has_news) do
