@@ -100,8 +100,7 @@ defmodule CambiatusWeb.Resolvers.Social do
   end
 
   defp is_admin?(news_id, current_user) do
-    Social.get_news(news_id)
-    |> case do
+    case Social.get_news(news_id) do
       nil -> false
       news -> Commune.is_community_admin?(news.community_id, current_user.account)
     end
