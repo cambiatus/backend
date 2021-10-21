@@ -691,4 +691,23 @@ defmodule Cambiatus.Commune do
       error -> error
     end
   end
+
+  def set_has_news(current_user, community_id, has_news) do
+    case get_community(community_id) do
+      {:ok, community} ->
+        if community.creator == current_user.account do
+          community
+          |> update_community(%{has_news: has_news})
+          |> case do
+            {:ok, _} = success -> success
+            {:error, _} = error -> error
+          end
+        else
+          {:error, "Unauthorized"}
+        end
+
+      {:error, _} = error ->
+        error
+    end
+  end
 end

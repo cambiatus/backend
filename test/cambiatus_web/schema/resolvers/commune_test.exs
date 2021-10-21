@@ -1011,5 +1011,38 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert(invite.creator_id == found_invite["creator"]["account"])
       assert(invite.community_id == found_invite["communityPreview"]["symbol"])
     end
+
+    test "updates community has_news flag" do
+      user = insert(:user)
+
+      community =
+        insert(:community, %{creator: user.account, has_news: false, symbol: "symbol-0"})
+
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      mutation {
+        hasNews(communityId: "#{community.symbol}", hasNews: true){
+          symbol
+          hasNews
+        }
+      }
+      """
+
+      res = post(conn, "/api/graph", query: query)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "hasNews" => %{
+                   "hasNews" => true,
+                   "symbol" => "symbol-0"
+                 }
+               }
+             } = response
+
+      assert Repo.get!(Community, community.symbol).has_news == true
+    end
   end
 end

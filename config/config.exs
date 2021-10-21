@@ -47,11 +47,10 @@ config :sentry,
 
 config :cambiatus, Oban,
   repo: Cambiatus.Repo,
-  queues: [contribution_paypal: 50]
-
-config :cambiatus, Oban,
-  repo: Cambiatus.Repo,
-  queues: [scheduled_news: 10],
+  queues: [
+    contribution_paypal: 50,
+    scheduled_news: 10
+  ],
   plugins: [
     {Oban.Plugins.Cron,
      crontab: [

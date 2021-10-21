@@ -92,6 +92,33 @@ defmodule Cambiatus.CommuneTest do
 
       assert community.highlighted_news_id == news.id
     end
+
+    test "set_has_news/3 sets community has_news flag" do
+      user = insert(:user)
+      community = insert(:community, creator: user.account, has_news: false)
+
+      response = Commune.set_has_news(user, community.symbol, true)
+
+      assert {:ok, %Community{has_news: true}} = response
+      assert Repo.get!(Community, community.symbol).has_news == true
+    end
+
+    test "set_has_news/3 returns unauthorized if user is not admin" do
+      user = insert(:user)
+      community = insert(:community, has_news: false)
+
+      response = Commune.set_has_news(user, community.symbol, true)
+
+      assert {:error, "Unauthorized"} == response
+    end
+
+    test "set_has_news/3 returns error if community is not found" do
+      user = insert(:user)
+
+      response = Commune.set_has_news(user, "any_community", true)
+
+      assert {:error, "No community exists with the symbol: any_community"} == response
+    end
   end
 
   describe "network" do

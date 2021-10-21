@@ -139,6 +139,15 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       middleware(Middleware.Authenticate)
       resolve(&Commune.add_photos/3)
     end
+
+    @desc "[Auth required - Admin only] Set has_news flag of community"
+    field :has_news, :community do
+      arg(:community_id, non_null(:string))
+      arg(:has_news, non_null(:boolean))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Commune.set_has_news/3)
+    end
   end
 
   @desc "Input to complete an objective"

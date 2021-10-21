@@ -205,4 +205,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
   def add_photos(_, %{symbol: symbol, urls: urls}, %{context: %{current_user: current_user}}) do
     Commune.add_photos(current_user, symbol, urls)
   end
+
+  def set_has_news(_, %{community_id: community_id, has_news: has_news}, %{
+        context: %{current_user: current_user}
+      }) do
+    Commune.set_has_news(current_user, community_id, has_news)
+  end
 end
