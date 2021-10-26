@@ -149,10 +149,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(&Commune.set_has_news/3)
     end
 
-    @desc "[Auth required - Admin only] Set highlighted news of community"
+    @desc "[Auth required - Admin only] Set highlighted news of community. If news_id is not present, sets highlighted as nil"
     field :highlighted_news, :community do
       arg(:community_id, non_null(:string))
-      arg(:news_id, non_null(:integer))
+      arg(:news_id, :integer)
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.set_highlighted_news/3)

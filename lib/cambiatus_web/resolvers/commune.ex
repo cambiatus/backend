@@ -212,9 +212,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.set_has_news(current_user, community_id, has_news)
   end
 
-  def set_highlighted_news(_, %{community_id: community_id, news_id: news_id}, %{
+  def set_highlighted_news(_, %{community_id: community_id} = args, %{
         context: %{current_user: current_user}
       }) do
+    news_id = Map.get(args, :news_id)
     Commune.set_highlighted_news(community_id, news_id, current_user)
   end
 end

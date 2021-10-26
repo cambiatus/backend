@@ -1056,14 +1056,17 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
           highlighted_news: nil
         })
 
-      news = insert(:news, %{community: community, user: user})
+      news_id = insert(:news, %{community: community, user: user}).id
 
       conn = build_conn() |> auth_user(user)
 
       query = """
       mutation {
-        highlightedNews(communityId: "#{community.symbol}", newsID: #{news.id}){
+        highlightedNews(communityId: "#{community.symbol}", newsID: #{news_id}){
           symbol
+          highlighted_news {
+            id
+          }
         }
       }
       """
@@ -1075,12 +1078,58 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert %{
                "data" => %{
                  "highlightedNews" => %{
-                   "symbol" => "symbol-0"
+                   "symbol" => "symbol-0",
+                   "highlighted_news" => %{
+                     "id" => ^news_id
+                   }
                  }
                }
              } = response
 
+      assert Repo.get!(Community, community.symbol).highlighted_news_id == news_id
+    end
+
+    test "removes highlighted news of community" do
+      user = insert(:user)
+
+      community =
+        insert(:community, %{
+          creator: user.account,
+          has_news: true,
+          symbol: "symbol-0"
+        })
+
+      news = insert(:news, %{community: community, user: user})
+      Community.changeset(community, %{highlighted_news_id: news.id}) |> Repo.update!()
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      mutation {
+        highlightedNews(communityId: "#{community.symbol}"){
+          symbol
+          highlighted_news {
+            id
+          }
+        }
+      }
+      """
+
       assert Repo.get!(Community, community.symbol).highlighted_news_id == news.id
+
+      res = post(conn, "/api/graph", query: query)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "highlightedNews" => %{
+                   "symbol" => "symbol-0",
+                   "highlighted_news" => nil
+                 }
+               }
+             } = response
+
+      assert Repo.get!(Community, community.symbol).highlighted_news_id == nil
     end
   end
 end
