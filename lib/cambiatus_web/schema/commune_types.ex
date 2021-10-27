@@ -119,6 +119,15 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
         {:ok, transfer}
       end)
     end
+
+    @desc "Subscribe to highlighted_news change"
+    field :highlighted_news_change, :news do
+      arg(:community_id, non_null(:string))
+
+      config(fn args, _res ->
+        {:ok, topic: args.community_id}
+      end)
+    end
   end
 
   @desc "Community mutations"

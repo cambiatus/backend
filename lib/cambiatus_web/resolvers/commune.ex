@@ -5,7 +5,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
   """
   alias Absinthe.Relay.Connection
 
-  alias Cambiatus.{Auth, Commune, Shop}
+  alias Cambiatus.{Auth, Commune, Error, Shop, Social}
   alias Cambiatus.Commune.{Claim, Community}
 
   def search(_, %{community_id: symbol}, _) do
@@ -216,6 +216,25 @@ defmodule CambiatusWeb.Resolvers.Commune do
         context: %{current_user: current_user}
       }) do
     news_id = Map.get(args, :news_id)
+
     Commune.set_highlighted_news(community_id, news_id, current_user)
+    |> case do
+      {:ok, community} ->
+        publish_highlighted_news_change(community.highlighted_news_id, community.symbol)
+        {:ok, community}
+
+      {:error, error} ->
+        {:error, message: "Could not set highlighted news", details: Error.from(error)}
+    end
+  end
+
+  defp publish_highlighted_news_change(news_id, community_id) do
+    news = if is_nil(news_id), do: nil, else: Social.get_news(news_id)
+
+    Absinthe.Subscription.publish(
+      CambiatusWeb.Endpoint,
+      news,
+      highlighted_news_change: community_id
+    )
   end
 end

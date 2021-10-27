@@ -11,14 +11,14 @@ defmodule Cambiatus.Commune do
   alias Cambiatus.Commune.{
     Action,
     Check,
+    Claim,
     Community,
     CommunityPhotos,
-    Claim,
     Network,
     Objective,
+    Subdomain,
     Transfer,
-    Validator,
-    Subdomain
+    Validator
   }
 
   @spec data :: Dataloader.Ecto.t()
@@ -689,10 +689,6 @@ defmodule Cambiatus.Commune do
     |> get_community
     |> check_user_authorization(current_user)
     |> do_set_highlighted_news(news_id)
-    |> case do
-      {:ok, _} = success -> success
-      {:error, _} = error -> error
-    end
   end
 
   defp check_user_authorization({:error, _} = error, _) do
