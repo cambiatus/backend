@@ -30,4 +30,8 @@ defmodule Cambiatus.Social.NewsReceipt do
   def from_news(query \\ NewsReceipt, news_id) do
     where(query, [r], r.news_id == ^news_id)
   end
+
+  def from_user(query \\ NewsReceipt, user_id) do
+    where(query, [r], r.user_id == ^user_id)
+  end
 end

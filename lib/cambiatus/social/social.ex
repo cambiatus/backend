@@ -5,8 +5,8 @@ defmodule Cambiatus.Social do
 
   import Ecto.Query
 
-  alias Cambiatus.Repo
   alias Cambiatus.Commune
+  alias Cambiatus.Repo
   alias Cambiatus.Social.News
   alias Cambiatus.Social.NewsReceipt
   alias Cambiatus.Social.NewsVersion
@@ -88,6 +88,13 @@ defmodule Cambiatus.Social do
     |> Repo.all()
     |> Enum.reduce(%{}, &sum_reactions/2)
     |> Enum.map(fn {reaction, count} -> %{reaction: reaction, count: count} end)
+  end
+
+  def get_news_receipt_from_user(news_id, user_id) do
+    NewsReceipt
+    |> NewsReceipt.from_news(news_id)
+    |> NewsReceipt.from_user(user_id)
+    |> Repo.one()
   end
 
   defp sum_reactions(%{reactions: reactions}, %{} = acc) do

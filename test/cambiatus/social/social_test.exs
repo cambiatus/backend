@@ -213,6 +213,26 @@ defmodule Cambiatus.SocialTest do
     end
   end
 
+  describe "get_news_receipt_from_user/2" do
+    test "returns news_receipt from user in news" do
+      user = insert(:user)
+      news = insert(:news)
+
+      news_receipt_id = insert(:news_receipt, user: user, news: news).id
+      insert(:news_receipt, news: news)
+
+      response = Social.get_news_receipt_from_user(news.id, user.account)
+
+      assert %NewsReceipt{id: ^news_receipt_id} = response
+    end
+
+    test "returns nil when there is no news_receipt" do
+      response = Social.get_news_receipt_from_user(123, "test")
+
+      assert response == nil
+    end
+  end
+
   describe "update_news_with_history/1" do
     test "when input is valid news, updates the news and creates a news_version" do
       user = insert(:user)

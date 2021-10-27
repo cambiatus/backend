@@ -99,6 +99,12 @@ defmodule CambiatusWeb.Resolvers.Social do
     end
   end
 
+  def get_news_receipt_from_user(%{id: news_id}, _, %{context: %{current_user: current_user}}) do
+    news_receipt = Social.get_news_receipt_from_user(news_id, current_user.account)
+
+    {:ok, news_receipt}
+  end
+
   defp is_admin?(news_id, current_user) do
     case Social.get_news(news_id) do
       nil -> false

@@ -86,7 +86,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
     end
 
     test "mark news as read creating a news_receipt for the user in the news" do
-      user = insert(:user)
+      user = insert(:user, account: "johndoe")
       conn = build_conn() |> auth_user(user)
 
       community_creator = insert(:user)
@@ -99,6 +99,9 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
             reactions
             inserted_at
             updated_at
+            user {
+              account
+            }
           }
         }
       """
@@ -109,7 +112,12 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
 
       assert %{
                "data" => %{
-                 "read" => %{"inserted_at" => _, "reactions" => [], "updated_at" => _}
+                 "read" => %{
+                   "inserted_at" => _,
+                   "reactions" => [],
+                   "updated_at" => _,
+                   "user" => %{"account" => "johndoe"}
+                 }
                }
              } = response
     end
@@ -181,10 +189,11 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
            } = response
   end
 
-  test "get news by id with reactions and versions" do
+  test "get news by id with reactions, versions and user receipt" do
     user = insert(:user)
     community = insert(:community, creator: user.account)
     news = insert(:news, user: user, community: community)
+    insert(:news_receipt, news: news, user: user, reactions: [":joy:"])
     insert(:news_receipt, news: news, reactions: [":smile:", ":eyes:"])
     insert(:news_receipt, news: news, reactions: [":eyes:"])
     insert(:network, community: community, account: user)
@@ -204,6 +213,9 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
         versions {
           title
         }
+        news_receipt {
+          reactions
+        }
       }
     }
     """
@@ -218,12 +230,47 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
                  "title" => "News title",
                  "reactions" => [
                    %{"count" => 2, "reaction" => ":eyes:"},
+                   %{"count" => 1, "reaction" => ":joy:"},
                    %{"count" => 1, "reaction" => ":smile:"}
                  ],
                  "versions" => [
                    %{"title" => "Hello World"},
                    %{"title" => "Hi World"}
-                 ]
+                 ],
+                 "news_receipt" => %{
+                   "reactions" => [":joy:"]
+                 }
+               }
+             }
+           } = response
+  end
+
+  test "get news by id gets nil news_receipt if user has not read the news yet" do
+    user = insert(:user)
+    another_user = insert(:user)
+    news = insert(:news)
+    insert(:network, community: news.community, account: user)
+    insert(:news_receipt, news: news, user: another_user)
+
+    conn = build_conn() |> auth_user(user)
+
+    query = """
+    query{
+      news(newsID: #{news.id}){
+        news_receipt {
+          reactions
+        }
+      }
+    }
+    """
+
+    res = post(conn, "/api/graph", query: query)
+    response = json_response(res, 200)
+
+    assert %{
+             "data" => %{
+               "news" => %{
+                 "news_receipt" => nil
                }
              }
            } = response
