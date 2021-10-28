@@ -69,6 +69,7 @@ defmodule Cambiatus.Mixfile do
       # EOS/Blockchain Packages
       {:eosrpc, "~> 0.6.2"},
       {:hashids, "~> 2.0"},
+      {:eosjs_auth_wrapper, "~> 0.1.7"},
 
       # Sentry
       {:sentry, "8.0.0"},

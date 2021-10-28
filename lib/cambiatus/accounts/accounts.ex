@@ -20,8 +20,38 @@ defmodule Cambiatus.Accounts do
 
   def query(queryable, _params), do: queryable
 
-  def verify_pass(_account, password) do
-    password == Application.get_env(:cambiatus, :graphql_secret)
+  def verify_pass(account, password) do
+    # password = "hello" signed
+
+    with {:ok, %{phrase: phrase}} <- get_request_from_account(account),
+         {:ok, public_key} <- get_public_key(account),
+         {:ok, true} <- verify_sign(password, phrase, public_key) do
+          true
+         else
+          _ -> false
+    end
+  end
+
+  defp get_request_from_account(_account) do
+    {:ok, %{phrase: "hello"}}
+  end
+
+  defp get_public_key(account) do
+    EOSRPC.Chain.get_account(account)
+    |> case do
+      {:error, _} ->
+        {:error, "Account not found"}
+
+      {:ok, %{body: account_info}} ->
+        [%{"required_auth" => %{"keys" => [%{"key" => public_key} | _]}} | _] =
+          account_info["permissions"]
+
+        {:ok, public_key}
+    end
+  end
+
+  defp verify_sign(sign, phrase, public_key) do
+    EosjsAuthWrapper.verify(sign, phrase, public_key)
   end
 
   @doc """
