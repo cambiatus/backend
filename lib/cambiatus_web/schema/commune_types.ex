@@ -124,8 +124,11 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field :highlighted_news_change, :news do
       arg(:community_id, non_null(:string))
 
-      config(fn args, _res ->
-        {:ok, topic: args.community_id}
+      config(fn args, %{context: context} ->
+        case context do
+          %{current_user: _} -> {:ok, topic: args.community_id}
+          _ -> {:error, "Please login first"}
+        end
       end)
     end
   end
