@@ -20,7 +20,9 @@ defmodule CambiatusWeb.Resolvers.Social do
     end
   end
 
-  def update_news(_, %{id: news_id} = params, _) do
+  def update_news(_, %{id: news_id} = params, %{context: %{current_user: current_user}}) do
+    params = Map.merge(params, %{user_id: current_user.account})
+
     Social.get_news(news_id)
     |> do_update_news(params)
     |> case do
