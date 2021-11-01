@@ -366,7 +366,7 @@ defmodule Cambiatus.Factory do
     %NewsReceipt{
       user: build(:user),
       news: build(:news),
-      reactions: [":laugh:", ":joy:"]
+      reactions: [:rocket, :red_heart]
     }
   end
 

@@ -124,14 +124,14 @@ defmodule Cambiatus.SocialTest do
     test "when all params are correct, creates a news receipt successfully" do
       user = insert(:user)
       news = insert(:news)
-      reactions = [":laugh:", ":joy:"]
+      reactions = [:rocket, :red_heart]
 
       assert {:ok, %NewsReceipt{} = receipt} =
                Social.upsert_news_receipt(news.id, user.account, reactions)
 
       assert receipt.news_id == news.id
       assert receipt.user_id == user.account
-      assert receipt.reactions == [":laugh:", ":joy:"]
+      assert receipt.reactions == [:rocket, :red_heart]
     end
 
     test "when all has no reactions in params, creates a news receipt with empty reactions" do
@@ -145,8 +145,8 @@ defmodule Cambiatus.SocialTest do
     end
 
     test "when there is a receipt with same user and news, updates the reactions" do
-      news_receipt = insert(:news_receipt, reactions: [":joy:"])
-      new_reactions = [":joy:", ":smile:", ":laugh:"]
+      news_receipt = insert(:news_receipt, reactions: [:rocket])
+      new_reactions = [:rocket, :red_heart, :thumbs_up]
 
       assert {:ok, %NewsReceipt{} = receipt} =
                Social.upsert_news_receipt(
@@ -157,7 +157,7 @@ defmodule Cambiatus.SocialTest do
 
       assert receipt.news_id == news_receipt.news_id
       assert receipt.user_id == news_receipt.user_id
-      assert receipt.reactions == [":joy:", ":smile:", ":laugh:"]
+      assert receipt.reactions == [:rocket, :red_heart, :thumbs_up]
     end
   end
 
@@ -165,19 +165,19 @@ defmodule Cambiatus.SocialTest do
     test "returns a list of reactions" do
       news = insert(:news)
 
-      insert(:news_receipt, news: news, reactions: ["a", "b"])
-      insert(:news_receipt, news: news, reactions: ["a", "c"])
-      insert(:news_receipt, news: news, reactions: ["b", "c"])
-      insert(:news_receipt, news: news, reactions: ["b"])
-      insert(:news_receipt, news: news, reactions: ["b", "d"])
+      insert(:news_receipt, news: news, reactions: [:rocket, :red_heart])
+      insert(:news_receipt, news: news, reactions: [:rocket, :thumbs_up])
+      insert(:news_receipt, news: news, reactions: [:red_heart, :thumbs_up])
+      insert(:news_receipt, news: news, reactions: [:red_heart])
+      insert(:news_receipt, news: news, reactions: [:red_heart, :thumbs_down])
 
       response = Social.get_news_reactions(news.id)
 
       assert response == [
-               %{reaction: "a", count: 2},
-               %{reaction: "b", count: 4},
-               %{reaction: "c", count: 2},
-               %{reaction: "d", count: 1}
+               %{reaction: :red_heart, count: 4},
+               %{reaction: :rocket, count: 2},
+               %{reaction: :thumbs_down, count: 1},
+               %{reaction: :thumbs_up, count: 2}
              ]
     end
 
@@ -199,16 +199,16 @@ defmodule Cambiatus.SocialTest do
       news = insert(:news)
       news2 = insert(:news)
 
-      insert(:news_receipt, news: news, reactions: ["a", "b"])
-      insert(:news_receipt, news: news, reactions: ["b", "c"])
-      insert(:news_receipt, news: news2, reactions: ["a", "c"])
+      insert(:news_receipt, news: news, reactions: [:rocket, :red_heart])
+      insert(:news_receipt, news: news, reactions: [:red_heart, :thumbs_up])
+      insert(:news_receipt, news: news2, reactions: [:rocket, :thumbs_up])
 
       response = Social.get_news_reactions(news.id)
 
       assert response == [
-               %{reaction: "a", count: 1},
-               %{reaction: "b", count: 2},
-               %{reaction: "c", count: 1}
+               %{reaction: :red_heart, count: 2},
+               %{reaction: :rocket, count: 1},
+               %{reaction: :thumbs_up, count: 1}
              ]
     end
   end

@@ -56,7 +56,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
     @desc "[Auth required] Add or update reactions from user in a news through news_receipt"
     field :react_to_news, :news_receipt do
       arg(:news_id, non_null(:integer))
-      arg(:reactions, non_null(list_of(non_null(:string))))
+      arg(:reactions, non_null(list_of(non_null(:reaction_enum))))
 
       middleware(Middleware.Authenticate)
       resolve(&Social.update_reactions/3)
@@ -84,7 +84,7 @@ defmodule CambiatusWeb.Schema.SocialTypes do
   end
 
   object :news_receipt do
-    field(:reactions, non_null(list_of(non_null(:string))))
+    field(:reactions, non_null(list_of(non_null(:reaction_enum))))
     field(:user, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
@@ -98,7 +98,22 @@ defmodule CambiatusWeb.Schema.SocialTypes do
   end
 
   object :reaction_type do
-    field(:reaction, non_null(:string))
+    field(:reaction, non_null(:reaction_enum))
     field(:count, non_null(:integer))
   end
+
+  enum(:reaction_enum,
+    values: [
+      :grinning_face_with_big_eyes,
+      :smiling_face_with_heart_eyes,
+      :slightly_frowning_face,
+      :face_with_raised_eyebrow,
+      :thumbs_up,
+      :thumbs_down,
+      :clapping_hands,
+      :party_popper,
+      :red_heart,
+      :rocket
+    ]
+  )
 end

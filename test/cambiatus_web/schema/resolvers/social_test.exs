@@ -133,7 +133,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
 
     mutation = """
       mutation {
-        reactToNews(news_id: #{news.id}, reactions: [":joy:", ":smile:"]){
+        reactToNews(news_id: #{news.id}, reactions: [ROCKET, PARTY_POPPER]){
           reactions
           inserted_at
           updated_at
@@ -149,7 +149,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
              "data" => %{
                "reactToNews" => %{
                  "inserted_at" => _,
-                 "reactions" => [":joy:", ":smile:"],
+                 "reactions" => ["ROCKET", "PARTY_POPPER"],
                  "updated_at" => _
                }
              }
@@ -193,9 +193,9 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
     user = insert(:user)
     community = insert(:community, creator: user.account)
     news = insert(:news, user: user, community: community)
-    insert(:news_receipt, news: news, user: user, reactions: [":joy:"])
-    insert(:news_receipt, news: news, reactions: [":smile:", ":eyes:"])
-    insert(:news_receipt, news: news, reactions: [":eyes:"])
+    insert(:news_receipt, news: news, user: user, reactions: [:rocket])
+    insert(:news_receipt, news: news, reactions: [:red_heart, :thumbs_up])
+    insert(:news_receipt, news: news, reactions: [:thumbs_up])
     insert(:network, community: community, account: user)
     insert(:news_version, news: news, title: "Hello World")
     insert(:news_version, news: news, title: "Hi World")
@@ -229,16 +229,16 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
                  "description" => "News description",
                  "title" => "News title",
                  "reactions" => [
-                   %{"count" => 2, "reaction" => ":eyes:"},
-                   %{"count" => 1, "reaction" => ":joy:"},
-                   %{"count" => 1, "reaction" => ":smile:"}
+                   %{"count" => 1, "reaction" => "RED_HEART"},
+                   %{"count" => 1, "reaction" => "ROCKET"},
+                   %{"count" => 2, "reaction" => "THUMBS_UP"}
                  ],
                  "versions" => [
                    %{"title" => "Hello World"},
                    %{"title" => "Hi World"}
                  ],
                  "news_receipt" => %{
-                   "reactions" => [":joy:"]
+                   "reactions" => ["ROCKET"]
                  }
                }
              }

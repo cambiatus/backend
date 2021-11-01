@@ -8,7 +8,20 @@ defmodule Cambiatus.Social.NewsReceipt do
   alias Cambiatus.Social.News
 
   schema "news_receipts" do
-    field(:reactions, {:array, :string})
+    field(:reactions, {:array, Ecto.Enum},
+      values: [
+        :grinning_face_with_big_eyes,
+        :smiling_face_with_heart_eyes,
+        :slightly_frowning_face,
+        :face_with_raised_eyebrow,
+        :thumbs_up,
+        :thumbs_down,
+        :clapping_hands,
+        :party_popper,
+        :red_heart,
+        :rocket
+      ]
+    )
 
     belongs_to(:news, News)
     belongs_to(:user, User, references: :account, type: :string)
