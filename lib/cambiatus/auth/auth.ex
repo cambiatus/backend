@@ -3,8 +3,8 @@ defmodule Cambiatus.Auth do
 
   import Ecto.Query
 
-  alias Cambiatus.Auth.{Invitation, InvitationId}
-  alias Cambiatus.{Accounts.User, Commune.Network, Repo}
+  alias Cambiatus.Auth.{Invitation, InvitationId, Request}
+  alias Cambiatus.{Accounts, Accounts.User, Commune.Network, Repo}
 
   @doc """
   Returns the list of invitations.
@@ -150,5 +150,35 @@ defmodule Cambiatus.Auth do
   """
   def change_invitation(%Invitation{} = invitation) do
     Invitation.changeset(invitation, %{})
+  end
+
+  def create_request(account, domain) do
+    account
+    |> Accounts.get_user()
+    |> case do
+      nil -> {:error, "Could not find user"}
+
+      user -> do_create_request(user, domain)
+    end
+  end
+
+  defp do_create_request(user, domain) do
+    params = %{
+      user_id: user.account,
+      domain: domain,
+      phrase: generate_phrase(user)
+    }
+
+    %Request{}
+    |> Request.changeset(params)
+    |> Repo.insert()
+  end
+
+  defp generate_phrase(user) do
+    Phoenix.Token.sign(Endpoint, auth_salt(), %{id: user.account})
+  end
+
+  defp auth_salt() do
+    Application.get_env(:cambiatus, :auth_salt)
   end
 end
