@@ -10,6 +10,7 @@ defmodule Cambiatus.Social do
   alias Cambiatus.Social.News
   alias Cambiatus.Social.NewsReceipt
   alias Cambiatus.Social.NewsVersion
+  alias Cambiatus.Workers.ScheduledNewsWorker
   alias Ecto.Multi
 
   @spec data :: Dataloader.Ecto.t()
@@ -44,6 +45,18 @@ defmodule Cambiatus.Social do
       end
     else
       do_create_news(attrs)
+      |> case do
+        {:ok, news} ->
+          ScheduledNewsWorker.new(%{news_id: news.id, news_scheduling: news.scheduling},
+            scheduled_at: news.scheduling
+          )
+          |> Oban.insert()
+
+          {:ok, news}
+
+        error ->
+          error
+      end
     end
   end
 
@@ -61,8 +74,21 @@ defmodule Cambiatus.Social do
     Multi.new()
     |> Multi.update(:news, News.changeset(news, attrs))
     |> Multi.insert(:version, NewsVersion.changeset(%NewsVersion{}, version_params))
+    |> set_scheduling_worker(news.id, attrs)
     |> Repo.transaction()
   end
+
+  defp set_scheduling_worker(%Multi{} = multi, news_id, %{scheduling: scheduling}) do
+    multi
+    |> Oban.insert(
+      :scheduling_worker,
+      ScheduledNewsWorker.new(%{news_id: news_id, news_scheduling: scheduling},
+        scheduled_at: scheduling
+      )
+    )
+  end
+
+  defp set_scheduling_worker(%Multi{} = multi, _, _), do: multi
 
   def upsert_news_receipt(news_id, user_account, reactions \\ []) do
     params = %{news_id: news_id, user_id: user_account, reactions: reactions}
@@ -101,11 +127,5 @@ defmodule Cambiatus.Social do
     reacts = Enum.into(reactions, %{}, &{&1, 1})
 
     Map.merge(acc, reacts, fn _k, v1, v2 -> v1 + v2 end)
-  end
-
-  def today_scheduled_news do
-    News
-    |> News.scheduled_today()
-    |> Repo.all()
   end
 end
