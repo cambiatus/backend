@@ -31,31 +31,14 @@ defmodule Cambiatus.Social do
   end
 
   def create_news(attrs \\ %{}) do
-    scheduling = Map.get(attrs, :scheduling)
+    do_create_news(attrs)
+    |> case do
+      {:ok, news} ->
+        handle_highlighted_news(news)
+        {:ok, news}
 
-    if is_nil(scheduling) do
-      do_create_news(attrs)
-      |> case do
-        {:ok, news} ->
-          Commune.set_highlighted_news(news.community_id, news.id)
-          {:ok, news}
-
-        error ->
-          error
-      end
-    else
-      do_create_news(attrs)
-      |> case do
-        {:ok, news} ->
-          %{news_id: news.id, news_scheduling: news.scheduling}
-          |> ScheduledNewsWorker.new(scheduled_at: news.scheduling)
-          |> Oban.insert()
-
-          {:ok, news}
-
-        error ->
-          error
-      end
+      error ->
+        error
     end
   end
 
@@ -63,6 +46,15 @@ defmodule Cambiatus.Social do
     %News{}
     |> News.changeset(attrs)
     |> Repo.insert()
+  end
+
+  defp handle_highlighted_news(%News{scheduling: nil} = news),
+    do: Commune.set_highlighted_news(news.community_id, news.id)
+
+  defp handle_highlighted_news(%News{} = news) do
+    %{news_id: news.id, news_scheduling: news.scheduling}
+    |> ScheduledNewsWorker.new(scheduled_at: news.scheduling)
+    |> Oban.insert()
   end
 
   def update_news_with_history(%News{} = news, attrs) do
@@ -76,6 +68,8 @@ defmodule Cambiatus.Social do
     |> set_scheduling_worker(news.id, attrs)
     |> Repo.transaction()
   end
+
+  defp set_scheduling_worker(%Multi{} = multi, _, %{scheduling: nil}), do: multi
 
   defp set_scheduling_worker(%Multi{} = multi, news_id, %{scheduling: scheduling}) do
     multi
