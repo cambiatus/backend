@@ -6,7 +6,7 @@ defmodule Cambiatus.Commune do
   import Ecto.Query
 
   alias Absinthe.Relay.Connection
-  alias Cambiatus.{Accounts.User, Repo}
+  alias Cambiatus.{Accounts.User, Repo, Social}
 
   alias Cambiatus.Commune.{
     Action,
@@ -691,13 +691,9 @@ defmodule Cambiatus.Commune do
     |> do_set_highlighted_news(news_id)
   end
 
-  defp check_user_authorization({:error, _} = error, _) do
-    error
-  end
+  defp check_user_authorization({:error, _} = error, _), do: error
 
-  defp check_user_authorization({:ok, _} = community, nil) do
-    community
-  end
+  defp check_user_authorization({:ok, _} = community, nil), do: community
 
   defp check_user_authorization({:ok, community} = community_response, current_user) do
     if community.creator == current_user.account do
@@ -707,12 +703,14 @@ defmodule Cambiatus.Commune do
     end
   end
 
-  defp do_set_highlighted_news({:error, _} = error, _) do
-    error
-  end
+  defp do_set_highlighted_news({:error, _} = error, _), do: error
 
   defp do_set_highlighted_news({:ok, community}, news_id) do
-    update_community(community, %{highlighted_news_id: news_id})
+    if news_id == nil || Social.news_from_community?(news_id, community.symbol) do
+      update_community(community, %{highlighted_news_id: news_id})
+    else
+      {:error, "News does not belong to community"}
+    end
   end
 
   def set_has_news(current_user, community_id, has_news) do

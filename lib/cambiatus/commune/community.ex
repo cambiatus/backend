@@ -3,19 +3,18 @@ defmodule Cambiatus.Commune.Community do
 
   alias Cambiatus.Commune.{
     Community,
-    Network,
+    CommunityPhotos,
     Mint,
+    Network,
     Objective,
-    Transfer,
     Subdomain,
-    CommunityPhotos
+    Transfer
   }
 
-  alias Cambiatus.Social.News
   alias Cambiatus.Payments.{Contribution, ContributionConfiguration}
-
-  alias Cambiatus.Shop.Product
   alias Cambiatus.Repo
+  alias Cambiatus.Shop.Product
+  alias Cambiatus.Social.News
 
   use Ecto.Schema
   import Ecto.Changeset

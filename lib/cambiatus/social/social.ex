@@ -118,4 +118,12 @@ defmodule Cambiatus.Social do
 
     Map.merge(acc, reacts, fn _k, v1, v2 -> v1 + v2 end)
   end
+
+  def news_from_community?(news_id, community_id) do
+    Repo.get_by(News, %{id: news_id, community_id: community_id})
+    |> case do
+      nil -> false
+      _ -> true
+    end
+  end
 end

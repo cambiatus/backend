@@ -223,8 +223,11 @@ defmodule CambiatusWeb.Resolvers.Commune do
         publish_highlighted_news_change(community.highlighted_news_id, community.symbol)
         {:ok, community}
 
-      {:error, error} ->
-        {:error, message: "Could not set highlighted news", details: Error.from(error)}
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, message: "Could not set highlighted news", details: Error.from(changeset)}
+
+      {:error, reason} ->
+        {:error, message: "Could not set highlighted news", details: reason}
     end
   end
 

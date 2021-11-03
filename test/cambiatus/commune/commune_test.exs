@@ -83,7 +83,7 @@ defmodule Cambiatus.CommuneTest do
 
     test "set_highlighted_news/3 sets the news as highlighted in community without current_user" do
       community = insert(:community)
-      news = insert(:news)
+      news = insert(:news, community: community)
 
       assert community.highlighted_news_id == nil
 
@@ -139,6 +139,21 @@ defmodule Cambiatus.CommuneTest do
 
       assert {:error, "No community exists with the symbol: invalid-1"} =
                Commune.set_highlighted_news("invalid-1", news.id, user)
+    end
+
+    test "set_highlighted_news/3 sets the news as highlighted in community with news from another community" do
+      community =
+        insert(:community,
+          has_news: true,
+          highlighted_news_id: nil
+        )
+
+      another_community = insert(:community)
+
+      news = insert(:news, community: another_community)
+
+      assert {:error, "News does not belong to community"} =
+               Commune.set_highlighted_news(community.symbol, news.id)
     end
 
     test "set_has_news/3 sets community has_news flag" do
