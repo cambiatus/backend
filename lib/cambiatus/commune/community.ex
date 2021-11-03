@@ -53,8 +53,8 @@ defmodule Cambiatus.Commune.Community do
 
     # Social
     field(:has_news, :boolean, default: false)
-
     belongs_to(:highlighted_news, News)
+
     belongs_to(:subdomain, Subdomain)
     belongs_to(:contribution_configuration, ContributionConfiguration)
 

@@ -120,8 +120,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       end)
     end
 
-    @desc "Subscribe to highlighted_news change"
-    field :highlighted_news_change, :news do
+    @desc "[Auth required] Subscribe to highlighted_news change"
+    field :highlighted_news, :news do
       arg(:community_id, non_null(:string))
 
       config(fn args, %{context: context} ->

@@ -712,20 +712,14 @@ defmodule Cambiatus.Commune do
   end
 
   defp do_set_highlighted_news({:ok, community}, news_id) do
-    community
-    |> update_community(%{highlighted_news_id: news_id})
+    update_community(community, %{highlighted_news_id: news_id})
   end
 
   def set_has_news(current_user, community_id, has_news) do
     case get_community(community_id) do
       {:ok, community} ->
         if community.creator == current_user.account do
-          community
-          |> update_community(%{has_news: has_news})
-          |> case do
-            {:ok, _} = success -> success
-            {:error, _} = error -> error
-          end
+          update_community(community, %{has_news: has_news})
         else
           {:error, "Unauthorized"}
         end

@@ -11,7 +11,7 @@ defmodule CambiatusWeb.Schema.Subscriptions.HighlightedNewsChangeTest do
 
       subscription = """
       subscription {
-        highlightedNewsChange(communityId: "#{community.symbol}") {
+        highlightedNews(communityId: "#{community.symbol}") {
           id
           title
         }
@@ -21,12 +21,12 @@ defmodule CambiatusWeb.Schema.Subscriptions.HighlightedNewsChangeTest do
       ref = push_doc(socket, subscription)
       assert_reply(ref, :ok, %{subscriptionId: subscription_id})
 
-      Absinthe.Subscription.publish(Endpoint, news, highlighted_news_change: community.symbol)
+      Absinthe.Subscription.publish(Endpoint, news, highlighted_news: community.symbol)
 
       expected_payload = %{"id" => news.id, "title" => "Hello world"}
 
       expected_result = %{
-        result: %{data: %{"highlightedNewsChange" => expected_payload}},
+        result: %{data: %{"highlightedNews" => expected_payload}},
         subscriptionId: subscription_id
       }
 
@@ -39,7 +39,7 @@ defmodule CambiatusWeb.Schema.Subscriptions.HighlightedNewsChangeTest do
 
       subscription = """
       subscription {
-        highlightedNewsChange(communityId: "#{community.symbol}") {
+        highlightedNews(communityId: "#{community.symbol}") {
           id
           title
         }

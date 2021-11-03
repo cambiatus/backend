@@ -25,10 +25,7 @@ defmodule Cambiatus.Social do
     queryable
   end
 
-  def get_news(news_id) do
-    News
-    |> Repo.get(news_id)
-  end
+  def get_news(news_id), do: Repo.get(News, news_id)
 
   def create_news(attrs \\ %{}) do
     do_create_news(attrs)
