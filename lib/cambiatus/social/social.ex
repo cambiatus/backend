@@ -47,9 +47,8 @@ defmodule Cambiatus.Social do
       do_create_news(attrs)
       |> case do
         {:ok, news} ->
-          ScheduledNewsWorker.new(%{news_id: news.id, news_scheduling: news.scheduling},
-            scheduled_at: news.scheduling
-          )
+          %{news_id: news.id, news_scheduling: news.scheduling}
+          |> ScheduledNewsWorker.new(scheduled_at: news.scheduling)
           |> Oban.insert()
 
           {:ok, news}

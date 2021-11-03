@@ -1,9 +1,11 @@
 defmodule Cambiatus.SocialTest do
   use Cambiatus.DataCase
+  use Oban.Testing, repo: Cambiatus.Repo
 
   alias Cambiatus.Commune
   alias Cambiatus.Social
   alias Cambiatus.Social.{News, NewsReceipt, NewsVersion}
+  alias Cambiatus.Workers.ScheduledNewsWorker
 
   describe "create_news/1" do
     setup :valid_community_and_user
@@ -28,7 +30,12 @@ defmodule Cambiatus.SocialTest do
           community_id: community.symbol
         })
 
-      assert {:ok, %News{}} = Social.create_news(params)
+      assert {:ok, %News{} = news} = Social.create_news(params)
+
+      assert_enqueued(
+        worker: ScheduledNewsWorker,
+        args: %{news_id: news.id, news_scheduling: news.scheduling}
+      )
     end
 
     test "create a valid news without scheduling sets highlighted news in community", %{

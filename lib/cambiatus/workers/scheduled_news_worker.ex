@@ -16,7 +16,7 @@ defmodule Cambiatus.Workers.ScheduledNewsWorker do
       Commune.set_highlighted_news(news.community_id, news.id)
       :ok
     else
-      {:error, "deu não"}
+      {:error, "Scheduling does not match"}
     end
   end
 end
