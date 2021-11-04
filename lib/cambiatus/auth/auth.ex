@@ -5,6 +5,7 @@ defmodule Cambiatus.Auth do
 
   alias Cambiatus.Auth.{Invitation, InvitationId, Request}
   alias Cambiatus.{Accounts, Accounts.User, Commune.Network, Repo}
+  alias CambiatusWeb.AuthToken
 
   @doc """
   Returns the list of invitations.
@@ -152,33 +153,34 @@ defmodule Cambiatus.Auth do
     Invitation.changeset(invitation, %{})
   end
 
+  @doc """
+  Returns an request for session or an error.any()
+
+  ##Examples
+
+      iex> create_request(account, domain)
+      {:ok, %Request{}}
+
+      iex> create_request(invalid_account, domain)
+      {:error, "Could not find user"}
+  """
   def create_request(account, domain) do
     account
     |> Accounts.get_user()
     |> case do
-      nil -> {:error, "Could not find user"}
+      nil ->
+        {:error, "Could not find user"}
 
-      user -> do_create_request(user, domain)
+      user ->
+        params = %{
+          user_id: user.account,
+          domain: domain,
+          phrase: :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64)
+        }
+
+        %Request{}
+        |> Request.changeset(params)
+        |> Repo.insert()
     end
-  end
-
-  defp do_create_request(user, domain) do
-    params = %{
-      user_id: user.account,
-      domain: domain,
-      phrase: generate_phrase(user)
-    }
-
-    %Request{}
-    |> Request.changeset(params)
-    |> Repo.insert()
-  end
-
-  defp generate_phrase(user) do
-    Phoenix.Token.sign(Endpoint, auth_salt(), %{id: user.account})
-  end
-
-  defp auth_salt() do
-    Application.get_env(:cambiatus, :auth_salt)
   end
 end

@@ -22,5 +22,6 @@ defmodule Cambiatus.Auth.Request do
     model
     |> cast(params, @fields)
     |> validate_required(@fields)
+    |> foreign_key_constraint(:user_id)
   end
 end

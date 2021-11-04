@@ -5,7 +5,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   """
 
   alias Absinthe.Relay.Connection
-  alias Cambiatus.{Accounts, Auth.SignUp, Auth.SignIn}
+  alias Cambiatus.{Accounts, Auth, Auth.SignUp, Auth.SignIn}
   alias Cambiatus.Accounts.User
   alias Cambiatus.Commune.Transfer
 

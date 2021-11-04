@@ -26,9 +26,9 @@ defmodule Cambiatus.Accounts do
     with {:ok, %{phrase: phrase}} <- get_request_from_account(account),
          {:ok, public_key} <- get_public_key(account),
          {:ok, true} <- verify_sign(password, phrase, public_key) do
-          true
-         else
-          _ -> false
+      true
+    else
+      _ -> false
     end
   end
 
