@@ -5,6 +5,7 @@ defmodule CambiatusWeb.Resolvers.Social do
   """
 
   alias Cambiatus.{Commune, Social}
+  alias Cambiatus.Social.News
 
   def news(_, params, %{context: %{current_user: current_user}}) do
     params
@@ -16,9 +17,20 @@ defmodule CambiatusWeb.Resolvers.Social do
         {:error, message: "Could not create news", details: Cambiatus.Error.from(reason)}
 
       {:ok, news} ->
+        handle_highlighted_news_subscription(news)
         {:ok, news}
     end
   end
+
+  defp handle_highlighted_news_subscription(%News{scheduling: nil} = news) do
+    Absinthe.Subscription.publish(
+      CambiatusWeb.Endpoint,
+      news,
+      highlighted_news: news.community_id
+    )
+  end
+
+  defp handle_highlighted_news_subscription(%News{scheduling: _}), do: nil
 
   def update_news(_, %{id: news_id} = params, %{context: %{current_user: current_user}}) do
     params = Map.merge(params, %{user_id: current_user.account})

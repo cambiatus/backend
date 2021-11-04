@@ -237,7 +237,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Absinthe.Subscription.publish(
       CambiatusWeb.Endpoint,
       news,
-      highlighted_news_change: community_id
+      highlighted_news: community_id
     )
   end
 end
