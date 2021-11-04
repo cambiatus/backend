@@ -688,7 +688,17 @@ defmodule Cambiatus.Commune do
     community_id
     |> get_community
     |> check_user_authorization(current_user)
-    |> do_set_highlighted_news(news_id)
+    |> case do
+      {:error, error} ->
+        {:error, error}
+
+      {:ok, community} ->
+        if is_nil(news_id) || Social.news_from_community?(news_id, community.symbol) do
+          update_community(community, %{highlighted_news_id: news_id})
+        else
+          {:error, "News does not belong to community"}
+        end
+    end
   end
 
   defp check_user_authorization({:error, _} = error, _), do: error
@@ -700,16 +710,6 @@ defmodule Cambiatus.Commune do
       community_response
     else
       {:error, "Unauthorized"}
-    end
-  end
-
-  defp do_set_highlighted_news({:error, _} = error, _), do: error
-
-  defp do_set_highlighted_news({:ok, community}, news_id) do
-    if news_id == nil || Social.news_from_community?(news_id, community.symbol) do
-      update_community(community, %{highlighted_news_id: news_id})
-    else
-      {:error, "News does not belong to community"}
     end
   end
 

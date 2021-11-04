@@ -28,7 +28,9 @@ defmodule Cambiatus.Social do
   def get_news(news_id), do: Repo.get(News, news_id)
 
   def create_news(attrs \\ %{}) do
-    do_create_news(attrs)
+    %News{}
+    |> News.changeset(attrs)
+    |> Repo.insert()
     |> case do
       {:ok, news} ->
         handle_highlighted_news(news)
@@ -39,16 +41,10 @@ defmodule Cambiatus.Social do
     end
   end
 
-  defp do_create_news(attrs) do
-    %News{}
-    |> News.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  defp handle_highlighted_news(%News{scheduling: nil} = news),
+  def handle_highlighted_news(%News{scheduling: nil} = news),
     do: Commune.set_highlighted_news(news.community_id, news.id)
 
-  defp handle_highlighted_news(%News{} = news) do
+  def handle_highlighted_news(%News{} = news) do
     %{news_id: news.id, news_scheduling: news.scheduling}
     |> ScheduledNewsWorker.new(scheduled_at: news.scheduling)
     |> Oban.insert()
