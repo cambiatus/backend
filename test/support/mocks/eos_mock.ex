@@ -25,4 +25,8 @@ defmodule Cambiatus.EosMock do
 
   def cambiatus_community, do: @cambiatus_community
   def cambiatus_account, do: @cambiatus_account
+
+  def get_public_key(_), do: {:ok, "EOS123tes123"}
+
+  def verify_sign(_, _, _), do: {:ok, true}
 end

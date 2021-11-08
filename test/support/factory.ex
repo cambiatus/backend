@@ -9,7 +9,11 @@ defmodule Cambiatus.Factory do
 
   alias Cambiatus.Repo
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Auth.Invitation
+
+  alias Cambiatus.Auth.{
+    Invitation,
+    Request
+  }
 
   alias Cambiatus.Commune.{
     Action,
@@ -352,6 +356,13 @@ defmodule Cambiatus.Factory do
       payment_method: sequence(:payment_method, [:paypal, :bitcoin, :ethereum, :eos]),
       status: sequence(:status, [:created, :captured, :approved, :rejected, :failed]),
       community: build(:community),
+      user: build(:user)
+    }
+  end
+
+  def request_factory() do
+    %Request{
+      phrase: "test",
       user: build(:user)
     }
   end

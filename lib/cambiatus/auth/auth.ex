@@ -5,7 +5,6 @@ defmodule Cambiatus.Auth do
 
   alias Cambiatus.Auth.{Invitation, InvitationId, Request}
   alias Cambiatus.{Accounts, Accounts.User, Commune.Network, Repo}
-  alias CambiatusWeb.AuthToken
 
   @doc """
   Returns the list of invitations.
@@ -158,13 +157,13 @@ defmodule Cambiatus.Auth do
 
   ##Examples
 
-      iex> create_request(account, domain)
+      iex> create_request(account)
       {:ok, %Request{}}
 
-      iex> create_request(invalid_account, domain)
+      iex> create_request(invalid_account)
       {:error, "Could not find user"}
   """
-  def create_request(account, domain) do
+  def create_request(account) do
     account
     |> Accounts.get_user()
     |> case do
@@ -174,13 +173,20 @@ defmodule Cambiatus.Auth do
       user ->
         params = %{
           user_id: user.account,
-          domain: domain,
           phrase: :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64)
         }
 
-        %Request{}
+        get_request(user.account)
+        |> case do
+          nil -> %Request{}
+          request -> request
+        end
         |> Request.changeset(params)
-        |> Repo.insert()
+        |> Repo.insert_or_update()
     end
+  end
+
+  def get_request(account) do
+    Repo.get_by(Request, user_id: account)
   end
 end

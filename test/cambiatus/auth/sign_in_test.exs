@@ -17,6 +17,7 @@ defmodule Cambiatus.Auth.SignInTest do
 
     test "successful sign in", %{community: community} do
       user = insert(:user)
+      insert(:request, user: user)
 
       assert {:ok, u} = SignIn.sign_in(user.account, "pass", domain: community.subdomain.name)
       assert u.account == user.account
@@ -31,6 +32,7 @@ defmodule Cambiatus.Auth.SignInTest do
       community = insert(:community)
       user = insert(:user)
       another_user = insert(:user)
+      insert(:request, user: another_user)
       invitation = insert(:invitation, %{community: community, creator: user})
       invitation_id = InvitationId.encode(invitation.id)
 

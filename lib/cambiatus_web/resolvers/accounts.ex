@@ -61,8 +61,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
      details: Cambiatus.Error.from("Error")}
   end
 
-  def gen_auth(_, %{account: account}, %{context: %{domain: domain}}) do
-    case Auth.create_request(account, domain) do
+  def gen_auth(_, %{account: account}, _) do
+    case Auth.create_request(account) do
       {:error, reason} ->
         {:error, message: "Failed to create request", details: Cambiatus.Error.from(reason)}
 
