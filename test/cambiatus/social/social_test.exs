@@ -34,7 +34,7 @@ defmodule Cambiatus.SocialTest do
 
       assert_enqueued(
         worker: ScheduledNewsWorker,
-        args: %{news_id: news.id, news_scheduling: news.scheduling}
+        args: %{news_id: news.id}
       )
     end
 

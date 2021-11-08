@@ -45,8 +45,8 @@ defmodule Cambiatus.Social do
     do: Commune.set_highlighted_news(news.community_id, news.id)
 
   def handle_highlighted_news(%News{} = news) do
-    %{news_id: news.id, news_scheduling: news.scheduling}
-    |> ScheduledNewsWorker.new(scheduled_at: news.scheduling)
+    %{news_id: news.id}
+    |> ScheduledNewsWorker.new(scheduled_at: news.scheduling, replace: [:scheduled_at])
     |> Oban.insert()
   end
 
@@ -68,8 +68,9 @@ defmodule Cambiatus.Social do
     multi
     |> Oban.insert(
       :scheduling_worker,
-      ScheduledNewsWorker.new(%{news_id: news_id, news_scheduling: scheduling},
-        scheduled_at: scheduling
+      ScheduledNewsWorker.new(%{news_id: news_id},
+        scheduled_at: scheduling,
+        replace: [:scheduled_at]
       )
     )
   end

@@ -213,7 +213,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
         versions {
           title
         }
-        news_receipt {
+        receipt {
           reactions
         }
       }
@@ -237,7 +237,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
                    %{"title" => "Hello World"},
                    %{"title" => "Hi World"}
                  ],
-                 "news_receipt" => %{
+                 "receipt" => %{
                    "reactions" => ["ROCKET"]
                  }
                }
@@ -257,7 +257,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
     query = """
     query{
       news(newsID: #{news.id}){
-        news_receipt {
+        receipt {
           reactions
         }
       }
@@ -270,7 +270,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
     assert %{
              "data" => %{
                "news" => %{
-                 "news_receipt" => nil
+                 "receipt" => nil
                }
              }
            } = response
