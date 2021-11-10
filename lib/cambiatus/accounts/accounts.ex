@@ -25,7 +25,7 @@ defmodule Cambiatus.Accounts do
   def query(queryable, _params), do: queryable
 
   def verify_pass(account, password) do
-    with %Request{phrase: phrase} <- Auth.get_request(account),
+    with %Request{phrase: phrase} <- Auth.get_valid_request(account),
          {:ok, public_key} <- @contract.get_public_key(account),
          {:ok, true} <- @contract.verify_sign(password, phrase, public_key) do
       true

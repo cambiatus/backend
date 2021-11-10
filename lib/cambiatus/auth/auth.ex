@@ -190,6 +190,19 @@ defmodule Cambiatus.Auth do
     Repo.get_by(Request, user_id: account)
   end
 
+  def get_valid_request(account) do
+    Request
+    |> Request.from_user(account)
+    |> Request.not_expired()
+    |> Repo.one()
+  end
+
+  def delete_expired_requests do
+    Request
+    |> Request.expired()
+    |> Repo.delete_all()
+  end
+
   def create_session(account, user_agent, token) do
     params = %{
       user_id: account,

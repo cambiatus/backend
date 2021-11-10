@@ -5,6 +5,7 @@ defmodule Cambiatus.Auth.Request do
 
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
   alias Cambiatus.Accounts.User
 
   schema "auth_requests" do
@@ -23,5 +24,17 @@ defmodule Cambiatus.Auth.Request do
     |> validate_required(@fields)
     |> foreign_key_constraint(:user_id)
     |> unique_constraint(:user_id)
+  end
+
+  def not_expired(query \\ Request) do
+    where(query, [r], datetime_add(r.updated_at, 30, "second") >= ^NaiveDateTime.utc_now())
+  end
+
+  def from_user(query \\ Request, account) do
+    where(query, [r], r.user_id == ^account)
+  end
+
+  def expired(query \\ Request) do
+    where(query, [r], datetime_add(r.updated_at, 30, "second") <= ^NaiveDateTime.utc_now())
   end
 end

@@ -47,7 +47,10 @@ config :sentry,
 
 config :cambiatus, Oban,
   repo: Cambiatus.Repo,
-  queues: [contribution_paypal: 50]
+  queues: [contribution_paypal: 50],
+  plugins: [
+    {Oban.Plugins.Cron, crontab: [{"@daily", Cambiatus.Workers.RemoveRequestsWorker}]}
+  ]
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
