@@ -362,8 +362,9 @@ defmodule Cambiatus.Factory do
 
   def request_factory() do
     %Request{
-      phrase: "test",
-      user: build(:user)
+      phrase: sequence(:phrase, &"#{&1}teste"),
+      user: build(:user),
+      ip_address: "127.0.0.1"
     }
   end
 end
