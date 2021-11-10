@@ -35,23 +35,31 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, _) do
+  def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, %{
+        context: %{user_agent: user_agent}
+      }) do
     case SignIn.sign_in(account, password, invitation_id: invitation_id) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
-        {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
+        token = CambiatusWeb.AuthToken.sign(user)
+        Cambiatus.Auth.create_session(account, user_agent, token)
+        {:ok, %{user: user, token: token}}
     end
   end
 
-  def sign_in(_, %{account: account, password: password}, %{context: %{domain: domain}}) do
+  def sign_in(_, %{account: account, password: password}, %{
+        context: %{domain: domain, user_agent: user_agent}
+      }) do
     case SignIn.sign_in(account, password, domain: domain) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
-        {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
+        token = CambiatusWeb.AuthToken.sign(user)
+        Cambiatus.Auth.create_session(account, user_agent, token)
+        {:ok, %{user: user, token: token}}
     end
   end
 

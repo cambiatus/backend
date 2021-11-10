@@ -3,7 +3,7 @@ defmodule Cambiatus.Auth do
 
   import Ecto.Query
 
-  alias Cambiatus.Auth.{Invitation, InvitationId, Request}
+  alias Cambiatus.Auth.{Invitation, InvitationId, Request, Session}
   alias Cambiatus.{Accounts, Accounts.User, Commune.Network, Repo}
 
   @doc """
@@ -188,5 +188,17 @@ defmodule Cambiatus.Auth do
 
   def get_request(account) do
     Repo.get_by(Request, user_id: account)
+  end
+
+  def create_session(account, user_agent, token) do
+    params = %{
+      user_id: account,
+      user_agent: user_agent,
+      token: token
+    }
+
+    %Session{}
+    |> Session.changeset(params)
+    |> Repo.insert()
   end
 end
