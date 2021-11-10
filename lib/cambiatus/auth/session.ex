@@ -16,7 +16,7 @@ defmodule Cambiatus.Auth.Session do
     timestamps()
   end
 
-  @fields ~w(user_agent token user_id)a
+  @fields ~w(user_agent ip_address token user_id)a
 
   def changeset(%__MODULE__{} = model, params \\ %{}) do
     model

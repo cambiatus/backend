@@ -163,7 +163,7 @@ defmodule Cambiatus.Auth do
       iex> create_request(invalid_account)
       {:error, "Could not find user"}
   """
-  def create_request(account) do
+  def create_request(account, ip_address) do
     account
     |> Accounts.get_user()
     |> case do
@@ -173,7 +173,8 @@ defmodule Cambiatus.Auth do
       user ->
         params = %{
           user_id: user.account,
-          phrase: :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64)
+          phrase: :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64),
+          ip_address: ip_address
         }
 
         get_request(user.account)
@@ -203,13 +204,7 @@ defmodule Cambiatus.Auth do
     |> Repo.delete_all()
   end
 
-  def create_session(account, user_agent, token) do
-    params = %{
-      user_id: account,
-      user_agent: user_agent,
-      token: token
-    }
-
+  def create_session(params) do
     %Session{}
     |> Session.changeset(params)
     |> Repo.insert()

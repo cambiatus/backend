@@ -36,7 +36,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, %{
-        context: %{user_agent: user_agent}
+        context: %{user_agent: user_agent, ip_address: ip_address}
       }) do
     case SignIn.sign_in(account, password, invitation_id: invitation_id) do
       {:error, reason} ->
@@ -44,13 +44,21 @@ defmodule CambiatusWeb.Resolvers.Accounts do
 
       {:ok, user} ->
         token = CambiatusWeb.AuthToken.sign(user)
-        Cambiatus.Auth.create_session(account, user_agent, token)
+
+        params = %{
+          user_id: account,
+          user_agent: user_agent,
+          token: token,
+          ip_address: ip_address
+        }
+
+        Cambiatus.Auth.create_session(params)
         {:ok, %{user: user, token: token}}
     end
   end
 
   def sign_in(_, %{account: account, password: password}, %{
-        context: %{domain: domain, user_agent: user_agent}
+        context: %{domain: domain, user_agent: user_agent, ip_address: ip_address}
       }) do
     case SignIn.sign_in(account, password, domain: domain) do
       {:error, reason} ->
@@ -58,7 +66,15 @@ defmodule CambiatusWeb.Resolvers.Accounts do
 
       {:ok, user} ->
         token = CambiatusWeb.AuthToken.sign(user)
-        Cambiatus.Auth.create_session(account, user_agent, token)
+
+        params = %{
+          user_id: account,
+          user_agent: user_agent,
+          token: token,
+          ip_address: ip_address
+        }
+
+        Cambiatus.Auth.create_session(params)
         {:ok, %{user: user, token: token}}
     end
   end
@@ -69,8 +85,8 @@ defmodule CambiatusWeb.Resolvers.Accounts do
      details: Cambiatus.Error.from("Error")}
   end
 
-  def gen_auth(_, %{account: account}, _) do
-    case Auth.create_request(account) do
+  def gen_auth(_, %{account: account}, %{context: %{ip_address: ip_address}}) do
+    case Auth.create_request(account, ip_address) do
       {:error, reason} ->
         {:error, message: "Failed to create request", details: Cambiatus.Error.from(reason)}
 

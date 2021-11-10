@@ -16,7 +16,7 @@ defmodule Cambiatus.Auth.Request do
     timestamps()
   end
 
-  @fields ~w(phrase user_id)a
+  @fields ~w(phrase ip_address user_id)a
 
   def changeset(%__MODULE__{} = model, params \\ %{}) do
     model

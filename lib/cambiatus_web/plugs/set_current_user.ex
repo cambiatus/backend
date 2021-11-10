@@ -17,6 +17,7 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
     context =
       set_current_user(conn)
       |> set_user_agent(conn)
+      |> set_ip_address(conn)
 
     Absinthe.Plug.put_options(conn, context: context)
   end
@@ -36,5 +37,10 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
       [agent] -> Map.put(context, :user_agent, agent)
       _ -> context
     end
+  end
+
+  def set_ip_address(context, conn) do
+    ip = conn.remote_ip |> Tuple.to_list() |> Enum.join(".")
+    Map.put(context, :ip_address, ip)
   end
 end
