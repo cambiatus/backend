@@ -83,7 +83,7 @@ defmodule Cambiatus.Mixfile do
       {:web_push_encryption, "~> 0.3.0"},
 
       # Background processing
-      {:oban, "~> 2.8"},
+      {:oban, "~> 2.9"},
 
       # Dev only
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},

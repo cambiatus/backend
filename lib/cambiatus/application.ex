@@ -5,7 +5,7 @@ defmodule Cambiatus.Application do
 
   require Logger
 
-  alias Cambiatus.{Repo, DbListener, PubSub}
+  alias Cambiatus.{DbListener, PubSub, Repo}
   alias CambiatusWeb.Endpoint
 
   def start(_type, _args) do

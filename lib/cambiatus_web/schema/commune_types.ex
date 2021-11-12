@@ -47,7 +47,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required] A single claim"
     field :claim, non_null(:claim) do
-      arg(:input, non_null(:claim_input))
+      arg(:id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.get_claim/3)
@@ -55,7 +55,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required] A single objective"
     field :objective, :objective do
-      arg(:input, non_null(:objective_input))
+      arg(:id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
       resolve(&Commune.get_objective/3)
@@ -119,6 +119,18 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
         {:ok, transfer}
       end)
     end
+
+    @desc "[Auth required] Subscribe to highlighted_news change"
+    field :highlighted_news, :news do
+      arg(:community_id, non_null(:string))
+
+      config(fn args, %{context: context} ->
+        case context do
+          %{current_user: _} -> {:ok, topic: args.community_id}
+          _ -> {:error, "Please login first"}
+        end
+      end)
+    end
   end
 
   @desc "Community mutations"
@@ -139,6 +151,24 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       middleware(Middleware.Authenticate)
       resolve(&Commune.add_photos/3)
     end
+
+    @desc "[Auth required - Admin only] Set has_news flag of community"
+    field :has_news, :community do
+      arg(:community_id, non_null(:string))
+      arg(:has_news, non_null(:boolean))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Commune.set_has_news/3)
+    end
+
+    @desc "[Auth required - Admin only] Set highlighted news of community. If news_id is not present, sets highlighted as nil"
+    field :highlighted_news, :community do
+      arg(:community_id, non_null(:string))
+      arg(:news_id, :integer)
+
+      middleware(Middleware.Authenticate)
+      resolve(&Commune.set_highlighted_news/3)
+    end
   end
 
   @desc "Input to complete an objective"
@@ -157,21 +187,11 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:symbol, non_null(:string))
   end
 
-  @desc "Input object to collect a single Objective"
-  input_object :objective_input do
-    field(:id, non_null(:integer))
-  end
-
   @desc "Params for filtering Claims"
   input_object(:claims_filter) do
     field(:claimer, :string)
     field(:status, :string)
     field(:direction, :direction)
-  end
-
-  @desc "Input to collect a claim"
-  input_object :claim_input do
-    field(:id, non_null(:integer))
   end
 
   @desc "Input to collect a user's transfers"
@@ -240,6 +260,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:has_shop, non_null(:boolean))
     field(:has_kyc, non_null(:boolean))
 
+    field(:has_news, non_null(:boolean))
+    field(:highlighted_news, :news, resolve: dataloader(Cambiatus.Social))
+
     connection field(:transfers, node_type: :transfer) do
       resolve(&Commune.get_transfers/3)
     end
@@ -254,6 +277,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(Cambiatus.Commune))
     field(:members, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Commune))
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
+    field(:news, non_null(list_of(non_null(:news))), resolve: dataloader(Cambiatus.Social))
 
     @desc "List of contributions this community received"
     field(:contributions, non_null(list_of(non_null(:contribution)))) do

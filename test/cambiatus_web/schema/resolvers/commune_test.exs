@@ -887,7 +887,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       query = """
       query {
-        claim(input:{id: #{claim.id}}) {
+        claim(id: #{claim.id}) {
           id
           createdAt
         }
@@ -1010,6 +1010,126 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       assert(invite.creator_id == found_invite["creator"]["account"])
       assert(invite.community_id == found_invite["communityPreview"]["symbol"])
+    end
+
+    test "updates community has_news flag" do
+      user = insert(:user)
+
+      community =
+        insert(:community, %{creator: user.account, has_news: false, symbol: "symbol-0"})
+
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      mutation {
+        hasNews(communityId: "#{community.symbol}", hasNews: true){
+          symbol
+          hasNews
+        }
+      }
+      """
+
+      res = post(conn, "/api/graph", query: query)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "hasNews" => %{
+                   "hasNews" => true,
+                   "symbol" => "symbol-0"
+                 }
+               }
+             } = response
+
+      assert Repo.get!(Community, community.symbol).has_news == true
+    end
+
+    test "updates highlighted news of community" do
+      user = insert(:user)
+
+      community =
+        insert(:community, %{
+          creator: user.account,
+          has_news: true,
+          symbol: "symbol-0",
+          highlighted_news: nil
+        })
+
+      news_id = insert(:news, %{community: community, user: user}).id
+
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      mutation {
+        highlightedNews(communityId: "#{community.symbol}", newsID: #{news_id}){
+          symbol
+          highlighted_news {
+            id
+          }
+        }
+      }
+      """
+
+      res = post(conn, "/api/graph", query: query)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "highlightedNews" => %{
+                   "symbol" => "symbol-0",
+                   "highlighted_news" => %{
+                     "id" => ^news_id
+                   }
+                 }
+               }
+             } = response
+
+      assert Repo.get!(Community, community.symbol).highlighted_news_id == news_id
+    end
+
+    test "removes highlighted news of community" do
+      user = insert(:user)
+
+      community =
+        insert(:community, %{
+          creator: user.account,
+          has_news: true,
+          symbol: "symbol-0"
+        })
+
+      news = insert(:news, %{community: community, user: user})
+      Community.changeset(community, %{highlighted_news_id: news.id}) |> Repo.update!()
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      mutation {
+        highlightedNews(communityId: "#{community.symbol}"){
+          symbol
+          highlighted_news {
+            id
+          }
+        }
+      }
+      """
+
+      assert Repo.get!(Community, community.symbol).highlighted_news_id == news.id
+
+      res = post(conn, "/api/graph", query: query)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "highlightedNews" => %{
+                   "symbol" => "symbol-0",
+                   "highlighted_news" => nil
+                 }
+               }
+             } = response
+
+      assert Repo.get!(Community, community.symbol).highlighted_news_id == nil
     end
   end
 end

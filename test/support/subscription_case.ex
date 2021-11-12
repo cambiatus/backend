@@ -5,6 +5,7 @@ defmodule CambiatusWeb.SubscriptionCase do
 
   use ExUnit.CaseTemplate
   import Phoenix.ChannelTest
+  import Cambiatus.Factory
 
   @endpoint CambiatusWeb.Endpoint
   alias CambiatusWeb.UserSocket
@@ -30,7 +31,16 @@ defmodule CambiatusWeb.SubscriptionCase do
       Ecto.Adapters.SQL.Sandbox.mode(Cambiatus.Repo, {:shared, self()})
     end
 
-    {:ok, socket} = Phoenix.ChannelTest.connect(UserSocket, %{})
+    params =
+      if tags[:authenticated_socket] do
+        user = insert(:user)
+        token = CambiatusWeb.AuthToken.sign(user)
+        %{"Authorization" => "Bearer " <> token}
+      else
+        %{}
+      end
+
+    {:ok, socket} = Phoenix.ChannelTest.connect(UserSocket, params)
 
     {:ok, socket} = Absinthe.Phoenix.SubscriptionTest.join_absinthe(socket)
 
