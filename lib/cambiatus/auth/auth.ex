@@ -209,4 +209,10 @@ defmodule Cambiatus.Auth do
     |> Session.changeset(params)
     |> Repo.insert()
   end
+
+  def delete_request(account) do
+    Request
+    |> Request.from_user(account)
+    |> Repo.delete_all()
+  end
 end

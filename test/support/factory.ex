@@ -7,7 +7,6 @@ defmodule Cambiatus.Factory do
 
   import Ecto.Query
 
-  alias Cambiatus.Repo
   alias Cambiatus.Accounts.User
 
   alias Cambiatus.Auth.{
@@ -18,23 +17,23 @@ defmodule Cambiatus.Factory do
   alias Cambiatus.Commune.{
     Action,
     Check,
-    Community,
     Claim,
-    Network,
-    Subdomain,
+    Community,
     Mint,
+    Network,
     Objective,
+    Subdomain,
     Transfer,
     Validator
   }
 
   alias Cambiatus.Kyc.{
-    KycData,
     Address,
-    Country,
-    State,
     City,
-    Neighborhood
+    Country,
+    KycData,
+    Neighborhood,
+    State
   }
 
   alias Cambiatus.Notifications.{
@@ -43,7 +42,14 @@ defmodule Cambiatus.Factory do
   }
 
   alias Cambiatus.Payments.Contribution
+  alias Cambiatus.Repo
   alias Cambiatus.Shop.Product
+
+  alias Cambiatus.Social.{
+    News,
+    NewsReceipt,
+    NewsVersion
+  }
 
   def user_factory do
     %User{
@@ -131,7 +137,9 @@ defmodule Cambiatus.Factory do
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
       created_at: NaiveDateTime.utc_now(),
       subdomain: build(:subdomain),
-      auto_invite: true
+      auto_invite: true,
+      has_news: false,
+      highlighted_news: nil
     }
   end
 
@@ -279,7 +287,7 @@ defmodule Cambiatus.Factory do
     }
   end
 
-  def address_factory() do
+  def address_factory do
     country = Repo.one(Country)
     province = build(:existing_state, %{country: country})
     canton = build(:existing_city, %{state: province})
@@ -297,25 +305,25 @@ defmodule Cambiatus.Factory do
     }
   end
 
-  def country_factory() do
+  def country_factory do
     %Country{
       name: sequence(:country, &"Country number #{&1}")
     }
   end
 
-  def state_factory() do
+  def state_factory do
     %State{
       name: sequence(:name, &"State #{&1}")
     }
   end
 
-  def city_factory() do
+  def city_factory do
     %City{
       name: sequence(:name, &"City #{&1}")
     }
   end
 
-  def neighborhood_factory() do
+  def neighborhood_factory do
     %Neighborhood{name: sequence(:name, &"Nice Neighborhood #{&1}")}
   end
 
@@ -343,13 +351,39 @@ defmodule Cambiatus.Factory do
     |> Enum.random()
   end
 
-  def subdomain_factory() do
+  def subdomain_factory do
     %Subdomain{
       name: sequence(:name, &"#{&1}.cambiatus.io")
     }
   end
 
-  def contributions_factory() do
+  def news_factory do
+    %News{
+      title: "News title",
+      description: "News description",
+      community: build(:community, has_news: true),
+      user: build(:user)
+    }
+  end
+
+  def news_receipt_factory do
+    %NewsReceipt{
+      user: build(:user),
+      news: build(:news),
+      reactions: [:rocket, :red_heart]
+    }
+  end
+
+  def news_version_factory do
+    %NewsVersion{
+      title: "News title",
+      description: "News description",
+      news: build(:news),
+      user: build(:user)
+    }
+  end
+
+  def contributions_factory do
     %Contribution{
       amount: sequence(:amount, &"#{&1}"),
       currency: sequence(:currency, [:USD, :BRL, :CRC, :BTC, :ETH, :EOS]),

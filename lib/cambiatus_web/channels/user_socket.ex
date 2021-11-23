@@ -1,6 +1,9 @@
 defmodule CambiatusWeb.UserSocket do
   use Phoenix.Socket
   use Absinthe.Phoenix.Socket, schema: CambiatusWeb.Schema
+
+  alias CambiatusWeb.AuthToken
+
   ## Channels
   # channel "room:*", EatYourDayWeb.RoomChannel
 
@@ -15,8 +18,25 @@ defmodule CambiatusWeb.UserSocket do
   #
   # See `Phoenix.Token` documentation for examples in
   # performing token verification on connect.
-  def connect(_params, socket, _connect_info) do
+
+  def connect(params, socket, _) do
+    context = build_context(params)
+    socket = Absinthe.Phoenix.Socket.put_options(socket, context: context)
+
     {:ok, socket}
+  end
+
+  defp build_context(%{"Authorization" => "Bearer " <> token}) do
+    with {:ok, %{id: account}} <- AuthToken.verify(token),
+         %{} = user <- Cambiatus.Accounts.get_user(account) do
+      %{current_user: user}
+    else
+      _ -> %{}
+    end
+  end
+
+  defp build_context(_) do
+    %{}
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:

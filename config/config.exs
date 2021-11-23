@@ -47,7 +47,10 @@ config :sentry,
 
 config :cambiatus, Oban,
   repo: Cambiatus.Repo,
-  queues: [contribution_paypal: 50],
+  queues: [
+    contribution_paypal: 50,
+    scheduled_news: 10
+  ],
   plugins: [
     {Oban.Plugins.Cron, crontab: [{"@daily", Cambiatus.Workers.RemoveRequestsWorker}]}
   ]

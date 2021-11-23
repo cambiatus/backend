@@ -113,9 +113,9 @@ defmodule Cambiatus.AuthTest do
       insert(:request, updated_at: DateTime.add(DateTime.utc_now(), -31, :second))
       insert(:request, updated_at: DateTime.add(DateTime.utc_now(), -31, :second))
 
-      assert 4 == Auth.Request |> Repo.all() |> Enum.count()
+      assert 4 == Request |> Repo.all() |> Enum.count()
       assert {3, nil} == Auth.delete_expired_requests()
-      assert 1 == Auth.Request |> Repo.all() |> Enum.count()
+      assert 1 == Request |> Repo.all() |> Enum.count()
     end
   end
 end

@@ -5,7 +5,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
   """
   alias Absinthe.Relay.Connection
 
-  alias Cambiatus.{Auth, Commune, Shop}
+  alias Cambiatus.{Auth, Commune, Error, Shop, Social}
   alias Cambiatus.Commune.{Claim, Community}
 
   def search(_, %{community_id: symbol}, _) do
@@ -24,7 +24,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
   Fetches a claim
   """
   @spec get_claim(map(), map(), map()) :: {:ok, Claim.t()} | {:error, term}
-  def get_claim(_, %{input: %{id: id}}, _) do
+  def get_claim(_, %{id: id}, _) do
     Commune.get_claim(id)
   end
 
@@ -104,7 +104,7 @@ defmodule CambiatusWeb.Resolvers.Commune do
   Fetch a objective
   """
   @spec get_objective(map(), map(), map()) :: {:ok, map()} | {:error, term}
-  def get_objective(_, %{input: params}, _) do
+  def get_objective(_, params, _) do
     Commune.get_objective(params.id)
   end
 
@@ -204,5 +204,40 @@ defmodule CambiatusWeb.Resolvers.Commune do
 
   def add_photos(_, %{symbol: symbol, urls: urls}, %{context: %{current_user: current_user}}) do
     Commune.add_photos(current_user, symbol, urls)
+  end
+
+  def set_has_news(_, %{community_id: community_id, has_news: has_news}, %{
+        context: %{current_user: current_user}
+      }) do
+    Commune.set_has_news(current_user, community_id, has_news)
+  end
+
+  def set_highlighted_news(_, %{community_id: community_id} = args, %{
+        context: %{current_user: current_user}
+      }) do
+    news_id = Map.get(args, :news_id)
+
+    Commune.set_highlighted_news(community_id, news_id, current_user)
+    |> case do
+      {:ok, community} ->
+        publish_highlighted_news_change(community.highlighted_news_id, community.symbol)
+        {:ok, community}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, message: "Could not set highlighted news", details: Error.from(changeset)}
+
+      {:error, reason} ->
+        {:error, message: "Could not set highlighted news", details: reason}
+    end
+  end
+
+  defp publish_highlighted_news_change(news_id, community_id) do
+    news = if is_nil(news_id), do: nil, else: Social.get_news(news_id)
+
+    Absinthe.Subscription.publish(
+      CambiatusWeb.Endpoint,
+      news,
+      highlighted_news: community_id
+    )
   end
 end

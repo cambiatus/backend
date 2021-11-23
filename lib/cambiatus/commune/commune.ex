@@ -6,19 +6,19 @@ defmodule Cambiatus.Commune do
   import Ecto.Query
 
   alias Absinthe.Relay.Connection
-  alias Cambiatus.{Accounts.User, Repo}
+  alias Cambiatus.{Accounts.User, Repo, Social}
 
   alias Cambiatus.Commune.{
     Action,
     Check,
+    Claim,
     Community,
     CommunityPhotos,
-    Claim,
     Network,
     Objective,
+    Subdomain,
     Transfer,
-    Validator,
-    Subdomain
+    Validator
   }
 
   @spec data :: Dataloader.Ecto.t()
@@ -415,6 +415,15 @@ defmodule Cambiatus.Commune do
     |> Enum.any?()
   end
 
+  def is_community_admin?(community_id, account) do
+    Community
+    |> Repo.get(community_id)
+    |> case do
+      nil -> false
+      community -> community.creator == account
+    end
+  end
+
   def community_validators(community_id) do
     query =
       from(u in User,
@@ -672,6 +681,49 @@ defmodule Cambiatus.Commune do
 
       found ->
         {:ok, found}
+    end
+  end
+
+  def set_highlighted_news(community_id, news_id, current_user \\ nil) do
+    community_id
+    |> get_community
+    |> check_user_authorization(current_user)
+    |> case do
+      {:error, error} ->
+        {:error, error}
+
+      {:ok, community} ->
+        if is_nil(news_id) || Social.news_from_community?(news_id, community.symbol) do
+          update_community(community, %{highlighted_news_id: news_id})
+        else
+          {:error, "News does not belong to community"}
+        end
+    end
+  end
+
+  defp check_user_authorization({:error, _} = error, _), do: error
+
+  defp check_user_authorization({:ok, _} = community, nil), do: community
+
+  defp check_user_authorization({:ok, community} = community_response, current_user) do
+    if community.creator == current_user.account do
+      community_response
+    else
+      {:error, "Unauthorized"}
+    end
+  end
+
+  def set_has_news(current_user, community_id, has_news) do
+    case get_community(community_id) do
+      {:ok, community} ->
+        if community.creator == current_user.account do
+          update_community(community, %{has_news: has_news})
+        else
+          {:error, "Unauthorized"}
+        end
+
+      {:error, _} = error ->
+        error
     end
   end
 end

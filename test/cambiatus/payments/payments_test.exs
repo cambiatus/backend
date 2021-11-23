@@ -8,7 +8,9 @@ defmodule Cambiatus.PaymentsTest do
       contribution = insert(:contributions)
       {:ok, found_contributions} = Payments.list_contributions()
 
-      assert [contribution] == found_contributions |> Repo.preload([:user, community: :subdomain])
+      assert [contribution] ==
+               found_contributions
+               |> Repo.preload([:user, community: [:subdomain, :highlighted_news]])
     end
   end
 end

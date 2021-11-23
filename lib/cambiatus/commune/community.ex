@@ -3,18 +3,18 @@ defmodule Cambiatus.Commune.Community do
 
   alias Cambiatus.Commune.{
     Community,
-    Network,
+    CommunityPhotos,
     Mint,
+    Network,
     Objective,
-    Transfer,
     Subdomain,
-    CommunityPhotos
+    Transfer
   }
 
   alias Cambiatus.Payments.{Contribution, ContributionConfiguration}
-
-  alias Cambiatus.Shop.Product
   alias Cambiatus.Repo
+  alias Cambiatus.Shop.Product
+  alias Cambiatus.Social.News
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -50,11 +50,16 @@ defmodule Cambiatus.Commune.Community do
     field(:has_shop, :boolean, default: true)
     field(:has_kyc, :boolean, default: false)
 
+    # Social
+    field(:has_news, :boolean, default: false)
+    belongs_to(:highlighted_news, News)
+
     belongs_to(:subdomain, Subdomain)
     belongs_to(:contribution_configuration, ContributionConfiguration)
 
     has_many(:products, Product, foreign_key: :community_id)
     has_many(:orders, through: [:products, :orders])
+    has_many(:news, News, foreign_key: :community_id)
     has_many(:transfers, Transfer, foreign_key: :community_id)
     has_many(:network, Network, foreign_key: :community_id)
     has_many(:members, through: [:network, :account])
@@ -65,9 +70,9 @@ defmodule Cambiatus.Commune.Community do
     has_many(:contributions, Contribution, foreign_key: :community_id)
   end
 
-  @required_fields ~w(symbol creator name description inviter_reward invited_reward)a
+  @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a
   @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id website
-   created_block created_tx created_at created_eos_account)a
+   created_block created_tx created_at created_eos_account highlighted_news_id)a
 
   @doc false
   def changeset(%Community{} = community, attrs) do

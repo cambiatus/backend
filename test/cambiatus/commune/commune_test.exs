@@ -80,6 +80,108 @@ defmodule Cambiatus.CommuneTest do
 
       assert {:ok, _} = Commune.get_action(action.id)
     end
+
+    test "set_highlighted_news/3 sets the news as highlighted in community without current_user" do
+      community = insert(:community)
+      news = insert(:news, community: community)
+
+      assert community.highlighted_news_id == nil
+
+      assert {:ok, %Community{} = community} =
+               Commune.set_highlighted_news(community.symbol, news.id)
+
+      assert community.highlighted_news_id == news.id
+    end
+
+    test "set_highlighted_news/3 sets the news as highlighted in community with current_user" do
+      user = insert(:user)
+
+      community =
+        insert(:community, creator: user.account, has_news: true, highlighted_news_id: nil)
+
+      news = insert(:news, user: user, community: community)
+
+      assert community.highlighted_news_id == nil
+
+      assert {:ok, %Community{} = community} =
+               Commune.set_highlighted_news(community.symbol, news.id, user)
+
+      assert community.highlighted_news_id == news.id
+    end
+
+    test "set_highlighted_news/3 sets the news as highlighted in community with invalid current_user" do
+      another_user = insert(:user)
+      user = insert(:user)
+
+      community =
+        insert(:community, creator: user.account, has_news: true, highlighted_news_id: nil)
+
+      news = insert(:news, user: user, community: community)
+
+      assert {:error, "Unauthorized"} =
+               Commune.set_highlighted_news(community.symbol, news.id, another_user)
+
+      assert community.highlighted_news_id == nil
+    end
+
+    test "set_highlighted_news/3 sets the news as highlighted in community with invalid community" do
+      user = insert(:user)
+
+      community =
+        insert(:community,
+          creator: user.account,
+          has_news: true,
+          highlighted_news_id: nil,
+          symbol: "symbol-0"
+        )
+
+      news = insert(:news, user: user, community: community)
+
+      assert {:error, "No community exists with the symbol: invalid-1"} =
+               Commune.set_highlighted_news("invalid-1", news.id, user)
+    end
+
+    test "set_highlighted_news/3 sets the news as highlighted in community with news from another community" do
+      community =
+        insert(:community,
+          has_news: true,
+          highlighted_news_id: nil
+        )
+
+      another_community = insert(:community)
+
+      news = insert(:news, community: another_community)
+
+      assert {:error, "News does not belong to community"} =
+               Commune.set_highlighted_news(community.symbol, news.id)
+    end
+
+    test "set_has_news/3 sets community has_news flag" do
+      user = insert(:user)
+      community = insert(:community, creator: user.account, has_news: false)
+
+      response = Commune.set_has_news(user, community.symbol, true)
+
+      assert {:ok, %Community{has_news: true}} = response
+      assert Repo.get!(Community, community.symbol).has_news == true
+    end
+
+    test "set_has_news/3 returns unauthorized if user is not admin" do
+      user = insert(:user)
+      community = insert(:community, has_news: false)
+
+      response = Commune.set_has_news(user, community.symbol, true)
+
+      assert {:error, "Unauthorized"} == response
+    end
+
+    test "set_has_news/3 returns error if community is not found" do
+      user = insert(:user)
+
+      response = Commune.set_has_news(user, "any_community", true)
+
+      assert {:error, "No community exists with the symbol: any_community"} == response
+    end
   end
 
   describe "network" do
