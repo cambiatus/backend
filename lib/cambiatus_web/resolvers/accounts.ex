@@ -35,6 +35,18 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
+  def update_language(_, params, %{context: %{current_user: current_user}}) do
+    current_user
+    |> Accounts.update_user(params)
+    |> case do
+      {:ok, updated_user} ->
+        {:ok, updated_user}
+
+      {:error, changeset} ->
+        {:error, message: "Could not update user", details: Cambiatus.Error.from(changeset)}
+    end
+  end
+
   def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, _) do
     case SignIn.sign_in(account, password, invitation_id: invitation_id) do
       {:error, reason} ->

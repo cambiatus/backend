@@ -58,7 +58,11 @@ defmodule Cambiatus.Factory do
       avatar: sequence(:avatar, &"ava-#{&1}"),
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:created_tx, &"tx-#{&1}"),
-      created_eos_account: sequence(:created_eos_account, &"eos-acc-#{&1}")
+      created_eos_account: sequence(:created_eos_account, &"eos-acc-#{&1}"),
+      language: "en",
+      claim_notification: true,
+      transfer_notification: true,
+      digest: true
     }
   end
 
