@@ -1,0 +1,69 @@
+## "msgid"s in this file come from POT (.pot) files.
+##
+## Do not add, change, or remove "msgid"s manually here as
+## they're tied to the ones in the corresponding POT file
+## (with the same domain).
+##
+## Use "mix gettext.extract --merge" or "mix gettext.merge"
+## to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2\n"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/claim.html.eex:218
+msgid ", here is your reward"
+msgstr ", aqui está sua recompensa"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/claim.html.eex:401
+#: lib/cambiatus_web/templates/email/transfer.html.eex:476
+msgid "Cambiatus by Satisfied Vagabonds LLC"
+msgstr "Cambiatus por Satisfied Vagabonds LLC"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/transfer.html.eex:439
+msgid "Go to app"
+msgstr "Vá para o app"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/claim.html.eex:208
+msgid "Hello"
+msgstr "Olá"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/transfer.html.eex:195
+msgid "Hey, you received"
+msgstr "Hey, você recebeu"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/claim.html.eex:261
+msgid "MORE ON APP"
+msgstr "MAIS NO APP"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/claim.html.eex:216
+msgid "Thanks for your contribution on"
+msgstr "Agradecemos sua contribuição na"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/transfer.html.eex:344
+msgid "You received"
+msgstr "Você recebeu"
+
+#, elixir-format
+#: lib/cambiatus_web/email.ex:28
+msgid "You received a new transfer on"
+msgstr "Você recebeu uma nova tranferência na"
+
+#, elixir-format
+#: lib/cambiatus_web/email.ex:39
+#: lib/cambiatus_web/templates/email/claim.html.eex:213
+msgid "Your claim was approved!"
+msgstr "Sua reivindicação foi aprovada!"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/transfer.html.eex:391
+msgid "more details on app."
+msgstr "mais detalhes no app."
