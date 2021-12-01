@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+</head>
+<body>
+  <%= @community.name %>
+  <%= Enum.map(@community.news, fn news ->
+    Phoenix.HTML.raw("#{news.title} <br>")
+  end) %>
+</body>
+</html>

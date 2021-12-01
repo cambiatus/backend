@@ -39,7 +39,19 @@ defmodule CambiatusWeb.Email do
     |> Mailer.deliver()
   end
 
-  def current_year(), do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
+  # input is a community with preloaded news with less than 30 days and members with active digest
+  def monthly_digest(community) do
+    Enum.each(community.members, fn member ->
+      new()
+      |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
+      |> to(member.email)
+      |> subject("Community News")
+      |> render_body("monthly_digest.html", %{community: community})
+      |> Mailer.deliver()
+    end)
+  end
+
+  def current_year, do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
 
   def format_date(date) do
     [date.day, date.month, date.year]
