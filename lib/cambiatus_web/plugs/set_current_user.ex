@@ -14,11 +14,15 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
   def init(opts), do: opts
 
   def call(conn, _) do
-    context = build_context(conn)
+    context =
+      set_current_user(conn)
+      |> set_user_agent(conn)
+      |> set_ip_address(conn)
+
     Absinthe.Plug.put_options(conn, context: context)
   end
 
-  def build_context(conn) do
+  def set_current_user(conn) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          {:ok, %{id: account}} <- AuthToken.verify(token),
          %{} = user <- Cambiatus.Accounts.get_user(account) do
@@ -26,5 +30,17 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
     else
       _ -> %{}
     end
+  end
+
+  def set_user_agent(context, conn) do
+    case get_req_header(conn, "user-agent") do
+      [agent] -> Map.put(context, :user_agent, agent)
+      _ -> context
+    end
+  end
+
+  def set_ip_address(context, conn) do
+    ip = conn.remote_ip |> Tuple.to_list() |> Enum.join(".")
+    Map.put(context, :ip_address, ip)
   end
 end

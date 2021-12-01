@@ -7,7 +7,11 @@ defmodule Cambiatus.Accounts do
 
   alias Cambiatus.Repo
   alias Cambiatus.Accounts.User
+  alias Cambiatus.Auth
+  alias Cambiatus.Auth.Request
   alias Cambiatus.Commune.Transfer
+
+  @contract Application.compile_env(:cambiatus, :contract)
 
   @spec data :: Dataloader.Ecto.t()
   def data(params \\ %{}) do
@@ -20,8 +24,14 @@ defmodule Cambiatus.Accounts do
 
   def query(queryable, _params), do: queryable
 
-  def verify_pass(_account, password) do
-    password == Application.get_env(:cambiatus, :graphql_secret)
+  def verify_pass(account, password) do
+    with %Request{phrase: phrase} <- Auth.get_valid_request(account),
+         {:ok, public_key} <- @contract.get_public_key(account),
+         {:ok, true} <- @contract.verify_sign(password, phrase, public_key) do
+      true
+    else
+      _ -> false
+    end
   end
 
   @doc """
