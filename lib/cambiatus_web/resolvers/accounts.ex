@@ -5,7 +5,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   """
 
   alias Absinthe.Relay.Connection
-  alias Cambiatus.{Accounts, Auth.SignUp, Auth.SignIn}
+  alias Cambiatus.{Accounts, Auth, Auth.SignUp, Auth.SignIn}
   alias Cambiatus.Accounts.User
   alias Cambiatus.Commune.Transfer
 
@@ -35,7 +35,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def update_language(_, params, %{context: %{current_user: current_user}}) do
+  def update_preferences(_, params, %{context: %{current_user: current_user}}) do
     current_user
     |> Accounts.update_user(params)
     |> case do
@@ -47,23 +47,47 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, _) do
+  def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, %{
+        context: %{user_agent: user_agent, ip_address: ip_address}
+      }) do
     case SignIn.sign_in(account, password, invitation_id: invitation_id) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
-        {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
+        token = CambiatusWeb.AuthToken.sign(user)
+
+        params = %{
+          user_id: account,
+          user_agent: user_agent,
+          token: token,
+          ip_address: ip_address
+        }
+
+        Cambiatus.Auth.create_session(params)
+        {:ok, %{user: user, token: token}}
     end
   end
 
-  def sign_in(_, %{account: account, password: password}, %{context: %{domain: domain}}) do
+  def sign_in(_, %{account: account, password: password}, %{
+        context: %{domain: domain, user_agent: user_agent, ip_address: ip_address}
+      }) do
     case SignIn.sign_in(account, password, domain: domain) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
       {:ok, user} ->
-        {:ok, %{user: user, token: CambiatusWeb.AuthToken.sign(user)}}
+        token = CambiatusWeb.AuthToken.sign(user)
+
+        params = %{
+          user_id: account,
+          user_agent: user_agent,
+          token: token,
+          ip_address: ip_address
+        }
+
+        Cambiatus.Auth.create_session(params)
+        {:ok, %{user: user, token: token}}
     end
   end
 
@@ -71,6 +95,16 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     {:error,
      message: "Couldn't signIn, domain or invitation required",
      details: Cambiatus.Error.from("Error")}
+  end
+
+  def gen_auth(_, %{account: account}, %{context: %{ip_address: ip_address}}) do
+    case Auth.create_request(account, ip_address) do
+      {:error, reason} ->
+        {:error, message: "Failed to create request", details: Cambiatus.Error.from(reason)}
+
+      {:ok, request} ->
+        {:ok, %{phrase: request.phrase}}
+    end
   end
 
   def sign_up(_, args, %{context: %{domain: domain}}) do

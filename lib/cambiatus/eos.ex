@@ -257,4 +257,22 @@ defmodule Cambiatus.Eos do
     |> Application.get_env(__MODULE__)
     |> Keyword.get(:cambiatus_cmm)
   end
+
+  def get_public_key(account) do
+    EOSRPC.Chain.get_account(account)
+    |> case do
+      {:error, _} ->
+        {:error, "Account not found"}
+
+      {:ok, %{body: account_info}} ->
+        [%{"required_auth" => %{"keys" => [%{"key" => public_key} | _]}} | _] =
+          account_info["permissions"]
+
+        {:ok, public_key}
+    end
+  end
+
+  def verify_sign(sign, phrase, public_key) do
+    EosjsAuthWrapper.verify(sign, phrase, public_key)
+  end
 end

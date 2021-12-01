@@ -76,9 +76,18 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     field :preference, :user do
-      arg(:language, non_null(:string))
+      arg(:language, :string)
+      arg(:claim_notification, :boolean)
+      arg(:transfer_notification, :boolean)
+      arg(:digest, :boolean)
 
-      resolve(&AccountsResolver.update_language/3)
+      resolve(&AccountsResolver.update_preferences/3)
+    end
+
+    field :gen_auth, :request do
+      arg(:account, non_null(:string))
+
+      resolve(&AccountsResolver.gen_auth/3)
     end
   end
 
@@ -131,6 +140,11 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   enum(:transfer_direction_value) do
     value(:sending, description: "User's sent transfers.")
     value(:receiving, description: "User's received transfers.")
+  end
+
+  @desc "Request object, contains a phrase to authenticate a request to login"
+  object :request do
+    field(:phrase, non_null(:string))
   end
 
   @desc "Session object, contains the user and a token used to authenticate requests"
