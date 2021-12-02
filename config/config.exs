@@ -49,10 +49,12 @@ config :cambiatus, Oban,
   repo: Cambiatus.Repo,
   queues: [
     contribution_paypal: 50,
-    scheduled_news: 10
+    scheduled_news: 10,
+    monthly_digest: 20
   ],
   plugins: [
-    {Oban.Plugins.Cron, crontab: [{"@daily", Cambiatus.Workers.RemoveRequestsWorker}]}
+    {Oban.Plugins.Cron, crontab: [{"@daily", Cambiatus.Workers.RemoveRequestsWorker}]},
+    {Oban.Plugins.Cron, crontab: [{"@monthly", Cambiatus.Workers.MonthlyDigestWorker}]}
   ]
 
 # Import environment specific config. This must remain at the bottom
