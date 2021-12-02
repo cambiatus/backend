@@ -14,7 +14,9 @@ defmodule Cambiatus.Workers.MonthlyDigestWorker do
     |> Repo.all()
     |> Repo.preload([[news: News.last_thirty_days()], :members])
     |> Enum.each(fn community ->
-      CambiatusWeb.Email.monthly_digest(community)
+      unless Enum.empty?(community.news) do
+        CambiatusWeb.Email.monthly_digest(community)
+      end
     end)
   end
 end
