@@ -8,7 +8,11 @@ defmodule Cambiatus.Factory do
   import Ecto.Query
 
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Auth.Invitation
+
+  alias Cambiatus.Auth.{
+    Invitation,
+    Request
+  }
 
   alias Cambiatus.Commune.{
     Action,
@@ -387,6 +391,14 @@ defmodule Cambiatus.Factory do
       status: sequence(:status, [:created, :captured, :approved, :rejected, :failed]),
       community: build(:community),
       user: build(:user)
+    }
+  end
+
+  def request_factory() do
+    %Request{
+      phrase: sequence(:phrase, &"#{&1}teste"),
+      user: build(:user),
+      ip_address: "127.0.0.1"
     }
   end
 end

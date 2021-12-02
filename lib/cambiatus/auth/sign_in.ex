@@ -23,10 +23,12 @@ defmodule Cambiatus.Auth.SignIn do
         # Community has auto invite and user is not in yet
         {true, false} ->
           {:ok, _txid} = netlink(user, community)
+          Auth.delete_request(account)
           {:ok, user}
 
         # Already a member, nothing new to do
         {_, true} ->
+          Auth.delete_request(account)
           {:ok, user}
 
         {false, false} ->
@@ -54,6 +56,8 @@ defmodule Cambiatus.Auth.SignIn do
 
       user ->
         if Accounts.verify_pass(account, password) do
+          Auth.delete_request(account)
+
           {:ok, user}
           |> netlink(invitation_id)
         else
