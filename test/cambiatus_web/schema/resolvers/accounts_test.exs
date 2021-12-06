@@ -136,6 +136,34 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert profile["account"] == user.account
       refute profile["bio"] == user.bio
     end
+
+    test "updates a user account language given the account name" do
+      assert Repo.aggregate(User, :count, :account) == 0
+      user = insert(:user, account: "test1234")
+      conn = build_conn() |> auth_user(user)
+
+      mutation = """
+      mutation {
+        preference(language: "pt") {
+          account
+          language
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: mutation)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "preference" => %{
+                   "account" => "test1234",
+                   "language" => "pt"
+                 }
+               }
+             } = response
+    end
   end
 
   describe "payment history" do
