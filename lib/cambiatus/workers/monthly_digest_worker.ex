@@ -4,6 +4,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorker do
   """
   use Oban.Worker, queue: :monthly_digest
 
+  alias Cambiatus.Accounts.User
   alias Cambiatus.Commune.Community
   alias Cambiatus.Repo
   alias Cambiatus.Social.News
@@ -12,7 +13,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorker do
     Community
     |> Community.with_news_enabled()
     |> Repo.all()
-    |> Repo.preload([[news: News.last_thirty_days()], :members])
+    |> Repo.preload([[news: News.last_thirty_days()], [members: User.accept_digest()]])
     |> Enum.each(fn community ->
       unless Enum.empty?(community.news) do
         CambiatusWeb.Email.monthly_digest(community)

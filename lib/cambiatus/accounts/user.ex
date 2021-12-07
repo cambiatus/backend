@@ -90,4 +90,8 @@ defmodule Cambiatus.Accounts.User do
     |> or_where([u], ilike(u.bio, ^"%#{q}%"))
     |> or_where([u], ilike(u.email, ^"%#{q}%"))
   end
+
+  def accept_digest(query \\ __MODULE__) do
+    where(query, [u], u.digest == true)
+  end
 end
