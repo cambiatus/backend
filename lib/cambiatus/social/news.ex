@@ -80,5 +80,6 @@ defmodule Cambiatus.Social.News do
       datetime_add(n.updated_at, 60 * 60 * 24 * 30, "second") >= ^NaiveDateTime.utc_now() and
         (is_nil(n.scheduling) or n.scheduling <= ^NaiveDateTime.utc_now())
     )
+    |> order_by(asc: :updated_at)
   end
 end

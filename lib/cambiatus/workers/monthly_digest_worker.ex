@@ -13,7 +13,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorker do
     Community
     |> Community.with_news_enabled()
     |> Repo.all()
-    |> Repo.preload([[news: News.last_thirty_days()], [members: User.accept_digest()]])
+    |> Repo.preload([[news: News.last_thirty_days()], [members: User.accept_digest()], :subdomain])
     |> Enum.each(fn community ->
       unless Enum.empty?(community.news) do
         CambiatusWeb.Email.monthly_digest(community)
