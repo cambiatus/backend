@@ -2,14 +2,15 @@ defmodule CambiatusWeb.Email do
   @moduledoc "Module responsible for mails templates"
 
   import Swoosh.Email
+  import CambiatusWeb.Gettext
 
   use Phoenix.Swoosh, view: CambiatusWeb.EmailView
 
-  alias Cambiatus.{Mailer, Repo}
+  alias Cambiatus.{Accounts, Mailer, Repo}
 
-  def welcome(recipient) do
+  def welcome(user) do
     new(
-      to: recipient,
+      to: user.email,
       from: Mailer.sender(),
       subject: "Welcome to the app.",
       html_body: "<strong>Thanks for joining!</strong>",
@@ -24,9 +25,10 @@ defmodule CambiatusWeb.Email do
     new(
       to: transfer.to.email,
       from: {"#{transfer.community.name} - Cambiatus", "no-reply@cambiatus.com"},
-      subject: "You received a new transfer on #{transfer.community.name}",
+      subject: gettext("You received a new transfer on") <> "#{transfer.community.name}",
       html_body: CambiatusWeb.EmailView.render("transfer.html", %{transfer: transfer})
     )
+    |> set_language(transfer)
     |> Mailer.deliver()
   end
 
@@ -34,8 +36,9 @@ defmodule CambiatusWeb.Email do
     new()
     |> from({"#{claim.action.objective.community.name} - Cambiatus", "no-reply@cambiatus.com"})
     |> to(claim.claimer.email)
-    |> subject("Your claim was approved!")
+    |> subject(gettext("Your claim was approved!"))
     |> render_body("claim.html", %{claim: claim})
+    |> set_language(claim)
     |> Mailer.deliver()
   end
 
@@ -57,5 +60,25 @@ defmodule CambiatusWeb.Email do
     [date.day, date.month, date.year]
     |> Enum.map(&to_string/1)
     |> Enum.join("/")
+  end
+
+  def set_language(mail, %Cambiatus.Commune.Transfer{:to_id => id} = _transfer) do
+    user = Accounts.get_user!(id)
+
+    if user.language do
+      Gettext.put_locale(Cambiatus.Gettext, user.language)
+    end
+
+    mail
+  end
+
+  def set_language(mail, %Cambiatus.Commune.Claim{:claimer_id => id} = _claim) do
+    user = Accounts.get_user!(id)
+
+    if user.language do
+      Gettext.put_locale(Cambiatus.Gettext, user.language)
+    end
+
+    mail
   end
 end
