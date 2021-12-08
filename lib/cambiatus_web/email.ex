@@ -49,7 +49,7 @@ defmodule CambiatusWeb.Email do
       |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
       |> to(member.email)
       |> subject("Community News")
-      |> render_body("monthly_digest.html", %{community: community})
+      |> render_body("monthly_digest.html", %{community: community, user: member})
       |> Mailer.deliver()
     end)
   end
