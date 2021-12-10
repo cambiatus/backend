@@ -30,10 +30,10 @@ defmodule Cambiatus.Accounts.User do
     field(:created_at, :utc_datetime)
     field(:created_eos_account, :string)
 
-    field(:language, :string)
-    field(:transfer_notification, :boolean)
-    field(:claim_notification, :boolean)
-    field(:digest, :boolean)
+    field(:language, :string, default: "en-US")
+    field(:transfer_notification, :boolean, default: false)
+    field(:claim_notification, :boolean, default: false)
+    field(:digest, :boolean, default: false)
 
     has_many(:push_subscriptions, PushSubscription, foreign_key: :account_id)
     has_many(:products, Product, foreign_key: :creator_id)
