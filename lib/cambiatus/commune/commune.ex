@@ -9,15 +9,18 @@ defmodule Cambiatus.Commune do
   alias Cambiatus.{Accounts.User, Repo, Social}
 
   alias Cambiatus.Commune.{
-    Action,
-    Check,
-    Claim,
     Community,
     CommunityPhotos,
     Network,
-    Objective,
     Subdomain,
-    Transfer,
+    Transfer
+  }
+
+  alias Cambiatus.Objectives.{
+    Action,
+    Check,
+    Claim,
+    Objective,
     Validator
   }
 

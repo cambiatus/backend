@@ -1,11 +1,11 @@
-defmodule Cambiatus.Commune.Objective do
+defmodule Cambiatus.Objectives.Objective do
   @moduledoc false
 
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Commune.Action
+  alias Cambiatus.Objectives.Action
   alias Cambiatus.Commune.Community
 
   schema "objectives" do

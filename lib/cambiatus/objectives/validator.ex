@@ -1,4 +1,4 @@
-defmodule Cambiatus.Commune.Validator do
+defmodule Cambiatus.Objectives.Validator do
   @moduledoc """
   Datatstructure for an action validator in `Cambiatus`
   """
@@ -7,11 +7,8 @@ defmodule Cambiatus.Commune.Validator do
   import Ecto.Changeset
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Validator,
-    Commune.Action
-  }
+  alias Cambiatus.Accounts.User
+  alias Cambiatus.Objectives.{Validator, Action}
 
   @primary_key false
   schema "validators" do

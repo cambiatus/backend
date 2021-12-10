@@ -1,11 +1,11 @@
-defmodule Cambiatus.Commune.Action do
+defmodule Cambiatus.Objectives.Action do
   @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
 
   alias Cambiatus.{Accounts.User}
-  alias Cambiatus.Commune.{Claim, Objective, Validator, Action}
+  alias Cambiatus.Objectives.{Claim, Objective, Validator, Action}
 
   schema "actions" do
     field(:description, :string)

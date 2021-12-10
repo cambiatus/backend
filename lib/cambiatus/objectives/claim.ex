@@ -1,4 +1,4 @@
-defmodule Cambiatus.Commune.Claim do
+defmodule Cambiatus.Objectives.Claim do
   @moduledoc """
   Datastructure for a claim in `Cambiatus`
   """
@@ -8,7 +8,7 @@ defmodule Cambiatus.Commune.Claim do
   import Ecto.Changeset
   import Ecto.Query
 
-  alias Cambiatus.Commune.{Action, Claim, Check, Objective}
+  alias Cambiatus.Objectives.{Action, Claim, Check, Objective}
   alias Cambiatus.Accounts.User
 
   schema "claims" do

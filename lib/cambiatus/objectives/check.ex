@@ -1,4 +1,4 @@
-defmodule Cambiatus.Commune.Check do
+defmodule Cambiatus.Objectives.Check do
   @moduledoc """
   Datastructure to represent the action of verifying a claim
   """
@@ -7,11 +7,8 @@ defmodule Cambiatus.Commune.Check do
   import Ecto.Changeset
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Claim,
-    Commune.Check
-  }
+  alias Cambiatus.Accounts.User
+  alias Cambiatus.Objectives.{Check, Claim}
 
   @primary_key false
   schema "checks" do

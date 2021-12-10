@@ -6,7 +6,8 @@ defmodule CambiatusWeb.Resolvers.Commune do
   alias Absinthe.Relay.Connection
 
   alias Cambiatus.{Auth, Commune, Error, Shop, Social}
-  alias Cambiatus.Commune.{Claim, Community}
+  alias Cambiatus.Commune.Community
+  alias Cambiatus.Objectives.Claim
 
   def search(_, %{community_id: symbol}, _) do
     Commune.get_community(symbol)
