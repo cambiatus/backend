@@ -50,7 +50,7 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
   object :mint do
     field(:memo, :string)
     field(:quantity, non_null(:float))
-    field(:to, non_null(:user), resolve: dataloader(Cambiatus.Commune))
+    field(:to, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:community, non_null(:community), resolve: dataloader(Cambiatus.Commune))
 
     field(:created_block, non_null(:integer))
@@ -78,7 +78,7 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
 
     field(:actions, non_null(list_of(non_null(:action)))) do
       arg(:input, :actions_input)
-      resolve(dataloader(Cambiatus.Commune))
+      resolve(dataloader(Cambiatus.Objectives))
     end
   end
 
@@ -101,11 +101,11 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
 
     field(:position, :integer)
 
-    field(:objective, non_null(:objective), resolve: dataloader(Cambiatus.Commune))
+    field(:objective, non_null(:objective), resolve: dataloader(Cambiatus.Objectives))
 
     field(:validators, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Accounts))
 
-    field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(Cambiatus.Commune))
+    field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(Cambiatus.Objectives))
     field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
@@ -116,7 +116,7 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
   @desc "A claim made in an action"
   object :claim do
     field(:id, non_null(:integer))
-    field(:action, non_null(:action), resolve: dataloader(Cambiatus.Commune))
+    field(:action, non_null(:action), resolve: dataloader(Cambiatus.Objectives))
     field(:claimer, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:status, non_null(:claim_status))
     field(:proof_photo, :string)
@@ -124,7 +124,7 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
 
     field(:checks, non_null(list_of(non_null(:check)))) do
       arg(:input, :checks_input)
-      resolve(dataloader(Cambiatus.Commune))
+      resolve(dataloader(Cambiatus.Objectives))
     end
 
     field(:created_block, non_null(:integer))
@@ -135,7 +135,7 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
 
   @desc "A check for a given claim"
   object :check do
-    field(:claim, non_null(:claim), resolve: dataloader(Cambiatus.Commune))
+    field(:claim, non_null(:claim), resolve: dataloader(Cambiatus.Objectives))
     field(:validator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
     field(:is_verified, non_null(:boolean))
     field(:created_block, non_null(:integer))

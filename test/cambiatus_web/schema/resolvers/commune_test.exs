@@ -11,7 +11,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
   alias Cambiatus.Objectives.{Action, Objective}
 
   @num 3
-  describe "Commune Resolver" do
+  describe "community" do
     test "collects a single transfer" do
       user = insert(:user)
       conn = build_conn() |> auth_user(user)

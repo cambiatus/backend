@@ -3,10 +3,9 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
 
   alias Cambiatus.Accounts.User
   alias Cambiatus.Commune.{Community}
-  alias Cambiatus.Objectives.{Action, Claim, Objective}
+  alias Cambiatus.Objectives.{Action, Claim, Objective, Validator}
 
   @num 3
-
   describe "Commune Resolver" do
     test "updates an objective to be completed" do
       user = insert(:user)
@@ -15,15 +14,9 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
 
       objective = insert(:objective, %{community: community})
 
-      input = %{
-        "input" => %{
-          "objective_id" => objective.id
-        }
-      }
-
       query = """
-      mutation ($input: CompleteObjectiveInput) {
-        completeObjective(input: $input) {
+      mutation {
+        completeObjective(id: #{objective.id}) {
           description
           isCompleted
           completedAt
@@ -31,7 +24,7 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       }
       """
 
-      res = post(conn, "/api/graph", query: query, variables: input)
+      res = post(conn, "/api/graph", query: query)
 
       response = json_response(res, 200)
 

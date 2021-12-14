@@ -6,7 +6,7 @@ defmodule Cambiatus.Objectives do
   import Ecto.Query
 
   alias Cambiatus.Commune.Community
-  alias Cambiatus.Objectives.{Action, Claim, Objective}
+  alias Cambiatus.Objectives.{Action, Claim, Objective, Validator}
   alias Cambiatus.Repo
 
   @spec data :: Dataloader.Ecto.t()

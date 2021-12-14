@@ -31,7 +31,6 @@ defmodule CambiatusWeb.Resolvers.Commune do
   Find a single community
   """
   @spec find_community(map(), map(), map()) :: {:ok, map()} | {:error, term()}
-
   def find_community(_, %{symbol: _, subdomain: _}, _) do
     {:error, "please use symbol or subdomain"}
   end
