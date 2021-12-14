@@ -5,8 +5,9 @@ defmodule Cambiatus.DbListener do
   use GenServer
   require Logger
 
-  alias Cambiatus.{Accounts, Commune, Notifications, Repo}
+  alias Cambiatus.{Accounts, Notifications, Repo}
   alias Cambiatus.Commune.{Claim, Transfer}
+  alias Cambiatus.Objectives
 
   alias CambiatusWeb.Endpoint
 
@@ -130,7 +131,7 @@ defmodule Cambiatus.DbListener do
 
   def handle_info({:notification, _, _, "claims_changed", payload}, _state) do
     with {:ok, %{record: record, operation: "INSERT"}} <- Jason.decode(payload, keys: :atoms),
-         {:ok, action} <- Commune.get_action(record.action_id),
+         {:ok, action} <- Objectives.get_action(record.action_id),
          {:ok, :notified} <- Notifications.notify_validators(action) do
       {:noreply, :event_handled}
     else
@@ -153,7 +154,7 @@ defmodule Cambiatus.DbListener do
 
   def handle_info({:notification, _, _, "check_added", payload}, _state) do
     with {:ok, %{record: record}} <- Jason.decode(payload, keys: :atoms),
-         {:ok, claim} <- Commune.get_claim(record.claim_id),
+         {:ok, claim} <- Objectives.get_claim(record.claim_id),
          {:ok, :notified} <- Notifications.notify_claimer(claim) do
       {:noreply, :event_handled}
     else

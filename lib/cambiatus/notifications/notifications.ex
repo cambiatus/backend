@@ -5,7 +5,7 @@ defmodule Cambiatus.Notifications do
 
   import Ecto.Query
 
-  alias Cambiatus.{Commune, Commune.Mint, Accounts.User, Repo}
+  alias Cambiatus.{Accounts.User, Commune.Mint, Objectives, Repo}
   alias Cambiatus.Notifications.{PushSubscription, Payload, NotificationHistory}
 
   @valid_types ~w(transfer verification mint)a
@@ -144,7 +144,7 @@ defmodule Cambiatus.Notifications do
   """
   @spec notify_claim_approved(integer()) :: {:ok, atom()} | {:error, term}
   def notify_claim_approved(claim_id) do
-    case Commune.get_claim(claim_id) do
+    case Objectives.get_claim(claim_id) do
       {:ok, claim} ->
         loaded_claim =
           claim

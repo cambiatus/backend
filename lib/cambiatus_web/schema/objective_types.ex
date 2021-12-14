@@ -8,8 +8,8 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
 
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
-  alias CambiatusWeb.Resolvers.Commune
   alias CambiatusWeb.Schema.Middleware
+  alias CambiatusWeb.Resolvers.Objectives
 
   object :objective_queries do
     @desc "[Auth required] A single claim"
@@ -17,7 +17,7 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
       arg(:id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
-      resolve(&Commune.get_claim/3)
+      resolve(&Objectives.get_claim/3)
     end
 
     @desc "[Auth required] A single objective"
@@ -25,23 +25,18 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
       arg(:id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
-      resolve(&Commune.get_objective/3)
+      resolve(&Objectives.get_objective/3)
     end
   end
 
   object :objective_mutations do
     @desc "[Auth required - Admin only] Complete an objective"
     field :complete_objective, :objective do
-      arg(:input, non_null(:complete_objective_input))
+      arg(:id, non_null(:integer))
 
       middleware(Middleware.Authenticate)
-      resolve(&Commune.complete_objective/3)
+      resolve(&Objectives.complete_objective/3)
     end
-  end
-
-  @desc "Input to complete an objective"
-  input_object :complete_objective_input do
-    field(:objective_id, non_null(:integer))
   end
 
   @desc "Params for filtering Claims"

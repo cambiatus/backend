@@ -9,6 +9,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
   alias CambiatusWeb.Resolvers.Commune
+  alias CambiatusWeb.Resolvers.Objectives
   alias CambiatusWeb.Schema.Middleware
 
   @desc "Community Queries on Cambiatus"
@@ -34,7 +35,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       arg(:filter, :claims_filter)
 
       middleware(Middleware.Authenticate)
-      resolve(&Commune.get_pending_claims/3)
+      resolve(&Objectives.get_pending_claims/3)
     end
 
     connection field(:analyzed_claims, node_type: :claim) do
@@ -42,7 +43,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       arg(:filter, :claims_filter)
 
       middleware(Middleware.Authenticate)
-      resolve(&Commune.get_analyzed_claims/3)
+      resolve(&Objectives.get_analyzed_claims/3)
     end
 
     @desc "[Auth required] A single Transfer"
@@ -219,7 +220,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     end
 
     field(:objectives, non_null(list_of(non_null(:objective))),
-      resolve: dataloader(Cambiatus.Commune)
+      resolve: dataloader(Cambiatus.Objectives)
     )
 
     @desc "List of users that are claim validators"
@@ -240,8 +241,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
     field(:product_count, non_null(:integer), resolve: &Commune.get_product_count/3)
     field(:order_count, non_null(:integer), resolve: &Commune.get_order_count/3)
-    field(:action_count, non_null(:integer), resolve: &Commune.get_action_count/3)
-    field(:claim_count, non_null(:integer), resolve: &Commune.get_claim_count/3)
+    field(:action_count, non_null(:integer), resolve: &Objectives.get_action_count/3)
+    field(:claim_count, non_null(:integer), resolve: &Objectives.get_claim_count/3)
   end
 
   @desc "Community Preview data, public data of a community"
