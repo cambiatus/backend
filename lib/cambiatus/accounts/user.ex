@@ -8,10 +8,11 @@ defmodule Cambiatus.Accounts.User do
 
   alias Cambiatus.{Auth.Invitation, Notifications.PushSubscription, Repo}
   alias Cambiatus.Accounts.{Contact, User}
-  alias Cambiatus.Commune.{Network, Claim, Transfer}
+  alias Cambiatus.Commune.{Network, Transfer}
   alias Cambiatus.Kyc.{KycData, Address}
   alias Cambiatus.Shop.Product
   alias Cambiatus.Payments.Contribution
+  alias Cambiatus.Objectives.Claim
 
   @primary_key {:account, :string, autogenerate: false}
   schema "users" do

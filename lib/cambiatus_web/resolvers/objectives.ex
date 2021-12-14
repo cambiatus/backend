@@ -1,4 +1,7 @@
 defmodule CambiatusWeb.Resolvers.Objectives do
+  @moduledoc """
+  This module holds the implementation of the resolver for the objectives context
+  """
   alias Absinthe.Relay.Connection
   alias Cambiatus.Commune.Community
   alias Cambiatus.Objectives

@@ -5,9 +5,9 @@ defmodule Cambiatus.DbListener do
   use GenServer
   require Logger
 
-  alias Cambiatus.{Accounts, Notifications, Repo}
-  alias Cambiatus.Commune.{Claim, Transfer}
-  alias Cambiatus.Objectives
+  alias Cambiatus.{Accounts, Notifications, Repo, Objectives}
+  alias Cambiatus.Commune.Transfer
+  alias Cambiatus.Objectives.Claim
 
   alias CambiatusWeb.Endpoint
 

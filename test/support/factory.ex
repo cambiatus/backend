@@ -11,15 +11,18 @@ defmodule Cambiatus.Factory do
   alias Cambiatus.Auth.Invitation
 
   alias Cambiatus.Commune.{
-    Action,
-    Check,
-    Claim,
     Community,
     Mint,
     Network,
-    Objective,
     Subdomain,
-    Transfer,
+    Transfer
+  }
+
+  alias Cambiatus.Objectives.{
+    Action,
+    Check,
+    Claim,
+    Objective,
     Validator
   }
 

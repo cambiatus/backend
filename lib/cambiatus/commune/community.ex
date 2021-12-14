@@ -6,7 +6,6 @@ defmodule Cambiatus.Commune.Community do
     CommunityPhotos,
     Mint,
     Network,
-    Objective,
     Subdomain,
     Transfer
   }
@@ -15,6 +14,7 @@ defmodule Cambiatus.Commune.Community do
   alias Cambiatus.Repo
   alias Cambiatus.Shop.Product
   alias Cambiatus.Social.News
+  alias Cambiatus.Objectives.Objective
 
   use Ecto.Schema
   import Ecto.Changeset

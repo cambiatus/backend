@@ -1,4 +1,8 @@
 defmodule Cambiatus.Objectives do
+  @moduledoc """
+  The Objectives context. Handles everything related to objectives. Actions, Claims, Objectives, Checks, Validators etc
+  """
+
   import Ecto.Query
 
   alias Cambiatus.Commune.Community

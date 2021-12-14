@@ -6,6 +6,7 @@ defmodule Cambiatus.Objectives.Reward do
   use Ecto.Schema
   @type t :: %__MODULE__{}
 
+  alias Cambiatus.Accounts.User
   alias Cambiatus.Objectives.Action
 
   schema "rewards" do
