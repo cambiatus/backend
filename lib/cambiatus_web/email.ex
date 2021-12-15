@@ -48,7 +48,8 @@ defmodule CambiatusWeb.Email do
       new()
       |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
       |> to(member.email)
-      |> subject("Community News")
+      |> set_language(member.language)
+      |> subject(gettext("Community News"))
       |> render_body("monthly_digest.html", %{community: community, user: member})
       |> Mailer.deliver()
     end)
@@ -65,20 +66,17 @@ defmodule CambiatusWeb.Email do
   def set_language(mail, %Cambiatus.Commune.Transfer{:to_id => id} = _transfer) do
     user = Accounts.get_user!(id)
 
-    if user.language do
-      Gettext.put_locale(Cambiatus.Gettext, user.language)
-    end
-
-    mail
+    set_language(mail, user.language)
   end
 
   def set_language(mail, %Cambiatus.Commune.Claim{:claimer_id => id} = _claim) do
     user = Accounts.get_user!(id)
 
-    if user.language do
-      Gettext.put_locale(Cambiatus.Gettext, user.language)
-    end
+    set_language(mail, user.language)
+  end
 
+  def set_language(mail, language) do
+    if language, do: Gettext.put_locale(CambiatusWeb.Gettext, language)
     mail
   end
 end
