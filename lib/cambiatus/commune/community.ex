@@ -62,7 +62,7 @@ defmodule Cambiatus.Commune.Community do
     has_many(:news, News, foreign_key: :community_id)
     has_many(:transfers, Transfer, foreign_key: :community_id)
     has_many(:network, Network, foreign_key: :community_id)
-    has_many(:members, through: [:network, :account])
+    has_many(:members, through: [:network, :user])
     has_many(:objectives, Objective, foreign_key: :community_id)
     has_many(:actions, through: [:objectives, :actions])
     has_many(:mints, Mint, foreign_key: :community_id)

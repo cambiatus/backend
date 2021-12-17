@@ -6,21 +6,23 @@ defmodule Cambiatus.Commune.Network do
   import Ecto.Query
 
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Commune.{Community, Network}
+  alias Cambiatus.Commune.{Community, Network, NetworkRoles, Role}
 
   schema "network" do
+    belongs_to(:community, Community, references: :symbol, type: :string)
+    belongs_to(:user, User, references: :account, type: :string, foreign_key: :account_id)
+    belongs_to(:invited_by, User, references: :account, type: :string)
+
     field(:created_block, :integer)
     field(:created_tx, :string)
     field(:created_eos_account, :string)
     field(:created_at, :utc_datetime)
 
-    belongs_to(:community, Community, references: :symbol, type: :string)
-    belongs_to(:account, User, references: :account, type: :string)
-    belongs_to(:invited_by, User, references: :account, type: :string)
+    many_to_many(:roles, Role, join_through: NetworkRoles)
   end
 
   @required_fields ~w(account_id community_id invited_by_id)a
-  @optional_fields ~w(created_block created_tx created_at created_eos_account)a
+  @optional_fields ~w(created_block created_tx created_at created_eos_account role_id)a
 
   @doc false
   def changeset(network, attrs) do
