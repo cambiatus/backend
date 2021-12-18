@@ -1,4 +1,4 @@
-defmodule Cambiatus.Commune.NetworkRoles do
+defmodule Cambiatus.Commune.NetworkRole do
   @moduledoc false
 
   use Ecto.Schema

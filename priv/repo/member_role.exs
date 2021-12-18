@@ -1,7 +1,7 @@
 IO.puts("Filling member_roles table with default values")
 
 alias Cambiatus.Repo
-alias Cambiatus.Commune.{Community, Network, NetworkRoles, Role}
+alias Cambiatus.Commune.{Community, NetworkRole, Role}
 
 # TODO: REMOVE THIS
 Repo.delete_all(Role)
@@ -23,12 +23,10 @@ else
 
     community = Repo.preload(community, :members)
 
-    Enum.map(community.members, fn member ->
-      member = Repo.preload(:network)
-      %NetworkRoles{}
-      |> NetworkRoles.changeset()
-      |> Network.changeset(%{role_id: role.id})
-      # |> Repo.update()
+    Enum.map(community.network, fn member_link ->
+      %NetworkRole{}
+      |> NetworkRole.changeset(%{role_id: role.id, network_id: member_link.id})
+      |> Repo.insert!()
     end)
   end)
 end

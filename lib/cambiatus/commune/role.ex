@@ -9,7 +9,7 @@ defmodule Cambiatus.Commune.Role do
 
   import Ecto.Changeset
 
-  alias Cambiatus.Commune.{Community, Network, Role}
+  alias Cambiatus.Commune.{Community, Network, NetworkRole, Role}
 
   schema "roles" do
     field(:name, :string)
@@ -21,7 +21,7 @@ defmodule Cambiatus.Commune.Role do
     )
 
     belongs_to(:community, Community, references: :symbol, type: :string)
-    many_to_many(:network, Network, join_through: NetworkRoles)
+    many_to_many(:network, Network, join_through: NetworkRole)
 
     timestamps()
   end
