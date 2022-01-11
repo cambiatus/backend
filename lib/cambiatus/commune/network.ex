@@ -6,7 +6,7 @@ defmodule Cambiatus.Commune.Network do
   import Ecto.Query
 
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Commune.{Community, Network, NetworkRoles, Role}
+  alias Cambiatus.Commune.{Community, Network, NetworkRole, Role}
 
   schema "network" do
     belongs_to(:community, Community, references: :symbol, type: :string)
@@ -18,7 +18,8 @@ defmodule Cambiatus.Commune.Network do
     field(:created_eos_account, :string)
     field(:created_at, :utc_datetime)
 
-    many_to_many(:roles, Role, join_through: NetworkRoles)
+    has_many(:network_roles, Cambiatus.Commune.NetworkRole)
+    many_to_many(:roles, Role, join_through: NetworkRole)
   end
 
   @required_fields ~w(account_id community_id invited_by_id)a

@@ -231,6 +231,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
     field(:news, non_null(list_of(non_null(:news))), resolve: dataloader(Cambiatus.Social))
 
+    field(:rewards, non_null(list_of(non_null(:reward))),
+      resolve: dataloader(Cambiatus.Objectives)
+    )
+
     @desc "List of contributions this community received"
     field(:contributions, non_null(list_of(non_null(:contribution)))) do
       arg(:status, :contribution_status_type)
@@ -280,6 +284,13 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:invited_by, :string)
   end
 
+  @desc "Role associated with community members"
+  object :role do
+    field(:name, non_null(:string))
+    field(:color, :string)
+    field(:permissions, non_null(list_of(non_null(:permission))))
+  end
+
   @desc "A transfer on Cambiatus"
   object :transfer do
     field(:id, non_null(:integer))
@@ -323,5 +334,24 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   enum(:direction) do
     value(:asc, description: "Ascending order")
     value(:desc, description: "Descending order")
+  end
+
+  @desc "Permissions a role can have"
+  enum(:permission) do
+    value(:invite,
+      description: "Role permission that allows to create invitations to the community"
+    )
+
+    value(:claim, description: "Role permission that allows to claim actions")
+
+    value(:order, description: "Role permission that allows to create orders to buy from the shop")
+
+    value(:verify, description: "Role permission that allows to verify claims")
+
+    value(:sell,
+      description: "Role permission that allows to sell products and services in the community"
+    )
+
+    value(:award, description: "Role permission that allows to award rewards on community actions")
   end
 end

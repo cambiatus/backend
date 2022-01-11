@@ -147,6 +147,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_at, :string)
     field(:created_eos_account, :string)
     field(:network, list_of(:network), resolve: dataloader(Cambiatus.Commune))
+    field(:roles, non_null(list_of(non_null(:role))), resolve: dataloader(Cambiatus.Commune))
 
     field(:address, :address, resolve: dataloader(Cambiatus.Kyc))
     field(:kyc, :kyc_data, resolve: dataloader(Cambiatus.Kyc))
@@ -160,7 +161,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     )
 
     field(:products, non_null(list_of(:product)), resolve: dataloader(Cambiatus.Shop))
-
     field(:analysis_count, non_null(:integer), resolve: &AccountsResolver.get_analysis_count/3)
 
     field(:contribution_count, non_null(:integer)) do

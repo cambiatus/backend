@@ -144,6 +144,12 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
     field(:created_at, non_null(:datetime))
   end
 
+  @desc "A reward, related to an action that is given to an user"
+  object :reward do
+    field(:action, non_null(:action), resolve: dataloader(Cambiatus.Objectives))
+    field(:receiver, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
+  end
+
   @desc "Claim possible status"
   enum :claim_status do
     value(:approved, as: "approved")

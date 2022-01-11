@@ -37,6 +37,7 @@ defmodule Cambiatus.Accounts.User do
     has_many(:to_transfers, Transfer, foreign_key: :to_id)
     has_many(:from_transfers, Transfer, foreign_key: :from_id)
     has_many(:network, Network, foreign_key: :account_id)
+    has_many(:roles, through: [:network, :network_roles, :role])
     has_many(:communities, through: [:network, :community])
     has_many(:invitations, Invitation, foreign_key: :creator_id)
     has_many(:claims, Claim, foreign_key: :claimer_id)

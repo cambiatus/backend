@@ -5,7 +5,7 @@ defmodule Cambiatus.Objectives.Action do
   import Ecto.Query
 
   alias Cambiatus.{Accounts.User}
-  alias Cambiatus.Objectives.{Claim, Objective, Validator, Action}
+  alias Cambiatus.Objectives.{Claim, Objective, Validator, Action, Reward}
 
   schema "actions" do
     field(:description, :string)
@@ -33,6 +33,7 @@ defmodule Cambiatus.Objectives.Action do
     has_many(:vals, Validator)
     has_many(:validators, through: [:vals, :validator])
     has_many(:claims, Claim)
+    has_many(:rewards, Reward)
   end
 
   @required_fields ~w(creator_id objective_id reward description verification_type)a
