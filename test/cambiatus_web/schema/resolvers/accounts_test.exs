@@ -4,7 +4,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
   """
   use Cambiatus.ApiCase
 
-  alias Cambiatus.{Accounts.User, Commune.Transfer}
+  alias Cambiatus.{Accounts.User, Auth.Request, Auth.Session, Commune.Transfer}
 
   describe "Accounts Resolver" do
     test "collects a user account given the account name" do
@@ -135,6 +135,34 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert Repo.aggregate(User, :count, :account) == 1
       assert profile["account"] == user.account
       refute profile["bio"] == user.bio
+    end
+
+    test "updates a user account language given the account name" do
+      assert Repo.aggregate(User, :count, :account) == 0
+      user = insert(:user, account: "test1234")
+      conn = build_conn() |> auth_user(user)
+
+      mutation = """
+      mutation {
+        preference(language: "pt") {
+          account
+          language
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: mutation)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "preference" => %{
+                   "account" => "test1234",
+                   "language" => "pt"
+                 }
+               }
+             } = response
     end
   end
 
@@ -494,6 +522,70 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert account == user2.account
       assert avatar == user2.avatar
       assert name == user2.name
+    end
+
+    test "get phrase to be signed" do
+      user = insert(:user)
+      conn = build_conn()
+
+      query = """
+      mutation{
+        genAuth(account: "#{user.account}"){
+          phrase
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query)
+
+      %{
+        "data" => %{
+          "genAuth" => %{
+            "phrase" => _
+          }
+        }
+      } = json_response(res, 200)
+
+      request = Repo.get_by(Request, user_id: user.account)
+
+      assert user.account == request.user_id
+    end
+
+    test "Sign in with signed phrase" do
+      community = insert(:community)
+      user = insert(:user)
+      insert(:network, community: community, account: user)
+      insert(:request, user: user)
+
+      conn =
+        build_conn()
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+        |> put_req_header("user-agent", "Mozilla")
+
+      query = """
+      mutation{
+        signIn(
+          account: "#{user.account}",
+          password: "SGI_KI_TEST"
+          ){
+          token
+        }
+      }
+      """
+
+      res = conn |> post("/api/graph", query: query)
+
+      %{
+        "data" => %{
+          "signIn" => %{
+            "token" => _
+          }
+        }
+      } = json_response(res, 200)
+
+      session = Repo.get_by(Session, user_id: user.account)
+
+      assert user.account == session.user_id
     end
   end
 end

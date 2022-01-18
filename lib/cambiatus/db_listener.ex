@@ -95,7 +95,11 @@ defmodule Cambiatus.DbListener do
       |> Notifications.create_notification_history()
 
       # Trigger email delivery as well
-      CambiatusWeb.Email.transfer(record)
+      user = Accounts.get_user!(record.to_id)
+
+      if user.transfer_notification do
+        CambiatusWeb.Email.transfer(record)
+      end
 
       {:noreply, :event_handled}
     else
@@ -143,7 +147,12 @@ defmodule Cambiatus.DbListener do
             |> Repo.preload(action: [objective: [community: :subdomain]])
             |> Repo.preload(:claimer)
 
-          CambiatusWeb.Email.claim(claim)
+          user = Accounts.get_user!(claim.claimer_id)
+
+          if user.claim_notification do
+            CambiatusWeb.Email.claim(claim)
+          end
+
           Notifications.notify_claim_approved(record.id)
         end
 

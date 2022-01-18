@@ -8,7 +8,11 @@ defmodule Cambiatus.Factory do
   import Ecto.Query
 
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Auth.Invitation
+
+  alias Cambiatus.Auth.{
+    Invitation,
+    Request
+  }
 
   alias Cambiatus.Commune.{
     Community,
@@ -61,7 +65,11 @@ defmodule Cambiatus.Factory do
       avatar: sequence(:avatar, &"ava-#{&1}"),
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:created_tx, &"tx-#{&1}"),
-      created_eos_account: sequence(:created_eos_account, &"eos-acc-#{&1}")
+      created_eos_account: sequence(:created_eos_account, &"eos-acc-#{&1}"),
+      language: "en",
+      claim_notification: true,
+      transfer_notification: true,
+      digest: true
     }
   end
 
@@ -390,6 +398,14 @@ defmodule Cambiatus.Factory do
       status: sequence(:status, [:created, :captured, :approved, :rejected, :failed]),
       community: build(:community),
       user: build(:user)
+    }
+  end
+
+  def request_factory() do
+    %Request{
+      phrase: sequence(:phrase, &"#{&1}teste"),
+      user: build(:user),
+      ip_address: "127.0.0.1"
     }
   end
 end

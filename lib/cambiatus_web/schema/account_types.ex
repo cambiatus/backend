@@ -74,6 +74,21 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
       resolve(&AccountsResolver.sign_in/3)
     end
+
+    field :preference, :user do
+      arg(:language, :string)
+      arg(:claim_notification, :boolean)
+      arg(:transfer_notification, :boolean)
+      arg(:digest, :boolean)
+
+      resolve(&AccountsResolver.update_preferences/3)
+    end
+
+    field :gen_auth, :request do
+      arg(:account, non_null(:string))
+
+      resolve(&AccountsResolver.gen_auth/3)
+    end
   end
 
   @desc "An input object for updating the current logged User"
@@ -89,6 +104,18 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:location, :string, description: "Optional, location, can be virtual or real")
     field(:interests, :string, description: "Optional, a list of strings interpolated with `-`")
     field(:avatar, :string, description: "Optional, URL that must be used as an avatar")
+
+    field(:claim_notification, :boolean,
+      description: "Optional, indicates if a user wants to receive a claim notification email"
+    )
+
+    field(:transfer_notification, :boolean,
+      description: "Optional, indicates if a user wants to receive a transfer notification email"
+    )
+
+    field(:digest, :boolean,
+      description: "Optional, indicates if a user wants to receive a monthly digest of news"
+    )
 
     field(:contacts, list_of(non_null(:contact_input)),
       description:
@@ -113,6 +140,11 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   enum(:transfer_direction_value) do
     value(:sending, description: "User's sent transfers.")
     value(:receiving, description: "User's received transfers.")
+  end
+
+  @desc "Request object, contains a phrase to authenticate a request to login"
+  object :request do
+    field(:phrase, non_null(:string))
   end
 
   @desc "Session object, contains the user and a token used to authenticate requests"
@@ -146,6 +178,10 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_block, :integer)
     field(:created_at, :string)
     field(:created_eos_account, :string)
+    field(:language, :string)
+    field(:claim_notification, :boolean)
+    field(:transfer_notification, :boolean)
+    field(:digest, :boolean)
     field(:network, list_of(:network), resolve: dataloader(Cambiatus.Commune))
     field(:roles, non_null(list_of(non_null(:role))), resolve: dataloader(Cambiatus.Commune))
 

@@ -1,7 +1,8 @@
 defmodule Cambiatus.AuthTest do
   use Cambiatus.DataCase
 
-  alias Cambiatus.{Auth, Auth.InvitationId}
+  alias Cambiatus.{Auth, Auth.InvitationId, Auth.Request}
+  alias Cambiatus.Repo
 
   describe "invitations" do
     setup :valid_community_and_user
@@ -66,6 +67,55 @@ defmodule Cambiatus.AuthTest do
       invitation = insert(:invitation)
 
       assert %Ecto.Changeset{} = Auth.change_invitation(invitation)
+    end
+  end
+
+  describe "get_request/1" do
+    test "returns an existing request" do
+      user = insert(:user)
+      request = insert(:request, user: user)
+      response = Auth.get_request(user.account)
+
+      assert request.id == response.id
+      assert request.phrase == response.phrase
+    end
+
+    test "returns nil if finds none request" do
+      user = insert(:user)
+
+      assert nil == Auth.get_request(user.account)
+    end
+  end
+
+  describe "get_valid_request/1" do
+    test "returns one valid request" do
+      user = insert(:user)
+      request = insert(:request, user: user)
+      response = Auth.get_valid_request(user.account)
+
+      assert request.id == response.id
+      assert request.phrase == response.phrase
+    end
+
+    test "retuns nil if non requests are valid" do
+      user = insert(:user)
+
+      insert(:request, user: user, updated_at: DateTime.add(DateTime.utc_now(), -31, :second))
+
+      assert nil == Auth.get_valid_request(user.account)
+    end
+  end
+
+  describe "delete_expired_requests/0" do
+    test "deletes all expired requests" do
+      insert(:request)
+      insert(:request, updated_at: DateTime.add(DateTime.utc_now(), -31, :second))
+      insert(:request, updated_at: DateTime.add(DateTime.utc_now(), -31, :second))
+      insert(:request, updated_at: DateTime.add(DateTime.utc_now(), -31, :second))
+
+      assert 4 == Request |> Repo.all() |> Enum.count()
+      assert {3, nil} == Auth.delete_expired_requests()
+      assert 1 == Request |> Repo.all() |> Enum.count()
     end
   end
 end

@@ -3,8 +3,8 @@ defmodule Cambiatus.Auth do
 
   import Ecto.Query
 
-  alias Cambiatus.Auth.{Invitation, InvitationId}
-  alias Cambiatus.{Accounts.User, Commune.Network, Repo}
+  alias Cambiatus.Auth.{Invitation, InvitationId, Request, Session}
+  alias Cambiatus.{Accounts, Accounts.User, Commune.Network, Repo}
 
   @doc """
   Returns the list of invitations.
@@ -150,5 +150,69 @@ defmodule Cambiatus.Auth do
   """
   def change_invitation(%Invitation{} = invitation) do
     Invitation.changeset(invitation, %{})
+  end
+
+  @doc """
+  Returns an request for session or an error.any()
+
+  ##Examples
+
+      iex> create_request(account)
+      {:ok, %Request{}}
+
+      iex> create_request(invalid_account)
+      {:error, "Could not find user"}
+  """
+  def create_request(account, ip_address) do
+    account
+    |> Accounts.get_user()
+    |> case do
+      nil ->
+        {:error, "Could not find user"}
+
+      user ->
+        params = %{
+          user_id: user.account,
+          phrase: :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64),
+          ip_address: ip_address
+        }
+
+        get_request(user.account)
+        |> case do
+          nil -> %Request{}
+          request -> request
+        end
+        |> Request.changeset(params)
+        |> Repo.insert_or_update()
+    end
+  end
+
+  def get_request(account) do
+    Repo.get_by(Request, user_id: account)
+  end
+
+  def get_valid_request(account) do
+    Request
+    |> Request.from_user(account)
+    |> Request.not_expired()
+    |> Repo.one()
+  end
+
+  def delete_expired_requests do
+    Request
+    |> Request.expired()
+    |> Repo.delete_all()
+  end
+
+  def create_session(params) do
+    %Session{}
+    |> Session.changeset(params)
+    |> Repo.insert()
+  end
+
+  def delete_request(account) do
+    Request
+    |> Request.from_user(account)
+    |> Repo.delete_all()
   end
 end
