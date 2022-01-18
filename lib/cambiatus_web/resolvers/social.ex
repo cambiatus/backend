@@ -7,7 +7,27 @@ defmodule CambiatusWeb.Resolvers.Social do
   alias Cambiatus.{Commune, Social}
   alias Cambiatus.Social.News
 
-  def news(_, params, %{context: %{current_user: current_user}}) do
+  def upsert_news(_, %{id: news_id} = params, %{context: %{current_user: current_user}}) do
+    params = Map.merge(params, %{user_id: current_user.account})
+
+    with news <- Social.get_news(news_id),
+         {:ok, transaction} <- Social.update_news_with_history(news, params) do
+      {:ok, transaction.news}
+    else
+      nil ->
+        {:error, "News not found", details: nil}
+
+      {:error, error} ->
+        Sentry.capture_message("News update failed", extra: %{error: error})
+        {:error, message: "Could not update news", details: Cambiatus.Error.from(error)}
+
+      {:error, _, error, _} ->
+        Sentry.capture_message("News update failed", extra: %{error: error})
+        {:error, message: "Could not update news", details: Cambiatus.Error.from(error)}
+    end
+  end
+
+  def upsert_news(_, params, %{context: %{current_user: current_user}}) do
     params
     |> Map.merge(%{user_id: current_user.account})
     |> Social.create_news()
@@ -31,26 +51,6 @@ defmodule CambiatusWeb.Resolvers.Social do
   end
 
   defp handle_highlighted_news_subscription(%News{scheduling: _}), do: nil
-
-  def update_news(_, %{id: news_id} = params, %{context: %{current_user: current_user}}) do
-    params = Map.merge(params, %{user_id: current_user.account})
-
-    Social.get_news(news_id)
-    |> do_update_news(params)
-    |> case do
-      {:ok, transaction_response} -> {:ok, transaction_response.news}
-      {:error, error} -> handle_news_update_error(error)
-      {:error, _, error, _} -> handle_news_update_error(error)
-    end
-  end
-
-  defp do_update_news(nil, _), do: {:error, "News not found"}
-  defp do_update_news(news, params), do: Social.update_news_with_history(news, params)
-
-  defp handle_news_update_error(error) do
-    Sentry.capture_message("News update failed", extra: %{error: error})
-    {:error, message: "Could not update news", details: Cambiatus.Error.from(error)}
-  end
 
   def mark_news_as_read(_, %{news_id: news_id}, %{context: %{current_user: current_user}}) do
     Social.upsert_news_receipt(news_id, current_user.account)

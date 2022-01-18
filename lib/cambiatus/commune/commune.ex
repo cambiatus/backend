@@ -12,7 +12,6 @@ defmodule Cambiatus.Commune do
     Community,
     CommunityPhotos,
     Network,
-    Role,
     Subdomain,
     Transfer
   }
