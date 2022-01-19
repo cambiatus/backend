@@ -23,7 +23,7 @@ defmodule Cambiatus.Commune.Network do
   end
 
   @required_fields ~w(account_id community_id invited_by_id)a
-  @optional_fields ~w(created_block created_tx created_at created_eos_account role_id)a
+  @optional_fields ~w(created_block created_tx created_at created_eos_account)a
 
   @doc false
   def changeset(network, attrs) do

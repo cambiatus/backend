@@ -179,7 +179,7 @@ defmodule Cambiatus.CommuneTest do
     } do
       network =
         insert(:network, %{
-          account: another_user,
+          user: another_user,
           community: community,
           invited_by: user
         })
@@ -194,7 +194,7 @@ defmodule Cambiatus.CommuneTest do
     } do
       network =
         insert(:network, %{
-          account: another_user,
+          user: another_user,
           community: community
         })
 
@@ -209,7 +209,7 @@ defmodule Cambiatus.CommuneTest do
     } do
       network =
         insert(:network, %{
-          account: another_user,
+          user: another_user,
           community: community,
           invited_by: user
         })
@@ -227,16 +227,16 @@ defmodule Cambiatus.CommuneTest do
         insert(
           :network,
           %{
-            account: another_user,
+            user: another_user,
             community: community,
             invited_by: user
           }
         )
         |> Repo.preload(:community)
-        |> Repo.preload(:account)
+        |> Repo.preload(:user)
         |> Repo.preload(:invited_by)
 
-      assert network.account.account == another_user.account
+      assert network.user.account == another_user.account
       assert network.community.symbol == community.symbol
       assert network.invited_by.account == user.account
     end

@@ -55,7 +55,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
 
       mutation = """
         mutation {
-          updateNews(id: #{news.id}, title: "New title", description: "New description"){
+          news(id: #{news.id}, title: "New title", description: "New description"){
             title
             description
             user {
@@ -72,7 +72,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
 
       assert %{
                "data" => %{
-                 "updateNews" => %{
+                 "news" => %{
                    "title" => "New title",
                    "description" => "New description",
                    "user" => %{"account" => "test1234"},
@@ -159,7 +159,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
   test "get news by id" do
     news = insert(:news)
     user = insert(:user)
-    insert(:network, community: news.community, account: user)
+    insert(:network, community: news.community, user: user)
     conn = build_conn() |> auth_user(user)
 
     query = """
@@ -196,7 +196,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
     insert(:news_receipt, news: news, user: user, reactions: [:rocket])
     insert(:news_receipt, news: news, reactions: [:red_heart, :thumbs_up])
     insert(:news_receipt, news: news, reactions: [:thumbs_up])
-    insert(:network, community: community, account: user)
+    insert(:network, community: community, user: user)
     insert(:news_version, news: news, title: "Hello World")
     insert(:news_version, news: news, title: "Hi World")
     conn = build_conn() |> auth_user(user)
@@ -249,7 +249,7 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
     user = insert(:user)
     another_user = insert(:user)
     news = insert(:news)
-    insert(:network, community: news.community, account: user)
+    insert(:network, community: news.community, user: user)
     insert(:news_receipt, news: news, user: another_user)
 
     conn = build_conn() |> auth_user(user)

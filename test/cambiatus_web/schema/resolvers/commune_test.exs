@@ -236,8 +236,8 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       insert_list(@num, :product, %{units: 0, community: c1})
       insert_list(@num, :product, %{community: c1})
 
-      insert(:network, %{community: c1, account: user})
-      insert(:network, %{community: c2, account: user})
+      insert(:network, %{community: c1, user: user})
+      insert(:network, %{community: c2, user: user})
 
       insert(:product, %{community: c2})
       insert(:product, %{creator: user, community: c2})
