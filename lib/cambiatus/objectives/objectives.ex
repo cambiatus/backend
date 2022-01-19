@@ -14,7 +14,7 @@ defmodule Cambiatus.Objectives do
 
   def query(Objective, _) do
     Objective
-    |> order_by([c], desc: c.created_at)
+    |> order_by([o], desc: o.created_at, asc: o.completed_at)
   end
 
   def query(Action, %{input: filters}) do
