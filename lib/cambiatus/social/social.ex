@@ -123,4 +123,27 @@ defmodule Cambiatus.Social do
       _ -> true
     end
   end
+
+  def delete_news(news_id, current_user) do
+    with {:news, news} <- {:news, get_news(news_id)},
+         {:admin, true} <-
+           {:admin, Commune.is_community_admin?(news.community_id, current_user.account)},
+         news <- Repo.preload(news, [:community, :versions]),
+         {:is_highlighted, false} <-
+           {:is_highlighted, news.community.highlighted_news_id == news.id} do
+      case Repo.delete(news) do
+        {:ok, _} -> {:ok, "News deleted successfully"}
+        _ -> {:error, "News delete failed"}
+      end
+    else
+      {:news, nil} ->
+        {:error, "News not found"}
+
+      {:admin, false} ->
+        {:error, "Logged user can't do that action"}
+
+      {:is_highlighted, true} ->
+        {:error, "Can't delete highlighted news"}
+    end
+  end
 end

@@ -6,6 +6,7 @@ defmodule Cambiatus.Social.News do
   alias Cambiatus.Accounts.User
   alias Cambiatus.Commune
   alias Cambiatus.Commune.Community
+  alias Cambiatus.Social.NewsVersion
 
   schema "news" do
     field(:title, :string)
@@ -14,6 +15,8 @@ defmodule Cambiatus.Social.News do
 
     belongs_to(:community, Community, references: :symbol, type: :string)
     belongs_to(:user, User, references: :account, type: :string)
+
+    has_many(:versions, NewsVersion, on_delete: :delete_all)
 
     timestamps()
   end

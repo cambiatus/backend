@@ -60,7 +60,7 @@ defmodule CambiatusWeb.Email do
     mail
   end
 
-  def set_language(mail, %Cambiatus.Commune.Claim{:claimer_id => id} = _claim) do
+  def set_language(mail, %Cambiatus.Objectives.Claim{:claimer_id => id} = _claim) do
     user = Accounts.get_user!(id)
 
     if user.language do

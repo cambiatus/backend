@@ -121,7 +121,7 @@ defmodule Cambiatus.Factory do
       created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
       created_at: NaiveDateTime.utc_now(),
       community: build(:community),
-      account: build(:user),
+      user: build(:user),
       invited_by: build(:user)
     }
   end

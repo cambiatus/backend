@@ -220,12 +220,17 @@ defmodule Cambiatus.Commune do
     |> Enum.any?()
   end
 
+  def is_community_admin?(%Community{} = community, account) do
+    community.creator == account
+  end
+
   def is_community_admin?(community_id, account) do
-    Community
-    |> Repo.get(community_id)
-    |> case do
-      nil -> false
-      community -> community.creator == account
+    case Repo.get(Community, community_id) do
+      nil ->
+        false
+
+      community ->
+        is_community_admin?(community, account)
     end
   end
 
