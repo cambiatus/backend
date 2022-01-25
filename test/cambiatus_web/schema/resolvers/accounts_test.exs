@@ -144,7 +144,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       mutation = """
       mutation {
-        preference(language: "pt") {
+        preference(language: PTBR) {
           account
           language
         }
@@ -159,7 +159,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
                "data" => %{
                  "preference" => %{
                    "account" => "test1234",
-                   "language" => "pt"
+                   "language" => "PTBR"
                  }
                }
              } = response

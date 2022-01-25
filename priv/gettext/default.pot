@@ -66,3 +66,53 @@ msgstr ""
 #: lib/cambiatus_web/templates/email/transfer.html.eex:391
 msgid "more details on app."
 msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:126
+msgid "During this month we've released some news in the app, and so you don't miss any of them, we've prepared a super summary!"
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:252
+msgid "GO TO COMMUNITY"
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:119
+msgid "Newsletter"
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:216
+msgid "See the latest news"
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:419
+msgid "Want to stop receiving these emails?"
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:411
+msgid "You are receiving this email because you signed up for Cambiatus or"
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:420
+msgid "You can unsubscribe by"
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:412
+msgid "a company that uses the Cambiatus platform."
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/monthly_digest.html.eex:420
+msgid "clicking here"
+msgstr ""
+
+#, elixir-format
+#: lib/cambiatus_web/email.ex:52
+msgid "Community News"
+msgstr ""
