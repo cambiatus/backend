@@ -64,6 +64,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&AccountsResolver.sign_up/3)
     end
 
+    @desc "Sign In on the platform, gives back an access token"
     field :sign_in, :session do
       arg(:account, non_null(:string))
       arg(:password, non_null(:string))
@@ -75,15 +76,18 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&AccountsResolver.sign_in/3)
     end
 
+    @desc "[Auth required] A mutation to only the preferences of the logged user"
     field :preference, :user do
-      arg(:language, :string)
+      arg(:language, :language)
       arg(:claim_notification, :boolean)
       arg(:transfer_notification, :boolean)
       arg(:digest, :boolean)
 
+      middleware(Middleware.Authenticate)
       resolve(&AccountsResolver.update_preferences/3)
     end
 
+    @desc "Generates a new signIn request"
     field :gen_auth, :request do
       arg(:account, non_null(:string))
 
@@ -178,7 +182,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_block, :integer)
     field(:created_at, :string)
     field(:created_eos_account, :string)
-    field(:language, :string)
+    field(:language, :language)
     field(:claim_notification, :boolean)
     field(:transfer_notification, :boolean)
     field(:digest, :boolean)
@@ -273,5 +277,12 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       description:
         "An Instagram account. Must have full URL like https://instagram.com/${username}"
     )
+  end
+
+  enum(:language) do
+    value(:ENUS, as: :"en-US", description: "en-US: US English language")
+    value(:PTBR, as: :"pt-BR", description: "pt-BR: Língua portugesa do Brasil")
+    value(:ESES, as: :"es-ES", description: "es-ES: idioma español de españa")
+    value(:AMHETH, as: :"amh-ETH", description: "amh-ETH: የኢትዮጵያ አማርኛ ቋንቋ")
   end
 end

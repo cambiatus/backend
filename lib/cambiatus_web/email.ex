@@ -75,6 +75,9 @@ defmodule CambiatusWeb.Email do
     set_language(mail, user.language)
   end
 
+  def set_language(mail, language) when is_atom(language),
+    do: set_language(mail, Atom.to_string(language))
+
   def set_language(mail, language) do
     if language, do: Gettext.put_locale(CambiatusWeb.Gettext, language)
     mail

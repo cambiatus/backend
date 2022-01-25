@@ -30,7 +30,11 @@ defmodule Cambiatus.Accounts.User do
     field(:created_at, :utc_datetime)
     field(:created_eos_account, :string)
 
-    field(:language, :string, default: "en-US")
+    field(:language, Ecto.Enum,
+      values: [:"en-US", :"pt-BR", :"es-ES", :"amh-ETH"],
+      default: :"en-US"
+    )
+
     field(:transfer_notification, :boolean, default: false)
     field(:claim_notification, :boolean, default: false)
     field(:digest, :boolean, default: false)
