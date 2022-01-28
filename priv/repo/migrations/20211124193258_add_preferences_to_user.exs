@@ -3,7 +3,7 @@ defmodule Cambiatus.Repo.Migrations.AddPreferencesToUser do
 
   def change do
     alter table(:users) do
-      add(:language, :string, null: false, default: "en-US")
+      add(:language, :string, null: false)
       add(:transfer_notification, :boolean, null: false, default: false)
       add(:claim_notification, :boolean, null: false, default: false)
       add(:digest, :boolean, null: false, default: false)
