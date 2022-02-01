@@ -99,4 +99,8 @@ defmodule Cambiatus.Commune.Community do
     |> join(:left, [c], s in assoc(c, :subdomain))
     |> where([c, s], s.name == ^subdomain)
   end
+
+  def with_news_enabled(query \\ Community) do
+    where(query, [c], c.has_news == true)
+  end
 end

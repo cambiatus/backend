@@ -2,6 +2,7 @@ defmodule Cambiatus.Social.News do
   @moduledoc false
   use Ecto.Schema
   import Ecto.Changeset
+  import Ecto.Query
 
   alias Cambiatus.Accounts.User
   alias Cambiatus.Commune
@@ -73,5 +74,15 @@ defmodule Cambiatus.Social.News do
       {:error, _} ->
         add_error(changeset, :community_id, "does not exist")
     end
+  end
+
+  def last_thirty_days(query \\ __MODULE__) do
+    where(
+      query,
+      [n],
+      datetime_add(n.updated_at, 60 * 60 * 24 * 30, "second") >= ^NaiveDateTime.utc_now() and
+        (is_nil(n.scheduling) or n.scheduling <= ^NaiveDateTime.utc_now())
+    )
+    |> order_by(asc: :updated_at)
   end
 end

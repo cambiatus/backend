@@ -66,7 +66,7 @@ defmodule Cambiatus.Factory do
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:created_tx, &"tx-#{&1}"),
       created_eos_account: sequence(:created_eos_account, &"eos-acc-#{&1}"),
-      language: "en",
+      language: "en-US",
       claim_notification: true,
       transfer_notification: true,
       digest: true

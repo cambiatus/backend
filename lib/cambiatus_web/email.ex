@@ -42,7 +42,20 @@ defmodule CambiatusWeb.Email do
     |> Mailer.deliver()
   end
 
-  def current_year(), do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
+  # input is a community with preloaded news with less than 30 days and members with active digest
+  def monthly_digest(community) do
+    Enum.each(community.members, fn member ->
+      new()
+      |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
+      |> to(member.email)
+      |> set_language(member.language)
+      |> subject(gettext("Community News"))
+      |> render_body("monthly_digest.html", %{community: community, user: member})
+      |> Mailer.deliver()
+    end)
+  end
+
+  def current_year, do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
 
   def format_date(date) do
     [date.day, date.month, date.year]
@@ -53,20 +66,20 @@ defmodule CambiatusWeb.Email do
   def set_language(mail, %Cambiatus.Commune.Transfer{:to_id => id} = _transfer) do
     user = Accounts.get_user!(id)
 
-    if user.language do
-      Gettext.put_locale(Cambiatus.Gettext, user.language)
-    end
-
-    mail
+    set_language(mail, user.language)
   end
 
   def set_language(mail, %Cambiatus.Objectives.Claim{:claimer_id => id} = _claim) do
     user = Accounts.get_user!(id)
 
-    if user.language do
-      Gettext.put_locale(Cambiatus.Gettext, user.language)
-    end
+    set_language(mail, user.language)
+  end
 
+  def set_language(mail, language) when is_atom(language),
+    do: set_language(mail, Atom.to_string(language))
+
+  def set_language(mail, language) do
+    if language, do: Gettext.put_locale(CambiatusWeb.Gettext, language)
     mail
   end
 end
