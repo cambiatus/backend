@@ -34,7 +34,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Creates a new user account"
-    field :sign_up, :session do
+    field :sign_up, non_null(:session) do
       arg(:name, non_null(:string), description: "User's Full name")
 
       arg(:account, non_null(:string),
@@ -65,7 +65,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Sign In on the platform, gives back an access token"
-    field :sign_in, :session do
+    field :sign_in, non_null(:session) do
       arg(:account, non_null(:string))
       arg(:password, non_null(:string))
 
