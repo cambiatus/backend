@@ -84,7 +84,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&AccountsResolver.update_preferences/3)
     end
 
-    field :gen_auth, :request do
+    field :gen_auth, non_null(:request) do
       arg(:account, non_null(:string))
 
       resolve(&AccountsResolver.gen_auth/3)
