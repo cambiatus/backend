@@ -31,8 +31,7 @@ defmodule CambiatusWeb.Router do
       "/graph",
       Absinthe.Plug,
       schema: CambiatusWeb.Schema,
-      socket: CambiatusWeb.UserSocket,
-      pipeline: {__MODULE__, :absinthe_pipeline}
+      socket: CambiatusWeb.UserSocket
     )
 
     forward(
@@ -53,11 +52,5 @@ defmodule CambiatusWeb.Router do
     post("/invite", InviteController, :invite)
 
     post("/paypal", PaypalController, :index)
-  end
-
-  def absinthe_pipeline(config, opts) do
-    config
-    |> Absinthe.Plug.default_pipeline(opts)
-    |> Absinthe.Pipeline.insert_after(Absinthe.Phase.Document.Result, MyApp.SentryErrors)
   end
 end
