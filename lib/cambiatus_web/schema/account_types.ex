@@ -47,8 +47,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
         description: "EOS Account public key, used for creating a new account"
       )
 
-      arg(:password, non_null(:string))
-
       arg(:user_type, non_null(:string),
         description:
           "User type informs if its a 'natural' or 'juridical' user for regular users and companies"
