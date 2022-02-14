@@ -25,7 +25,7 @@ defmodule CambiatusWeb.Email do
     new(
       to: transfer.to.email,
       from: {"#{transfer.community.name} - Cambiatus", "no-reply@cambiatus.com"},
-      subject: gettext("You received a new transfer on") <> "#{transfer.community.name}",
+      subject: gettext("You received a new transfer on") <> " #{transfer.community.name}",
       html_body: CambiatusWeb.EmailView.render("transfer.html", %{transfer: transfer})
     )
     |> set_language(transfer)
