@@ -168,7 +168,8 @@ defmodule Cambiatus.Auth.SignUp do
       {:error, :account_already_exists} = error ->
         error
 
-      _ ->
+      error ->
+        Sentry.capture_message("Error creating account on EOS", extra: error)
         {:error, :eos_account_creation_failed}
     end
   end
