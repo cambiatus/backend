@@ -165,11 +165,11 @@ defmodule Cambiatus.Auth.SignUp do
       {:ok, _} ->
         params
 
-      {:error, :account_already_exists} = error ->
-        error
+      {:error, :account_already_exists} ->
+        {:error, :account_already_exists}
 
-      error ->
-        Sentry.capture_message("Error creating account on EOS", extra: error)
+      other_error ->
+        Sentry.capture_message("Error creating account on EOS", extra: other_error)
         {:error, :eos_account_creation_failed}
     end
   end
@@ -236,7 +236,8 @@ defmodule Cambiatus.Auth.SignUp do
       {:ok, %{transaction_id: _txid}} ->
         params
 
-      _ ->
+      error ->
+        Sentry.capture_message("Error creating account on EOS", extra: error)
         {:error, :netlink_failed}
     end
   end
