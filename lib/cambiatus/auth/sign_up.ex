@@ -236,8 +236,11 @@ defmodule Cambiatus.Auth.SignUp do
       {:ok, %{transaction_id: _txid}} ->
         params
 
-      error ->
-        Sentry.capture_message("Error creating account on EOS", extra: error)
+      {:error, details} ->
+        Sentry.capture_message("Error during netlink", extra: details)
+        {:error, :netlink_failed}
+
+      _ ->
         {:error, :netlink_failed}
     end
   end
