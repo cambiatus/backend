@@ -16,7 +16,7 @@ else
       %Role{}
       |> Role.changeset(%{
         name: "member",
-        permissions: [:invite, :claim, :order, :sell],
+        permissions: [:invite, :claim, :order, :verify, :sell, :transfer],
         community_id: community.symbol
       })
       |> Repo.insert()

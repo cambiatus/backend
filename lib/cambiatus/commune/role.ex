@@ -16,7 +16,7 @@ defmodule Cambiatus.Commune.Role do
     field(:color, :string)
 
     field(:permissions, {:array, Ecto.Enum},
-      values: [:invite, :claim, :order, :verify, :sell, :award],
+      values: [:invite, :claim, :order, :verify, :sell, :award, :transfer],
       default: []
     )
 

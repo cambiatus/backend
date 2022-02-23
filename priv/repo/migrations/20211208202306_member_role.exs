@@ -4,7 +4,7 @@ defmodule Cambiatus.Repo.Migrations.MemberRole do
   def up do
     execute("""
     CREATE TYPE permission AS ENUM
-     ('invite', 'claim', 'order', 'verify', 'sell', 'award')
+     ('invite', 'claim', 'order', 'verify', 'sell', 'award', 'transfer')
     """)
 
     create table(:roles) do
