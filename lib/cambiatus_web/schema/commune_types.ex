@@ -353,5 +353,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     )
 
     value(:award, description: "Role permission that allows to award rewards on community actions")
+
+    value(:transfer,
+      description: "Role permission that allows users to transfer tokens on their community"
+    )
   end
 end
