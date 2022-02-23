@@ -181,9 +181,9 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_at, :string)
     field(:created_eos_account, :string)
     field(:language, :language)
-    field(:claim_notification, :boolean)
-    field(:transfer_notification, :boolean)
-    field(:digest, :boolean)
+    field(:claim_notification, non_null(:boolean))
+    field(:transfer_notification, non_null(:boolean))
+    field(:digest, non_null(:boolean))
     field(:network, list_of(:network), resolve: dataloader(Cambiatus.Commune))
     field(:roles, non_null(list_of(non_null(:role))), resolve: dataloader(Cambiatus.Commune))
 
