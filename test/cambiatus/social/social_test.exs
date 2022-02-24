@@ -284,4 +284,34 @@ defmodule Cambiatus.SocialTest do
       assert response == []
     end
   end
+
+  describe "delete_news/1" do
+    test "deletes news" do
+      user = insert(:user)
+      community = insert(:community, has_news: true, creator: user.account)
+      news = insert(:news, community: community, user: user)
+
+      user = Cambiatus.Accounts.get_user(news.user_id)
+
+      assert Social.get_news(news.id)
+
+      assert {:ok, _} = Social.delete_news(news.id, user)
+
+      refute Social.get_news(news.id)
+    end
+
+    test "deletes news with reactions" do
+      user = insert(:user)
+      community = insert(:community, has_news: true, creator: user.account)
+      news = insert(:news, community: community, user: user)
+
+      insert(:news_receipt, news: news, reactions: [:rocket, :red_heart])
+      insert(:news_receipt, news: news, reactions: [:red_heart, :thumbs_up])
+
+      assert {:ok, _} = Social.delete_news(news.id, user)
+
+      refute Social.get_news(news.id)
+      assert Social.get_news_reactions(news.id) == []
+    end
+  end
 end

@@ -8,112 +8,112 @@
 ## to merge POT files into PO files.
 msgid ""
 msgstr ""
-"Language: pt-BR\n"
+"Language: amh-ETH\n"
 "Plural-Forms: nplurals=2\n"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:218
 msgid ", here is your reward"
-msgstr ", aqui está sua recompensa"
+msgstr "ሽልማትህ ይህ ነው።"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:401
 #: lib/cambiatus_web/templates/email/transfer.html.eex:476
 msgid "Cambiatus by Satisfied Vagabonds LLC"
-msgstr "Cambiatus por Satisfied Vagabonds LLC"
+msgstr "Cambiatus by Satisfied Vagabonds LLC"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/transfer.html.eex:439
 msgid "Go to app"
-msgstr "Vá para o app"
+msgstr "ወደ መተግበሪያ ይሂዱ"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:208
 msgid "Hello"
-msgstr "Olá"
+msgstr "ሰላም"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/transfer.html.eex:195
 msgid "Hey, you received"
-msgstr "Hey, você recebeu"
+msgstr "ሄይ ተቀብለሃል"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:261
 msgid "MORE ON APP"
-msgstr "MAIS NO APP"
+msgstr "በመተግበሪያው ላይ ተጨማሪ"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:216
 msgid "Thanks for your contribution on"
-msgstr "Agradecemos sua contribuição na"
+msgstr "ላደረጉት አስተዋፅዖ እናመሰግናለን"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/transfer.html.eex:344
 msgid "You received"
-msgstr "Você recebeu"
+msgstr "ተቀብለሃል"
 
 #, elixir-format
 #: lib/cambiatus_web/email.ex:28
 msgid "You received a new transfer on"
-msgstr "Você recebeu uma nova transferência em"
+msgstr "በ ላይ አዲስ ዝውውር ተቀብለዋል።"
 
 #, elixir-format
 #: lib/cambiatus_web/email.ex:39
 #: lib/cambiatus_web/templates/email/claim.html.eex:213
 msgid "Your claim was approved!"
-msgstr "Sua reivindicação foi aprovada!"
+msgstr "የይገባኛል ጥያቄዎ ጸድቋል!"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/transfer.html.eex:391
 msgid "more details on app."
-msgstr "mais detalhes no app."
+msgstr "በመተግበሪያው ላይ ተጨማሪ ዝርዝሮች."
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:126
 msgid "During this month we've released some news in the app, and so you don't miss any of them, we've prepared a super summary!"
-msgstr "Durante esse mês divulgamos algumas notícias no aplicativo, e para que você não perca nenhuma delas, preparamos um super resumo!"
+msgstr "በዚህ ወር በመተግበሪያው ውስጥ አንዳንድ ዜናዎችን አውጥተናል፣ እና አንዳቸውም እንዳያመልጥዎ፣ እጅግ በጣም ጥሩ ማጠቃለያ አዘጋጅተናል!"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:252
 msgid "GO TO COMMUNITY"
-msgstr "IR PARA COMUNIDADE"
+msgstr "ወደ ማህበረሰብ ሂድ"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:119
 msgid "Newsletter"
-msgstr "Resumo de Notícias"
+msgstr "ጋዜጣ"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:216
 msgid "See the latest news"
-msgstr "Veja as últimas notícias"
+msgstr "የቅርብ ዜናዎችን ይመልከቱ"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:419
 msgid "Want to stop receiving these emails?"
-msgstr "Não quer mais receber esses emails?"
+msgstr "እነዚህን ኢሜይሎች መቀበል ማቆም ይፈልጋሉ?"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:411
 msgid "You are receiving this email because you signed up for Cambiatus or"
-msgstr "Você está recebendo este email porque se inscreveu na Cambiatus ou"
+msgstr "ይህ ኢሜይል የደረሰዎት ለካምቢያተስ ስለተመዘገቡ ነው።"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:420
 msgid "You can unsubscribe by"
-msgstr "Você pode deixar de recebê-los"
+msgstr "ከደንበኝነት ምዝገባ መውጣት ትችላለህ"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:412
 msgid "a company that uses the Cambiatus platform."
-msgstr "uma empresa que utiliza a plataforma Cambiatus."
+msgstr "የካምቢያተስ መድረክን የሚጠቀም ኩባንያ."
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:420
 msgid "clicking here"
-msgstr "clicando aqui"
+msgstr "እዚህ ጠቅ ማድረግ"
 
 #, elixir-format
 #: lib/cambiatus_web/email.ex:52
 msgid "Community News"
-msgstr "Notícias da Comunidade"
+msgstr "የማህበረሰብ ዜና"

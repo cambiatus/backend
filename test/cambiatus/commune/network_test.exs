@@ -14,7 +14,7 @@ defmodule Cambiatus.Commune.NetworkTest do
       another_user: another_user
     } do
       community = insert(:community)
-      network = insert(:network, %{account: another_user, community: community, invited_by: user})
+      network = insert(:network, %{user: another_user, community: community, invited_by: user})
 
       assert %Ecto.Changeset{} = Commune.change_network(network)
     end

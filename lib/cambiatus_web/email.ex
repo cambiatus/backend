@@ -25,7 +25,7 @@ defmodule CambiatusWeb.Email do
     new(
       to: transfer.to.email,
       from: {"#{transfer.community.name} - Cambiatus", "no-reply@cambiatus.com"},
-      subject: gettext("You received a new transfer on") <> "#{transfer.community.name}",
+      subject: gettext("You received a new transfer on") <> " #{transfer.community.name}",
       html_body: CambiatusWeb.EmailView.render("transfer.html", %{transfer: transfer})
     )
     |> set_language(transfer)
@@ -69,7 +69,7 @@ defmodule CambiatusWeb.Email do
     set_language(mail, user.language)
   end
 
-  def set_language(mail, %Cambiatus.Commune.Claim{:claimer_id => id} = _claim) do
+  def set_language(mail, %Cambiatus.Objectives.Claim{:claimer_id => id} = _claim) do
     user = Accounts.get_user!(id)
 
     set_language(mail, user.language)

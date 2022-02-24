@@ -10,6 +10,7 @@ defmodule Cambiatus.Accounts do
   alias Cambiatus.Auth
   alias Cambiatus.Auth.Request
   alias Cambiatus.Commune.Transfer
+  alias Cambiatus.Objectives.Check
 
   @contract Application.compile_env(:cambiatus, :contract)
 
@@ -100,7 +101,7 @@ defmodule Cambiatus.Accounts do
   """
   def get_analysis_count(user) do
     query =
-      from(c in Cambiatus.Commune.Check,
+      from(c in Check,
         where: c.validator_id == ^user.account,
         select: count(c.validator_id)
       )

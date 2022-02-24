@@ -34,7 +34,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Creates a new user account"
-    field :sign_up, :session do
+    field :sign_up, non_null(:session) do
       arg(:name, non_null(:string), description: "User's Full name")
 
       arg(:account, non_null(:string),
@@ -46,8 +46,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       arg(:public_key, non_null(:string),
         description: "EOS Account public key, used for creating a new account"
       )
-
-      arg(:password, non_null(:string))
 
       arg(:user_type, non_null(:string),
         description:
@@ -65,7 +63,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Sign In on the platform, gives back an access token"
-    field :sign_in, :session do
+    field :sign_in, non_null(:session) do
       arg(:account, non_null(:string))
       arg(:password, non_null(:string))
 
@@ -88,7 +86,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     end
 
     @desc "Generates a new signIn request"
-    field :gen_auth, :request do
+    field :gen_auth, non_null(:request) do
       arg(:account, non_null(:string))
 
       resolve(&AccountsResolver.gen_auth/3)
@@ -183,10 +181,11 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_at, :string)
     field(:created_eos_account, :string)
     field(:language, :language)
-    field(:claim_notification, :boolean)
-    field(:transfer_notification, :boolean)
-    field(:digest, :boolean)
+    field(:claim_notification, non_null(:boolean))
+    field(:transfer_notification, non_null(:boolean))
+    field(:digest, non_null(:boolean))
     field(:network, list_of(:network), resolve: dataloader(Cambiatus.Commune))
+    field(:roles, non_null(list_of(non_null(:role))), resolve: dataloader(Cambiatus.Commune))
 
     field(:address, :address, resolve: dataloader(Cambiatus.Kyc))
     field(:kyc, :kyc_data, resolve: dataloader(Cambiatus.Kyc))
@@ -200,7 +199,6 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     )
 
     field(:products, non_null(list_of(:product)), resolve: dataloader(Cambiatus.Shop))
-
     field(:analysis_count, non_null(:integer), resolve: &AccountsResolver.get_analysis_count/3)
 
     field(:contribution_count, non_null(:integer)) do

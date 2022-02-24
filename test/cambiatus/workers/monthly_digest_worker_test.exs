@@ -15,10 +15,10 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
       user2 = insert(:user)
       user3 = insert(:user)
       user4 = insert(:user)
-      insert(:network, account: user1, community: community1)
-      insert(:network, account: user2, community: community1)
-      insert(:network, account: user3, community: community2)
-      insert(:network, account: user4, community: community3)
+      insert(:network, user: user1, community: community1)
+      insert(:network, user: user2, community: community1)
+      insert(:network, user: user3, community: community2)
+      insert(:network, user: user4, community: community3)
       insert(:news, community: community1)
       insert(:news, community: community2)
       user4_email = user4.email
@@ -60,7 +60,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
       )
 
       user = insert(:user)
-      insert(:network, account: user, community: community)
+      insert(:network, user: user, community: community)
 
       assert :ok == perform_job(MonthlyDigestWorker, %{})
 

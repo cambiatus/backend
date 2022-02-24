@@ -40,13 +40,13 @@ defmodule CambiatusWeb.Schema.KycTypes do
     end
 
     @desc "[Auth required] A mutation to delete user's kyc data"
-    field :delete_kyc, :delete_kyc_address do
+    field :delete_kyc, :delete_status do
       middleware(Middleware.Authenticate)
       resolve(&Kyc.delete_kyc/3)
     end
 
     @desc "[Auth required] A mutation to delete user's address data"
-    field :delete_address, :delete_kyc_address do
+    field :delete_address, :delete_status do
       middleware(Middleware.Authenticate)
       resolve(&Kyc.delete_address/3)
     end
@@ -118,7 +118,7 @@ defmodule CambiatusWeb.Schema.KycTypes do
   end
 
   @desc "Object status for deleting KYC & Address"
-  object :delete_kyc_address do
+  object :delete_status do
     field(:status, non_null(:string))
     field(:reason, non_null(:string))
   end

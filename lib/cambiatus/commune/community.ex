@@ -6,7 +6,6 @@ defmodule Cambiatus.Commune.Community do
     CommunityPhotos,
     Mint,
     Network,
-    Objective,
     Subdomain,
     Transfer
   }
@@ -15,6 +14,7 @@ defmodule Cambiatus.Commune.Community do
   alias Cambiatus.Repo
   alias Cambiatus.Shop.Product
   alias Cambiatus.Social.News
+  alias Cambiatus.Objectives.Objective
 
   use Ecto.Schema
   import Ecto.Changeset
@@ -62,12 +62,13 @@ defmodule Cambiatus.Commune.Community do
     has_many(:news, News, foreign_key: :community_id)
     has_many(:transfers, Transfer, foreign_key: :community_id)
     has_many(:network, Network, foreign_key: :community_id)
-    has_many(:members, through: [:network, :account])
+    has_many(:members, through: [:network, :user])
     has_many(:objectives, Objective, foreign_key: :community_id)
     has_many(:actions, through: [:objectives, :actions])
     has_many(:mints, Mint, foreign_key: :community_id)
     has_many(:uploads, CommunityPhotos, foreign_key: :community_id, on_replace: :delete)
     has_many(:contributions, Contribution, foreign_key: :community_id)
+    has_many(:rewards, through: [:objectives, :actions, :rewards])
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a

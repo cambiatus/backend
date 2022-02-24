@@ -97,13 +97,11 @@ defmodule Cambiatus.Eos do
   def netlink(new_user, inviter, community_id, user_type) do
     unlock_wallet()
 
-    asset = build_asset(community_id)
-
     action = %{
       account: mcc_contract(),
       authorization: [%{actor: cambiatus_acc(), permission: "active"}],
       data: %{
-        cmm_asset: asset,
+        community_id: community_id,
         new_user: new_user,
         inviter: inviter,
         user_type: user_type

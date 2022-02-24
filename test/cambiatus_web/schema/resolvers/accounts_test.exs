@@ -554,7 +554,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     test "Sign in with signed phrase" do
       community = insert(:community)
       user = insert(:user)
-      insert(:network, community: community, account: user)
+      insert(:network, community: community, user: user)
       insert(:request, user: user)
 
       conn =

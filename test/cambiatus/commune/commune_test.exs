@@ -2,9 +2,9 @@ defmodule Cambiatus.CommuneTest do
   use Cambiatus.DataCase
 
   alias Cambiatus.Commune
-  alias Cambiatus.Commune.{Community, Action, Objective}
+  alias Cambiatus.Commune.Community
 
-  describe "communities" do
+  describe "commune" do
     @valid_attrs %{
       symbol: "TES",
       issuer: "testtesttest",
@@ -62,23 +62,6 @@ defmodule Cambiatus.CommuneTest do
       community = insert(:community)
       assert {:ok, %Community{}} = Commune.delete_community(community)
       assert_raise Ecto.NoResultsError, fn -> Commune.get_community!(community.symbol) end
-    end
-
-    @action_id 1
-    test "get_action/1 collects errors out if action doesn't exist" do
-      assert Repo.aggregate(Action, :count, :id) == 0
-
-      assert {:error, "Action with id: #{@action_id} not found"} == Commune.get_action(@action_id)
-    end
-
-    test "get_action/1 collects an action with a valid id" do
-      assert Repo.aggregate(Action, :count, :id) == 0
-
-      action = insert(:action)
-
-      assert Repo.aggregate(Action, :count, :id) == 1
-
-      assert {:ok, _} = Commune.get_action(action.id)
     end
 
     test "set_highlighted_news/3 sets the news as highlighted in community without current_user" do
@@ -196,7 +179,7 @@ defmodule Cambiatus.CommuneTest do
     } do
       network =
         insert(:network, %{
-          account: another_user,
+          user: another_user,
           community: community,
           invited_by: user
         })
@@ -211,7 +194,7 @@ defmodule Cambiatus.CommuneTest do
     } do
       network =
         insert(:network, %{
-          account: another_user,
+          user: another_user,
           community: community
         })
 
@@ -226,7 +209,7 @@ defmodule Cambiatus.CommuneTest do
     } do
       network =
         insert(:network, %{
-          account: another_user,
+          user: another_user,
           community: community,
           invited_by: user
         })
@@ -244,49 +227,22 @@ defmodule Cambiatus.CommuneTest do
         insert(
           :network,
           %{
-            account: another_user,
+            user: another_user,
             community: community,
             invited_by: user
           }
         )
         |> Repo.preload(:community)
-        |> Repo.preload(:account)
+        |> Repo.preload(:user)
         |> Repo.preload(:invited_by)
 
-      assert network.account.account == another_user.account
+      assert network.user.account == another_user.account
       assert network.community.symbol == community.symbol
       assert network.invited_by.account == user.account
     end
 
     test "create_network/1 with invalid data returns error changeset" do
       assert {:error, %Ecto.Changeset{}} = Commune.create_network(@invalid_attrs)
-    end
-  end
-
-  describe "objectives" do
-    test "update_objective/2 with valid data updates the objective" do
-      objective = insert(:objective)
-      change = %{is_completed: true}
-      assert {:ok, %Objective{} = objective} = Commune.update_objective(objective, change)
-      {:ok, found_objective} = Commune.get_objective(objective.id)
-      assert objective.id == found_objective.id
-      assert objective.is_completed == found_objective.is_completed
-    end
-  end
-
-  describe "search" do
-    test "fuzzy search actions" do
-      objective = insert(:objective)
-      base = %{objective: objective, verification_type: "claimable", description: ""}
-      _action1 = insert(:action, %{base | description: "asdf QUERY asdf"})
-      _action2 = insert(:action, %{base | description: "asdfQUERYasdf"})
-      _action3 = insert(:action, %{base | description: "QUERYasdf"})
-      _action4 = insert(:action, %{base | description: "asdfQUERY"})
-      _action5 = insert(:action, %{base | description: "asdf"})
-      _action6 = insert(:action, %{base | description: "asdfquery"})
-
-      results = Action |> Commune.query(%{query: "QUERY"}) |> Repo.all()
-      assert(Enum.count(results) == 5)
     end
   end
 end

@@ -1,4 +1,4 @@
-defmodule Cambiatus.Commune.Validator do
+defmodule Cambiatus.Objectives.Validator do
   @moduledoc """
   Datatstructure for an action validator in `Cambiatus`
   """
@@ -7,11 +7,8 @@ defmodule Cambiatus.Commune.Validator do
   import Ecto.Changeset
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{
-    Accounts.User,
-    Commune.Validator,
-    Commune.Action
-  }
+  alias Cambiatus.Accounts.User
+  alias Cambiatus.Objectives.Action
 
   @primary_key false
   schema "validators" do
@@ -26,15 +23,15 @@ defmodule Cambiatus.Commune.Validator do
 
   @required_fields ~w(action_id validator_id created_block created_tx created_eos_account created_at)a
 
-  @spec changeset(Validator.t(), map()) :: Ecto.Changeset.t()
-  def changeset(%Validator{} = validator, attrs) do
+  @spec changeset(__MODULE__.t(), map()) :: Ecto.Changeset.t()
+  def changeset(%__MODULE__{} = validator, attrs) do
     validator
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
   end
 
   def create_changeset(attrs) do
-    %Validator{}
+    %__MODULE__{}
     |> changeset(attrs)
     |> foreign_key_constraint(:action_id)
     |> foreign_key_constraint(:validator_id)

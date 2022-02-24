@@ -15,7 +15,7 @@ defmodule CambiatusWeb.InviteControllerTest do
          %{conn: conn} do
       community = insert(:community)
       user = insert(:user)
-      insert(:network, %{account: user, community: community})
+      insert(:network, %{user: user, community: community})
 
       body = %{community_id: community.symbol, creator_id: user.account}
       conn = post(conn, invite_path(conn, :invite), body)
@@ -42,7 +42,7 @@ defmodule CambiatusWeb.InviteControllerTest do
          %{conn: conn} do
       community = insert(:community)
       user = insert(:user)
-      insert(:network, %{account: user, community: community})
+      insert(:network, %{user: user, community: community})
 
       body = %{"community_id" => community.symbol, "creator_id" => user.account}
       conn = post(conn, invite_path(conn, :invite), body)

@@ -25,24 +25,14 @@ defmodule CambiatusWeb.Schema.SocialTypes do
   object :social_mutations do
     @desc "[Auth required - Admin only] News mutation, that allows for creating news on a community"
     field :news, :news do
+      arg(:id, :integer)
       arg(:title, non_null(:string))
       arg(:description, non_null(:string))
-      arg(:community_id, non_null(:string))
+      arg(:community_id, :string)
       arg(:scheduling, :datetime)
 
       middleware(Middleware.Authenticate)
-      resolve(&Social.news/3)
-    end
-
-    @desc "[Auth required - Admin only] Mutation to update news"
-    field :update_news, :news do
-      arg(:id, non_null(:integer))
-      arg(:title, :string)
-      arg(:description, :string)
-      arg(:scheduling, :datetime)
-
-      middleware(Middleware.Authenticate)
-      resolve(&Social.update_news/3)
+      resolve(&Social.upsert_news/3)
     end
 
     @desc "[Auth required] Mark news as read, creating a new news_receipt without reactions"
@@ -60,6 +50,14 @@ defmodule CambiatusWeb.Schema.SocialTypes do
 
       middleware(Middleware.Authenticate)
       resolve(&Social.update_reactions/3)
+    end
+
+    @desc "[Auth required] Deletes News "
+    field :delete_news, :delete_status do
+      arg(:news_id, non_null(:integer))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Social.delete_news/3)
     end
   end
 
