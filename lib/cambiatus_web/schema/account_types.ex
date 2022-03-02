@@ -85,6 +85,12 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&AccountsResolver.update_preferences/3)
     end
 
+    @desc "[Auth required] Set the latest_accept_terms date"
+    field :accept_terms, :user do
+      middleware(Middleware.Authenticate)
+      resolve(&AccountsResolver.set_accepted_terms_date/3)
+    end
+
     @desc "Generates a new signIn request"
     field :gen_auth, non_null(:request) do
       arg(:account, non_null(:string))
@@ -180,10 +186,13 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:created_block, :integer)
     field(:created_at, :string)
     field(:created_eos_account, :string)
+
     field(:language, :language)
     field(:claim_notification, non_null(:boolean))
     field(:transfer_notification, non_null(:boolean))
     field(:digest, non_null(:boolean))
+    field(:latest_accepted_terms, :datetime)
+
     field(:network, list_of(:network), resolve: dataloader(Cambiatus.Commune))
     field(:roles, non_null(list_of(non_null(:role))), resolve: dataloader(Cambiatus.Commune))
 
