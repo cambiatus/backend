@@ -191,7 +191,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     field(:claim_notification, non_null(:boolean))
     field(:transfer_notification, non_null(:boolean))
     field(:digest, non_null(:boolean))
-    field(:latest_accepted_terms, :datetime)
+    field(:latest_accepted_terms, :naive_datetime)
 
     field(:network, list_of(:network), resolve: dataloader(Cambiatus.Commune))
     field(:roles, non_null(list_of(non_null(:role))), resolve: dataloader(Cambiatus.Commune))
