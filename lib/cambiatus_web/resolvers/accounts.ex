@@ -57,7 +57,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
       {:error, changeset} ->
         {:error,
          message: "Could not set the accepted terms date",
-         detauls: Cambiatus.Error.from(changeset)}
+         details: Cambiatus.Error.from(changeset)}
     end
   end
 
