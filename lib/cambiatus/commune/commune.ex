@@ -147,6 +147,7 @@ defmodule Cambiatus.Commune do
   end
 
   def update_community({:error, _} = error), do: error
+  def update_community({:error, _} = error, _), do: error
   def update_community({:ok, community}, attrs), do: update_community(community, attrs)
 
   def update_community(%Community{} = community, attrs) do
