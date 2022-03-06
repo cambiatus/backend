@@ -257,6 +257,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   object(:contact) do
     field(:type, :contact_type)
     field(:external_id, :string)
+    field(:label, :string, description: "A label that can be used to better identify the contact")
   end
 
   enum(:contact_type) do

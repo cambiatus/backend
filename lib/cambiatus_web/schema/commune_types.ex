@@ -25,7 +25,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       arg(:symbol, :string)
       arg(:subdomain, :string)
 
-      middleware(Middleware.Authenticate)
+      # middleware(Middleware.Authenticate)
       resolve(&Commune.find_community/3)
     end
 
@@ -247,6 +247,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:order_count, non_null(:integer), resolve: &Commune.get_order_count/3)
     field(:action_count, non_null(:integer), resolve: &Objectives.get_action_count/3)
     field(:claim_count, non_null(:integer), resolve: &Objectives.get_claim_count/3)
+
+    field(:contacts, non_null(list_of(non_null(:contact))),
+      resolve: dataloader(Cambiatus.Accounts)
+    )
   end
 
   @desc "Community Preview data, public data of a community"

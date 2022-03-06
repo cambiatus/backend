@@ -13,13 +13,20 @@ defmodule Cambiatus.Accounts.Contact do
   import Ecto.Changeset
 
   alias Cambiatus.Accounts.{Contact, User}
+  alias Cambiatus.Commune.Community
   alias ExPhoneNumber
 
   schema "contacts" do
-    field(:type, Ecto.Enum, values: [:phone, :whatsapp, :telegram, :instagram])
+    field(:type, Ecto.Enum,
+      values: [:phone, :whatsapp, :telegram, :instagram, :email],
+      null: false
+    )
+
     field(:external_id, :string)
+    field(:label, :string)
 
     belongs_to(:user, User, references: :account, type: :string)
+    belongs_to(:community, Community, references: :symbol, type: :string)
     timestamps(type: :utc_datetime)
   end
 
@@ -30,6 +37,8 @@ defmodule Cambiatus.Accounts.Contact do
     |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
     |> validate_external_id()
+    |> check_constraint(:user_id, :contact_must_belong_user_or_community)
+    |> check_constraint(:community_id, :contact_must_belong_user_or_community)
   end
 
   def validate_external_id(changeset) do
@@ -45,6 +54,9 @@ defmodule Cambiatus.Accounts.Contact do
 
       :instagram ->
         validate_format(changeset, :external_id, @instagram_regex)
+
+      :email ->
+        validate_format(changeset, :email, ~r/@/)
 
       _ ->
         validate_format(changeset, :external_id, ~r/(?s).*/)
