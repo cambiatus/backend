@@ -117,7 +117,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       query = """
       mutation($input: UserUpdateInput!){
-        updateUser(input: $input) {
+        user(input: $input) {
           account
           bio
         }
@@ -128,7 +128,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       %{
         "data" => %{
-          "updateUser" => profile
+          "user" => profile
         }
       } = json_response(res, 200)
 

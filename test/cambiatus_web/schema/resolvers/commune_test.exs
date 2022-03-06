@@ -565,7 +565,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       query = """
       mutation {
-        hasNews(communityId: "#{community.symbol}", hasNews: true){
+        community(communityId: "#{community.symbol}", input: {hasNews: true}){
           symbol
           hasNews
         }
@@ -578,7 +578,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       assert %{
                "data" => %{
-                 "hasNews" => %{
+                 "community" => %{
                    "hasNews" => true,
                    "symbol" => "symbol-0"
                  }
