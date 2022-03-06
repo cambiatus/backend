@@ -63,7 +63,9 @@ defmodule Cambiatus.Accounts.User do
   end
 
   @required_fields ~w(account email name)a
-  @optional_fields ~w(bio location interests avatar created_block created_tx created_at created_eos_account language transfer_notification claim_notification digest)a
+  @optional_fields ~w(bio location interests avatar created_block
+  created_tx created_at created_eos_account language
+  transfer_notification claim_notification digest)a
 
   @doc false
   def changeset(%User{} = user, attrs) do

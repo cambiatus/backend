@@ -26,7 +26,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   @desc "Account Mutations"
   object(:account_mutations) do
     @desc "[Auth required] A mutation to update a user"
-    field :update_user, :user do
+    field :user, :user do
       arg(:input, non_null(:user_update_input))
 
       middleware(Middleware.Authenticate)
@@ -121,13 +121,14 @@ defmodule CambiatusWeb.Schema.AccountTypes do
 
     field(:contacts, list_of(non_null(:contact_input)),
       description:
-        "Optional, list will overwrite all entries, ensure to send all contact information"
+        "Optional, list will overwrite all entries, make sure to send all contact information"
     )
   end
 
   input_object(:contact_input) do
     field(:type, :contact_type)
     field(:external_id, :string)
+    field(:label, :string)
   end
 
   input_object(:transfer_direction) do
@@ -276,6 +277,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       description:
         "An Instagram account. Must have full URL like https://instagram.com/${username}"
     )
+
+    value(:email, description: "Email, must be a valid address")
   end
 
   enum(:language) do

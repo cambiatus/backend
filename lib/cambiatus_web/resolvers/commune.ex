@@ -47,6 +47,22 @@ defmodule CambiatusWeb.Resolvers.Commune do
     {:ok, invite.community}
   end
 
+  def update_community(_, %{community_id: community_id, input: changes}, %{
+        context: %{current_user: current_user}
+      }) do
+    Commune.update_community(community_id, current_user, changes)
+    |> case do
+      {:ok, _community} = ok ->
+        ok
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, message: "Can't update community", details: Error.from(changeset)}
+
+      {:error, reason} ->
+        {:error, message: "Can't update community", details: reason}
+    end
+  end
+
   @doc """
   Collects all transfers from a community
   """
@@ -98,12 +114,6 @@ defmodule CambiatusWeb.Resolvers.Commune do
 
   def add_photos(_, %{symbol: symbol, urls: urls}, %{context: %{current_user: current_user}}) do
     Commune.add_photos(current_user, symbol, urls)
-  end
-
-  def set_has_news(_, %{community_id: community_id, has_news: has_news}, %{
-        context: %{current_user: current_user}
-      }) do
-    Commune.set_has_news(current_user, community_id, has_news)
   end
 
   def set_highlighted_news(_, %{community_id: community_id} = args, %{

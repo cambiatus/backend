@@ -87,10 +87,20 @@ defmodule Cambiatus.Commune.Community do
   @doc false
   def changeset(%Community{} = community, attrs) do
     community
+    |> Repo.preload(:contacts)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_assoc(:subdomain, with: &Subdomain.changeset/2)
     |> cast_assoc(:contribution_configuration, with: &ContributionConfiguration.changeset/2)
     |> validate_required(@required_fields)
+    |> assoc_contacts(attrs)
+  end
+
+  def assoc_contacts(changeset, attrs) do
+    if Map.has_key?(attrs, :contacts) do
+      put_assoc(changeset, :contacts, Map.get(attrs, :contacts))
+    else
+      changeset
+    end
   end
 
   def save_photos(%Community{} = community, urls) do
