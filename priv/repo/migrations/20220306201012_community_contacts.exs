@@ -37,11 +37,5 @@ defmodule Cambiatus.Repo.Migrations.CommunityContacts do
         check: "(community_id IS NULL) <> (user_id IS NULL)"
       )
     )
-
-    create(
-      constraint(:contacts, :contact_must_belong_user_or_community,
-        check: "(community_id IS NULL) <> (user_id IS NULL)"
-      )
-    )
   end
 end
