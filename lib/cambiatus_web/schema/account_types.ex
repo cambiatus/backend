@@ -279,6 +279,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
     )
 
     value(:email, description: "Email, must be a valid address")
+    value(:link, description: "Links Any URL")
   end
 
   enum(:language) do
