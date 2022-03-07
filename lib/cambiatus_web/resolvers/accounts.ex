@@ -47,6 +47,20 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
+  def set_accepted_terms_date(_, _, %{context: %{current_user: current_user}}) do
+    current_user
+    |> Accounts.update_user(%{latest_accepted_terms: DateTime.utc_now()})
+    |> case do
+      {:ok, _user} = ok ->
+        ok
+
+      {:error, changeset} ->
+        {:error,
+         message: "Could not set the accepted terms date",
+         details: Cambiatus.Error.from(changeset)}
+    end
+  end
+
   def sign_in(_, %{account: account, password: password, invitation_id: invitation_id}, %{
         context: %{user_agent: user_agent, ip_address: ip_address}
       }) do

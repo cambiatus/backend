@@ -40,6 +40,8 @@ defmodule Cambiatus.Accounts.User do
     field(:claim_notification, :boolean, default: false)
     field(:digest, :boolean, default: false)
 
+    field(:latest_accepted_terms, :naive_datetime)
+
     has_many(:push_subscriptions, PushSubscription, foreign_key: :account_id)
     has_many(:products, Product, foreign_key: :creator_id)
     has_many(:orders, through: [:products, :orders])
@@ -63,7 +65,8 @@ defmodule Cambiatus.Accounts.User do
   end
 
   @required_fields ~w(account email name)a
-  @optional_fields ~w(bio location interests avatar created_block created_tx created_at created_eos_account language transfer_notification claim_notification digest)a
+  @optional_fields ~w(bio location interests avatar created_block created_tx created_at created_eos_account
+                      language transfer_notification claim_notification digest latest_accepted_terms)a
 
   @doc false
   def changeset(%User{} = user, attrs) do
