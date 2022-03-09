@@ -25,7 +25,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       arg(:symbol, :string)
       arg(:subdomain, :string)
 
-      middleware(Middleware.Authenticate)
+      # middleware(Middleware.Authenticate)
       resolve(&Commune.find_community/3)
     end
 
@@ -129,15 +129,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(&Commune.add_photos/3)
     end
 
-    @desc "[Auth required - Admin only] Set has_news flag of community"
-    field :has_news, :community do
-      arg(:community_id, non_null(:string))
-      arg(:has_news, non_null(:boolean))
-
-      middleware(Middleware.Authenticate)
-      resolve(&Commune.set_has_news/3)
-    end
-
     @desc "[Auth required - Admin only] Set highlighted news of community. If news_id is not present, sets highlighted as nil"
     field :highlighted_news, :community do
       arg(:community_id, non_null(:string))
@@ -146,6 +137,24 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       middleware(Middleware.Authenticate)
       resolve(&Commune.set_highlighted_news/3)
     end
+
+    @desc "[Auth required - Admin only] Updates various fields in a community"
+    field :community, :community do
+      arg(:community_id, non_null(:string))
+      arg(:input, non_null(:community_update_input))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Commune.update_community/3)
+    end
+  end
+
+  input_object(:community_update_input) do
+    field(:has_news, :boolean, description: "Changes if the community has news enabled")
+
+    field(:contacts, list_of(non_null(:contact_input)),
+      description:
+        "Optional, list will overwrite all entries, make sure to always send all contacts"
+    )
   end
 
   input_object :transfer_succeed_input do
@@ -247,6 +256,10 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:order_count, non_null(:integer), resolve: &Commune.get_order_count/3)
     field(:action_count, non_null(:integer), resolve: &Objectives.get_action_count/3)
     field(:claim_count, non_null(:integer), resolve: &Objectives.get_claim_count/3)
+
+    field(:contacts, non_null(list_of(non_null(:contact))),
+      resolve: dataloader(Cambiatus.Accounts)
+    )
   end
 
   @desc "Community Preview data, public data of a community"

@@ -143,7 +143,7 @@ defmodule Cambiatus.CommuneTest do
       user = insert(:user)
       community = insert(:community, creator: user.account, has_news: false)
 
-      response = Commune.set_has_news(user, community.symbol, true)
+      response = Commune.update_community(community.symbol, user, %{has_news: true})
 
       assert {:ok, %Community{has_news: true}} = response
       assert Repo.get!(Community, community.symbol).has_news == true
@@ -153,7 +153,7 @@ defmodule Cambiatus.CommuneTest do
       user = insert(:user)
       community = insert(:community, has_news: false)
 
-      response = Commune.set_has_news(user, community.symbol, true)
+      response = Commune.update_community(community.symbol, user, %{has_news: true})
 
       assert {:error, "Unauthorized"} == response
     end
@@ -161,7 +161,7 @@ defmodule Cambiatus.CommuneTest do
     test "set_has_news/3 returns error if community is not found" do
       user = insert(:user)
 
-      response = Commune.set_has_news(user, "any_community", true)
+      response = Commune.update_community("any_community", user, %{has_news: true})
 
       assert {:error, "No community exists with the symbol: any_community"} == response
     end

@@ -146,22 +146,21 @@ defmodule Cambiatus.Commune do
     |> Repo.insert()
   end
 
-  @doc """
-  Updates a community.
+  def update_community({:error, _} = error), do: error
+  def update_community({:error, _} = error, _), do: error
+  def update_community({:ok, community}, attrs), do: update_community(community, attrs)
 
-  ## Examples
-
-      iex> update_community(community, %{field: new_value})
-      {:ok, %Community{}}
-
-      iex> update_community(community, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
   def update_community(%Community{} = community, attrs) do
     community
     |> Community.changeset(attrs)
     |> Repo.update()
+  end
+
+  def update_community(community_id, current_user, attrs) do
+    community_id
+    |> get_community()
+    |> check_user_authorization(current_user)
+    |> update_community(attrs)
   end
 
   @doc """
@@ -432,20 +431,6 @@ defmodule Cambiatus.Commune do
       community_response
     else
       {:error, "Unauthorized"}
-    end
-  end
-
-  def set_has_news(current_user, community_id, has_news) do
-    case get_community(community_id) do
-      {:ok, community} ->
-        if community.creator == current_user.account do
-          update_community(community, %{has_news: has_news})
-        else
-          {:error, "Unauthorized"}
-        end
-
-      {:error, _} = error ->
-        error
     end
   end
 end

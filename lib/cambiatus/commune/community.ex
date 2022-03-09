@@ -1,6 +1,8 @@
 defmodule Cambiatus.Commune.Community do
   @moduledoc false
 
+  alias Cambiatus.Accounts.Contact
+
   alias Cambiatus.Commune.{
     Community,
     CommunityPhotos,
@@ -52,6 +54,7 @@ defmodule Cambiatus.Commune.Community do
 
     # Social
     field(:has_news, :boolean, default: false)
+
     belongs_to(:highlighted_news, News)
 
     belongs_to(:subdomain, Subdomain)
@@ -69,6 +72,12 @@ defmodule Cambiatus.Commune.Community do
     has_many(:uploads, CommunityPhotos, foreign_key: :community_id, on_replace: :delete)
     has_many(:contributions, Contribution, foreign_key: :community_id)
     has_many(:rewards, through: [:objectives, :actions, :rewards])
+
+    has_many(:contacts, Contact,
+      foreign_key: :community_id,
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a
@@ -78,10 +87,20 @@ defmodule Cambiatus.Commune.Community do
   @doc false
   def changeset(%Community{} = community, attrs) do
     community
+    |> Repo.preload(:contacts)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_assoc(:subdomain, with: &Subdomain.changeset/2)
     |> cast_assoc(:contribution_configuration, with: &ContributionConfiguration.changeset/2)
     |> validate_required(@required_fields)
+    |> assoc_contacts(attrs)
+  end
+
+  def assoc_contacts(changeset, attrs) do
+    if Map.has_key?(attrs, :contacts) do
+      put_assoc(changeset, :contacts, Map.get(attrs, :contacts))
+    else
+      changeset
+    end
   end
 
   def save_photos(%Community{} = community, urls) do
