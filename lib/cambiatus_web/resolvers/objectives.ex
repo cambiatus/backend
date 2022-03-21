@@ -105,7 +105,6 @@ defmodule CambiatusWeb.Resolvers.Objectives do
   end
 
   def get_claim_count(%Action{} = action, filter, _) do
-    # Objectives.get_claim_count(action, filter)
     Objectives.get_claim_count(action, filter)
   end
 

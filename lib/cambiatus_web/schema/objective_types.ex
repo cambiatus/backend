@@ -24,7 +24,7 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
     field :objective, :objective do
       arg(:id, non_null(:integer))
 
-      # middleware(Middleware.Authenticate)
+      middleware(Middleware.Authenticate)
       resolve(&Objectives.get_objective/3)
     end
   end
