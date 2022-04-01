@@ -116,6 +116,8 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
       arg(:status, :claim_status)
       resolve(&Objectives.get_claim_count/3)
     end
+
+    field(:image, :string)
   end
 
   @desc "A claim made in an action"
