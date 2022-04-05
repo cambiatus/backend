@@ -22,6 +22,7 @@ defmodule Cambiatus.Objectives.Action do
     field(:photo_proof_instructions, :string)
 
     field(:position, :integer)
+    field(:image, :string)
 
     field(:created_block, :integer)
     field(:created_tx, :string)

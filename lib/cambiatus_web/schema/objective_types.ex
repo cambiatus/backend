@@ -111,6 +111,13 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
+
+    field(:claim_count, non_null(:integer)) do
+      arg(:status, :claim_status)
+      resolve(&Objectives.get_claim_count/3)
+    end
+
+    field(:image, :string)
   end
 
   @desc "A claim made in an action"

@@ -244,6 +244,24 @@ defmodule Cambiatus.Objectives do
     end
   end
 
+  def get_claim_count(%Action{} = action, filter \\ %{}) do
+    query = from(c in Claim, where: c.action_id == ^action.id, select: count(c.id))
+
+    query =
+      if Map.has_key?(filter, :status) do
+        Claim.with_status(query, Map.get(filter, :status))
+      else
+        query
+      end
+
+    query
+    |> Repo.one()
+    |> case do
+      nil -> {:ok, 0}
+      results -> {:ok, results}
+    end
+  end
+
   @doc """
   Fetch a single objective by id
 

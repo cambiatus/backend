@@ -5,7 +5,7 @@ defmodule CambiatusWeb.Resolvers.Objectives do
   alias Absinthe.Relay.Connection
   alias Cambiatus.Commune.Community
   alias Cambiatus.Objectives
-  alias Cambiatus.Objectives.Claim
+  alias Cambiatus.Objectives.{Action, Claim}
 
   @doc """
   Fetches a claim
@@ -102,6 +102,10 @@ defmodule CambiatusWeb.Resolvers.Objectives do
 
   def get_claim_count(%Community{} = community, _, _) do
     Objectives.get_claim_count(community)
+  end
+
+  def get_claim_count(%Action{} = action, filter, _) do
+    Objectives.get_claim_count(action, filter)
   end
 
   @spec complete_objective(map(), map(), map()) :: {:ok, map()} | {:error, String.t()}
