@@ -3,9 +3,6 @@ IO.puts("Filling member_roles table with default values")
 alias Cambiatus.Repo
 alias Cambiatus.Commune.{Community, NetworkRole, Role}
 
-# TODO: REMOVE THIS
-Repo.delete_all(Role)
-
 if Repo.aggregate(Role, :count, :id) > 0 do
   IO.puts("Roles already migrated")
 else

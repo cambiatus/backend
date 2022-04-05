@@ -8,8 +8,8 @@ defmodule Cambiatus.Shop.Product do
   import Ecto.Query
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{Accounts.User, Commune.Community}
-  alias Cambiatus.Shop.{Order, Product}
+  alias Cambiatus.{Accounts.User, Commune.Community, Repo}
+  alias Cambiatus.Shop.{Order, Product, ProductImage}
 
   schema "products" do
     field(:title, :string)
@@ -21,6 +21,8 @@ defmodule Cambiatus.Shop.Product do
     field(:is_deleted, :boolean)
     field(:deleted_at, :utc_datetime)
 
+    timestamps()
+
     field(:created_block, :integer)
     field(:created_tx, :string)
     field(:created_eos_account, :string)
@@ -29,11 +31,12 @@ defmodule Cambiatus.Shop.Product do
     belongs_to(:creator, User, references: :account, type: :string)
     belongs_to(:community, Community, references: :symbol, type: :string)
 
+    has_many(:images, ProductImage)
     has_many(:orders, Order, foreign_key: :product_id)
   end
 
-  @required_fields ~w(title description price image track_stock units
-  created_block is_deleted deleted_at created_tx created_eos_account created_at)a
+  @required_fields ~w(title description price track_stock units created_block is_deleted created_tx created_eos_account created_at)a
+  @optional_fields ~w(deleted_at image)a
 
   @doc """
   This function contains the logic required for the validation of base shop changeset
@@ -41,7 +44,9 @@ defmodule Cambiatus.Shop.Product do
   @spec changeset(Product.t(), map()) :: Ecto.Changeset.t()
   def changeset(%Product{} = shop, attrs) do
     shop
-    |> cast(attrs, @required_fields)
+    |> Repo.preload(:images)
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_assoc(:images)
     |> validate_required(@required_fields)
   end
 
