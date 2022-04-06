@@ -3,7 +3,7 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
 
   alias Cambiatus.Accounts.User
   alias Cambiatus.Commune.{Community}
-  alias Cambiatus.Objectives.{Action, Claim, Objective, Validator}
+  alias Cambiatus.Objectives.{Action, Claim, Check, Objective, Validator}
 
   @num 3
   describe "Commune Resolver" do
@@ -443,6 +443,69 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       claim_history_ids = ch["edges"] |> Enum.map(& &1["node"]) |> Enum.map(& &1["action"]["id"])
 
       refute Enum.any?(claim_history_ids)
+    end
+
+    test "fetch user claims filtered by community" do
+      assert Repo.aggregate(User, :count, :account) == 0
+      user = insert(:user, account: "lucca123")
+      # insert claims from two different communities
+      community = insert(:community)
+      objective = insert(:objective, %{community: community})
+      action = insert(:action, %{objective: objective})
+      claim1 = insert(:claim, %{action: action, claimer: user})
+
+      community2 = insert(:community)
+      objective2 = insert(:objective, %{community: community2})
+      action2 = insert(:action, %{objective: objective2})
+      claim2 = insert(:claim, %{action: action2, claimer: user})
+
+      # Same user checked two different communities
+      insert(:check, %{claim: claim1, validator: user, is_verified: true})
+      insert(:check, %{claim: claim2, validator: user, is_verified: false})
+
+      assert Repo.aggregate(Community, :count, :symbol) == 2
+      assert Repo.aggregate(Objective, :count, :id) == 2
+      assert Repo.aggregate(Action, :count, :id) == 2
+      assert Repo.aggregate(Check, :count, :is_verified) == 2
+
+      conn = build_conn() |> auth_user(user)
+
+      variables = %{
+        "account" => user.account,
+        "community_id" => community.symbol
+      }
+
+      query = """
+      query($account: String!, $community_id: String!){
+        user(account: $account) {
+          claims(communityId: $community_id) {
+            action {
+              objective {
+                community {
+                  symbol
+                }
+              }
+            }
+          }
+          avatar
+          bio
+        }
+      }
+      """
+
+      res = conn |> get("/api/graph", query: query, variables: variables)
+
+      %{
+        "data" => %{
+          "user" => user_response
+        }
+      } = json_response(res, 200)
+
+      assert Enum.count(user_response["claims"]) == 1
+
+      assert user_response["claims"]
+             |> hd
+             |> get_in(["action", "objective", "community", "symbol"]) == community.symbol
     end
   end
 end
