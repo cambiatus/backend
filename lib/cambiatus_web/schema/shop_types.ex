@@ -40,6 +40,20 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
   @desc "Shop mutations"
   object(:shop_mutations) do
+    @desc "[Auth required]"
+    field :product, :product do
+      arg(:community_id, non_null(:string))
+      arg(:title, non_null(:string))
+      arg(:description, non_null(:string))
+      arg(:price, non_null(:float))
+      arg(:images, non_null(list_of(non_null(:string))))
+      arg(:track_stock, non_null(:boolean))
+      arg(:units, :integer)
+
+      # TODO: Put authentication back
+      # middleware(Middleware.Authenticate)
+      resolve(&Shop.upsert_product/3)
+    end
   end
 
   @desc "Shop subscriptions"
@@ -56,15 +70,21 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:title, non_null(:string))
     field(:description, non_null(:string))
     field(:price, non_null(:float))
-    field(:image, :string)
     field(:track_stock, non_null(:boolean))
-    field(:units, non_null(:integer))
+    field(:units, :integer)
+    field(:images, non_null(list_of(non_null(:string))))
 
     field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
-    field(:created_block, non_null(:integer))
-    field(:created_tx, non_null(:string))
-    field(:created_eos_account, non_null(:string))
-    field(:created_at, non_null(:datetime))
+
+    field(:inserted_at, non_null(:naive_datetime))
+    field(:updated_at, non_null(:naive_datetime))
+
+    # TODO: Remove deprecated fields
+    field(:image, :string, deprecate: true)
+    field(:created_block, non_null(:integer), deprecate: true)
+    field(:created_tx, non_null(:string), deprecate: true)
+    field(:created_eos_account, non_null(:string), deprecate: true)
+    field(:created_at, non_null(:datetime), deprecate: true)
 
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
   end

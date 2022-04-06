@@ -23,6 +23,18 @@ defmodule Cambiatus.Shop do
     queryable
   end
 
+  def create_product(attrs \\ %{}) do
+    %Product{}
+    |> Product.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def update_product(%Product{} = product, attrs) do
+    product
+    |> Product.changeset(attrs)
+    |> Repo.update()
+  end
+
   def list_products(community_id, filters \\ %{}) do
     query =
       Product

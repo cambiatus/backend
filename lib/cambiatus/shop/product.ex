@@ -8,7 +8,8 @@ defmodule Cambiatus.Shop.Product do
   import Ecto.Query
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{Accounts.User, Commune.Community, Repo}
+  alias Cambiatus.{Accounts.User, Commune, Repo}
+  alias Cambiatus.Commune.Community
   alias Cambiatus.Shop.{Order, Product, ProductImage}
 
   schema "products" do
@@ -50,6 +51,8 @@ defmodule Cambiatus.Shop.Product do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_assoc(:images)
     |> validate_required(@required_fields)
+    |> validate_community_shop_enabled()
+    |> validate_track_stock_units()
   end
 
   def create_changeset(attrs) do
@@ -59,6 +62,44 @@ defmodule Cambiatus.Shop.Product do
     |> put_assoc(:community, attrs.community)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
+    |> validate_community_shop_enabled()
+    |> validate_track_stock_units()
+    |> validate_price_precision()
+  end
+
+  def validate_community_shop_enabled(changeset) do
+    community_id = get_field(changeset, :community_id)
+
+    Commune.get_community(community_id)
+    |> case do
+      {:ok, community} ->
+        if Map.get(community, :has_shop),
+          do: changeset,
+          else: add_error(changeset, :community_id, "news is not enabled")
+
+      {:error, _} ->
+        add_error(changeset, :community_id, "does not exist")
+    end
+  end
+
+  def validate_track_stock_units(changeset) do
+    unless get_field(changeset, :track_stock) do
+      add_error(changeset, :units, "cannot be filled if track_stock is false")
+    else
+      changeset
+    end
+  end
+
+  def validate_token_precision(changeset) do
+    community_id = get_field(changeset, :community_id)
+    price = get_field(changeset, :price)
+    {precision, _} = Eos.parse_symbol(community_id)
+
+    unless Float.round(price, precision) == price do
+      add_error(changeset, :price, "Price must have precision of #{precision}")
+    else
+      changeset
+    end
   end
 
   def from_community(query \\ Product, community_id) do
