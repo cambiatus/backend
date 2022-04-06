@@ -3,7 +3,8 @@ defmodule Cambiatus.Repo.Migrations.MultipleShopImages do
 
   def change do
     alter table(:products) do
-      timestamps()
+      add(:inserted_at, :naive_datetime, null: true)
+      add(:updated_at, :naive_datetime, null: true)
     end
 
     create table(:product_images) do
@@ -12,5 +13,11 @@ defmodule Cambiatus.Repo.Migrations.MultipleShopImages do
 
       timestamps()
     end
+
+    create(
+      unique_index(:product_images, [:product_id, :uri],
+        name: :product_images_unique_product_image
+      )
+    )
   end
 end

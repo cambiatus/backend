@@ -35,7 +35,9 @@ defmodule Cambiatus.Shop.Product do
     has_many(:orders, Order, foreign_key: :product_id)
   end
 
-  @required_fields ~w(title description price track_stock units created_block is_deleted created_tx created_eos_account created_at)a
+  # TODO: Put back this after the update of structure from blockchain to graphql
+  # @required_fields ~w(title description price track_stock units created_block is_deleted)a
+  @required_fields ~w(title description price track_stock units created_block is_deleted created_tx created_eos_account created_at inserted_at updated_at)a
   @optional_fields ~w(deleted_at image)a
 
   @doc """
