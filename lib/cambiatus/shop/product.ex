@@ -38,8 +38,9 @@ defmodule Cambiatus.Shop.Product do
 
   # TODO: Put back this after the update of structure from blockchain to graphql
   # @required_fields ~w(title description price track_stock units created_block is_deleted)a
-  @required_fields ~w(title description price track_stock units created_block is_deleted created_tx created_eos_account created_at inserted_at updated_at)a
-  @optional_fields ~w(deleted_at image)a
+  @required_fields ~w(title description price track_stock community_id)a
+  @optional_fields ~w(units deleted_at image created_block is_deleted creator_id
+  created_tx created_eos_account created_at inserted_at updated_at)a
 
   @doc """
   This function contains the logic required for the validation of base shop changeset
@@ -64,13 +65,12 @@ defmodule Cambiatus.Shop.Product do
     |> foreign_key_constraint(:community_id)
     |> validate_community_shop_enabled()
     |> validate_track_stock_units()
-    |> validate_price_precision()
   end
 
   def validate_community_shop_enabled(changeset) do
-    community_id = get_field(changeset, :community_id)
-
-    Commune.get_community(community_id)
+    changeset
+    |> get_field(:community_id)
+    |> Commune.get_community()
     |> case do
       {:ok, community} ->
         if Map.get(community, :has_shop),
@@ -83,20 +83,12 @@ defmodule Cambiatus.Shop.Product do
   end
 
   def validate_track_stock_units(changeset) do
-    unless get_field(changeset, :track_stock) do
+    track_stock = get_field(changeset, :track_stock)
+    units = get_field(changeset, :units)
+
+    if (is_nil(track_stock) or track_stock == false) and
+         (not is_nil(units) and units > 0) do
       add_error(changeset, :units, "cannot be filled if track_stock is false")
-    else
-      changeset
-    end
-  end
-
-  def validate_token_precision(changeset) do
-    community_id = get_field(changeset, :community_id)
-    price = get_field(changeset, :price)
-    {precision, _} = Eos.parse_symbol(community_id)
-
-    unless Float.round(price, precision) == price do
-      add_error(changeset, :price, "Price must have precision of #{precision}")
     else
       changeset
     end

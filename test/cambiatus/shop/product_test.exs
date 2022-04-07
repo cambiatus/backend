@@ -1,0 +1,29 @@
+defmodule Cambiatus.Shop.ProductTest do
+  use Cambiatus.DataCase
+
+  alias Cambiatus.Shop.Product
+
+  describe "changeset validations" do
+    setup do
+      community = insert(:community)
+
+      params = %{
+        community_id: community.symbol,
+        title: "Test product",
+        description: "Lorem ...",
+        price: 7,
+        images: [],
+        track_stock: false
+      }
+
+      %{params: params}
+    end
+
+    test "changeset with units without track_stock", %{params: params} do
+      changeset =
+        Product.changeset(%Product{}, Map.merge(params, %{track_stock: false, units: 10}))
+
+      assert %{units: ["cannot be filled if track_stock is false"]} == errors_on(changeset)
+    end
+  end
+end
