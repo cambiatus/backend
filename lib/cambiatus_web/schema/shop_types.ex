@@ -50,8 +50,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       arg(:track_stock, non_null(:boolean))
       arg(:units, :integer)
 
-      # TODO: Put authentication back
-      # middleware(Middleware.Authenticate)
+      middleware(Middleware.Authenticate)
       resolve(&Shop.upsert_product/3)
     end
   end
