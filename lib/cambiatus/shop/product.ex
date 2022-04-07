@@ -75,7 +75,7 @@ defmodule Cambiatus.Shop.Product do
       {:ok, community} ->
         if Map.get(community, :has_shop),
           do: changeset,
-          else: add_error(changeset, :community_id, "news is not enabled")
+          else: add_error(changeset, :community_id, "shop is not enabled")
 
       {:error, _} ->
         add_error(changeset, :community_id, "does not exist")
