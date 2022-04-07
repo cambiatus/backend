@@ -30,7 +30,7 @@ defmodule CambiatusWeb.Resolvers.Shop do
         Sentry.capture_message("Product update failed", extra: %{error: reason})
         {:error, message: "Product update failed", details: Cambiatus.Error.from(reason)}
 
-      {:ok, product} = result ->
+      {:ok, _product} = result ->
         result
     end
   end
