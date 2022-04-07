@@ -98,7 +98,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
         }
       """
 
-      response =
+      _response =
         conn
         |> post("/api/graph", query: mutation)
         |> json_response(200)
