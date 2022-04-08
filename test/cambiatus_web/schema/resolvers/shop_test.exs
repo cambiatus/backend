@@ -74,7 +74,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                "data" => %{"product" => nil},
                "errors" => [
                  %{
-                   "details" => %{"community_id" => ["news is not enabled"]},
+                   "details" => %{"community_id" => ["shop is not enabled"]},
                    "locations" => _,
                    "message" => _
                  }
