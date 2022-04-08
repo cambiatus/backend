@@ -27,8 +27,8 @@ defmodule CambiatusWeb.Resolvers.Shop do
     |> Shop.create_product()
     |> case do
       {:error, reason} ->
-        Sentry.capture_message("Product update failed", extra: %{error: reason})
-        {:error, message: "Product update failed", details: Cambiatus.Error.from(reason)}
+        Sentry.capture_message("Product creation failed", extra: %{error: reason})
+        {:error, message: "Product creation failed", details: Cambiatus.Error.from(reason)}
 
       {:ok, _product} = result ->
         result
