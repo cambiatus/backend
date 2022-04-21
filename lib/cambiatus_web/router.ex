@@ -52,7 +52,6 @@ defmodule CambiatusWeb.Router do
     post("/invite", InviteController, :invite)
     get("/manifest", ManifestController, :manifest)
 
-
     post("/paypal", PaypalController, :index)
   end
 end
