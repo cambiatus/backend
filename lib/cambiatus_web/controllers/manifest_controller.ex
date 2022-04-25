@@ -4,23 +4,28 @@ defmodule CambiatusWeb.ManifestController do
   alias Cambiatus.Commune
 
   def get_subdomain(conn) do
-    subdomain =
-      conn
-      |> Map.get(:private)
-      |> Map.get(:absinthe)
-      |> Map.get(:context)
-      |> Map.get(:domain)
-
-    case subdomain do
+    with subdomain <- conn.host do
+      {:ok, subdomain}
+    else
       nil ->
-        {:error, "No subdomain provided"}
+        subdomain = conn.private.absinthe.context.domain
+        {:ok, subdomain}
 
       _ ->
-        {:ok, subdomain}
+        {:error, "No subdomain provided"}
     end
   end
 
-  def manifest_template({:ok, community}) do
+  def serve_manifest_json(conn, community) do
+    manifest =
+      community
+      |> manifest_template()
+      |> Poison.encode!()
+
+    json(conn, manifest)
+  end
+
+  def manifest_template(community) do
     %{
       name: "#{community.name} | Cambiatus",
       short_name: community.name,
@@ -32,15 +37,21 @@ defmodule CambiatusWeb.ManifestController do
   end
 
   def manifest(conn, _params) do
-    with {:ok, community: community} <- get_subdomain(conn) do
-      manifest =
-        community
-        |> Commune.get_community_by_subdomain()
-        |> manifest_template()
-        |> Poison.encode!()
-
-      json(conn, manifest)
+    with {:ok, host} <- get_subdomain(conn),
+         {:ok, community} <- Commune.get_community_by_subdomain(host) do
+      serve_manifest_json(conn, community)
     else
+      # Community not found, use placeholder community
+      {:error, _} ->
+        community = %{
+          name: "Cambiatus",
+          description: "Cambiatus description",
+          website: "https://www.cambiatus.com/",
+          logo: "Cambiatus logo"
+        }
+
+        serve_manifest_json(conn, community)
+
       _ ->
         conn
         |> put_status(422)
