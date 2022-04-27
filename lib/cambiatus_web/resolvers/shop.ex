@@ -56,4 +56,16 @@ defmodule CambiatusWeb.Resolvers.Shop do
         {:ok, product}
     end
   end
+
+  def delete_product(_, %{id: product_id}, %{context: %{current_user: current_user}}) do
+    case Shop.delete_product(product_id, current_user) do
+      {:error, reason} ->
+        Sentry.capture_message("Product deletion failed", extra: %{error: reason})
+
+        {:ok, %{status: :error, reason: reason}}
+
+      {:ok, message} ->
+        {:ok, %{status: :success, reason: message}}
+    end
+  end
 end

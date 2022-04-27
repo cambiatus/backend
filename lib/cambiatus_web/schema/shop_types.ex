@@ -40,18 +40,27 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
   @desc "Shop mutations"
   object(:shop_mutations) do
-    @desc "[Auth required]"
+    @desc "[Auth required] Upserts a product"
     field :product, :product do
-      arg(:community_id, non_null(:string))
-      arg(:title, non_null(:string))
-      arg(:description, non_null(:string))
-      arg(:price, non_null(:float))
-      arg(:images, non_null(list_of(non_null(:string))))
-      arg(:track_stock, non_null(:boolean))
+      arg(:id, :integer)
+      arg(:community_id, :string)
+      arg(:title, :string)
+      arg(:description, :string)
+      arg(:price, :float)
+      arg(:images, list_of(non_null(:string)))
+      arg(:track_stock, :boolean)
       arg(:units, :integer)
 
       middleware(Middleware.Authenticate)
       resolve(&Shop.upsert_product/3)
+    end
+
+    @desc "[Auth required] Deletes a product"
+    field :delete_product, :delete_status do
+      arg(:id, non_null(:integer))
+
+      middleware(Middleware.Authenticate)
+      resolve(&Shop.delete_product/3)
     end
   end
 
@@ -59,6 +68,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   object(:shop_subscriptions) do
   end
 
+  @desc "Product"
   object(:product) do
     field(:id, non_null(:integer))
     field(:creator_id, non_null(:string))
@@ -88,6 +98,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
   end
 
+  @desc "Product, but in a preview version, simpler and to be used as public"
   object(:product_preview) do
     field(:id, non_null(:integer))
     field(:creator_id, non_null(:string))

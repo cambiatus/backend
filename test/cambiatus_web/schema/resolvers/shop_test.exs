@@ -42,6 +42,47 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              } = response
     end
 
+    test "create product fails if not all required fields are filled" do
+      user = insert(:user, account: "lucca123")
+      conn = build_conn() |> auth_user(user)
+
+      community = insert(:community, creator: user.account, has_shop: true)
+
+      mutation = """
+        mutation {
+          product(communityId: "#{community.symbol}",
+                  title: "Product title",
+                  images: [],
+                  trackStock: false) {
+            title
+            description
+            creator {
+              account
+            }
+            inserted_at
+          }
+        }
+      """
+
+      res = post(conn, "/api/graph", query: mutation)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{"product" => nil},
+               "errors" => [
+                 %{
+                   "details" => %{
+                     "price" => ["can't be blank"],
+                     "description" => ["can't be blank"]
+                   },
+                   "locations" => _,
+                   "message" => _
+                 }
+               ]
+             } = response
+    end
+
     test "create product fails if shop is not enabled" do
       user = insert(:user, account: "lucca123")
       conn = build_conn() |> auth_user(user)
@@ -98,12 +139,12 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
         }
       """
 
-      _response =
+      response =
         conn
         |> post("/api/graph", query: mutation)
         |> json_response(200)
 
-      assert %{
+      expected_response = %{
         "data" => %{
           "product" => %{
             "title" => product.title,
@@ -111,6 +152,31 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
           }
         }
       }
+
+      assert(response == expected_response)
+    end
+
+    test "delete existing product" do
+      user = insert(:user)
+      product = insert(:product, %{creator: user})
+
+      conn = build_conn() |> auth_user(user)
+
+      mutation = """
+        mutation {
+          deleteProduct(id: #{product.id}) {
+            status
+          }
+        }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: mutation)
+        |> json_response(200)
+
+      assert %{"data" => %{"deleteProduct" => %{"status" => "success"}}} == response
+      assert Cambiatus.Shop.get_product(product.id) == nil
     end
   end
 end

@@ -5,6 +5,7 @@ defmodule Cambiatus.Shop do
 
   import Ecto.Query
 
+  alias Cambiatus.Commune
   alias Cambiatus.Repo
   alias Cambiatus.Shop.{Product, Order}
 
@@ -25,13 +26,13 @@ defmodule Cambiatus.Shop do
 
   def create_product(attrs \\ %{}) do
     %Product{}
-    |> Product.changeset(attrs)
+    |> Product.changeset(attrs, :create)
     |> Repo.insert()
   end
 
   def update_product(%Product{} = product, attrs) do
     product
-    |> Product.changeset(attrs)
+    |> Product.changeset(attrs, :update)
     |> Repo.update()
   end
 
@@ -60,9 +61,7 @@ defmodule Cambiatus.Shop do
   end
 
   def get_product(id) do
-    Product
-    |> Repo.get(id)
-    |> case do
+    case Repo.get(Product, id) do
       nil ->
         nil
 
@@ -73,6 +72,25 @@ defmodule Cambiatus.Shop do
         else
           product
         end
+    end
+  end
+
+  def delete_product(product_id, current_user) do
+    with %Product{} = product <- get_product(product_id),
+         product <- Repo.preload(product, [:community, :creator]),
+         true <-
+           Commune.is_community_admin?(product.community.symbol, current_user) ||
+             product.creator_id ==
+               current_user.account do
+      product
+      |> Product.changeset(%{}, :delete)
+      |> Repo.update()
+    else
+      nil ->
+        {:error, "Product not found"}
+
+      false ->
+        {:error, " Logged user can't do this action"}
     end
   end
 

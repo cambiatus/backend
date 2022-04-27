@@ -45,26 +45,33 @@ defmodule Cambiatus.Shop.Product do
   @doc """
   This function contains the logic required for the validation of base shop changeset
   """
-  @spec changeset(Product.t(), map()) :: Ecto.Changeset.t()
-  def changeset(%Product{} = shop, attrs) do
-    shop
+  @spec changeset(Product.t(), map(), atom()) :: Ecto.Changeset.t()
+  def changeset(product, attrs, operation \\ :create)
+
+  def changeset(%Product{}, attrs, :create) do
+    %Product{}
     |> Repo.preload(:images)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> cast_assoc(:images)
     |> validate_required(@required_fields)
-    |> validate_community_shop_enabled()
-    |> validate_track_stock_units()
-  end
-
-  def create_changeset(attrs) do
-    %Product{}
-    |> changeset(attrs)
-    |> put_assoc(:creator, attrs.creator)
-    |> put_assoc(:community, attrs.community)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
     |> validate_community_shop_enabled()
     |> validate_track_stock_units()
+  end
+
+  def changeset(%Product{} = product, attrs, :update) do
+    product
+    |> Repo.preload(:images)
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> cast_assoc(:images)
+    |> validate_community_shop_enabled()
+    |> validate_track_stock_units()
+  end
+
+  def changeset(%Product{} = product, _, :delete) do
+    product
+    |> cast(%{deleted_at: DateTime.utc_now(), is_deleted: true}, [:deleted_at, :is_deleted])
   end
 
   def validate_community_shop_enabled(changeset) do
