@@ -198,7 +198,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
         |> post("/api/graph", query: mutation)
         |> json_response(200)
 
-      assert %{} == response
+      assert %{"data" => %{"product" => %{"trackStock" => false, "units" => 0}}} == response
     end
 
     test "delete existing product" do
