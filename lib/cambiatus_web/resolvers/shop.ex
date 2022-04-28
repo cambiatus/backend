@@ -4,16 +4,17 @@ defmodule CambiatusWeb.Resolvers.Shop do
   """
 
   alias Cambiatus.Shop
+  alias Cambiatus.Shop.Product
 
   def upsert_product(_, %{id: product_id} = params, %{context: %{current_user: current_user}}) do
     params = Map.merge(params, %{creator_id: current_user.account})
 
-    with product <- Shop.get_product(product_id),
+    with %Product{} = product <- Shop.get_product(product_id),
          {:ok, updated_product} <- Shop.update_product(product, params) do
       {:ok, updated_product}
     else
       nil ->
-        {:error, "Product not found", details: nil}
+        {:error, "Product not found"}
 
       {:error, error} ->
         Sentry.capture_message("Product update failed", extra: %{error: error})

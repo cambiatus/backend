@@ -81,7 +81,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:price, non_null(:float))
     field(:track_stock, non_null(:boolean))
     field(:units, :integer)
-    field(:images, non_null(list_of(non_null(:string))))
+    field(:images, non_null(list_of(non_null(:product_image))))
 
     field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
 
@@ -110,6 +110,11 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:community_id, non_null(:string))
 
     field(:community, non_null(:community_preview), resolve: dataloader(Cambiatus.Commune))
+  end
+
+  @desc "Product image"
+  object(:product_image) do
+    field(:uri, non_null(:string))
   end
 
   @desc "An Order"

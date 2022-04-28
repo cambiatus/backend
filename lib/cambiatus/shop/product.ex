@@ -32,14 +32,18 @@ defmodule Cambiatus.Shop.Product do
     belongs_to(:creator, User, references: :account, type: :string)
     belongs_to(:community, Community, references: :symbol, type: :string)
 
-    has_many(:images, ProductImage)
+    has_many(:images, ProductImage,
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
+
     has_many(:orders, Order, foreign_key: :product_id)
   end
 
   # TODO: Put back this after the update of structure from blockchain to graphql
   # @required_fields ~w(title description price track_stock units created_block is_deleted)a
   @required_fields ~w(title description price track_stock community_id)a
-  @optional_fields ~w(units deleted_at image created_block is_deleted creator_id
+  @optional_fields ~w(units deleted_at created_block is_deleted creator_id
   created_tx created_eos_account created_at inserted_at updated_at)a
 
   @doc """
@@ -52,7 +56,7 @@ defmodule Cambiatus.Shop.Product do
     %Product{}
     |> Repo.preload(:images)
     |> cast(attrs, @required_fields ++ @optional_fields)
-    |> cast_assoc(:images)
+    |> assoc_images(attrs)
     |> validate_required(@required_fields)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
@@ -64,7 +68,7 @@ defmodule Cambiatus.Shop.Product do
     product
     |> Repo.preload(:images)
     |> cast(attrs, @required_fields ++ @optional_fields)
-    |> cast_assoc(:images)
+    |> assoc_images(attrs)
     |> validate_community_shop_enabled()
     |> validate_track_stock_units()
   end
@@ -72,6 +76,19 @@ defmodule Cambiatus.Shop.Product do
   def changeset(%Product{} = product, _, :delete) do
     product
     |> cast(%{deleted_at: DateTime.utc_now(), is_deleted: true}, [:deleted_at, :is_deleted])
+  end
+
+  def assoc_images(changeset, attrs) do
+    if Map.has_key?(attrs, :images) do
+      images =
+        attrs
+        |> Map.get(:images)
+        |> Enum.map(&%ProductImage{uri: &1})
+
+      put_assoc(changeset, :images, images)
+    else
+      changeset
+    end
   end
 
   def validate_community_shop_enabled(changeset) do

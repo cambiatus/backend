@@ -156,6 +156,28 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       assert(response == expected_response)
     end
 
+    test "update images substitutes old images" do
+      user = insert(:user)
+      product = insert(:product, %{creator: user})
+
+      conn = build_conn() |> auth_user(user)
+
+      mutation = """
+      mutation {
+        product(id: #{product.id}, images: ["c"]) {
+          images { uri }
+        }
+      }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: mutation)
+        |> json_response(200)
+
+      assert %{"data" => %{"product" => %{"images" => [%{"uri" => "c"}]}}} == response
+    end
+
     test "delete existing product" do
       user = insert(:user)
       product = insert(:product, %{creator: user})
