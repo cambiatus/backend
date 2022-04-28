@@ -111,7 +111,7 @@ defmodule Cambiatus.Shop.Product do
     units = get_field(changeset, :units)
 
     if (is_nil(track_stock) or track_stock == false) and
-         (not is_nil(units) and units > 0) do
+         (not is_nil(units) or units > 0) do
       add_error(changeset, :units, "cannot be filled if track_stock is false")
     else
       changeset
