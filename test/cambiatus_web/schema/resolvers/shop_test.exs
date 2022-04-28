@@ -178,6 +178,29 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       assert %{"data" => %{"product" => %{"images" => [%{"uri" => "c"}]}}} == response
     end
 
+    test "update existing product sending track_stock" do
+      user = insert(:user)
+      product = insert(:product, %{creator: user, track_stock: true, units: 10})
+
+      conn = build_conn() |> auth_user(user)
+
+      mutation = """
+      mutation {
+        product(id: #{product.id}, trackStock: false, units: 0) {
+          trackStock
+          units
+        }
+      }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: mutation)
+        |> json_response(200)
+
+      assert %{} == response
+    end
+
     test "delete existing product" do
       user = insert(:user)
       product = insert(:product, %{creator: user})
