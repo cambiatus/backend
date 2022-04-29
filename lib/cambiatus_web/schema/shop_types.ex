@@ -81,7 +81,10 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:price, non_null(:float))
     field(:track_stock, non_null(:boolean))
     field(:units, :integer)
-    field(:images, non_null(list_of(non_null(:product_image))))
+
+    field(:images, non_null(list_of(non_null(:product_image))),
+      resolve: dataloader(Cambiatus.Shop)
+    )
 
     field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))
 
