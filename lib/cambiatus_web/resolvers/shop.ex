@@ -43,9 +43,9 @@ defmodule CambiatusWeb.Resolvers.Shop do
   end
 
   def get_products(_, %{community_id: community_id}, _) do
-    case Shop.list_products(community_id) do
-      results -> {:ok, results}
-    end
+    results = Shop.list_products(community_id)
+
+    {:ok, results}
   end
 
   def get_product(_, %{id: id}, _) do

@@ -108,7 +108,13 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:title, non_null(:string))
     field(:description, non_null(:string))
     field(:price, non_null(:float))
-    field(:image, :string)
+
+    field(:images, non_null(list_of(non_null(:product_image))),
+      resolve: dataloader(Cambiatus.Shop)
+    )
+
+    # TODO: Remove deprecated fields
+    field(:image, :string, deprecate: true)
 
     field(:community_id, non_null(:string))
 
