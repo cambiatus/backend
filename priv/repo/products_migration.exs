@@ -6,21 +6,29 @@ alias Cambiatus.Repo
 Product
 |> Repo.all()
 |> Enum.map(fn product ->
-  {:ok, product} =
+  {:ok, _} =
     product
-    |> Product.changeset(%{inserted_at: product.created_at, updated_at: product.created_at})
+    |> Product.changeset(
+      %{inserted_at: product.created_at, updated_at: product.created_at},
+      :update
+    )
     |> Repo.update()
-    IO.puts("migrated")
+
+  IO.puts("🗓 Product ##{product.id} dates migrated")
+
+  product
 end)
 |> Enum.map(fn product ->
-  if is_nil(product) or is_nil(product.image) do
+  if is_nil(product) or is_nil(product.image) or product.image == "" do
     product
+    IO.puts("🚫 Product with ID ##{product.id} has no images")
   else
     {:ok, product} =
       %ProductImage{}
       |> ProductImage.changeset(%{uri: product.image, product_id: product.id})
       |> Repo.insert()
 
+    IO.puts("🖼 Product ##{product.id} images migrated")
     product
   end
 end)
