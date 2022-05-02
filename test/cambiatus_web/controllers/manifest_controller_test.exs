@@ -13,24 +13,13 @@ defmodule CambiatusWeb.ManifestControllerTest do
 
     test "get manifest from existing community",
          %{conn: conn, community: community} do
-      # Generate community, save name and subdomain name
+      # Get community for DataCase.valid_community_and_user,
+      # pattern match community for name and subdomain,
       # insert subdomain name into conn
-
-      # community =
-      #   community
-      #   |> Repo.preload(:subdomain)
-
-      IO.inspect(community)
 
       %{name: name, subdomain: %{name: subdomain}} =
         community
         |> Repo.preload(:subdomain)
-
-      IO.puts(name)
-      IO.puts(subdomain)
-
-      # subdomain = community.subdomain.name
-      # name = community.name
 
       conn =
         %{conn | host: subdomain}
