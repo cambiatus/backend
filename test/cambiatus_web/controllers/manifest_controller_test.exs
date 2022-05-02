@@ -17,7 +17,12 @@ defmodule CambiatusWeb.ManifestControllerTest do
       # pattern match community for name and subdomain,
       # insert subdomain name into conn
 
+<<<<<<< HEAD
       %{name: name, subdomain: %{name: subdomain}} = Repo.preload(community, :subdomain)
+=======
+      %{name: name, subdomain: %{name: subdomain}} =
+        Repo.preload(community, :subdomain)
+>>>>>>> 79ff3fface9cfe363c823c828c641731bd699d0b
 
       conn =
         %{conn | host: subdomain}
