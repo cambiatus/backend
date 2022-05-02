@@ -18,8 +18,7 @@ defmodule CambiatusWeb.ManifestControllerTest do
       # insert subdomain name into conn
 
       %{name: name, subdomain: %{name: subdomain}} =
-        community
-        |> Repo.preload(:subdomain)
+        Repo.preload(community, :subdomain)
 
       conn =
         %{conn | host: subdomain}
