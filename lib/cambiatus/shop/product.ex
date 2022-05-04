@@ -16,7 +16,6 @@ defmodule Cambiatus.Shop.Product do
     field(:title, :string)
     field(:description, :string)
     field(:price, :float)
-    field(:image, :string)
     field(:track_stock, :boolean)
     field(:units, :integer)
     field(:is_deleted, :boolean)
@@ -24,27 +23,19 @@ defmodule Cambiatus.Shop.Product do
 
     timestamps()
 
-    field(:created_block, :integer)
-    field(:created_tx, :string)
-    field(:created_eos_account, :string)
-    field(:created_at, :utc_datetime)
-
     belongs_to(:creator, User, references: :account, type: :string)
     belongs_to(:community, Community, references: :symbol, type: :string)
+
+    has_many(:orders, Order, foreign_key: :product_id)
 
     has_many(:images, ProductImage,
       on_replace: :delete,
       on_delete: :delete_all
     )
-
-    has_many(:orders, Order, foreign_key: :product_id)
   end
 
-  # TODO: Put back this after the update of structure from blockchain to graphql
-  # @required_fields ~w(title description price track_stock units created_block is_deleted)a
   @required_fields ~w(title description price track_stock community_id)a
-  @optional_fields ~w(units deleted_at created_block is_deleted creator_id
-  created_tx created_eos_account created_at inserted_at updated_at)a
+  @optional_fields ~w(units deleted_at is_deleted creator_id inserted_at updated_at)a
 
   @doc """
   This function contains the logic required for the validation of base shop changeset
