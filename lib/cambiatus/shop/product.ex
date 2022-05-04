@@ -126,7 +126,7 @@ defmodule Cambiatus.Shop.Product do
 
   def newer_first(query \\ Product) do
     query
-    |> order_by([p], desc: p.created_at)
+    |> order_by([p], desc: p.inserted_at)
   end
 
   def in_stock(query \\ Product, in_stock?) do
