@@ -104,10 +104,6 @@ defmodule Cambiatus.Factory do
       price: sequence(:price, &"#{&1}.544"),
       images: build_list(Enum.random(1..10), :product_image),
       track_stock: true,
-      created_block: sequence(:created_block, &"#{&1}"),
-      created_tx: sequence(:tx, &"c_tx-#{&1}"),
-      created_eos_account: sequence(:created_eos_account, &"acc-eos-#{&1}"),
-      created_at: NaiveDateTime.utc_now(),
       units: sequence(:units, &"#{&1}"),
       is_deleted: false,
       deleted_at: NaiveDateTime.utc_now()

@@ -190,7 +190,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       insert_list(@num, :product, %{community: community, creator: user})
       insert_list(2, :product, %{community: community})
-      %{title: f_title} = insert(:product, %{community: community, created_at: latest})
+      %{title: f_title} = insert(:product, %{community: community, inserted_at: latest})
 
       variables = %{
         "communityId" => community.symbol
@@ -241,7 +241,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       insert(:product, %{community: c2})
       insert(:product, %{creator: user, community: c2})
-      %{title: f_title} = insert(:product, %{created_at: latest, community: c1})
+      %{title: f_title} = insert(:product, %{inserted_at: latest, community: c1})
 
       variables = %{
         "communityId" => c1.symbol
@@ -280,7 +280,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
       %{title: first_title} =
-        insert(:product, %{creator: user, created_at: latest, community: community})
+        insert(:product, %{creator: user, inserted_at: latest, community: community})
 
       insert_list(@num, :product, %{creator: user, community: community})
 
@@ -297,7 +297,6 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
           id
           title
           description
-          createdAt
           creator {
             account
           }
@@ -332,7 +331,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
           id
           title
           description
-          createdAt
+          insertedAt
         }
       }
       """
