@@ -10,8 +10,3 @@ To build this backend follow the following
 
 
 #Boom! and you can now hack away!
-
-### TODO
-- implement git hooks for contributors to ensure stability
-
-

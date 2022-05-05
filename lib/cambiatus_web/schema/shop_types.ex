@@ -90,14 +90,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
-
-    # TODO: Remove deprecated fields
-    field(:image, :string, deprecate: true)
-    field(:created_block, non_null(:integer), deprecate: true)
-    field(:created_tx, non_null(:string), deprecate: true)
-    field(:created_eos_account, non_null(:string), deprecate: true)
-    field(:created_at, non_null(:datetime), deprecate: true)
-
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
   end
 
@@ -113,11 +105,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       resolve: dataloader(Cambiatus.Shop)
     )
 
-    # TODO: Remove deprecated fields
-    field(:image, :string, deprecate: true)
-
     field(:community_id, non_null(:string))
-
     field(:community, non_null(:community_preview), resolve: dataloader(Cambiatus.Commune))
   end
 
