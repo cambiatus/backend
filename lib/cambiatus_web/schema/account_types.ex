@@ -233,7 +233,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
           "Optional community filter, filling this will get only claims from this community"
       )
 
-      resolve(dataloader(Cambiatus.Commune))
+      resolve(dataloader(Cambiatus.Objectives))
     end
 
     @desc "List of payers to the given recipient fetched by the part of the account name."

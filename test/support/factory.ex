@@ -46,7 +46,7 @@ defmodule Cambiatus.Factory do
 
   alias Cambiatus.Payments.Contribution
   alias Cambiatus.Repo
-  alias Cambiatus.Shop.Product
+  alias Cambiatus.Shop.{Product, ProductImage}
 
   alias Cambiatus.Social.{
     News,
@@ -102,7 +102,7 @@ defmodule Cambiatus.Factory do
       title: sequence(:title, &"title-#{&1}"),
       description: sequence(:description, &"desc-#{&1}"),
       price: sequence(:price, &"#{&1}.544"),
-      image: sequence(:image, &"image-#{&1}"),
+      images: build_list(Enum.random(1..10), :product_image),
       track_stock: true,
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
@@ -111,6 +111,12 @@ defmodule Cambiatus.Factory do
       units: sequence(:units, &"#{&1}"),
       is_deleted: false,
       deleted_at: NaiveDateTime.utc_now()
+    }
+  end
+
+  def product_image_factory() do
+    %ProductImage{
+      uri: sequence(:image, &"image-#{&1}")
     }
   end
 

@@ -4,6 +4,37 @@ defmodule CambiatusWeb.Resolvers.Shop do
   """
 
   alias Cambiatus.Shop
+  alias Cambiatus.Shop.Product
+
+  def upsert_product(_, %{id: product_id} = params, %{context: %{current_user: current_user}}) do
+    params = Map.merge(params, %{creator_id: current_user.account})
+
+    with %Product{} = product <- Shop.get_product(product_id),
+         {:ok, updated_product} <- Shop.update_product(product, params) do
+      {:ok, updated_product}
+    else
+      nil ->
+        {:error, "Product not found"}
+
+      {:error, error} ->
+        Sentry.capture_message("Product update failed", extra: %{error: error})
+        {:error, message: "Product update failed", details: Cambiatus.Error.from(error)}
+    end
+  end
+
+  def upsert_product(_, params, %{context: %{current_user: current_user}}) do
+    params
+    |> Map.merge(%{creator_id: current_user.account})
+    |> Shop.create_product()
+    |> case do
+      {:error, reason} ->
+        Sentry.capture_message("Product creation failed", extra: %{error: reason})
+        {:error, message: "Product creation failed", details: Cambiatus.Error.from(reason)}
+
+      {:ok, _product} = result ->
+        result
+    end
+  end
 
   def get_products(_, %{community_id: community_id, filters: filters}, _) do
     case Shop.list_products(community_id, filters) do
@@ -12,9 +43,9 @@ defmodule CambiatusWeb.Resolvers.Shop do
   end
 
   def get_products(_, %{community_id: community_id}, _) do
-    case Shop.list_products(community_id) do
-      results -> {:ok, results}
-    end
+    results = Shop.list_products(community_id)
+
+    {:ok, results}
   end
 
   def get_product(_, %{id: id}, _) do
@@ -24,6 +55,18 @@ defmodule CambiatusWeb.Resolvers.Shop do
 
       product ->
         {:ok, product}
+    end
+  end
+
+  def delete_product(_, %{id: product_id}, %{context: %{current_user: current_user}}) do
+    case Shop.delete_product(product_id, current_user) do
+      {:error, reason} ->
+        Sentry.capture_message("Product deletion failed", extra: %{error: reason})
+
+        {:ok, %{status: :error, reason: reason}}
+
+      {:ok, message} ->
+        {:ok, %{status: :success, reason: message}}
     end
   end
 end

@@ -8,8 +8,9 @@ defmodule Cambiatus.Shop.Product do
   import Ecto.Query
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{Accounts.User, Commune.Community}
-  alias Cambiatus.Shop.{Order, Product}
+  alias Cambiatus.{Accounts.User, Commune, Repo}
+  alias Cambiatus.Commune.Community
+  alias Cambiatus.Shop.{Order, Product, ProductImage}
 
   schema "products" do
     field(:title, :string)
@@ -21,6 +22,8 @@ defmodule Cambiatus.Shop.Product do
     field(:is_deleted, :boolean)
     field(:deleted_at, :utc_datetime)
 
+    timestamps()
+
     field(:created_block, :integer)
     field(:created_tx, :string)
     field(:created_eos_account, :string)
@@ -29,29 +32,90 @@ defmodule Cambiatus.Shop.Product do
     belongs_to(:creator, User, references: :account, type: :string)
     belongs_to(:community, Community, references: :symbol, type: :string)
 
+    has_many(:images, ProductImage,
+      on_replace: :delete,
+      on_delete: :delete_all
+    )
+
     has_many(:orders, Order, foreign_key: :product_id)
   end
 
-  @required_fields ~w(title description price image track_stock units
-  created_block is_deleted deleted_at created_tx created_eos_account created_at)a
+  # TODO: Put back this after the update of structure from blockchain to graphql
+  # @required_fields ~w(title description price track_stock units created_block is_deleted)a
+  @required_fields ~w(title description price track_stock community_id)a
+  @optional_fields ~w(units deleted_at created_block is_deleted creator_id
+  created_tx created_eos_account created_at inserted_at updated_at)a
 
   @doc """
   This function contains the logic required for the validation of base shop changeset
   """
-  @spec changeset(Product.t(), map()) :: Ecto.Changeset.t()
-  def changeset(%Product{} = shop, attrs) do
-    shop
-    |> cast(attrs, @required_fields)
-    |> validate_required(@required_fields)
-  end
+  @spec changeset(Product.t(), map(), atom()) :: Ecto.Changeset.t()
+  def changeset(product, attrs, operation \\ :create)
 
-  def create_changeset(attrs) do
+  def changeset(%Product{}, attrs, :create) do
     %Product{}
-    |> changeset(attrs)
-    |> put_assoc(:creator, attrs.creator)
-    |> put_assoc(:community, attrs.community)
+    |> Repo.preload(:images)
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> assoc_images(attrs)
+    |> validate_required(@required_fields)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
+    |> validate_community_shop_enabled()
+    |> validate_track_stock_units()
+  end
+
+  def changeset(%Product{} = product, attrs, :update) do
+    product
+    |> Repo.preload(:images)
+    |> cast(attrs, @required_fields ++ @optional_fields)
+    |> assoc_images(attrs)
+    |> validate_community_shop_enabled()
+    |> validate_track_stock_units()
+  end
+
+  def changeset(%Product{} = product, _, :delete) do
+    product
+    |> cast(%{deleted_at: DateTime.utc_now(), is_deleted: true}, [:deleted_at, :is_deleted])
+  end
+
+  def assoc_images(changeset, attrs) do
+    if Map.has_key?(attrs, :images) do
+      images =
+        attrs
+        |> Map.get(:images)
+        |> Enum.map(&%ProductImage{uri: &1})
+
+      put_assoc(changeset, :images, images)
+    else
+      changeset
+    end
+  end
+
+  def validate_community_shop_enabled(changeset) do
+    changeset
+    |> get_field(:community_id)
+    |> Commune.get_community()
+    |> case do
+      {:ok, community} ->
+        if Map.get(community, :has_shop),
+          do: changeset,
+          else: add_error(changeset, :community_id, "shop is not enabled")
+
+      {:error, _} ->
+        add_error(changeset, :community_id, "does not exist")
+    end
+  end
+
+  def validate_track_stock_units(changeset) do
+    track_stock = get_field(changeset, :track_stock)
+    units = get_field(changeset, :units)
+
+    if (is_nil(track_stock) or track_stock == false) and
+         (not is_nil(units) and units > 0) do
+      add_error(changeset, :units, "cannot be filled if track_stock is false")
+    else
+      changeset
+    end
   end
 
   def from_community(query \\ Product, community_id) do
