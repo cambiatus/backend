@@ -90,7 +90,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
-
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
   end
 
