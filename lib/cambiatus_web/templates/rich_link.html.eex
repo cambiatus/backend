@@ -10,11 +10,11 @@
       -->
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@_cambiatus">
-    <meta name="description" content=<%= description %>>
-    <meta property="og:description" content=<%= description %>>
-    <meta property="og:locale" content=<%= locale %>>
+    <meta name="description" content="<%= description %>">
+    <meta property="og:description" content="<%= description %>">
+    <meta property="og:locale" content="<%= locale %>">
     <meta property="og:type" content="website">
-    <meta property="og:title" content=<%= title %>>
+    <meta property="og:title" content="<%= title %>">
     <meta property="og:url" content=<%= url %>>
     <meta property="og:image" content=<%= image %>>
 
