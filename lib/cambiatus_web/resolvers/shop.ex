@@ -69,22 +69,4 @@ defmodule CambiatusWeb.Resolvers.Shop do
         {:ok, %{status: :success, reason: message}}
     end
   end
-
-  def get_product_rich_link(id) do
-    case get_product(nil, %{id: id}, nil) do
-      {:ok, product} ->
-        {:ok,
-         %{
-           name: product.title,
-           description: product.description,
-           title: product.title,
-           url: nil,
-           image: product.image,
-           locale: nil
-         }}
-
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
 end

@@ -218,22 +218,4 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   def get_contribution_count(%User{} = user, _, _) do
     Accounts.get_contribution_count(user)
   end
-
-  def get_user_rich_link(account) do
-    case get_user(nil, %{account: account}, nil) do
-      {:ok, user} ->
-        {:ok,
-         %{
-           name: user.name,
-           description: user.bio,
-           title: user.name,
-           url: user.email,
-           image: user.avatar,
-           locale: user.location
-         }}
-
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
 end

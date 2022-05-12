@@ -144,22 +144,4 @@ defmodule CambiatusWeb.Resolvers.Commune do
       highlighted_news: community_id
     )
   end
-
-  def get_community_rich_link(community_subdomain) do
-    case find_community(%{}, %{subdomain: community_subdomain}, %{}) do
-      {:ok, community} ->
-        {:ok,
-         %{
-           name: community.name,
-           description: community.description,
-           title: community.name,
-           url: community_subdomain,
-           image: community.logo,
-           locale: nil
-         }}
-
-      {:error, reason} ->
-        {:error, reason}
-    end
-  end
 end
