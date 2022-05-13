@@ -1,11 +1,11 @@
 defmodule CambiatusWeb.RichLinkController do
-  use CambiatusWeb, :controller
-
   @moduledoc """
   Get data and render html to be used for rich links (also known as Open Graphs).
   These rich links show additional information about the website when shared on social media
   and must be compliant with the [Open Grap Protocol](https://ogp.me/)
   """
+
+  use CambiatusWeb, :controller
 
   alias CambiatusWeb.Resolvers.{Accounts, Commune, Shop}
   alias Cambiatus.Repo
