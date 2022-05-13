@@ -3,13 +3,12 @@ defmodule CambiatusWeb.RichLinkController do
 
   @moduledoc """
   Get data and render html to be used for rich links (also known as Open Graphs).
-  These rich links show additional information about the website when shared on social media and must be compliant with the [Open Grap Protocol](https://ogp.me/)
+  These rich links show additional information about the website when shared on social media
+  and must be compliant with the [Open Grap Protocol](https://ogp.me/)
   """
 
   alias CambiatusWeb.Resolvers.{Accounts, Commune, Shop}
   alias Cambiatus.Repo
-  require Earmark
-  require HtmlSanitizeEx
 
   def rich_link(conn, params) do
     data =
@@ -29,7 +28,6 @@ defmodule CambiatusWeb.RichLinkController do
 
     case data do
       {:ok, data} ->
-        data = %{data | description: md_to_txt(data.description)}
         render(conn, "rich_link.html", %{data: data})
 
       {:error, reason} ->
@@ -88,16 +86,6 @@ defmodule CambiatusWeb.RichLinkController do
 
       {:error, reason} ->
         {:error, reason}
-    end
-  end
-
-  defp md_to_txt(markdown) do
-    with {:ok, string, _} <- Earmark.as_html(markdown) do
-      HtmlSanitizeEx.strip_tags(string)
-      |> String.trim()
-    else
-      {:error, _} ->
-        ""
     end
   end
 end

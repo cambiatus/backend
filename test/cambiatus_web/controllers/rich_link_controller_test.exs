@@ -16,7 +16,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         insert(:community)
         |> Repo.preload(:subdomain)
 
-      data = %{
+      expected_data = %{
         description: md_to_txt(community.description),
         title: community.name,
         url: community.subdomain.name,
@@ -34,7 +34,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       # Check http code 200 and if all the rich link fields are properly filled
       assert conn.status == 200
 
-      Enum.each(data, fn {k, v} ->
+      Enum.each(expected_data, fn {k, v} ->
         assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
       end)
     end
@@ -45,7 +45,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       user = insert(:user)
 
-      data = %{
+      expected_data = %{
         description: md_to_txt(user.bio),
         title: user.name,
         url: user.email,
@@ -60,7 +60,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       # Check http code 200 and if all the rich link fields are properly filled
       assert conn.status == 200
 
-      Enum.each(data, fn {k, v} ->
+      Enum.each(expected_data, fn {k, v} ->
         assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
       end)
     end
@@ -75,7 +75,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       [image | _] = product.images
 
-      data = %{
+      expected_data = %{
         description: md_to_txt(product.description),
         title: product.title,
         url: nil,
@@ -90,7 +90,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       # Check http code 200 and if all the rich link fields are properly filled
       assert conn.status == 200
 
-      Enum.each(data, fn {k, v} ->
+      Enum.each(expected_data, fn {k, v} ->
         assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
       end)
     end
