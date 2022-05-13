@@ -1,0 +1,18 @@
+<html lang="en" class="h-full" >
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="@_cambiatus">
+    <meta name="description" content="<%= @data.description %>">
+    <meta property="og:description" content="<%= @data.description %>">
+    <meta property="og:locale" content="<%= @data.locale %>">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<%= @data.title %>">
+    <meta property="og:url" content="<%= @data.url %>">
+    <meta property="og:image" content="<%= @data.image %>">
+
+    <title>"<%= @data.title %>"</title>
+  </head>

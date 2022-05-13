@@ -1,18 +1,21 @@
 defmodule CambiatusWeb.RichLinkController do
   use CambiatusWeb, :controller
 
+  @moduledoc """
+  Get data and render html to be used for rich links (also known as Open Graphs).
+  These rich links show additional information about the website when shared on social media and must be compliant with the [Open Grap Protocol](https://ogp.me/)
+  """
+
   alias CambiatusWeb.Resolvers.{Accounts, Commune, Shop}
   alias Cambiatus.Repo
   require Earmark
   require HtmlSanitizeEx
 
-  @rich_link_file Path.expand("../templates/rich_link.html.eex", __DIR__)
-
   def rich_link(conn, params) do
     data =
       case Map.get(params, "page") do
-        ["shop"] ->
-          product_rich_link(Map.get(params, "id"))
+        ["shop", id] ->
+          product_rich_link(id)
 
         ["profile", account] ->
           user_rich_link(account)
@@ -26,11 +29,8 @@ defmodule CambiatusWeb.RichLinkController do
 
     case data do
       {:ok, data} ->
-        response =
-          %{data | description: md_to_txt(data.description)}
-          |> Enum.into([])
-
-        html(conn, EEx.eval_file(@rich_link_file, response))
+        data = %{data | description: md_to_txt(data.description)}
+        render(conn, "rich_link.html", %{data: data})
 
       {:error, reason} ->
         send_resp(conn, 404, reason)
@@ -45,7 +45,6 @@ defmodule CambiatusWeb.RichLinkController do
 
         {:ok,
          %{
-           name: product.title,
            description: product.description,
            title: product.title,
            url: nil,
@@ -63,7 +62,6 @@ defmodule CambiatusWeb.RichLinkController do
       {:ok, user} ->
         {:ok,
          %{
-           name: user.name,
            description: user.bio,
            title: user.name,
            url: user.email,
@@ -81,7 +79,6 @@ defmodule CambiatusWeb.RichLinkController do
       {:ok, community} ->
         {:ok,
          %{
-           name: community.name,
            description: community.description,
            title: community.name,
            url: community_subdomain,

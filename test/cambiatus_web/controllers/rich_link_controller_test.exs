@@ -4,8 +4,6 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
   alias Cambiatus.Repo
 
-  @rich_link_file Path.expand("../../../lib/cambiatus_web/templates/rich_link.html.eex", __DIR__)
-
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
@@ -13,73 +11,64 @@ defmodule CambiatusWeb.RichLinkControllerTest do
   describe "RichLink" do
     test "generate rich link for community",
          %{conn: conn} do
-      # Get community for DataCase.valid_community_and_user,
-      # pattern match community for name and subdomain,
-      # insert subdomain name into conn
+      # Insert community and extract data for the rich link
       community =
         insert(:community)
         |> Repo.preload(:subdomain)
 
       data = %{
-        name: community.name,
-        description: community.description,
+        description: md_to_txt(community.description),
         title: community.name,
         url: community.subdomain.name,
         image: community.logo,
         locale: nil
       }
 
-      expected_response =
-        %{data | description: md_to_txt(data.description)}
-        |> Enum.into([])
-
+      # Submit GET request for a community rich link
       conn =
         %{conn | host: community.subdomain.name}
         |> get("/api/rich_link")
 
       response = html_response(conn, 200)
 
-      # Check http code 200 and if the community name served is the same generated
+      # Check http code 200 and if all the rich link fields are properly filled
       assert conn.status == 200
-      assert EEx.eval_file(@rich_link_file, expected_response) == response
+
+      Enum.each(data, fn {k, v} ->
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      end)
     end
 
     test "generate rich link for user",
          %{conn: conn} do
-      # Get community for DataCase.valid_community_and_user,
-      # pattern match community for name and subdomain,
-      # insert subdomain name into conn
-      #  community = Repo.preload(community, :subdomain)
+      # Insert user and extract data for the rich link
 
       user = insert(:user)
 
       data = %{
-        name: user.name,
-        description: user.bio,
+        description: md_to_txt(user.bio),
         title: user.name,
         url: user.email,
         image: user.avatar,
         locale: user.location
       }
 
-      expected_response =
-        %{data | description: md_to_txt(data.description)}
-        |> Enum.into([])
-
+      # Submit GET request for a user rich link
       conn = get(conn, "/api/rich_link/profile/#{user.account}")
-
       response = html_response(conn, 200)
 
-      # Check http code 200 and if the community name served is the same generated
+      # Check http code 200 and if all the rich link fields are properly filled
       assert conn.status == 200
-      assert EEx.eval_file(@rich_link_file, expected_response) == response
+
+      Enum.each(data, fn {k, v} ->
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      end)
     end
 
     test "generate rich link for product",
          %{conn: conn} do
-      # Get community for DataCase.valid_community_and_user,
-      # pattern match community for name and subdomain,
-      # insert subdomain name into conn
+      # Insert product and extract data for the rich link
+
       product =
         insert(:product)
         |> Repo.preload(:images)
@@ -87,29 +76,28 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       [image | _] = product.images
 
       data = %{
-        name: product.title,
-        description: product.description,
+        description: md_to_txt(product.description),
         title: product.title,
         url: nil,
         image: image.uri,
         locale: nil
       }
 
-      expected_response =
-        %{data | description: md_to_txt(data.description)}
-        |> Enum.into([])
-
-      conn = get(conn, "/api/rich_link/shop?id=#{product.id}")
-
+      # Submit GET request for a product rich link
+      conn = get(conn, "/api/rich_link/shop/#{product.id}")
       response = html_response(conn, 200)
 
-      # Check http code 200 and if the community name served is the same generated
+      # Check http code 200 and if all the rich link fields are properly filled
       assert conn.status == 200
-      assert EEx.eval_file(@rich_link_file, expected_response) == response
+
+      Enum.each(data, fn {k, v} ->
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      end)
     end
   end
 
   defp md_to_txt(markdown) do
+    # Convert markdown to plain text
     with {:ok, string, _} <- Earmark.as_html(markdown) do
       HtmlSanitizeEx.strip_tags(string)
       |> String.trim()
