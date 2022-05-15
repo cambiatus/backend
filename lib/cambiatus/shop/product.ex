@@ -10,7 +10,7 @@ defmodule Cambiatus.Shop.Product do
 
   alias Cambiatus.{Accounts.User, Commune, Repo}
   alias Cambiatus.Commune.Community
-  alias Cambiatus.Shop.{Order, Product, ProductImage}
+  alias Cambiatus.Shop.{Category, Order, Product, ProductCategory, ProductImage}
 
   schema "products" do
     field(:title, :string)
@@ -32,6 +32,9 @@ defmodule Cambiatus.Shop.Product do
       on_replace: :delete,
       on_delete: :delete_all
     )
+
+    has_many(:product_categories, ProductCategory)
+    many_to_many(:categories, Category, join_through: ProductCategory)
   end
 
   @required_fields ~w(title description price track_stock community_id)a
