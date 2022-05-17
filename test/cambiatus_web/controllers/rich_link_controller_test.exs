@@ -45,16 +45,24 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       user = insert(:user)
 
+      community =
+        insert(:community)
+        |> Repo.preload(:subdomain)
+
       expected_data = %{
         description: md_to_txt(user.bio),
         title: user.name,
-        url: user.email,
+        url: community.subdomain.name,
         image: user.avatar,
         locale: user.location
       }
 
       # Submit GET request for a user rich link
-      conn = get(conn, "/api/rich_link/profile/#{user.account}")
+
+      conn =
+        %{conn | host: community.subdomain.name}
+        |> get("/api/rich_link/profile/#{user.account}")
+
       response = html_response(conn, 200)
 
       # Check http code 200 and if all the rich link fields are properly filled
@@ -75,16 +83,23 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       [image | _] = product.images
 
+      community =
+        insert(:community)
+        |> Repo.preload(:subdomain)
+
       expected_data = %{
         description: md_to_txt(product.description),
         title: product.title,
-        url: nil,
+        url: community.subdomain.name,
         image: image.uri,
         locale: nil
       }
 
       # Submit GET request for a product rich link
-      conn = get(conn, "/api/rich_link/shop/#{product.id}")
+      conn =
+        %{conn | host: community.subdomain.name}
+        |> get("/api/rich_link/shop/#{product.id}")
+
       response = html_response(conn, 200)
 
       # Check http code 200 and if all the rich link fields are properly filled

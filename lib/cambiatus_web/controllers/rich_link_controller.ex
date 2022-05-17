@@ -12,18 +12,20 @@ defmodule CambiatusWeb.RichLinkController do
 
   def rich_link(conn, params) do
     data =
-      case Map.get(params, "page") do
-        ["shop", id] ->
-          product_rich_link(id)
+      with community_subdomain <- conn.host do
+        case Map.get(params, "page") do
+          ["shop", id] ->
+            product_rich_link(id, community_subdomain)
 
-        ["profile", account] ->
-          user_rich_link(account)
+          ["profile", account] ->
+            user_rich_link(account, community_subdomain)
 
-        [] ->
-          community_rich_link(conn.host)
+          [] ->
+            community_rich_link(community_subdomain)
 
-        _ ->
-          send_resp(conn, 404, "Category not found")
+          _ ->
+            send_resp(conn, 404, "Category not found")
+        end
       end
 
     case data do
@@ -35,7 +37,7 @@ defmodule CambiatusWeb.RichLinkController do
     end
   end
 
-  def product_rich_link(id) do
+  def product_rich_link(id, community_subdomain) do
     case Shop.get_product(nil, %{id: id}, nil) do
       {:ok, product} ->
         product = Repo.preload(product, :images)
@@ -45,7 +47,7 @@ defmodule CambiatusWeb.RichLinkController do
          %{
            description: product.description,
            title: product.title,
-           url: nil,
+           url: community_subdomain,
            image: image.uri,
            locale: nil
          }}
@@ -55,14 +57,14 @@ defmodule CambiatusWeb.RichLinkController do
     end
   end
 
-  def user_rich_link(account) do
+  def user_rich_link(account, community_subdomain) do
     case Accounts.get_user(nil, %{account: account}, nil) do
       {:ok, user} ->
         {:ok,
          %{
            description: user.bio,
            title: user.name,
-           url: user.email,
+           url: community_subdomain,
            image: user.avatar,
            locale: user.location
          }}
