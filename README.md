@@ -66,6 +66,10 @@ Here is our [GraphQL wiki](https://cambiatus.github.io/onboarding.md) page
 - EOS Blockchain main [documentation](https://developers.eos.io/welcome/latest/overview/index) page
    - Here is [our documentation](eos.md) on how we use EOS blockchain
 
+**HTTP server**
+
+- [NGINX](https://nginx.org/en/docs/) main documentation page
+
 ## Development Environment Setup
 
 To build and run this application locally follow the following steps!
@@ -120,6 +124,25 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 #Boom! Now you can hack away!
 
+## NGINX setup
+
+To setup NGINX on your machine (as localhost) follow these steps!
+
+**Step 1**
+
+Replace the original configuration file (`nginx.conf`) with the one [inside this repo](/nginx/nginx.conf)
+
+- Note 1: To run on your local machine you'll need to update all `root` directives to reflect where the files are located on your machine (such as on line 104)
+
+- Note 2: For Windows users it is recommended to install NGINX under the C:\Program Files directory
+
+**Step 2**
+
+Open a terminal and `cd` into NGINX's installation directory and run
+```
+nginx
+```
+Now you can make HTTP requests to NGINX on your browser under localhost!
 ## Contributing
 
 When you are ready to make your first contribution please check out our [contribution guide](/.github/contributing.md), this will get your up to speed on where and how to start.
