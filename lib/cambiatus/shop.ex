@@ -7,7 +7,7 @@ defmodule Cambiatus.Shop do
 
   alias Cambiatus.Commune
   alias Cambiatus.Repo
-  alias Cambiatus.Shop.{Product, Order}
+  alias Cambiatus.Shop.{Category, Product, Order}
 
   @spec data(any) :: Dataloader.Ecto.t()
   def data(params \\ %{}) do
@@ -128,5 +128,9 @@ defmodule Cambiatus.Shop do
 
   def get_order(id) do
     Repo.get(Order, id)
+  end
+
+  def create_category() do
+    %Category{}
   end
 end
