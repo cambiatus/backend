@@ -8,8 +8,9 @@ defmodule Cambiatus.Shop.Product do
   import Ecto.Query
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{Accounts.User, Commune, Repo}
+  alias Cambiatus.{Accounts.User, Repo}
   alias Cambiatus.Commune.Community
+  alias Cambiatus.Shop
   alias Cambiatus.Shop.{Category, Order, Product, ProductCategory, ProductImage}
 
   schema "products" do
@@ -37,7 +38,7 @@ defmodule Cambiatus.Shop.Product do
     many_to_many(:categories, Category, join_through: ProductCategory)
   end
 
-  @required_fields ~w(title description price track_stock community_id)a
+  @required_fields ~w(community_id title description price track_stock)a
   @optional_fields ~w(units deleted_at is_deleted creator_id inserted_at updated_at)a
 
   @doc """
@@ -48,22 +49,24 @@ defmodule Cambiatus.Shop.Product do
 
   def changeset(%Product{}, attrs, :create) do
     %Product{}
-    |> Repo.preload(:images)
+    |> Repo.preload([:images, :categories])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> assoc_images(attrs)
+    |> assoc_categories(attrs)
     |> validate_required(@required_fields)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
-    |> validate_community_shop_enabled()
+    |> Shop.validate_community_shop_enabled()
     |> validate_track_stock_units()
   end
 
   def changeset(%Product{} = product, attrs, :update) do
     product
-    |> Repo.preload(:images)
+    |> Repo.preload([:images, :categories])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> assoc_images(attrs)
-    |> validate_community_shop_enabled()
+    |> assoc_categories(attrs)
+    |> Shop.validate_community_shop_enabled()
     |> validate_track_stock_units()
   end
 
@@ -85,20 +88,13 @@ defmodule Cambiatus.Shop.Product do
     end
   end
 
-  def validate_community_shop_enabled(changeset) do
-    changeset
-    |> get_field(:community_id)
-    |> Commune.get_community()
-    |> case do
-      {:ok, community} ->
-        if Map.get(community, :has_shop),
-          do: changeset,
-          else: add_error(changeset, :community_id, "shop is not enabled")
+  def assoc_categories(changeset, %{categories: []}), do: changeset
 
-      {:error, _} ->
-        add_error(changeset, :community_id, "does not exist")
-    end
+  def assoc_categories(changeset, %{categories: _} = attrs) do
+    put_assoc(changeset, :categories, Map.get(attrs, :categories))
   end
+
+  def assoc_categories(changeset, _), do: changeset
 
   def validate_track_stock_units(changeset) do
     track_stock = get_field(changeset, :track_stock)

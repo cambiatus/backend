@@ -46,7 +46,7 @@ defmodule Cambiatus.Factory do
 
   alias Cambiatus.Payments.Contribution
   alias Cambiatus.Repo
-  alias Cambiatus.Shop.{Product, ProductImage}
+  alias Cambiatus.Shop.{Category, Product, ProductImage}
 
   alias Cambiatus.Social.{
     News,
@@ -408,6 +408,20 @@ defmodule Cambiatus.Factory do
       phrase: sequence(:phrase, &"#{&1}teste"),
       user: build(:user),
       ip_address: "127.0.0.1"
+    }
+  end
+
+  def category_factory do
+    %Category{
+      icon_uri: sequence("icon_uri", &"image-#{&1}"),
+      image_uri: sequence("image_uri", &"image-#{&1}"),
+      name: sequence("category"),
+      description: sequence("category description"),
+      slug: sequence("category", &"#{&1}/"),
+      meta_title: sequence("meta-title-"),
+      meta_description: sequence("meta-description-"),
+      meta_keywords: sequence("meta-keywords"),
+      position: sequence(:position, & &1)
     }
   end
 end

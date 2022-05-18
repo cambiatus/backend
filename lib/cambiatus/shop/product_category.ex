@@ -8,6 +8,8 @@ defmodule Cambiatus.Shop.ProductCategory do
   alias Cambiatus.Shop.{Category, Product}
 
   schema "product_categories" do
+    field(:position, :integer)
+
     belongs_to(:product, Product)
     belongs_to(:category, Category)
 

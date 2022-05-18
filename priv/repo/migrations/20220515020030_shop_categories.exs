@@ -6,7 +6,7 @@ defmodule Cambiatus.Repo.Migrations.ShopCategories do
       add(:community_id, references(:communities, column: :symbol, type: :string, null: false))
       add(:category_id, references(:categories))
 
-      add(:icon, :string, null: true, comment: "URI for the icon")
+      add(:icon_uri, :string, null: true, comment: "URI for the icon")
       add(:image_uri, :string, null: true, comment: "URI for the image")
       add(:name, :string, null: false, comment: "Name")
       add(:description, :string, null: false, comment: "Markdown description of the category")
@@ -24,13 +24,18 @@ defmodule Cambiatus.Repo.Migrations.ShopCategories do
         comment: "Meta tag for keywords, used for indexing"
       )
 
+      add(:position, :integer, comment: "Ordering position")
+
       timestamps()
     end
+
+    create(index(:categories, [:community_id]))
+    create(index(:categories, [:category_id]))
 
     create table(:product_categories) do
       add(:product_id, references(:products, null: false))
       add(:category_id, references(:categories, null: false))
-      add(:position, :integer, null: false, comment: "Ordering position")
+      add(:position, :integer, comment: "Ordering position")
 
       timestamps()
     end
