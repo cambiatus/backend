@@ -1,4 +1,4 @@
-defmodule Cambiatus.UploadTest do
+defmodule Cambiatus.FileUploadTest do
   @moduledoc """
   Unit tests for the upload module
   """
