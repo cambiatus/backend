@@ -144,8 +144,15 @@ defmodule Cambiatus.ShopTest do
         })
 
       assert {:ok, %Category{} = sub_category} = Shop.create_category(params)
-      category = Repo.preload(Shop.get_category!(category.id), [:categories])
-      assert category.categories == [sub_category]
+
+      category =
+        category.id
+        |> Shop.get_category!()
+        |> Repo.preload([:categories])
+
+      categories = category.categories |> Enum.map(&Repo.preload(&1, [:categories]))
+
+      assert categories == [sub_category]
 
       another_params =
         params_for(:category, %{
@@ -156,7 +163,15 @@ defmodule Cambiatus.ShopTest do
 
       assert {:ok, %Category{} = another_sub_category} = Shop.create_category(another_params)
       category = Repo.preload(Shop.get_category!(category.id), [:categories])
-      assert category.categories == [sub_category, another_sub_category]
+
+      category =
+        category.id
+        |> Shop.get_category!()
+        |> Repo.preload([:categories])
+
+      categories = category.categories |> Enum.map(&Repo.preload(&1, [:categories]))
+
+      assert categories == [sub_category, another_sub_category]
     end
   end
 end
