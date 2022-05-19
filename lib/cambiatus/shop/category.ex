@@ -25,8 +25,6 @@ defmodule Cambiatus.Shop.Category do
     field(:meta_description, :string)
     field(:meta_keywords, :string)
 
-    field(:position, :integer)
-
     timestamps()
 
     belongs_to(:community, Community, references: :symbol, type: :string)
