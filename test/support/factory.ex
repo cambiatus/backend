@@ -420,8 +420,7 @@ defmodule Cambiatus.Factory do
       slug: sequence("category", &"#{&1}/"),
       meta_title: sequence("meta-title-"),
       meta_description: sequence("meta-description-"),
-      meta_keywords: sequence("meta-keywords"),
-      position: sequence(:position, & &1)
+      meta_keywords: sequence("meta-keywords")
     }
   end
 end
