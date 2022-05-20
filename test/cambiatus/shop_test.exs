@@ -69,6 +69,11 @@ defmodule Cambiatus.ShopTest do
       assert Shop.get_category!(category.id) == category
     end
 
+    test "get_category/1 returns the category with given id" do
+      category = insert(:category)
+      assert Shop.get_category(category.id) == {:ok, category}
+    end
+
     test "create_category/1 with valid data creates a category", %{community: community} do
       params = Map.merge(@valid_attrs, %{community_id: community.symbol})
 

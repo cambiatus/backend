@@ -55,6 +55,24 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       resolve(&Shop.upsert_product/3)
     end
 
+    @desc "[Auth required - Admin only] Upserts a category"
+    field :category, :category do
+      arg(:id, :integer)
+
+      arg(:category_id, :string, description: "Parent category ID")
+      arg(:icon_uri, :string)
+      arg(:image_uri, :string)
+      arg(:name, non_null(:string))
+      arg(:description, non_null(:string))
+      arg(:slug, :string)
+      arg(:meta_title, :string)
+      arg(:meta_description, :string)
+      arg(:meta_keywords, :string)
+
+      middleware(Middleware.AdminAuthenticate)
+      resolve(&Shop.upsert_category/3)
+    end
+
     @desc "[Auth required] Deletes a product"
     field :delete_product, :delete_status do
       arg(:id, non_null(:integer))
