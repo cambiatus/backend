@@ -90,6 +90,8 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
 
+    field(:categories, non_null(list_of(non_null(:category))), resolve: dataloader(Cambiatus.Shop))
+
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
   end
 
@@ -112,6 +114,27 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   @desc "Product image"
   object(:product_image) do
     field(:uri, non_null(:string))
+  end
+
+  @desc "Product category"
+  object(:category) do
+    field(:id, non_null(:integer))
+    field(:icon_uri, :string)
+    field(:image_uri, :string)
+    field(:name, non_null(:string))
+    field(:description, non_null(:string))
+
+    field(:slug, :string)
+    field(:meta_title, :string)
+    field(:meta_description, :string)
+    field(:meta_keywords, :string)
+
+    field(:category, :category, resolve: dataloader(Cambiatus.Shop))
+    field(:categories, list_of(non_null(:category)), resolve: dataloader(Cambiatus.Shop))
+    field(:products, list_of(non_null(:product)), resolve: dataloader(Cambiatus.Shop))
+
+    field(:inserted_at, non_null(:naive_datetime))
+    field(:updated_at, non_null(:naive_datetime))
   end
 
   @desc "An Order"
