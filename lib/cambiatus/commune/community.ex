@@ -14,7 +14,7 @@ defmodule Cambiatus.Commune.Community do
 
   alias Cambiatus.Payments.{Contribution, ContributionConfiguration}
   alias Cambiatus.Repo
-  alias Cambiatus.Shop.Product
+  alias Cambiatus.Shop.{Category, Product}
   alias Cambiatus.Social.News
   alias Cambiatus.Objectives.Objective
 
@@ -78,6 +78,8 @@ defmodule Cambiatus.Commune.Community do
       on_replace: :delete,
       on_delete: :delete_all
     )
+
+    has_many(:categories, Category, foreign_key: :community_id)
   end
 
   @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a
