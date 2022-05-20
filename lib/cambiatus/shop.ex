@@ -161,6 +161,20 @@ defmodule Cambiatus.Shop do
   end
 
   @doc """
+  Gets a single category. Returns nil if not found
+
+  ## Examples
+
+      iex> get_category(123)
+      %Category{}
+
+      iex> get_category(0)
+      nil
+
+  """
+  def get_category(id), do: Repo.get(Category, id)
+
+  @doc """
   Gets a single category.
 
   Raises `Ecto.NoResultsError` if the Category does not exist.
