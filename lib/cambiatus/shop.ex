@@ -240,9 +240,8 @@ defmodule Cambiatus.Shop do
   """
   def delete_category(category_id, user, community_id) do
     with %Category{} = category <- get_category(category_id),
-         {:community, true} <- {:community, category.community_id == community_id},
-         {:admin, true} <-
-           {:admin, Commune.is_community_admin?(category.community_id, user.account)} do
+         true <- category.community_id == community_id,
+         true <- Commune.is_community_admin?(category.community_id, user.account) do
       case Repo.delete(category) do
         {:ok, _} -> {:ok, "Category deleted successfully"}
         _ -> {:error, "Category delete failed"}
@@ -251,11 +250,8 @@ defmodule Cambiatus.Shop do
       nil ->
         {:error, "Category not found"}
 
-      {:admin, false} ->
-        {:error, " Logged user can't do this action"}
-
-      {:community, false} ->
-        {:error, "Can't delete other community category"}
+      false ->
+        {:error, "Logged user can't do this action"}
     end
   end
 

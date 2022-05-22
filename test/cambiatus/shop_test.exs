@@ -71,7 +71,7 @@ defmodule Cambiatus.ShopTest do
 
     test "get_category/1 returns the category with given id" do
       category = insert(:category)
-      assert Shop.get_category(category.id) == {:ok, category}
+      assert Shop.get_category(category.id) == category
     end
 
     test "create_category/1 with valid data creates a category", %{community: community} do
@@ -127,9 +127,14 @@ defmodule Cambiatus.ShopTest do
       assert category == Shop.get_category!(category.id)
     end
 
-    test "delete_category/1 deletes the category" do
-      category = insert(:category)
-      assert {:ok, %Category{}} = Shop.delete_category(category)
+    test "delete_category/1 deletes the category if the user is an admin" do
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+      category = insert(:category, community_id: community.symbol)
+
+      assert {:ok, "Category deleted successfully"} =
+               Shop.delete_category(category.id, admin, community.symbol)
+
       assert_raise Ecto.NoResultsError, fn -> Shop.get_category!(category.id) end
     end
 
