@@ -33,6 +33,10 @@ defmodule Cambiatus.ApiCase do
         token = CambiatusWeb.AuthToken.sign(user)
         put_req_header(conn, "authorization", "Bearer #{token}")
       end
+
+      defp assign_domain(conn, domain) do
+        put_req_header(conn, "community-domain", domain)
+      end
     end
   end
 

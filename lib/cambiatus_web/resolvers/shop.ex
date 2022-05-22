@@ -3,18 +3,25 @@ defmodule CambiatusWeb.Resolvers.Shop do
   Resolver module for Shop operations, responsible to parse GraphQL params and adjust responses to it
   """
 
-  alias Cambiatus.Shop
+  alias Cambiatus.{Commune, Shop, Repo}
   alias Cambiatus.Shop.{Category, Product}
 
   def upsert_product(_, %{id: product_id} = params, %{context: %{current_user: current_user}}) do
     params = Map.merge(params, %{creator_id: current_user.account})
 
     with %Product{} = product <- Shop.get_product(product_id),
+         %Product{} = product <- Repo.preload(product, :community),
+         true <-
+           product.creator_id == current_user.account ||
+             Commune.is_community_admin?(product.community, current_user.account),
          {:ok, updated_product} <- Shop.update_product(product, params) do
       {:ok, updated_product}
     else
       nil ->
         {:error, "Product not found"}
+
+      false ->
+        {:error, "Logged user can't do this action"}
 
       {:error, error} ->
         Sentry.capture_message("Product update failed", extra: %{error: error})

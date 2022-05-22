@@ -123,9 +123,9 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              } = response
     end
 
-    test "update existing product" do
+    test "owner update existing product" do
       user = insert(:user)
-      product = insert(:product)
+      product = insert(:product, creator: user)
 
       conn = build_conn() |> auth_user(user)
 
@@ -154,6 +154,76 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       }
 
       assert(response == expected_response)
+    end
+
+    test "admin can update other community members products" do
+      user = insert(:user)
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+      product = insert(:product, community: community, creator: user)
+
+      conn = build_conn() |> auth_user(admin) |> assign_domain(community.subdomain.name)
+
+      mutation = """
+        mutation {
+          product(id: #{product.id},
+                  description: "one") {
+                    title
+                    description
+                  }
+        }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: mutation)
+        |> json_response(200)
+
+      assert response == %{
+               "data" => %{
+                 "product" => %{
+                   "title" => product.title,
+                   "description" => "one"
+                 }
+               }
+             }
+    end
+
+    test "Users can't update products they do not own" do
+      user = insert(:user)
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+      product = insert(:product, community: community, creator: user)
+
+      # Finally we try with someone else, it should fail
+      someone = insert(:user)
+      conn = build_conn() |> auth_user(someone) |> assign_domain(community.subdomain.name)
+
+      mutation = """
+        mutation {
+          product(id: #{product.id},
+                  description: "one") {
+                    title
+                    description
+                  }
+        }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: mutation)
+        |> json_response(200)
+
+      assert response == %{
+               "data" => %{"product" => nil},
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 5, "line" => 2}],
+                   "message" => "Logged user can't do this action",
+                   "path" => ["product"]
+                 }
+               ]
+             }
     end
 
     test "update images substitutes old images" do

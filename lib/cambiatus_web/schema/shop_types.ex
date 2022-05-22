@@ -50,6 +50,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       arg(:images, list_of(non_null(:string)))
       arg(:track_stock, :boolean)
       arg(:units, :integer)
+      arg(:categories, list_of(non_null(:integer)))
 
       middleware(Middleware.Authenticate)
       resolve(&Shop.upsert_product/3)
