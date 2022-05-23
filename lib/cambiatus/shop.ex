@@ -47,6 +47,16 @@ defmodule Cambiatus.Shop do
     |> Repo.insert()
   end
 
+  def update_product(%Product{} = product, %{categories: categories} = attrs)
+      when is_list(categories) do
+    attrs =
+      attrs
+      |> Map.merge(%{product_categories: Enum.map(categories, &%{category_id: &1})})
+      |> Map.delete(:categories)
+
+    update_product(product, attrs)
+  end
+
   def update_product(%Product{} = product, attrs) do
     product
     |> Product.changeset(attrs, :update)

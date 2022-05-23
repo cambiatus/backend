@@ -156,6 +156,46 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       assert(response == expected_response)
     end
 
+    test "update product category" do
+      user = insert(:user)
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+      product = insert(:product, community: community, creator: user)
+
+      [cat_1, cat_2] = insert_list(2, :category, community: community)
+
+      conn = build_conn() |> auth_user(user)
+
+      mutation = """
+        mutation {
+          product(id: #{product.id}, categories: [#{cat_1.id}, #{cat_2.id}]) {
+                    title
+                    categories { id }
+                  }
+        }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: mutation)
+        |> json_response(200)
+
+      expected_response = %{
+        "data" => %{
+          "product" => %{
+            "categories" => [%{"id" => cat_1.id}, %{"id" => cat_2.id}],
+            "title" => product.title
+          }
+        }
+      }
+
+      assert(response == expected_response)
+    end
+
+    test "can't update product category if category don't exist on the community"
+
+    test "update_product/2 with an category from another community fails"
+
     test "admin can update other community members products" do
       user = insert(:user)
       admin = insert(:user)
@@ -189,7 +229,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              }
     end
 
-    test "Users can't update products they do not own" do
+    test "users can't update products they do not own" do
       user = insert(:user)
       admin = insert(:user)
       community = insert(:community, creator: admin.account)

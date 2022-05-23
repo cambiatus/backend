@@ -11,7 +11,7 @@ defmodule Cambiatus.Shop.Product do
   alias Cambiatus.{Accounts.User, Repo}
   alias Cambiatus.Commune.Community
   alias Cambiatus.Shop
-  alias Cambiatus.Shop.{Category, Order, Product, ProductCategory, ProductImage}
+  alias Cambiatus.Shop.{Order, Product, ProductCategory, ProductImage}
 
   schema "products" do
     field(:title, :string)
@@ -35,7 +35,7 @@ defmodule Cambiatus.Shop.Product do
     )
 
     has_many(:product_categories, ProductCategory)
-    many_to_many(:categories, Category, join_through: ProductCategory)
+    has_many(:categories, through: [:product_categories, :category])
   end
 
   @required_fields ~w(community_id title description price track_stock)a
@@ -90,8 +90,8 @@ defmodule Cambiatus.Shop.Product do
 
   def assoc_categories(changeset, %{categories: []}), do: changeset
 
-  def assoc_categories(changeset, %{categories: _} = attrs) do
-    put_assoc(changeset, :categories, Map.get(attrs, :categories))
+  def assoc_categories(changeset, %{product_categories: _} = attrs) do
+    put_assoc(changeset, :product_categories, Map.get(attrs, :product_categories))
   end
 
   def assoc_categories(changeset, _), do: changeset

@@ -9,7 +9,8 @@ defmodule Cambiatus.ShopTest do
     test "update_product/2 with categories" do
       product = insert(:product)
       [cat1, cat2] = insert_list(2, :category)
-      params = %{categories: [cat1, cat2]}
+
+      params = %{product_categories: [%{category_id: cat1.id}, %{category_id: cat2.id}]}
 
       assert {:ok, %Product{} = product} = Shop.update_product(product, params)
       product = Repo.preload(product, [:categories])

@@ -50,7 +50,10 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       arg(:images, list_of(non_null(:string)))
       arg(:track_stock, :boolean)
       arg(:units, :integer)
-      arg(:categories, list_of(non_null(:integer)))
+
+      arg(:categories, list_of(non_null(:integer)),
+        description: "List of categories ID you want to relate to this product"
+      )
 
       middleware(Middleware.Authenticate)
       resolve(&Shop.upsert_product/3)
@@ -69,6 +72,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       arg(:meta_title, :string)
       arg(:meta_description, :string)
       arg(:meta_keywords, :string)
+      arg(:categories, list_of(non_null(:integer)))
 
       middleware(Middleware.AdminAuthenticate)
       resolve(&Shop.upsert_category/3)
