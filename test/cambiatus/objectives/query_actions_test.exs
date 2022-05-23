@@ -1,36 +1,20 @@
 defmodule CambiatusWeb.QueryActionsTest do
-  use Cambiatus.DataCase
-  use CambiatusWeb.ConnCase
-
-  alias Cambiatus.Auth.SignIn
-  alias CambiatusWeb.AuthToken
-  alias Cambiatus.Repo
+  use Cambiatus.ApiCase
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    user = insert(:user)
+
+    conn =
+      conn
+      |> put_req_header("accept", "application/json")
+      |> auth_user(user)
+
+    {:ok, conn: conn}
   end
 
   describe "querying" do
-    setup do
-      creator = insert(:user)
-
-      community =
-        :community
-        |> insert(%{creator: creator.account})
-        |> Repo.preload(:subdomain)
-
-      user = insert(:user)
-      _placeholder = insert(:request, user: user)
-      {:ok, user} = SignIn.sign_in(user.account, "pass", domain: community.subdomain.name)
-
-      {:ok, %{user: user}}
-    end
-
     test "get request",
-         %{conn: conn, user: user} do
-      # Use signed user to generate an authentication token
-      auth_token = AuthToken.sign(user)
-
+         %{conn: conn} do
       # Create objective that is common for all actions tested
       objective = insert(:objective)
       community_symbol = objective.community.symbol
@@ -42,31 +26,32 @@ defmodule CambiatusWeb.QueryActionsTest do
         deadline: DateTime.add(DateTime.now!("Etc/UTC"), 3600),
         usages: 0,
         usages_left: 4,
-        objective: objective
+        objective: objective,
+        description: ""
       }
 
       # Create 3 actions, only modifying the descrpition between them
-      action_to_match1 =
-        insert(:action, Map.put(valid_action_params, :description, "Lorem ipsem"))
+      action_to_match1 = insert(:action, %{valid_action_params | description: "Lorem ipsum"})
 
-      action_to_match2 =
-        insert(:action, Map.put(valid_action_params, :description, "PlAcEhOlDeR tExT"))
+      action_to_match2 = insert(:action, %{valid_action_params | description: "PlAcEhOlDeR tExT"})
 
-      _action_to_match3 =
-        insert(:action, Map.put(valid_action_params, :description, "never matches"))
+      _action_to_match3 = insert(:action, %{valid_action_params | description: "never matches"})
 
       # Make 3 queries searching for different descriptions
       query1 =
-        generate_query(community_symbol, "Lorem ipsem")
-        |> make_query_request(conn, auth_token)
+        community_symbol
+        |> generate_query("Lorem ipsum")
+        |> make_query_request(conn)
 
       query2 =
-        generate_query(community_symbol, "holder")
-        |> make_query_request(conn, auth_token)
+        community_symbol
+        |> generate_query("holder")
+        |> make_query_request(conn)
 
       query3 =
-        generate_query(community_symbol, "nothing at all")
-        |> make_query_request(conn, auth_token)
+        community_symbol
+        |> generate_query("nothing at all")
+        |> make_query_request(conn)
 
       # Check if the first query matched only the first action
       assert [action_to_match1.id] == get_query_ids(query1)
@@ -77,12 +62,11 @@ defmodule CambiatusWeb.QueryActionsTest do
     end
   end
 
-  defp make_query_request(query, conn, auth_token) do
+  defp make_query_request(query, conn) do
     conn
     |> put_req_header("accept", "application/json")
     |> put_req_header("content-type", "application/json")
-    |> put_req_header("authorization", "Bearer #{auth_token}")
-    |> get("/api/graph", query: query)
+    |> post("/api/graph", query: query)
   end
 
   defp generate_query(community_symbol, description) do
@@ -100,7 +84,8 @@ defmodule CambiatusWeb.QueryActionsTest do
 
   defp get_query_ids(conn) do
     response =
-      conn.resp_body
+      conn
+      |> response(200)
       |> Poison.Parser.parse!(%{keys: :atoms!})
 
     Enum.map(response.data.search.actions, fn x -> x.id end)
