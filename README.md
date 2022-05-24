@@ -126,23 +126,43 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 ## NGINX setup
 
-To setup NGINX on your machine (as localhost) follow these steps!
+We use NGINX to manage our server infrastructure. You can check out how to install and run it on their [official site](https://nginx.org/)
+
+We also use NGINX to redirect social media crawlers in order to dynamically serve rich links (or Open Graphs) in accordance to the [Open Graph Protocol](https://ogp.me/). To set this up on your NGINX follow these steps:
+
+**Step 0**
+
+Locate your NGINX configuration file (`nginx.conf`) and get ready to edit it
 
 **Step 1**
 
-Replace the original configuration file (`nginx.conf`) with the one [inside this repo](/nginx/nginx.conf)
+Add the following lines right before any of the server blocks are declared:
 
-- Note 1: To run on your local machine you'll need to update all `root` directives to reflect where the files are located on your machine (such as on line 104)
+```
+map $http_user_agent $rich_link_prefix {
+	default 0;
+	~*(facebookexternalhit|twitterbot|telegrambot|linkedinbot|slackbot)  /api/rich_link;
+}
+```
 
-- Note 2: For Windows users it is recommended to install NGINX under the C:\Program Files directory
+This code is responsible for detecting a crawler from different social media websites based on the user agent issued on the http request.
+
+If a crawler is detected it saves the user agent to the `$rich_link_prefix` variable.
 
 **Step 2**
 
-Open a terminal and `cd` into NGINX's installation directory and run
+Inside the server block referring to `server_name block staging.cambiatus.io *.staging.cambiatus.io;` under `location /` insert:
+
 ```
-nginx
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+if ($rich_link_prefix != 0) {
+	proxy_pass http://127.0.0.1:4000$rich_link_prefix$request_uri;
+}
 ```
-Now you can make HTTP requests to NGINX on your browser under localhost!
+
+This code redirects the identified crawler to the correct rich link URL. Nut if a crawler was not detected the server runs normally.
+
 ## Contributing
 
 When you are ready to make your first contribution please check out our [contribution guide](/.github/contributing.md), this will get your up to speed on where and how to start.
