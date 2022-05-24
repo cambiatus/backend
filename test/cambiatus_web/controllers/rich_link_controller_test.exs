@@ -65,9 +65,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       response = html_response(conn, 200)
 
-      # Check http code 200 and if all the rich link fields are properly filled
-      assert conn.status == 200
-
+      # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
         assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
       end)

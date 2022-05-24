@@ -6,7 +6,8 @@ defmodule CambiatusWeb.RichLinkView do
 
   def md_to_txt(markdown) do
     with {:ok, string, _} <- Earmark.as_html(markdown) do
-      HtmlSanitizeEx.strip_tags(string)
+      string
+      |> HtmlSanitizeEx.strip_tags()
       |> String.trim()
     else
       {:error, _} ->
