@@ -14,5 +14,5 @@
     <meta property="og:url" content="<%= @data.url %>">
     <meta property="og:image" content="<%= @data.image %>">
 
-    <title>"<%= @data.title %>"</title>
+    <title><%= @data.title %></title>
   </head>
