@@ -218,17 +218,19 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
         |> json_response(200)
 
       expected_response = %{
-        "data" => %{
-          "product" => %{
-            "error" => "Can't find category with given ID"
+        "data" => %{"product" => nil},
+        "errors" => [
+          %{
+            "details" => %{"product_category" => ["Can't find category with given ID"]},
+            "locations" => [%{"column" => 5, "line" => 2}],
+            "message" => "Product update failed",
+            "path" => ["product"]
           }
-        }
+        ]
       }
 
       assert(response == expected_response)
     end
-
-    test "update_product/2 with an category from another community fails"
 
     test "admin can update other community members products" do
       user = insert(:user)

@@ -7,8 +7,9 @@ defmodule Cambiatus.ShopTest do
     alias Cambiatus.Shop.Product
 
     test "update_product/2 with categories" do
-      product = insert(:product)
-      [cat1, cat2] = insert_list(2, :category)
+      community = insert(:community)
+      product = insert(:product, %{community: community})
+      [cat1, cat2] = insert_list(2, :category, %{community: community})
 
       params = %{product_categories: [%{category_id: cat1.id}, %{category_id: cat2.id}]}
 

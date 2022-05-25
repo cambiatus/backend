@@ -11,7 +11,7 @@ defmodule Cambiatus.Shop.Product do
   alias Cambiatus.{Accounts.User, Repo}
   alias Cambiatus.Commune.Community
   alias Cambiatus.Shop
-  alias Cambiatus.Shop.{Order, Product, ProductCategory, ProductImage}
+  alias Cambiatus.Shop.{Category, Order, Product, ProductCategory, ProductImage}
 
   schema "products" do
     field(:title, :string)
@@ -53,6 +53,7 @@ defmodule Cambiatus.Shop.Product do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> assoc_images(attrs)
     |> assoc_categories(attrs)
+    |> validate_categories()
     |> validate_required(@required_fields)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
@@ -66,6 +67,7 @@ defmodule Cambiatus.Shop.Product do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> assoc_images(attrs)
     |> assoc_categories(attrs)
+    |> validate_categories()
     |> Shop.validate_community_shop_enabled()
     |> validate_track_stock_units()
   end
@@ -95,6 +97,38 @@ defmodule Cambiatus.Shop.Product do
   end
 
   def assoc_categories(changeset, _), do: changeset
+
+  def validate_categories(
+        %{
+          changes: %{product_categories: product_categories},
+          data: %{community_id: community_id}
+        } = changeset
+      ) do
+    any_invalid? =
+      Enum.any?(product_categories, fn product_category ->
+        case product_category.changes do
+          %{category_id: category_id} ->
+            case Repo.get(Category, category_id) do
+              nil ->
+                true
+
+              %Category{} = category ->
+                category.community_id != community_id
+            end
+
+          _ ->
+            false
+        end
+      end)
+
+    if any_invalid? do
+      add_error(changeset, :product_category, "Can't find category with given ID")
+    else
+      changeset
+    end
+  end
+
+  def validate_categories(changeset), do: changeset
 
   def validate_track_stock_units(changeset) do
     track_stock = get_field(changeset, :track_stock)
