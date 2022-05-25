@@ -350,7 +350,7 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
           createdAt
         }
       }
-
+      
       """
 
       res = conn |> get("/api/graph", query: query)
@@ -516,7 +516,7 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       params = %{objective: objective, description: ""}
       action_1 = insert(:action, %{params | description: "Lorem ipsum"})
       action_2 = insert(:action, %{params | description: "PlAcEhOlDeR tExT"})
-      action_3 = insert(:action, %{params | description: "never matches"})
+      _action_3 = insert(:action, %{params | description: "never matches"})
 
       conn = build_conn() |> auth_user(user)
 
@@ -540,7 +540,9 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
         conn |> post("/api/graph", query: query.(action_2.description)) |> json_response(200)
 
       response_3 =
-        conn |> post("/api/graph", query: query.(action_3.description)) |> json_response(200)
+        conn
+        |> post("/api/graph", query: query.("Description not meant to match"))
+        |> json_response(200)
 
       assert %{
                "data" => %{
