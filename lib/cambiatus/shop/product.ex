@@ -111,6 +111,7 @@ defmodule Cambiatus.Shop.Product do
           category.community_id != community_id
         else
           nil ->
+            # If we can't find a community, then its invalid
             true
 
           _ ->
