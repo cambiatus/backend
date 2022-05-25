@@ -192,7 +192,41 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       assert(response == expected_response)
     end
 
-    test "can't update product category if category don't exist on the community"
+    test "can't update product category if category don't exist on the community" do
+      user = insert(:user)
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+      product = insert(:product, community: community, creator: user)
+
+      another_community = insert(:community)
+      invalid_category = insert(:category, community: another_community)
+
+      conn = build_conn() |> auth_user(user)
+
+      mutation = """
+        mutation {
+          product(id: #{product.id}, categories: [#{invalid_category.id}]) {
+                    title
+                    categories { id }
+                  }
+        }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: mutation)
+        |> json_response(200)
+
+      expected_response = %{
+        "data" => %{
+          "product" => %{
+            "error" => "Can't find category with given ID"
+          }
+        }
+      }
+
+      assert(response == expected_response)
+    end
 
     test "update_product/2 with an category from another community fails"
 
