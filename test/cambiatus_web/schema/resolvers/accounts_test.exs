@@ -587,5 +587,70 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       assert user.account == session.user_id
     end
+
+    test "search members" do
+      # Create 3 users, only modifying the name between them
+      community = build(:community) |> Repo.preload(:members)
+      params = %{communities: community, name: ""}
+
+      user_1 = insert(:user, %{params | name: "Lorem ipsum"})
+      user_2 = insert(:user, %{params | name: "PlAcEhOlDeR tExT"})
+      user_3 = insert(:user, %{params | name: "never matches"})
+
+      community = %{community | members: [user_1, user_2, user_3]} |> insert()
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
+      query = fn name ->
+        """
+        {
+          search(communityId:"#{community.symbol}") {
+            members(query: "#{name}") {
+              name,
+              account
+            }
+          }
+        }
+        """
+      end
+
+      response_1 = conn |> post("/api/graph", query: query.(user_1.name)) |> json_response(200)
+
+      response_2 = conn |> post("/api/graph", query: query.(user_2.name)) |> json_response(200)
+
+      response_3 =
+        conn
+        |> post("/api/graph", query: query.("Description not meant to match"))
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "members" => [
+                     %{
+                       "name" => user_1.name,
+                       "account" => user_1.account
+                     }
+                   ]
+                 }
+               }
+             } == response_1
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "members" => [
+                     %{
+                       "name" => user_2.name,
+                       "account" => user_2.account
+                     }
+                   ]
+                 }
+               }
+             } == response_2
+
+      assert %{"data" => %{"search" => %{"members" => []}}} = response_3
+    end
   end
 end
