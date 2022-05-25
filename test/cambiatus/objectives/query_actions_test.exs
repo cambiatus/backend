@@ -1,41 +1,48 @@
 defmodule CambiatusWeb.QueryActionsTest do
   use Cambiatus.ApiCase
 
-  setup %{conn: conn} do
-    user = insert(:user)
-
-    conn =
-      conn
-      |> put_req_header("accept", "application/json")
-      |> auth_user(user)
-
-    {:ok, conn: conn}
-  end
-
   describe "querying" do
-    test "get request",
-         %{conn: conn} do
+    setup do
+      {:ok, user: insert(:user)}
+    end
+
+    @valid_attrs %{
+      is_completed: false,
+      verification_type: "claimable",
+      deadline: DateTime.add(DateTime.now!("Etc/UTC"), 3600),
+      usages: 0,
+      usages_left: 4
+    }
+
+    test "post request", %{user: user} do
       # Create objective that is common for all actions tested
       objective = insert(:objective)
       community_symbol = objective.community.symbol
 
-      # Parameters to ensure that the created actions are validated
-      valid_action_params = %{
-        is_completed: false,
-        verification_type: "claimable",
-        deadline: DateTime.add(DateTime.now!("Etc/UTC"), 3600),
-        usages: 0,
-        usages_left: 4,
-        objective: objective,
-        description: ""
-      }
+      # Insert the objective into the valid attrs
+      params = Map.merge(@valid_attrs, %{objective: objective})
 
       # Create 3 actions, only modifying the descrpition between them
-      action_to_match1 = insert(:action, %{valid_action_params | description: "Lorem ipsum"})
+      action_to_match1 =
+        insert(
+          :action,
+          Map.merge(params, %{description: "Lorem ipsum"})
+        )
 
-      action_to_match2 = insert(:action, %{valid_action_params | description: "PlAcEhOlDeR tExT"})
+      action_to_match2 =
+        insert(
+          :action,
+          Map.merge(params, %{description: "PlAcEhOlDeR tExT"})
+        )
 
-      _action_to_match3 = insert(:action, %{valid_action_params | description: "never matches"})
+      _action_to_match3 =
+        insert(
+          :action,
+          Map.merge(params, %{description: "never matches"})
+        )
+
+      # Create and authorize conn
+      conn = build_conn() |> auth_user(user)
 
       # Make 3 queries searching for different descriptions
       query1 =
