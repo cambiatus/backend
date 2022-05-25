@@ -350,7 +350,7 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
           createdAt
         }
       }
-      
+
       """
 
       res = conn |> get("/api/graph", query: query)
