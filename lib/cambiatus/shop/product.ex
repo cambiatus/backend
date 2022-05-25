@@ -106,15 +106,12 @@ defmodule Cambiatus.Shop.Product do
       ) do
     any_invalid? =
       Enum.any?(product_categories, fn product_category ->
-        case product_category.changes do
-          %{category_id: category_id} ->
-            case Repo.get(Category, category_id) do
-              nil ->
-                true
-
-              %Category{} = category ->
-                category.community_id != community_id
-            end
+        with %{category_id: category_id} <- product_category.changes,
+             %Category{} = category <- Repo.get(Category, category_id) do
+          category.community_id != community_id
+        else
+          nil ->
+            true
 
           _ ->
             false
