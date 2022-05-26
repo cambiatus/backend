@@ -31,9 +31,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       response = html_response(conn, 200)
 
-      # Check http code 200 and if all the rich link fields are properly filled
-      assert conn.status == 200
-
+      # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
         assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
       end)
@@ -58,7 +56,6 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       }
 
       # Submit GET request for a user rich link
-
       conn =
         %{conn | host: community.subdomain.name}
         |> get("/api/rich_link/profile/#{user.account}")
@@ -71,10 +68,9 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       end)
     end
 
-    test "generate rich link for product",
+    test "generate rich link for product with image",
          %{conn: conn} do
       # Insert product and extract data for the rich link
-
       product =
         insert(:product)
         |> Repo.preload(:images)
@@ -100,19 +96,48 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       response = html_response(conn, 200)
 
-      # Check http code 200 and if all the rich link fields are properly filled
-      assert conn.status == 200
-
+      # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
         assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
       end)
     end
   end
 
+  test "generate rich link for product without image",
+       %{conn: conn} do
+    # Insert product without images and extract data for the rich link
+    product = insert(:product, images: [])
+
+    community =
+      insert(:community)
+      |> Repo.preload(:subdomain)
+
+    expected_data = %{
+      description: md_to_txt(product.description),
+      title: product.title,
+      url: community.subdomain.name,
+      image: "https://buss.staging.cambiatus.io/images/logo-cambiatus-mobile.svg",
+      locale: nil
+    }
+
+    # Submit GET request for a product rich link
+    conn =
+      %{conn | host: community.subdomain.name}
+      |> get("/api/rich_link/shop/#{product.id}")
+
+    response = html_response(conn, 200)
+
+    # Check if all the rich link fields are properly filled
+    Enum.each(expected_data, fn {k, v} ->
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+    end)
+  end
+
   defp md_to_txt(markdown) do
     # Convert markdown to plain text
-    with {:ok, string, _} <- Earmark.as_html(markdown) do
-      HtmlSanitizeEx.strip_tags(string)
+    with {:ok, string, _} <- Earmark.as_html(markdown, escape: false) do
+      string
+      |> HtmlSanitizeEx.strip_tags()
       |> String.trim()
     else
       {:error, _} ->
