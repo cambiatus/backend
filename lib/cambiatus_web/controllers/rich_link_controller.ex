@@ -38,17 +38,24 @@ defmodule CambiatusWeb.RichLinkController do
   end
 
   def product_rich_link(id, community_subdomain) do
+    get_image = fn product ->
+      with product = Repo.preload(product, :images),
+           [image | _] <- product.images do
+        image.uri
+      else
+        _ ->
+          "https://buss.staging.cambiatus.io/images/logo-cambiatus-mobile.svg"
+      end
+    end
+
     case Shop.get_product(nil, %{id: id}, nil) do
       {:ok, product} ->
-        product = Repo.preload(product, :images)
-        [image | _] = product.images
-
         {:ok,
          %{
            description: product.description,
            title: product.title,
            url: community_subdomain,
-           image: image.uri,
+           image: get_image.(product),
            locale: nil
          }}
 
