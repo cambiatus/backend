@@ -66,7 +66,7 @@ defmodule Cambiatus.KycDataTest do
     data = %{
       account_id: kyc.account_id,
       user_type: "natural",
-      document: "088888888",
+      document: "08-a888888a",
       document_type: "cedula_de_identidad",
       phone: kyc.phone,
       country_id: kyc.country_id
@@ -77,7 +77,9 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document: {"The following error(s) were found:\n- First digit cannot be zero\n", []}
+        document:
+          {"The following error(s) were found:\n- First digit cannot be zero\n- Dashes positions are not valid\n- Entry must contain 9 digits\n- Entry must only contain digits or dashes\n",
+           []}
       ]
     )
   end
@@ -88,7 +90,7 @@ defmodule Cambiatus.KycDataTest do
     data = %{
       account_id: kyc.account_id,
       user_type: "natural",
-      document: "088888",
+      document: "088-888",
       document_type: "dimex",
       phone: kyc.phone,
       country_id: kyc.country_id
@@ -100,7 +102,7 @@ defmodule Cambiatus.KycDataTest do
     assert(
       Map.get(changeset, :errors) == [
         document:
-          {"The following error(s) were found:\n- First digit cannot be zero\n- Entry must contain 12 digits\n",
+          {"The following error(s) were found:\n- First digit cannot be zero\n- Dashes positions are not valid\n- Entry must contain 12 digits\n",
            []}
       ]
     )

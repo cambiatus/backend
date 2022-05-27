@@ -126,7 +126,7 @@ defmodule Cambiatus.Kyc.KycData do
     add_error(changeset, :country_id, "is invalid")
   end
 
-  defp get_document_type_pattern(document_type) do
+  def get_document_type_pattern(document_type) do
     case document_type do
       "cedula_de_identidad" ->
         %{
