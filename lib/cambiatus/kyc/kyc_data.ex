@@ -113,12 +113,12 @@ defmodule Cambiatus.Kyc.KycData do
   def validate_document_by_document_type(changeset, "Costa Rica") do
     document_type = get_field(changeset, :document_type)
     document = get_field(changeset, :document)
-    regex = get_document_type_regex(document_type)
+    pattern = get_document_type_pattern(document_type)
 
-    if String.match?(document, regex) do
+    if String.match?(document, pattern.regex) do
       changeset
     else
-      add_error(changeset, :document, "Document entry is not valid for #{document_type}")
+      add_error(changeset, :document, document_type_error_handler(document, pattern))
     end
   end
 
@@ -126,22 +126,106 @@ defmodule Cambiatus.Kyc.KycData do
     add_error(changeset, :country_id, "is invalid")
   end
 
-  defp get_document_type_regex(document_type) do
+  defp get_document_type_pattern(document_type) do
     case document_type do
       "cedula_de_identidad" ->
-        ~r/^[1-9]-?\d{4}-?\d{4}$/
+        %{
+          regex: ~r/^[1-9]-?\d{4}-?\d{4}$/,
+          non_null_first_digit: true,
+          dashes_positions: [1, 6],
+          string_length: [9]
+        }
 
       "dimex" ->
-        ~r/^[1-9]{1}\d{10,11}$/
+        %{
+          regex: ~r/^[1-9]{1}\d{10,11}$/,
+          non_null_first_digit: true,
+          dashes_positions: [],
+          string_length: [12]
+        }
 
       "nite" ->
-        ~r/^[1-9]{1}\d{9}$/
+        %{
+          regex: ~r/^[1-9]{1}\d{9}$/,
+          non_null_first_digit: true,
+          dashes_positions: [],
+          string_length: [10]
+        }
 
       "mipyme" ->
-        ~r/^\d-?\d{3}-?\d{6}$/
+        %{
+          regex: ~r/^\d-?\d{3}-?\d{6}$/,
+          non_null_first_digit: false,
+          dashes_positions: [1, 5],
+          string_length: [10]
+        }
 
       "gran_empresa" ->
-        ~r/^\d-?\d{3}-?\d{6}$/
+        %{
+          regex: ~r/^\d-?\d{3}-?\d{6}$/,
+          non_null_first_digit: false,
+          dashes_positions: [1, 5],
+          string_length: [10]
+        }
+    end
+  end
+
+  def document_type_error_handler(input, opts) do
+    message = "The following error(s) were found:\n"
+    document_type_error_handler(input, opts, message)
+  end
+
+  defp document_type_error_handler(input, %{non_null_first_digit: true} = opts, message) do
+    opts = Map.delete(opts, :non_null_first_digit)
+
+    case String.match?(input, ~r/^0/) do
+      true ->
+        document_type_error_handler(input, opts, message <> "- First digit cannot be zero\n")
+
+      _ ->
+        document_type_error_handler(input, opts, message)
+    end
+  end
+
+  # defp document_type_error_handler(input, %{dahses_positions: [_]} = opts, message) do
+  #   case String.match?(input, ~r/^0/) do
+  #     true ->
+  #       message = message <> "- First digit cannot be zero\n"
+
+  #     _ ->
+  #       message = message
+  #   end
+
+  #   opts = Map.delete(opts, :dahses_positions)
+  #   document_type_error_handler(input, opts, message)
+  # end
+
+  defp document_type_error_handler(input, %{string_length: [input_length]} = opts, message) do
+    opts = Map.delete(opts, :string_length)
+    string = String.replace(input, "-", "")
+
+    case String.length(string) == input_length do
+      false ->
+        document_type_error_handler(
+          input,
+          opts,
+          message <> "- Entry must contain #{input_length} digits\n"
+        )
+
+      _ ->
+        document_type_error_handler(input, opts, message)
+    end
+  end
+
+  defp document_type_error_handler(input, _opts, message) do
+    string = String.replace(input, "-", "")
+
+    case String.match?(string, ~r/\D/) do
+      true ->
+        message <> "- Entry must only contain digits\n"
+
+      _ ->
+        message
     end
   end
 end

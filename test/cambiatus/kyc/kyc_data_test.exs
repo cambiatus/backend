@@ -77,7 +77,7 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document: {"Document entry is not valid for cedula_de_identidad", []}
+        document: {"The following error(s) were found:\n- First digit cannot be zero\n", []}
       ]
     )
   end
@@ -98,7 +98,11 @@ defmodule Cambiatus.KycDataTest do
     refute(changeset.valid?)
 
     assert(
-      Map.get(changeset, :errors) == [document: {"Document entry is not valid for dimex", []}]
+      Map.get(changeset, :errors) == [
+        document:
+          {"The following error(s) were found:\n- First digit cannot be zero\n- Entry must contain 12 digits\n",
+           []}
+      ]
     )
   end
 
@@ -118,7 +122,11 @@ defmodule Cambiatus.KycDataTest do
     refute(changeset.valid?)
 
     assert(
-      Map.get(changeset, :errors) == [document: {"Document entry is not valid for nite", []}]
+      Map.get(changeset, :errors) == [
+        document:
+          {"The following error(s) were found:\n- First digit cannot be zero\n- Entry must contain 10 digits\n",
+           []}
+      ]
     )
   end
 
@@ -138,7 +146,9 @@ defmodule Cambiatus.KycDataTest do
     refute(changeset.valid?)
 
     assert(
-      Map.get(changeset, :errors) == [document: {"Document entry is not valid for mipyme", []}]
+      Map.get(changeset, :errors) == [
+        document: {"The following error(s) were found:\n- Entry must contain 10 digits\n", []}
+      ]
     )
   end
 
@@ -159,7 +169,7 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document: {"Document entry is not valid for gran_empresa", []}
+        document: {"The following error(s) were found:\n- Entry must contain 10 digits\n", []}
       ]
     )
   end

@@ -106,7 +106,11 @@ defmodule Cambiatus.Auth.SignUpTest do
       assert params == SignUp.validate(params, :kyc)
 
       assert {:error, :kyc_invalid,
-              [document: {"Document entry is not valid for #{kyc.document_type}", []}]} ==
+              [
+                document:
+                  {"The following error(s) were found:\n- Entry must contain 10 digits\n- Entry must only contain digits\n",
+                   []}
+              ]} ==
                SignUp.validate(%{kyc: invalid_kyc, account: kyc.account.account}, :kyc)
     end
   end
