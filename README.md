@@ -141,7 +141,7 @@ Add the following lines right before any of the server blocks are declared:
 ```
 map $http_user_agent $rich_link_prefix {
 	default 0;
-	~*(facebookexternalhit|twitterbot|telegrambot|linkedinbot|slackbot)  /api/rich_link;
+	~*(facebookexternalhit|twitterbot|telegrambot|linkedinbot|slackbot|whatsapp)  /api/rich_link;
 }
 ```
 
@@ -157,9 +157,11 @@ Inside the server block referring to `server_name block staging.cambiatus.io *.s
 proxy_set_header Host $http_host;
 proxy_set_header X-Real-IP $remote_addr;
 if ($rich_link_prefix != 0) {
-	proxy_pass http://127.0.0.1:4000$rich_link_prefix$request_uri;
+	proxy_pass http://127.0.0.1:#{backend_listening_port}$rich_link_prefix$request_uri;
 }
 ```
+
+Note: Replace `#{backend_listening_port}` with the port to which the backend server is setup to listen.
 
 This code redirects the identified crawler to the correct rich link URL. Nut if a crawler was not detected the server runs normally.
 
