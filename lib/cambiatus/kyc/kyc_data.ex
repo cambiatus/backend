@@ -187,18 +187,31 @@ defmodule Cambiatus.Kyc.KycData do
     end
   end
 
-  # defp document_type_error_handler(input, %{dahses_positions: [_]} = opts, message) do
-  #   case String.match?(input, ~r/^0/) do
-  #     true ->
-  #       message = message <> "- First digit cannot be zero\n"
+  defp document_type_error_handler(input, %{dashes_positions: positions} = opts, message) do
+    opts = Map.delete(opts, :dashes_positions)
+    graphemes = String.graphemes(input)
 
-  #     _ ->
-  #       message = message
-  #   end
+    # Check if dashes are in the correct position, if not insert them
+    graphemes =
+      Enum.reduce(positions, graphemes, fn x, acc ->
+        case Enum.at(acc, x) do
+          "-" ->
+            acc
 
-  #   opts = Map.delete(opts, :dahses_positions)
-  #   document_type_error_handler(input, opts, message)
-  # end
+          _ ->
+            List.insert_at(acc, x, "-")
+        end
+      end)
+
+    # Check if the number of dashes is correct
+    case Enum.count(graphemes, fn x -> x == "-" end) != Enum.count(positions) do
+      true ->
+        document_type_error_handler(input, opts, message <> "- Dashes positions are not valid\n")
+
+      _ ->
+        document_type_error_handler(input, opts, message)
+    end
+  end
 
   defp document_type_error_handler(input, %{string_length: [input_length]} = opts, message) do
     opts = Map.delete(opts, :string_length)
@@ -222,7 +235,7 @@ defmodule Cambiatus.Kyc.KycData do
 
     case String.match?(string, ~r/\D/) do
       true ->
-        message <> "- Entry must only contain digits\n"
+        message <> "- Entry must only contain digits or dashes\n"
 
       _ ->
         message
