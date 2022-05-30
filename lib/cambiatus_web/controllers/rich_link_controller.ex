@@ -20,11 +20,8 @@ defmodule CambiatusWeb.RichLinkController do
           ["profile", account] ->
             user_rich_link(account, community_subdomain)
 
-          [] ->
-            community_rich_link(community_subdomain)
-
           _ ->
-            send_resp(conn, 404, "Category not found")
+            community_rich_link(community_subdomain)
         end
       end
 
