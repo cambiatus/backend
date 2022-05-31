@@ -67,7 +67,7 @@ defmodule CambiatusWeb.RichLinkController do
         {:ok,
          %{
            description: user.bio,
-           title: user.name,
+           title: if(user.name, do: user.name, else: user.account),
            url: community_subdomain <> "/profile/#{user.account}",
            image: user.avatar,
            locale: user.location
