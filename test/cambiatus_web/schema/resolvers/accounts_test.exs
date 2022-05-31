@@ -589,15 +589,16 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     end
 
     test "search members" do
+      community = insert(:community)
+
       # Create 3 users, only modifying the name between them
-      community = build(:community) |> Repo.preload(:members)
-      params = %{communities: community, name: ""}
+      user_1 = insert(:user, name: "Lorem ipsum")
+      user_2 = insert(:user, name: "PlAcEhOlDeR tExT")
+      user_3 = insert(:user, name: "never matches")
 
-      user_1 = insert(:user, %{params | name: "Lorem ipsum"})
-      user_2 = insert(:user, %{params | name: "PlAcEhOlDeR tExT"})
-      user_3 = insert(:user, %{params | name: "never matches"})
-
-      community = %{community | members: [user_1, user_2, user_3]} |> insert()
+      insert(:network, community: community, user: user_1)
+      insert(:network, community: community, user: user_2)
+      insert(:network, community: community, user: user_3)
 
       user = insert(:user)
       conn = build_conn() |> auth_user(user)
@@ -621,7 +622,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       response_3 =
         conn
-        |> post("/api/graph", query: query.("Description not meant to match"))
+        |> post("/api/graph", query: query.("Name not meant to match"))
         |> json_response(200)
 
       assert %{
