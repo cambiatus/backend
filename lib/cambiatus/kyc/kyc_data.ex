@@ -141,7 +141,7 @@ defmodule Cambiatus.Kyc.KycData do
           regex: ~r/^[1-9]{1}\d{10,11}$/,
           non_null_first_digit: true,
           dashes_positions: [],
-          string_length: [12]
+          string_length: [11, 12]
         }
 
       "nite" ->
@@ -220,12 +220,29 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   defp check_string_length(changeset, input, opts) do
-    input = String.replace(input, "-", "")
+    input_length =
+      input
+      |> String.replace("-", "")
+      |> String.length()
 
     # changeset =
-    with [input_length] <- opts.string_length,
-         true <- String.length(input) != input_length do
-      add_error(changeset, :document, "- Entry must contain #{input_length} digits")
+    with pattern_length <- opts.string_length,
+         min_length <- Enum.min(pattern_length),
+         max_length <- Enum.max(pattern_length),
+         true <- input_length < min_length || input_length > max_length do
+      if min_length == max_length do
+        add_error(
+          changeset,
+          :document,
+          "- Entry must be #{min_length} digits long"
+        )
+      else
+        add_error(
+          changeset,
+          :document,
+          "- Entry must be between #{min_length} and #{max_length} digits long"
+        )
+      end
     else
       _ ->
         changeset
@@ -242,68 +259,4 @@ defmodule Cambiatus.Kyc.KycData do
       changeset
     end
   end
-
-  # def document_type_error_handler(input, opts) do
-  #   message = "The following error(s) were found:\n"
-  #   document_type_error_handler(input, opts, message)
-  # end
-
-  # defp document_type_error_handler(input, %{non_null_first_digit: true} = opts, message) do
-  #   opts = Map.delete(opts, :non_null_first_digit)
-
-  #   if String.match?(input, ~r/^0/) do
-  #     document_type_error_handler(input, opts, message <> "- First digit cannot be zero\n")
-  #   else
-  #     document_type_error_handler(input, opts, message)
-  #   end
-  # end
-
-  # defp document_type_error_handler(input, %{dashes_positions: positions} = opts, message) do
-  #   opts = Map.delete(opts, :dashes_positions)
-  #   graphemes = String.graphemes(input)
-
-  #   # Check if dashes are in the correct position, if not insert them
-  #   graphemes =
-  #     Enum.reduce(positions, graphemes, fn x, acc ->
-  #       case Enum.at(acc, x) do
-  #         "-" ->
-  #           acc
-
-  #         _ ->
-  #           List.insert_at(acc, x, "-")
-  #       end
-  #     end)
-
-  #   # Check if the number of dashes is correct
-  #   if Enum.count(graphemes, &(&1 == "-")) != Enum.count(positions) do
-  #     document_type_error_handler(input, opts, message <> "- Dashes positions are not valid\n")
-  #   else
-  #     document_type_error_handler(input, opts, message)
-  #   end
-  # end
-
-  # defp document_type_error_handler(input, %{string_length: [input_length]} = opts, message) do
-  #   opts = Map.delete(opts, :string_length)
-  #   string = String.replace(input, "-", "")
-
-  #   if String.length(string) != input_length do
-  #     document_type_error_handler(
-  #       input,
-  #       opts,
-  #       message <> "- Entry must contain #{input_length} digits\n"
-  #     )
-  #   else
-  #     document_type_error_handler(input, opts, message)
-  #   end
-  # end
-
-  # defp document_type_error_handler(input, _opts, message) do
-  #   string = String.replace(input, "-", "")
-
-  #   if String.match?(string, ~r/\D/) do
-  #     message <> "- Entry must only contain digits or dashes\n"
-  #   else
-  #     message
-  #   end
-  # end
 end
