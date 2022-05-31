@@ -41,7 +41,7 @@ defmodule CambiatusWeb.RichLinkController do
         image.uri
       else
         _ ->
-          "https://buss.staging.cambiatus.io/images/logo-cambiatus-mobile.svg"
+          "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
       end
     end
 

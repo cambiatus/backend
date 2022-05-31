@@ -147,7 +147,8 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       description: md_to_txt(product.description),
       title: product.title,
       url: community.subdomain.name <> "/shop/#{product.id}",
-      image: "https://buss.staging.cambiatus.io/images/logo-cambiatus-mobile.svg",
+      image:
+        "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5",
       locale: nil
     }
 
