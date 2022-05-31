@@ -174,7 +174,7 @@ defmodule Cambiatus.Factory do
       usages: 10,
       usages_left: 5,
       verifications: 10,
-      verification_type: "claimable",
+      verification_type: sequence(:verification_type, ["automatic", "claimable"]),
       is_completed: false,
       created_block: sequence(:created_block, &"#{&1}"),
       created_tx: sequence(:tx, &"c_tx-#{&1}"),
