@@ -77,9 +77,10 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document:
-          {"The following error(s) were found:\n- First digit cannot be zero\n- Dashes positions are not valid\n- Entry must contain 9 digits\n- Entry must only contain digits or dashes\n",
-           []}
+        document: {"- Entry must only contain digits or dashes", []},
+        document: {"- Entry must contain 9 digits", []},
+        document: {"- Dashes positions are not valid", []},
+        document: {"- First digit cannot be zero", []}
       ]
     )
   end
@@ -101,9 +102,9 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document:
-          {"The following error(s) were found:\n- First digit cannot be zero\n- Dashes positions are not valid\n- Entry must contain 12 digits\n",
-           []}
+        document: {"- Entry must contain 12 digits", []},
+        document: {"- Dashes positions are not valid", []},
+        document: {"- First digit cannot be zero", []}
       ]
     )
   end
@@ -125,9 +126,8 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document:
-          {"The following error(s) were found:\n- First digit cannot be zero\n- Entry must contain 10 digits\n",
-           []}
+        document: {"- Entry must contain 10 digits", []},
+        document: {"- First digit cannot be zero", []}
       ]
     )
   end
@@ -149,7 +149,7 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document: {"The following error(s) were found:\n- Entry must contain 10 digits\n", []}
+        document: {"- Entry must contain 10 digits", []}
       ]
     )
   end
@@ -171,7 +171,7 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document: {"The following error(s) were found:\n- Entry must contain 10 digits\n", []}
+        document: {"- Entry must contain 10 digits", []}
       ]
     )
   end
