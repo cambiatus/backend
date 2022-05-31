@@ -49,6 +49,7 @@ defmodule Cambiatus.Mixfile do
       {:ex_phone_number, "~> 0.2"},
       {:number, "~> 1.0"},
       {:earmark, "~> 1.4"},
+      {:html_sanitize_ex, "~> 1.4"},
 
       # Email capabilities
       {:swoosh, "~> 1.0"},

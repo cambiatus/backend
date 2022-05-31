@@ -66,6 +66,10 @@ Here is our [GraphQL wiki](https://cambiatus.github.io/onboarding.md) page
 - EOS Blockchain main [documentation](https://developers.eos.io/welcome/latest/overview/index) page
    - Here is [our documentation](eos.md) on how we use EOS blockchain
 
+**HTTP server**
+
+- [NGINX](https://nginx.org/en/docs/) main documentation page
+
 ## Development Environment Setup
 
 To build and run this application locally follow the following steps!
@@ -119,6 +123,47 @@ mix phx.server
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 #Boom! Now you can hack away!
+
+## NGINX setup
+
+We use NGINX to manage our server infrastructure. You can check out how to install and run it on their [official site](https://nginx.org/)
+
+We also use NGINX to redirect social media crawlers in order to dynamically serve rich links (or Open Graphs) in accordance to the [Open Graph Protocol](https://ogp.me/). To set this up on your NGINX follow these steps:
+
+**Step 0**
+
+Locate your NGINX configuration file (`nginx.conf`) and get ready to edit it
+
+**Step 1**
+
+Add the following lines right before any of the server blocks are declared:
+
+```
+map $http_user_agent $rich_link_prefix {
+	default 0;
+	~*(facebookexternalhit|twitterbot|telegrambot|linkedinbot|slackbot|whatsapp)  /api/rich_link;
+}
+```
+
+This code is responsible for detecting a crawler from different social media websites based on the user agent issued on the http request.
+
+If a crawler is detected it saves the user agent to the `$rich_link_prefix` variable.
+
+**Step 2**
+
+Inside the server block referring to `server_name block staging.cambiatus.io *.staging.cambiatus.io;` under `location /` insert:
+
+```
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+if ($rich_link_prefix != 0) {
+	proxy_pass http://127.0.0.1:#{backend_listening_port}$rich_link_prefix$request_uri;
+}
+```
+
+Note: Replace `#{backend_listening_port}` with the port to which the backend server is setup to listen.
+
+This code redirects the identified crawler to the correct rich link URL. Nut if a crawler was not detected the server runs normally.
 
 ## Contributing
 
