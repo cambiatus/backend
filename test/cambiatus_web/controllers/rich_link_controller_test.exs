@@ -50,7 +50,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       expected_data = %{
         description: md_to_txt(user.bio),
         title: user.name,
-        url: community.subdomain.name,
+        url: community.subdomain.name <> "/profile/#{user.account}",
         image: user.avatar,
         locale: user.location
       }
@@ -84,7 +84,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       expected_data = %{
         description: md_to_txt(product.description),
         title: product.title,
-        url: community.subdomain.name,
+        url: community.subdomain.name <> "/shop/#{product.id}",
         image: image.uri,
         locale: nil
       }
@@ -115,7 +115,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
     expected_data = %{
       description: md_to_txt(product.description),
       title: product.title,
-      url: community.subdomain.name,
+      url: community.subdomain.name <> "/shop/#{product.id}",
       image: "https://buss.staging.cambiatus.io/images/logo-cambiatus-mobile.svg",
       locale: nil
     }

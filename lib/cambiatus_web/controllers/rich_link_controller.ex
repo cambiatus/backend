@@ -51,7 +51,7 @@ defmodule CambiatusWeb.RichLinkController do
          %{
            description: product.description,
            title: product.title,
-           url: community_subdomain,
+           url: community_subdomain <> "/shop/#{product.id}",
            image: get_image.(product),
            locale: nil
          }}
@@ -68,7 +68,7 @@ defmodule CambiatusWeb.RichLinkController do
          %{
            description: user.bio,
            title: user.name,
-           url: community_subdomain,
+           url: community_subdomain <> "/profile/#{user.account}",
            image: user.avatar,
            locale: user.location
          }}
