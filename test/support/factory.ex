@@ -170,7 +170,7 @@ defmodule Cambiatus.Factory do
       creator: build(:user),
       reward: 1.45,
       description: "general description",
-      deadline: NaiveDateTime.utc_now(),
+      deadline: DateTime.add(DateTime.now!("Etc/UTC"), 3600),
       usages: 10,
       usages_left: 5,
       verifications: 10,

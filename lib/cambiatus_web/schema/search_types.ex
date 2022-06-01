@@ -29,7 +29,7 @@ defmodule CambiatusWeb.Schema.SearchTypes do
 
     field(:actions, non_null(list_of(non_null(:action)))) do
       arg(:query, :string)
-      resolve(dataloader(Cambiatus.Commune))
+      resolve(dataloader(Cambiatus.Objectives))
     end
 
     field(:members, non_null(list_of(non_null(:user)))) do

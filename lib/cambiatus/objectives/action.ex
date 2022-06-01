@@ -73,7 +73,6 @@ defmodule Cambiatus.Objectives.Action do
     query
     |> join(:inner, [a], obj in Objective, on: obj.id == a.objective_id)
     |> completed(false)
-    |> where([a], a.verification_type == "claimable")
     |> where([a], is_nil(a.deadline) or a.deadline >= ^now)
     |> where([a], (a.usages_left > 1 and a.usages > 0) or a.usages == 0)
     |> where([a, obj], obj.is_completed == false)
