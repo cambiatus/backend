@@ -79,7 +79,6 @@ defmodule Cambiatus.KycDataTest do
       Map.get(changeset, :errors) == [
         document: {"Entry must only contain digits or dashes", []},
         document: {"Entry must be 9 digits long", []},
-        document: {"Dashes positions are not valid", []},
         document: {"First digit cannot be zero", []}
       ]
     )
@@ -103,7 +102,6 @@ defmodule Cambiatus.KycDataTest do
     assert(
       Map.get(changeset, :errors) == [
         document: {"Entry must be between 11 and 12 digits long", []},
-        document: {"Dashes positions are not valid", []},
         document: {"First digit cannot be zero", []}
       ]
     )

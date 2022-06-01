@@ -111,9 +111,15 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   def validate_document_by_document_type(changeset, "Costa Rica") do
-    document_type = get_field(changeset, :document_type)
-    document = get_field(changeset, :document)
-    pattern = get_document_type_pattern(document_type)
+    document =
+      changeset
+      |> get_field(:document)
+      |> String.replace("-", "")
+
+    pattern =
+      changeset
+      |> get_field(:document_type)
+      |> get_document_type_pattern()
 
     if String.match?(document, pattern.regex) do
       changeset
@@ -130,9 +136,8 @@ defmodule Cambiatus.Kyc.KycData do
     case document_type do
       "cedula_de_identidad" ->
         %{
-          regex: ~r/^[1-9]-?\d{4}-?\d{4}$/,
+          regex: ~r/^[1-9]\d{8}$/,
           non_null_first_digit: true,
-          dashes_positions: [1, 6],
           string_length: [9]
         }
 
@@ -140,7 +145,6 @@ defmodule Cambiatus.Kyc.KycData do
         %{
           regex: ~r/^[1-9]{1}\d{10,11}$/,
           non_null_first_digit: true,
-          dashes_positions: [],
           string_length: [11, 12]
         }
 
@@ -148,23 +152,20 @@ defmodule Cambiatus.Kyc.KycData do
         %{
           regex: ~r/^[1-9]{1}\d{9}$/,
           non_null_first_digit: true,
-          dashes_positions: [],
           string_length: [10]
         }
 
       "mipyme" ->
         %{
-          regex: ~r/^\d-?\d{3}-?\d{6}$/,
+          regex: ~r/^\d{10}$/,
           non_null_first_digit: false,
-          dashes_positions: [1, 5],
           string_length: [10]
         }
 
       "gran_empresa" ->
         %{
-          regex: ~r/^\d-?\d{3}-?\d{6}$/,
+          regex: ~r/^\d{10}$/,
           non_null_first_digit: false,
-          dashes_positions: [1, 5],
           string_length: [10]
         }
     end
@@ -173,7 +174,6 @@ defmodule Cambiatus.Kyc.KycData do
   def document_type_error_handler(changeset, input, opts) do
     changeset
     |> check_null_first_digit(input, opts)
-    |> check_dashes_positions(input, opts)
     |> check_string_length(input, opts)
     |> check_only_digits(input, opts)
   end
@@ -186,34 +186,8 @@ defmodule Cambiatus.Kyc.KycData do
     end
   end
 
-  defp check_dashes_positions(changeset, input, %{dashes_positions: positions} = opts) do
-    graphemes = String.graphemes(input)
-    # Check if dashes are in the correct position, if not insert them
-    graphemes =
-      Enum.reduce(positions, graphemes, fn x, acc ->
-        case Enum.at(acc, x) do
-          "-" ->
-            acc
-
-          _ ->
-            List.insert_at(acc, x, "-")
-        end
-      end)
-
-    # Check if the number of dashes is correct
-    if Enum.count(graphemes, &(&1 == "-")) != Enum.count(positions) do
-      add_error(changeset, :document, "Dashes positions are not valid")
-    else
-      changeset
-    end
-  end
-
   defp check_string_length(changeset, input, opts) do
-    input_length =
-      input
-      |> String.replace("-", "")
-      |> String.length()
-
+    input_length = String.length(input)
     pattern_length = opts.string_length
 
     min_length = Enum.min(pattern_length)
@@ -239,8 +213,6 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   defp check_only_digits(changeset, input, _opts) do
-    input = String.replace(input, "-", "")
-
     if String.match?(input, ~r/\D/) do
       add_error(changeset, :document, "Entry must only contain digits or dashes")
     else
