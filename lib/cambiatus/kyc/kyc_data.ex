@@ -178,44 +178,33 @@ defmodule Cambiatus.Kyc.KycData do
     |> check_only_digits(input, opts)
   end
 
-  # defp check_null_first_digit(changeset, )
   defp check_null_first_digit(changeset, input, opts) do
-    # changeset =
-    with true <- opts.non_null_first_digit,
-         true <- String.starts_with?(input, "0") do
+    if opts.non_null_first_digit && String.match?(input, ~r/^0/) do
       add_error(changeset, :document, "- First digit cannot be zero")
     else
-      _ ->
-        changeset
+      changeset
     end
   end
 
-  defp check_dashes_positions(changeset, input, opts) do
-    # changeset =
-    with positions <- opts.dashes_positions,
-         #  true <- String.length(input) >= Enum.max(positions),
-         graphemes <- String.graphemes(input) do
-      # Check if dashes are in the correct position, if not insert them
-      graphemes =
-        Enum.reduce(positions, graphemes, fn x, acc ->
-          case Enum.at(acc, x) do
-            "-" ->
-              acc
+  defp check_dashes_positions(changeset, input, %{dashes_positions: positions} = opts) do
+    graphemes = String.graphemes(input)
+    # Check if dashes are in the correct position, if not insert them
+    graphemes =
+      Enum.reduce(positions, graphemes, fn x, acc ->
+        case Enum.at(acc, x) do
+          "-" ->
+            acc
 
-            _ ->
-              List.insert_at(acc, x, "-")
-          end
-        end)
+          _ ->
+            List.insert_at(acc, x, "-")
+        end
+      end)
 
-      # Check if the number of dashes is correct
-      if Enum.count(graphemes, &(&1 == "-")) != Enum.count(positions) do
-        add_error(changeset, :document, "- Dashes positions are not valid")
-      else
-        changeset
-      end
+    # Check if the number of dashes is correct
+    if Enum.count(graphemes, &(&1 == "-")) != Enum.count(positions) do
+      add_error(changeset, :document, "- Dashes positions are not valid")
     else
-      _ ->
-        changeset
+      changeset
     end
   end
 
@@ -225,11 +214,12 @@ defmodule Cambiatus.Kyc.KycData do
       |> String.replace("-", "")
       |> String.length()
 
-    # changeset =
-    with pattern_length <- opts.string_length,
-         min_length <- Enum.min(pattern_length),
-         max_length <- Enum.max(pattern_length),
-         true <- input_length < min_length || input_length > max_length do
+    pattern_length = opts.string_length
+
+    min_length = Enum.min(pattern_length)
+    max_length = Enum.max(pattern_length)
+
+    if input_length < min_length || input_length > max_length do
       if min_length == max_length do
         add_error(
           changeset,
@@ -244,15 +234,13 @@ defmodule Cambiatus.Kyc.KycData do
         )
       end
     else
-      _ ->
-        changeset
+      changeset
     end
   end
 
   defp check_only_digits(changeset, input, _opts) do
     input = String.replace(input, "-", "")
 
-    # changeset =
     if String.match?(input, ~r/\D/) do
       add_error(changeset, :document, "- Entry must only contain digits or dashes")
     else
