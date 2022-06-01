@@ -106,8 +106,8 @@ defmodule Cambiatus.Auth.SignUpTest do
 
       changeset =
         %KycData{}
-        |> struct(invalid_kyc)
-        |> change()
+        |> Kernel.struct(invalid_kyc)
+        |> Ecto.Changeset.change()
         |> KycData.document_type_error_handler(invalid_kyc.document, document_pattern)
 
       assert params == SignUp.validate(params, :kyc)
