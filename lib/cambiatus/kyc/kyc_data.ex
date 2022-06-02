@@ -132,43 +132,44 @@ defmodule Cambiatus.Kyc.KycData do
     add_error(changeset, :country_id, "is invalid")
   end
 
-  def get_document_type_pattern(document_type) do
-    case document_type do
-      "cedula_de_identidad" ->
-        %{
-          regex: ~r/^[1-9]\d{8}$/,
-          non_null_first_digit: true,
-          string_length: [9]
-        }
+  def get_document_type_pattern("cedula_de_identidad") do
+    %{
+      regex: ~r/^[1-9]\d{8}$/,
+      non_null_first_digit: true,
+      string_length: [9]
+    }
+  end
 
-      "dimex" ->
-        %{
-          regex: ~r/^[1-9]{1}\d{10,11}$/,
-          non_null_first_digit: true,
-          string_length: [11, 12]
-        }
+  def get_document_type_pattern("dimex") do
+    %{
+      regex: ~r/^[1-9]{1}\d{10,11}$/,
+      non_null_first_digit: true,
+      string_length: [11, 12]
+    }
+  end
 
-      "nite" ->
-        %{
-          regex: ~r/^[1-9]{1}\d{9}$/,
-          non_null_first_digit: true,
-          string_length: [10]
-        }
+  def get_document_type_pattern("nite") do
+    %{
+      regex: ~r/^[1-9]{1}\d{9}$/,
+      non_null_first_digit: true,
+      string_length: [10]
+    }
+  end
 
-      "mipyme" ->
-        %{
-          regex: ~r/^\d{10}$/,
-          non_null_first_digit: false,
-          string_length: [10]
-        }
+  def get_document_type_pattern("mipyme") do
+    %{
+      regex: ~r/^\d{10}$/,
+      non_null_first_digit: false,
+      string_length: [10]
+    }
+  end
 
-      "gran_empresa" ->
-        %{
-          regex: ~r/^\d{10}$/,
-          non_null_first_digit: false,
-          string_length: [10]
-        }
-    end
+  def get_document_type_pattern("gran_empresa") do
+    %{
+      regex: ~r/^\d{10}$/,
+      non_null_first_digit: false,
+      string_length: [10]
+    }
   end
 
   def document_type_error_handler(changeset, input, opts) do
