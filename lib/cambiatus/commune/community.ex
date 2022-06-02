@@ -80,8 +80,8 @@ defmodule Cambiatus.Commune.Community do
     )
   end
 
-  @required_fields ~w(symbol creator name description inviter_reward invited_reward has_news)a
-  @optional_fields ~w(logo type supply max_supply min_balance issuer subdomain_id website
+  @required_fields ~w(symbol creator name inviter_reward invited_reward has_news)a
+  @optional_fields ~w(description logo type supply max_supply min_balance issuer subdomain_id website
    created_block created_tx created_at created_eos_account highlighted_news_id)a
 
   @doc false
