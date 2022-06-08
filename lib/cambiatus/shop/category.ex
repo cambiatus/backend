@@ -28,14 +28,14 @@ defmodule Cambiatus.Shop.Category do
     timestamps()
 
     belongs_to(:community, Community, references: :symbol, type: :string)
-    belongs_to(:category, Category)
+    belongs_to(:parent_category, Category, foreign_key: :category_id)
     has_many(:categories, Category)
 
     many_to_many(:products, Product, join_through: ProductCategory)
   end
 
   @required_fields ~w(community_id name description slug)a
-  @optional_fields ~w(category_id icon_uri image_uri meta_title meta_description meta_keywords)a
+  @optional_fields ~w(parent_category_id icon_uri image_uri meta_title meta_description meta_keywords)a
 
   def changeset(%Category{} = category, attrs) do
     category
