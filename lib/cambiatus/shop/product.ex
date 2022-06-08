@@ -104,26 +104,20 @@ defmodule Cambiatus.Shop.Product do
           data: %{community_id: community_id}
         } = changeset
       ) do
-    any_invalid? =
-      Enum.any?(product_categories, fn product_category ->
+    Enum.reduce(
+      product_categories,
+      changeset,
+      fn product_category, changeset ->
         with %{category_id: category_id} <- product_category.changes,
-             %Category{} = category <- Repo.get(Category, category_id) do
-          category.community_id != community_id
+             %Category{} = category <- Repo.get(Category, category_id),
+             true <- category.community_id == community_id do
+          changeset
         else
-          nil ->
-            # If we can't find a community, then its invalid
-            true
-
           _ ->
-            false
+            add_error(changeset, :product_category, "Can't find category with given ID")
         end
-      end)
-
-    if any_invalid? do
-      add_error(changeset, :product_category, "Can't find category with given ID")
-    else
-      changeset
-    end
+      end
+    )
   end
 
   def validate_categories(changeset), do: changeset

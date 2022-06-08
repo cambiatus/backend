@@ -35,7 +35,7 @@ defmodule Cambiatus.Shop.Category do
   end
 
   @required_fields ~w(community_id name description slug)a
-  @optional_fields ~w(parent_category_id icon_uri image_uri meta_title meta_description meta_keywords)a
+  @optional_fields ~w(category_id icon_uri image_uri meta_title meta_description meta_keywords)a
 
   def changeset(%Category{} = category, attrs) do
     category
