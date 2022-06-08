@@ -513,11 +513,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                }
              } == response2
 
-      assert %{
-               "data" => %{
-                 "products" => []
-               }
-             } == response3
+      assert %{"data" => %{"products" => []}} == response3
     end
   end
 end
