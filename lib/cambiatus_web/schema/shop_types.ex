@@ -63,7 +63,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field :category, :category do
       arg(:id, :integer)
 
-      arg(:category_id, :string, description: "Parent category ID")
+      arg(:category_id, :int, description: "Parent category ID")
       arg(:icon_uri, :string)
       arg(:image_uri, :string)
       arg(:name, non_null(:string))
