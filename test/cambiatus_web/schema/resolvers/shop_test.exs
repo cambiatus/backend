@@ -370,6 +370,69 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       assert Cambiatus.Shop.get_product(product.id) == nil
     end
 
+    test "search products" do
+      community = insert(:community)
+
+      # Create 3 products, only modifying the name between them
+      product_1 = insert(:product, %{title: "Lorem ipsum", community: community})
+      product_2 = insert(:product, %{title: "PlAcEhOlDeR tExT", community: community})
+      _product_3 = insert(:product, %{title: "never matches", community: community})
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
+      query = fn title ->
+        """
+        {
+          search(communityId:"#{community.symbol}") {
+            products(query: "#{title}") {
+              title,
+              description,
+            }
+          }
+        }
+        """
+      end
+
+      response_1 =
+        conn |> post("/api/graph", query: query.(product_1.title)) |> json_response(200)
+
+      response_2 =
+        conn |> post("/api/graph", query: query.(product_2.title)) |> json_response(200)
+
+      response_3 =
+        conn
+        |> post("/api/graph", query: query.("Title not meant to match"))
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "products" => [
+                     %{
+                       "title" => product_1.title,
+                       "description" => product_1.description
+                     }
+                   ]
+                 }
+               }
+             } == response_1
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "products" => [
+                     %{
+                       "title" => product_2.title,
+                       "description" => product_2.description
+                     }
+                   ]
+                 }
+               }
+             } == response_2
+
+      assert %{"data" => %{"search" => %{"products" => []}}} = response_3
+
     test "query product by categories" do
       user = insert(:user)
       community = insert(:community)
@@ -429,8 +492,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       response3 =
         conn
         |> post("/api/graph", query: query_3)
-        |> json_response(200)
-
+        
       assert %{
                "data" => %{
                  "products" => [

@@ -102,11 +102,17 @@ defmodule Cambiatus.Auth.SignUpTest do
 
       params = %{kyc: kyc_input, account: kyc.account.account}
       invalid_kyc = Map.update!(kyc_input, :document, &(&1 <> "invalidatedoc"))
+      document_pattern = KycData.get_document_type_pattern(invalid_kyc.document_type)
+
+      changeset =
+        %KycData{}
+        |> Kernel.struct(invalid_kyc)
+        |> Ecto.Changeset.change()
+        |> KycData.document_type_error_handler(invalid_kyc.document, document_pattern)
 
       assert params == SignUp.validate(params, :kyc)
 
-      assert {:error, :kyc_invalid,
-              [document: {"Document entry is not valid for #{kyc.document_type}", []}]} ==
+      assert {:error, :kyc_invalid, Map.get(changeset, :errors)} ==
                SignUp.validate(%{kyc: invalid_kyc, account: kyc.account.account}, :kyc)
     end
   end
