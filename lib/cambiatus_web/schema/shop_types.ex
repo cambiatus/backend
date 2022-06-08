@@ -78,7 +78,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       resolve(&Shop.upsert_category/3)
     end
 
-    @desc "[Auth required - Admin only] Upserts a category"
+    @desc "[Auth required - Admin only] Deletes a category"
     field :delete_category, :delete_status do
       arg(:id, non_null(:integer))
 
