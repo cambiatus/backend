@@ -493,6 +493,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       response3 =
         conn
         |> post("/api/graph", query: query_3)
+        |> json_response(200)
 
       assert %{
                "data" => %{

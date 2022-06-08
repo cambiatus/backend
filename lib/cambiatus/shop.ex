@@ -166,12 +166,12 @@ defmodule Cambiatus.Shop do
 
   @doc """
   Returns the list of categories.
-
+  
   ## Examples
-
+  
       iex> list_categories()
       [%Category{}, ...]
-
+  
   """
   def list_categories do
     Repo.all(Category)
@@ -179,45 +179,45 @@ defmodule Cambiatus.Shop do
 
   @doc """
   Gets a single category. Returns nil if not found
-
+  
   ## Examples
-
+  
       iex> get_category(123)
       %Category{}
-
+  
       iex> get_category(0)
       nil
-
+  
   """
   def get_category(id), do: Repo.get(Category, id)
 
   @doc """
   Gets a single category.
-
+  
   Raises `Ecto.NoResultsError` if the Category does not exist.
-
+  
   ## Examples
-
+  
       iex> get_category!(123)
       %Category{}
-
+  
       iex> get_category!(456)
       ** (Ecto.NoResultsError)
-
+  
   """
   def get_category!(id), do: Repo.get!(Category, id)
 
   @doc """
   Creates a category.
-
+  
   ## Examples
-
+  
       iex> create_category(%{field: value})
       {:ok, %Category{}}
-
+  
       iex> create_category(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def create_category(attrs \\ %{}) do
     %Category{}
@@ -227,15 +227,15 @@ defmodule Cambiatus.Shop do
 
   @doc """
   Updates a category.
-
+  
   ## Examples
-
+  
       iex> update_category(category, %{field: new_value})
       {:ok, %Category{}}
-
+  
       iex> update_category(category, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def update_category(%Category{} = category, attrs) do
     category
@@ -245,15 +245,15 @@ defmodule Cambiatus.Shop do
 
   @doc """
   Deletes a category.
-
+  
   ## Examples
-
+  
       iex> delete_category(category_id)
       {:ok, %Category{}}
-
+  
       iex> delete_category(category_id)
       {:error, %Ecto.Changeset{}}
-
+  
   """
   def delete_category(category_id, user, community_id) do
     with %Category{} = category <- get_category(category_id),
@@ -274,12 +274,12 @@ defmodule Cambiatus.Shop do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking category changes.
-
+  
   ## Examples
-
+  
       iex> change_category(category)
       %Ecto.Changeset{data: %Category{}}
-
+  
   """
   def change_category(%Category{} = category, attrs \\ %{}) do
     Category.changeset(category, attrs)

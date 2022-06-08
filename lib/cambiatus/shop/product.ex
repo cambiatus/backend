@@ -148,6 +148,7 @@ defmodule Cambiatus.Shop.Product do
     query
     |> join(:inner, [p], c in assoc(p, :categories))
     |> where([p, c], c.id in ^category_id)
+    |> distinct([p], p.id)
   end
 
   def active(query \\ Product) do
