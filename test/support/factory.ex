@@ -46,7 +46,7 @@ defmodule Cambiatus.Factory do
 
   alias Cambiatus.Payments.Contribution
   alias Cambiatus.Repo
-  alias Cambiatus.Shop.{Category, Product, ProductImage}
+  alias Cambiatus.Shop.{Category, Product, ProductImage, ProductCategory}
 
   alias Cambiatus.Social.{
     News,
@@ -421,6 +421,14 @@ defmodule Cambiatus.Factory do
       meta_title: sequence("meta-title-"),
       meta_description: sequence("meta-description-"),
       meta_keywords: sequence("meta-keywords")
+    }
+  end
+
+  def product_category_factory do
+    %ProductCategory{
+      position: sequence(:position, &"#{&1}"),
+      product: build(:product),
+      category: build(:category)
     }
   end
 end

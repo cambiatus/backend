@@ -144,6 +144,12 @@ defmodule Cambiatus.Shop.Product do
     |> where([p], p.creator_id == ^account)
   end
 
+  def in_category(query \\ Product, category_id) do
+    query
+    |> join(:inner, [p], c in assoc(p, :categories))
+    |> where([p, c], c.id in ^category_id)
+  end
+
   def active(query \\ Product) do
     query
     |> where([p], p.is_deleted == false)

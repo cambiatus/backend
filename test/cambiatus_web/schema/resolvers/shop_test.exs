@@ -369,5 +369,92 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       assert %{"data" => %{"deleteProduct" => %{"status" => "success"}}} == response
       assert Cambiatus.Shop.get_product(product.id) == nil
     end
+
+    test "query product by categories" do
+      user = insert(:user)
+      community = insert(:community)
+
+      cat_1 = insert(:category, community: community)
+      cat_2 = insert(:category, community: community)
+      cat_3 = insert(:category, community: community)
+
+      product_1 = insert(:product, creator: user, community: community)
+      product_2 = insert(:product, creator: user, community: community)
+      product_3 = insert(:product, creator: user, community: community)
+
+      insert(:product_category, product: product_1, category: cat_1)
+      insert(:product_category, product: product_1, category: cat_2)
+      insert(:product_category, product: product_2, category: cat_1)
+      insert(:product_category, product: product_3, category: cat_2)
+
+      conn = build_conn() |> auth_user(user)
+
+      query_1 = """
+      query{
+        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_1.id}]}) {
+          id,
+          title
+          }
+        }
+      """
+
+      query_2 = """
+      query{
+        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_1.id}, #{cat_2.id}]}) {
+          id,
+          title
+          }
+        }
+      """
+
+      query_3 = """
+      query{
+        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_3.id}]}) {
+          id,
+          title
+          }
+        }
+      """
+
+      response1 =
+        conn
+        |> post("/api/graph", query: query_1)
+        |> json_response(200)
+
+      response2 =
+        conn
+        |> post("/api/graph", query: query_2)
+        |> json_response(200)
+
+      response3 =
+        conn
+        |> post("/api/graph", query: query_3)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "products" => [
+                   %{"id" => product_1.id, "title" => product_1.title},
+                   %{"id" => product_2.id, "title" => product_2.title}
+                 ]
+               }
+             } == response1
+
+      assert %{
+               "data" => %{
+                 "products" => [
+                   %{"id" => product_1.id, "title" => product_1.title},
+                   %{"id" => product_2.id, "title" => product_2.title},
+                   %{"id" => product_3.id, "title" => product_3.title}
+                 ]
+               }
+             } == response2
+
+      assert %{
+               "data" => %{
+                 "products" => []
+               }
+             } == response3
+    end
   end
 end

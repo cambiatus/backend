@@ -84,6 +84,13 @@ defmodule Cambiatus.Shop do
         query
       end
 
+    query =
+      if Map.has_key?(filters, :categories_ids) do
+        Product.in_category(query, Map.get(filters, :categories_ids))
+      else
+        query
+      end
+
     Repo.all(query)
   end
 
