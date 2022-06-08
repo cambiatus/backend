@@ -432,6 +432,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              } == response_2
 
       assert %{"data" => %{"search" => %{"products" => []}}} = response_3
+    end
 
     test "query product by categories" do
       user = insert(:user)
@@ -492,7 +493,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       response3 =
         conn
         |> post("/api/graph", query: query_3)
-        
+
       assert %{
                "data" => %{
                  "products" => [
