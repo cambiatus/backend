@@ -72,7 +72,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       arg(:meta_title, :string)
       arg(:meta_description, :string)
       arg(:meta_keywords, :string)
-      arg(:categories, list_of(non_null(:integer)))
+      arg(:categories, non_null(list_of(non_null(:integer))))
 
       middleware(Middleware.AdminAuthenticate)
       resolve(&Shop.upsert_category/3)
