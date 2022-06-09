@@ -70,28 +70,21 @@ defmodule Cambiatus.Shop do
       |> Product.active()
       |> Product.newer_first()
 
-    query =
-      if Map.has_key?(filters, :account) do
-        Product.created_by(query, Map.get(filters, :account))
-      else
+    filters
+    |> Enum.reduce(query, fn
+      {:account, account}, query ->
         query
-      end
+        |> Product.created_by(account)
 
-    query =
-      if Map.has_key?(filters, :in_stock) do
-        Product.in_stock(query, Map.get(filters, :in_stock))
-      else
+      {:in_stock, in_stock}, query ->
         query
-      end
+        |> Product.in_stock(in_stock)
 
-    query =
-      if Map.has_key?(filters, :categories_ids) do
-        Product.in_category(query, Map.get(filters, :categories_ids))
-      else
+      {:categories_ids, categories_ids}, query ->
         query
-      end
-
-    Repo.all(query)
+        |> Product.in_categories(categories_ids)
+    end)
+    |> Repo.all()
   end
 
   def get_product(id) do

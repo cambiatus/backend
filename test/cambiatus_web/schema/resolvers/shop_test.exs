@@ -434,7 +434,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       assert %{"data" => %{"search" => %{"products" => []}}} = response_3
     end
 
-    test "query product by categories" do
+    test "query products by categories" do
       user = insert(:user)
       community = insert(:community)
 
