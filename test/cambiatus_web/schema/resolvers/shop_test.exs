@@ -464,7 +464,9 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       query_2 = """
       query{
-        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_1.id}, #{cat_2.id}]}) {
+        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_1.id}, #{
+        cat_2.id
+      }]}) {
           id,
           title
           }
