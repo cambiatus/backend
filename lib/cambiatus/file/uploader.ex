@@ -53,8 +53,11 @@ defmodule Cambiatus.File.Uploader do
     image_path
     |> Mogrify.open()
     |> Mogrify.resize_to_limit(~s(#{width}x#{height}))
+    |> strip_metadata()
     |> Mogrify.save(opts)
   end
+
+  def strip_metadata(image), do: Mogrify.custom(image, "strip")
 
   @doc """
   Saves a file

@@ -45,6 +45,12 @@ config :sentry,
   enable_source_code_context: true,
   root_source_code_path: File.cwd!()
 
+config :mogrify,
+  strip_command: [
+    path: "magick",
+    args: ["strip"]
+  ]
+
 config :cambiatus, Oban,
   repo: Cambiatus.Repo,
   queues: [
