@@ -1,7 +1,7 @@
 defmodule CambiatusWeb.Resolvers.ShopTest do
   use Cambiatus.ApiCase
 
-  describe "Shop Resolver" do
+  describe "Product" do
     test "create product" do
       user = insert(:user, account: "lucca123")
       conn = build_conn() |> auth_user(user)
@@ -368,6 +368,128 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       assert %{"data" => %{"deleteProduct" => %{"status" => "success"}}} == response
       assert Cambiatus.Shop.get_product(product.id) == nil
+    end
+  end
+
+  describe "Category" do
+    setup do
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+
+      conn = auth_conn(admin, community.subdomain.name)
+
+      {:ok, %{conn: conn, community: community}}
+    end
+
+    test "create new category", %{conn: conn, community: community} do
+      category_params = params_for(:category, community: community)
+
+      mutation = """
+        mutation {
+          category(name: "#{category_params[:name]}",
+                   description: "#{category_params[:description]}",
+                   slug: "#{category_params[:slug]}") {
+            name
+            description
+            slug
+          }
+        }
+      """
+
+      res = post(conn, "/api/graph", query: mutation)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "category" => %{
+                   "name" => category_params[:name],
+                   "description" => category_params[:description],
+                   "slug" => category_params[:slug]
+                 }
+               }
+             } == response
+    end
+
+    test "add existing categories as subcategories to a new category", %{
+      conn: conn,
+      community: community
+    } do
+      category_1 = insert(:category, community: community)
+      category_2 = insert(:category, community: community)
+      category_params = params_for(:category, community: community)
+
+      mutation = """
+        mutation {
+          category(name: "#{category_params[:name]}",
+                   description: "#{category_params[:description]}",
+                   slug: "#{category_params[:slug]}",
+                   categories: [{ id: #{category_1.id}}, { id: #{category_2.id} }]) {
+            name
+            categories { id }
+          }
+        }
+      """
+
+      res = post(conn, "/api/graph", query: mutation)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "category" => %{
+                   "name" => category_params[:name],
+                   "categories" => [
+                     %{
+                       "id" => category_1.id
+                     },
+                     %{
+                       "id" => category_2.id
+                     }
+                   ]
+                 }
+               }
+             } == response
+    end
+
+    test "add parent category to existing category", %{
+      conn: conn,
+      community: community
+    } do
+      category = insert(:category, community: community)
+      category_parent = insert(:category, community: community)
+
+      mutation = """
+        mutation {
+          category(id: #{category.id},
+                   parentCategory: { id: #{category_parent.id} }) {
+            name
+            parentCategory { id }
+          }
+        }
+      """
+
+      res = post(conn, "/api/graph", query: mutation)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "category" => %{
+                   "name" => category_params[:name],
+                   "parentCategory" => %{
+                     "id" => category_parent.id
+                   }
+                 }
+               }
+             } == response
+    end
+
+    test "Deleting a parent category also deletes its children and the products relationship", %{
+      conn: conn,
+      community: community
+    } do
+      assert false
     end
   end
 end

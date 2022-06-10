@@ -72,7 +72,11 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       arg(:meta_title, :string)
       arg(:meta_description, :string)
       arg(:meta_keywords, :string)
-      arg(:categories, non_null(list_of(non_null(:integer))))
+
+      arg(:categories, list_of(non_null(:subcategory_input)),
+        description:
+          "List of subcategories; Associates given IDs as subcategories to this category"
+      )
 
       middleware(Middleware.AdminAuthenticate)
       resolve(&Shop.upsert_category/3)
@@ -193,5 +197,9 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   input_object(:products_filter_input) do
     field(:account, non_null(:string))
     field(:in_stock, :boolean)
+  end
+
+  input_object(:subcategory_input) do
+    field(:id, non_null(:integer))
   end
 end
