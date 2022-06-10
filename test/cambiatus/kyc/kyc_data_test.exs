@@ -66,7 +66,7 @@ defmodule Cambiatus.KycDataTest do
     data = %{
       account_id: kyc.account_id,
       user_type: "natural",
-      document: "088888888",
+      document: "08-a888888a",
       document_type: "cedula_de_identidad",
       phone: kyc.phone,
       country_id: kyc.country_id
@@ -77,7 +77,9 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document: {"Document entry is not valid for cedula_de_identidad", []}
+        document: {"Entry must only contain digits or dashes", []},
+        document: {"Entry must be 9 digits long", []},
+        document: {"First digit cannot be zero", []}
       ]
     )
   end
@@ -88,7 +90,7 @@ defmodule Cambiatus.KycDataTest do
     data = %{
       account_id: kyc.account_id,
       user_type: "natural",
-      document: "088888",
+      document: "088-888",
       document_type: "dimex",
       phone: kyc.phone,
       country_id: kyc.country_id
@@ -98,7 +100,10 @@ defmodule Cambiatus.KycDataTest do
     refute(changeset.valid?)
 
     assert(
-      Map.get(changeset, :errors) == [document: {"Document entry is not valid for dimex", []}]
+      Map.get(changeset, :errors) == [
+        document: {"Entry must be between 11 and 12 digits long", []},
+        document: {"First digit cannot be zero", []}
+      ]
     )
   end
 
@@ -118,7 +123,10 @@ defmodule Cambiatus.KycDataTest do
     refute(changeset.valid?)
 
     assert(
-      Map.get(changeset, :errors) == [document: {"Document entry is not valid for nite", []}]
+      Map.get(changeset, :errors) == [
+        document: {"Entry must be 10 digits long", []},
+        document: {"First digit cannot be zero", []}
+      ]
     )
   end
 
@@ -138,7 +146,9 @@ defmodule Cambiatus.KycDataTest do
     refute(changeset.valid?)
 
     assert(
-      Map.get(changeset, :errors) == [document: {"Document entry is not valid for mipyme", []}]
+      Map.get(changeset, :errors) == [
+        document: {"Entry must be 10 digits long", []}
+      ]
     )
   end
 
@@ -159,7 +169,7 @@ defmodule Cambiatus.KycDataTest do
 
     assert(
       Map.get(changeset, :errors) == [
-        document: {"Document entry is not valid for gran_empresa", []}
+        document: {"Entry must be 10 digits long", []}
       ]
     )
   end

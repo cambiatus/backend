@@ -507,5 +507,70 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
              |> hd
              |> get_in(["action", "objective", "community", "symbol"]) == community.symbol
     end
+
+    test "search actions" do
+      user = insert(:user)
+      objective = insert(:objective)
+
+      # Create 3 actions, only modifying the description between them
+      params = %{objective: objective, description: ""}
+      action_1 = insert(:action, %{params | description: "Lorem ipsum"})
+      action_2 = insert(:action, %{params | description: "PlAcEhOlDeR tExT"})
+      _action_3 = insert(:action, %{params | description: "never matches"})
+
+      conn = build_conn() |> auth_user(user)
+
+      query = fn description ->
+        """
+        {
+          search(communityId:"#{objective.community.symbol}") {
+            actions(query: "#{description}") {
+              description,
+              id
+            }
+          }
+        }
+        """
+      end
+
+      response_1 =
+        conn |> post("/api/graph", query: query.(action_1.description)) |> json_response(200)
+
+      response_2 =
+        conn |> post("/api/graph", query: query.(action_2.description)) |> json_response(200)
+
+      response_3 =
+        conn
+        |> post("/api/graph", query: query.("Description not meant to match"))
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "actions" => [
+                     %{
+                       "description" => action_1.description,
+                       "id" => action_1.id
+                     }
+                   ]
+                 }
+               }
+             } == response_1
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "actions" => [
+                     %{
+                       "description" => action_2.description,
+                       "id" => action_2.id
+                     }
+                   ]
+                 }
+               }
+             } == response_2
+
+      assert %{"data" => %{"search" => %{"actions" => []}}} = response_3
+    end
   end
 end

@@ -111,14 +111,20 @@ defmodule Cambiatus.Kyc.KycData do
   end
 
   def validate_document_by_document_type(changeset, "Costa Rica") do
-    document_type = get_field(changeset, :document_type)
-    document = get_field(changeset, :document)
-    regex = get_document_type_regex(document_type)
+    document =
+      changeset
+      |> get_field(:document)
+      |> String.replace("-", "")
 
-    if String.match?(document, regex) do
+    pattern =
+      changeset
+      |> get_field(:document_type)
+      |> get_document_type_pattern()
+
+    if String.match?(document, pattern.regex) do
       changeset
     else
-      add_error(changeset, :document, "Document entry is not valid for #{document_type}")
+      document_type_error_handler(changeset, document, pattern)
     end
   end
 
@@ -126,22 +132,92 @@ defmodule Cambiatus.Kyc.KycData do
     add_error(changeset, :country_id, "is invalid")
   end
 
-  defp get_document_type_regex(document_type) do
-    case document_type do
-      "cedula_de_identidad" ->
-        ~r/^[1-9]-?\d{4}-?\d{4}$/
+  def get_document_type_pattern("cedula_de_identidad") do
+    %{
+      regex: ~r/^[1-9]\d{8}$/,
+      non_null_first_digit: true,
+      string_length: [9]
+    }
+  end
 
-      "dimex" ->
-        ~r/^[1-9]{1}\d{10,11}$/
+  def get_document_type_pattern("dimex") do
+    %{
+      regex: ~r/^[1-9]{1}\d{10,11}$/,
+      non_null_first_digit: true,
+      string_length: [11, 12]
+    }
+  end
 
-      "nite" ->
-        ~r/^[1-9]{1}\d{9}$/
+  def get_document_type_pattern("nite") do
+    %{
+      regex: ~r/^[1-9]{1}\d{9}$/,
+      non_null_first_digit: true,
+      string_length: [10]
+    }
+  end
 
-      "mipyme" ->
-        ~r/^\d-?\d{3}-?\d{6}$/
+  def get_document_type_pattern("mipyme") do
+    %{
+      regex: ~r/^\d{10}$/,
+      non_null_first_digit: false,
+      string_length: [10]
+    }
+  end
 
-      "gran_empresa" ->
-        ~r/^\d-?\d{3}-?\d{6}$/
+  def get_document_type_pattern("gran_empresa") do
+    %{
+      regex: ~r/^\d{10}$/,
+      non_null_first_digit: false,
+      string_length: [10]
+    }
+  end
+
+  def document_type_error_handler(changeset, input, opts) do
+    changeset
+    |> check_null_first_digit(input, opts)
+    |> check_string_length(input, opts)
+    |> check_only_digits(input, opts)
+  end
+
+  defp check_null_first_digit(changeset, input, opts) do
+    if opts.non_null_first_digit && String.match?(input, ~r/^0/) do
+      add_error(changeset, :document, "First digit cannot be zero")
+    else
+      changeset
+    end
+  end
+
+  defp check_string_length(changeset, input, opts) do
+    input_length = String.length(input)
+    pattern_length = opts.string_length
+
+    min_length = Enum.min(pattern_length)
+    max_length = Enum.max(pattern_length)
+
+    if input_length < min_length || input_length > max_length do
+      if min_length == max_length do
+        add_error(
+          changeset,
+          :document,
+          "Entry must be #{min_length} digits long"
+        )
+      else
+        add_error(
+          changeset,
+          :document,
+          "Entry must be between #{min_length} and #{max_length} digits long"
+        )
+      end
+    else
+      changeset
+    end
+  end
+
+  defp check_only_digits(changeset, input, _opts) do
+    if String.match?(input, ~r/\D/) do
+      add_error(changeset, :document, "Entry must only contain digits or dashes")
+    else
+      changeset
     end
   end
 end
