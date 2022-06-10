@@ -35,7 +35,11 @@ defmodule Cambiatus.ApiCase do
       end
 
       defp assign_domain(conn, domain) do
-        put_req_header(conn, "community-domain", domain)
+        put_req_header(conn, "community-domain", "https://#{domain}")
+      end
+
+      defp auth_conn(user, domain) do
+        build_conn() |> auth_user(user) |> assign_domain(domain)
       end
     end
   end
