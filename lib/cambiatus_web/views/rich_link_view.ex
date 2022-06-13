@@ -14,4 +14,15 @@ defmodule CambiatusWeb.RichLinkView do
         ""
     end
   end
+
+  def create_description(%{
+        description: description,
+        price: price,
+        currency: currency,
+        creator: creator
+      }) do
+    "<strong>#{price} #{currency}</strong> - #{md_to_txt(description)} - Vendido por #{creator}"
+  end
+
+  def create_description(data), do: md_to_txt(data.description)
 end

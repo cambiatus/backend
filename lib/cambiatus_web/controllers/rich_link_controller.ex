@@ -45,6 +45,25 @@ defmodule CambiatusWeb.RichLinkController do
       end
     end
 
+    get_currency = fn community_subdomain ->
+      case Commune.find_community(%{}, %{subdomain: community_subdomain}, %{}) do
+        {:ok, community} ->
+          String.slice(community.symbol, 2, 7)
+
+        {:error, reason} ->
+          {:error, reason}
+      end
+    end
+
+    get_creator_name = fn product ->
+      creator =
+        product
+        |> Repo.preload(:creator)
+        |> Map.get(:creator)
+
+      if creator.name, do: creator.name, else: creator.account
+    end
+
     case Shop.get_product(nil, %{id: id}, nil) do
       {:ok, product} ->
         {:ok,
@@ -53,7 +72,10 @@ defmodule CambiatusWeb.RichLinkController do
            title: product.title,
            url: community_subdomain <> "/shop/#{product.id}",
            image: get_image.(product),
-           locale: nil
+           locale: nil,
+           price: product.price,
+           currency: get_currency.(community_subdomain),
+           creator: get_creator_name.(product)
          }}
 
       {:error, reason} ->

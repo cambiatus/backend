@@ -105,6 +105,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       product =
         insert(:product)
         |> Repo.preload(:images)
+        |> Repo.preload(:creator)
 
       [image | _] = product.images
 
@@ -112,8 +113,11 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         insert(:community)
         |> Repo.preload(:subdomain)
 
+      description =
+        "<strong>#{product.price} #{String.slice(community.symbol, 2, 7)}</strong> - #{md_to_txt(product.description)} - Vendido por #{product.creator.name}"
+
       expected_data = %{
-        description: md_to_txt(product.description),
+        description: description,
         title: product.title,
         url: community.subdomain.name <> "/shop/#{product.id}",
         image: image.uri,
@@ -143,8 +147,11 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       insert(:community)
       |> Repo.preload(:subdomain)
 
+    description =
+      "<strong>#{product.price} #{String.slice(community.symbol, 2, 7)}</strong> - #{md_to_txt(product.description)} - Vendido por #{product.creator.name}"
+
     expected_data = %{
-      description: md_to_txt(product.description),
+      description: description,
       title: product.title,
       url: community.subdomain.name <> "/shop/#{product.id}",
       image:
