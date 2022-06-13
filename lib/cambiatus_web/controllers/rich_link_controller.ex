@@ -36,7 +36,7 @@ defmodule CambiatusWeb.RichLinkController do
 
   def product_rich_link(id, community_subdomain) do
     get_image = fn product ->
-      with product = Repo.preload(product, :images),
+      with product <- Repo.preload(product, :images),
            [image | _] <- product.images do
         image.uri
       else
