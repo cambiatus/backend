@@ -141,7 +141,9 @@ defmodule CambiatusWeb.RichLinkControllerTest do
   test "generate rich link for product without image",
        %{conn: conn} do
     # Insert product without images and extract data for the rich link
-    product = insert(:product, images: [])
+    product =
+      insert(:product, images: [])
+      |> Repo.preload(:creator)
 
     community =
       insert(:community)
