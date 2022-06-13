@@ -625,9 +625,11 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                "data" => %{
                  "category" => %{
                    "name" => category_parent.name,
-                   "categories" => %{
-                     "id" => category.id
-                   }
+                   "categories" => [
+                     %{
+                       "id" => category.id
+                     }
+                   ]
                  }
                }
              } == response
