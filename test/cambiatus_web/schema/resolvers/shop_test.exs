@@ -610,24 +610,23 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       mutation = """
         mutation {
-          category(id: #{category.id},
-                   parentCategory: { id: #{category_parent.id} }) {
+          category(id: #{category_parent.id},
+                   categories: [ { id: #{category.id} }]) {
+
             name
-            parentCategory { id }
+            categories { id }
           }
         }
       """
 
-      res = post(conn, "/api/graph", query: mutation)
-
-      response = json_response(res, 200)
+      response = post(conn, "/api/graph", query: mutation) |> json_response(200)
 
       assert %{
                "data" => %{
                  "category" => %{
-                   "name" => category_params[:name],
-                   "parentCategory" => %{
-                     "id" => category_parent.id
+                   "name" => category_parent.name,
+                   "categories" => %{
+                     "id" => category.id
                    }
                  }
                }
@@ -638,7 +637,30 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       conn: conn,
       community: community
     } do
-      assert false
+      category_parent = insert(:category, community: community)
+      category = insert(:category, community: community, parent: category_parent)
+
+      mutation = """
+        mutation {
+          deleteCategory(id: #{category_parent.id}) {
+            status
+            reason
+          }
+        }
+      """
+
+      response = post(conn, "/api/graph", query: mutation) |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "deleteCategory" => %{
+                   "reason" => "Category deleted successfully",
+                   "status" => "success"
+                 }
+               }
+             } == response
+
+      refute Cambiatus.Shop.get_category(category.id)
     end
   end
 end

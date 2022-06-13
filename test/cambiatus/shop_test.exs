@@ -96,11 +96,14 @@ defmodule Cambiatus.ShopTest do
       assert {:error, %Ecto.Changeset{}} = Shop.create_category(@invalid_attrs)
     end
 
-    test "create_category/1 with subcategory", %{community: community} do
-      sub_category_params = params_for(:category, %{community_id: community.symbol})
+    test "create_category/1 with existing subcategory", %{community: community} do
+      sub_category = insert(:category, %{community_id: community.symbol})
 
       params =
-        params_for(:category, %{community_id: community.symbol, categories: [sub_category_params]})
+        params_for(:category, %{
+          community_id: community.symbol,
+          categories: [%{id: sub_category.id}]
+        })
 
       assert {:ok, %Category{}} = Shop.create_category(params)
       assert Shop.list_categories() |> length() == 2
@@ -152,7 +155,7 @@ defmodule Cambiatus.ShopTest do
         params_for(:category, %{
           name: "Fruit 🍏",
           community_id: community.symbol,
-          category_id: category.id
+          parent_id: category.id
         })
 
       assert {:ok, %Category{} = sub_category} = Shop.create_category(params)
@@ -170,7 +173,7 @@ defmodule Cambiatus.ShopTest do
         params_for(:category, %{
           name: "Another fruit 🍒",
           community_id: community.symbol,
-          category_id: category.id
+          parent_id: category.id
         })
 
       assert {:ok, %Category{} = another_sub_category} = Shop.create_category(another_params)

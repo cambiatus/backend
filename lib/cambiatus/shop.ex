@@ -212,7 +212,27 @@ defmodule Cambiatus.Shop do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_category(attrs \\ %{}) do
+  def create_category(%{categories: categories} = attrs) do
+    attrs
+    |> Map.delete(:categories)
+    |> create_category()
+    |> case do
+      {:ok, category} ->
+        ids = Enum.map(categories, & &1.id)
+        query = from(p in Category, where: p.id in ^ids)
+        sub_categories = Repo.all(query)
+
+        category
+        |> Category.changeset(%{})
+        |> Category.assoc_categories(sub_categories)
+        |> Repo.update()
+
+      {:error, _} = error ->
+        error
+    end
+  end
+
+  def create_category(attrs) do
     %Category{}
     |> Category.changeset(attrs)
     |> Repo.insert()
@@ -230,6 +250,25 @@ defmodule Cambiatus.Shop do
       {:error, %Ecto.Changeset{}}
 
   """
+  def update_category(%Category{} = category, %{categories: categories} = attrs) do
+    category
+    |> update_category(Map.delete(attrs, :categories))
+    |> case do
+      {:ok, category} ->
+        ids = Enum.map(categories, & &1.id)
+        query = from(p in Category, where: p.id in ^ids)
+        sub_categories = Repo.all(query)
+
+        category
+        |> Category.changeset(%{})
+        |> Category.assoc_categories(sub_categories)
+        |> Repo.update()
+
+      {:error, _} = error ->
+        error
+    end
+  end
+
   def update_category(%Category{} = category, attrs) do
     category
     |> Category.changeset(attrs)
