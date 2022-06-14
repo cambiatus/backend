@@ -564,8 +564,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       conn: conn,
       community: community
     } do
-      category_1 = insert(:category, community: community)
-      category_2 = insert(:category, community: community)
+      category_1 = insert(:category, community: community, name: "Art")
+      category_2 = insert(:category, community: community, name: "Business")
       category_params = params_for(:category, community: community)
 
       mutation = """
