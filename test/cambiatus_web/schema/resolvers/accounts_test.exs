@@ -653,5 +653,111 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       assert %{"data" => %{"search" => %{"members" => []}}} = response_3
     end
+
+    test "list and sort users" do
+      community = insert(:community)
+
+      user_1 =
+        insert(:user,
+          name: "a",
+          account: "aaaaaaaaaaaa",
+          created_at: DateTime.add(DateTime.now!("Etc/UTC"), -3600)
+        )
+
+      user_2 =
+        insert(:user,
+          name: "b",
+          account: "bbbbbbbbbbbb",
+          created_at: DateTime.add(DateTime.now!("Etc/UTC"), -1800)
+        )
+
+      user_3 =
+        insert(:user,
+          name: "c",
+          account: "cccccccccccc",
+          created_at: DateTime.add(DateTime.now!("Etc/UTC"), -600)
+        )
+
+      insert(:network, community: community, user: user_1)
+      insert(:network, community: community, user: user_2)
+      insert(:network, community: community, user: user_3)
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
+      query = fn order_by, order_direction ->
+        """
+        {
+          search(communityId:"#{community.symbol}") {
+            members(query: "", order_by: "#{order_by}", order_direction: "#{order_direction}") {
+              account
+            }
+          }
+        }
+        """
+      end
+
+      response_1 = conn |> post("/api/graph", query: query.("name", "asc")) |> json_response(200)
+
+      response_2 =
+        conn |> post("/api/graph", query: query.("account", "desc")) |> json_response(200)
+
+      response_3 =
+        conn |> post("/api/graph", query: query.("created_at", "desc")) |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "members" => [
+                     %{
+                       "account" => user_1.account
+                     },
+                     %{
+                       "account" => user_2.account
+                     },
+                     %{
+                       "account" => user_3.account
+                     }
+                   ]
+                 }
+               }
+             } == response_1
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "members" => [
+                     %{
+                       "account" => user_3.account
+                     },
+                     %{
+                       "account" => user_2.account
+                     },
+                     %{
+                       "account" => user_1.account
+                     }
+                   ]
+                 }
+               }
+             } == response_2
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "members" => [
+                     %{
+                       "account" => user_3.account
+                     },
+                     %{
+                       "account" => user_2.account
+                     },
+                     %{
+                       "account" => user_1.account
+                     }
+                   ]
+                 }
+               }
+             } == response_3
+    end
   end
 end

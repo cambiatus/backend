@@ -89,7 +89,7 @@ defmodule Cambiatus.Accounts.User do
     end
   end
 
-  def search(query \\ User, q) do
+  def search(query \\ User, q, o) do
     query
     |> where([u], fragment("?.name @@ plainto_tsquery(?)", u, ^q))
     |> or_where([u], fragment("?.account @@ plainto_tsquery(?)", u, ^q))
@@ -99,6 +99,7 @@ defmodule Cambiatus.Accounts.User do
     |> or_where([u], ilike(u.account, ^"%#{q}%"))
     |> or_where([u], ilike(u.bio, ^"%#{q}%"))
     |> or_where([u], ilike(u.email, ^"%#{q}%"))
+    |> order_by([u], ^o)
   end
 
   def accept_digest(query \\ __MODULE__) do
