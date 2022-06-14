@@ -164,7 +164,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:meta_description, :string)
     field(:meta_keywords, :string)
 
-    field(:parent_category, :category, resolve: dataloader(Cambiatus.Shop))
+    field(:parent, :category, resolve: dataloader(Cambiatus.Shop))
     field(:categories, list_of(non_null(:category)), resolve: dataloader(Cambiatus.Shop))
     field(:products, list_of(non_null(:product)), resolve: dataloader(Cambiatus.Shop))
 
