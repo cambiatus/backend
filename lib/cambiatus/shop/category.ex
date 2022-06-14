@@ -9,6 +9,7 @@ defmodule Cambiatus.Shop.Category do
   use Ecto.Schema
 
   import Ecto.Changeset
+  import Ecto.Query
 
   alias Cambiatus.{Repo, Shop}
   alias Cambiatus.Commune.Community
@@ -55,5 +56,9 @@ defmodule Cambiatus.Shop.Category do
 
   def assoc_categories(changeset, categories) do
     put_assoc(changeset, :categories, categories)
+  end
+
+  def alphabetical(query \\ Category) do
+    order_by(query, [c], asc: :name)
   end
 end

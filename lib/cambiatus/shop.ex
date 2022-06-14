@@ -20,6 +20,11 @@ defmodule Cambiatus.Shop do
     |> Product.active()
   end
 
+  def query(Category, _) do
+    Category
+    |> Category.alphabetical()
+  end
+
   def query(queryable, _params) do
     queryable
   end
