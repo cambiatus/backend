@@ -635,6 +635,28 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              } == response
     end
 
+    test "add parent to new category", %{
+      conn: conn,
+      community: community
+    } do
+      parent = insert(:category, community: community)
+
+      mutation = """
+        mutation {
+          category(name: "New Category",
+                   description: "Description",
+                   slug: "new-category",
+                   parentId: #{parent.id}) {
+            parent { id }
+          }
+        }
+      """
+
+      response = post(conn, "/api/graph", query: mutation) |> json_response(200)
+
+      assert %{"data" => %{"category" => %{"parent" => %{"id" => parent.id}}}} == response
+    end
+
     test "Deleting a parent category also deletes its children and the products relationship", %{
       conn: conn,
       community: community
