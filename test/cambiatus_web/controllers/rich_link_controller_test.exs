@@ -176,11 +176,12 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
   defp md_to_txt(markdown) do
     # Convert markdown to plain text
-    with {:ok, string, _} <- Earmark.as_html(markdown, escape: false) do
-      string
-      |> HtmlSanitizeEx.strip_tags()
-      |> String.trim()
-    else
+    case Earmark.as_html(markdown, escape: false) do
+      {:ok, string, _} ->
+        string
+        |> HtmlSanitizeEx.strip_tags()
+        |> String.trim()
+
       {:error, _} ->
         ""
     end
