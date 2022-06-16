@@ -5,8 +5,8 @@
 
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@_cambiatus">
-    <meta name="description" content="<%= raw create_description(@data) %>">
-    <meta property="og:description" content="<%= raw create_description(@data) %>">
+    <meta name="description" content="<%= create_description(@data) %>">
+    <meta property="og:description" content="<%= create_description(@data) %>">
     <meta property="og:locale" content="<%= @data.locale %>">
     <meta property="og:type" content="website">
     <meta property="og:title" content="<%= create_title(@data) %>">
