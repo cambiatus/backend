@@ -9,9 +9,9 @@
     <meta property="og:description" content="<%= raw create_description(@data) %>">
     <meta property="og:locale" content="<%= @data.locale %>">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="<%= @data.title %>">
+    <meta property="og:title" content="<%= create_title(@data) %>">
     <meta property="og:url" content="<%= @data.url %>">
     <meta property="og:image" content="<%= @data.image %>">
 
-    <title><%= @data.title %></title>
+    <title><%= create_title(@data) %></title>
   </head>

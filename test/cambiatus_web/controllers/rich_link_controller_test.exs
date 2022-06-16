@@ -113,12 +113,13 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         insert(:community)
         |> Repo.preload(:subdomain)
 
-      description =
-        "#{product.price} #{String.slice(community.symbol, 2, 7)} - #{md_to_txt(product.description)} - Vendido por #{product.creator.name}"
+      title = "#{product.price} #{String.slice(community.symbol, 2, 7)} - #{product.title}"
+
+      description = "Vendido por #{product.creator.name} - #{md_to_txt(product.description)}"
 
       expected_data = %{
         description: description,
-        title: product.title,
+        title: title,
         url: community.subdomain.name <> "/shop/#{product.id}",
         image: image.uri,
         locale: nil
@@ -149,12 +150,13 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       insert(:community)
       |> Repo.preload(:subdomain)
 
-    description =
-      "#{product.price} #{String.slice(community.symbol, 2, 7)} - #{md_to_txt(product.description)} - Vendido por #{product.creator.name}"
+    title = "#{product.price} #{String.slice(community.symbol, 2, 7)} - #{product.title}"
+
+    description = "Vendido por #{product.creator.name} - #{md_to_txt(product.description)}"
 
     expected_data = %{
       description: description,
-      title: product.title,
+      title: title,
       url: community.subdomain.name <> "/shop/#{product.id}",
       image:
         "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5",
