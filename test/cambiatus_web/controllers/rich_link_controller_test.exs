@@ -114,7 +114,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         |> Repo.preload(:subdomain)
 
       description =
-        "<strong>#{product.price} #{String.slice(community.symbol, 2, 7)}</strong> - #{md_to_txt(product.description)} - Vendido por #{product.creator.name}"
+        "#{product.price} #{String.slice(community.symbol, 2, 7)} - #{md_to_txt(product.description)} - Vendido por #{product.creator.name}"
 
       expected_data = %{
         description: description,
@@ -150,7 +150,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       |> Repo.preload(:subdomain)
 
     description =
-      "<strong>#{product.price} #{String.slice(community.symbol, 2, 7)}</strong> - #{md_to_txt(product.description)} - Vendido por #{product.creator.name}"
+      "#{product.price} #{String.slice(community.symbol, 2, 7)} - #{md_to_txt(product.description)} - Vendido por #{product.creator.name}"
 
     expected_data = %{
       description: description,
