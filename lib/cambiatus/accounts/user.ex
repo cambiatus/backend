@@ -89,17 +89,23 @@ defmodule Cambiatus.Accounts.User do
     end
   end
 
-  def search(query \\ User, q, o) do
-    query
-    |> where([u], fragment("?.name @@ plainto_tsquery(?)", u, ^q))
-    |> or_where([u], fragment("?.account @@ plainto_tsquery(?)", u, ^q))
-    |> or_where([u], fragment("?.bio @@ plainto_tsquery(?)", u, ^q))
-    |> or_where([u], fragment("?.email @@ plainto_tsquery(?)", u, ^q))
-    |> or_where([u], ilike(u.name, ^"%#{q}%"))
-    |> or_where([u], ilike(u.account, ^"%#{q}%"))
-    |> or_where([u], ilike(u.bio, ^"%#{q}%"))
-    |> or_where([u], ilike(u.email, ^"%#{q}%"))
-    |> order_by([u], ^o)
+  def search(query \\ User, filters) do
+    Enum.reduce(filters, query, fn
+      {:search_string, s}, query ->
+        query
+        |> where([u], fragment("?.name @@ plainto_tsquery(?)", u, ^s))
+        |> or_where([u], fragment("?.account @@ plainto_tsquery(?)", u, ^s))
+        |> or_where([u], fragment("?.bio @@ plainto_tsquery(?)", u, ^s))
+        |> or_where([u], fragment("?.email @@ plainto_tsquery(?)", u, ^s))
+        |> or_where([u], ilike(u.name, ^"%#{s}%"))
+        |> or_where([u], ilike(u.account, ^"%#{s}%"))
+        |> or_where([u], ilike(u.bio, ^"%#{s}%"))
+        |> or_where([u], ilike(u.email, ^"%#{s}%"))
+
+      {:ordering, o}, query ->
+        query
+        |> order_by([u], ^o)
+    end)
   end
 
   def accept_digest(query \\ __MODULE__) do

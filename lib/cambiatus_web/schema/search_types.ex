@@ -33,18 +33,21 @@ defmodule CambiatusWeb.Schema.SearchTypes do
     end
 
     field(:members, non_null(list_of(non_null(:user)))) do
-      arg(:query, :string)
-      # Field direction defined on CambiatusWeb.Schema.CommuneTypes
-      arg(:order_by, :order_by_fields, default_value: :name)
-      arg(:order_direction, :direction, default_value: :asc)
-
+      arg(:filters, :members_filter_input)
       resolve(dataloader(Cambiatus.Accounts))
     end
   end
 
+  input_object(:members_filter_input) do
+    field(:search_string, :string)
+    field(:order_by, :order_by_fields, default_value: :name)
+    # Field direction defined on CambiatusWeb.Schema.CommuneTypes
+    field(:order_direction, :direction, default_value: :asc)
+  end
+
   enum(:order_by_fields) do
-    value(:name, name: "name", description: "Name")
-    value(:account, name: "account", description: "Account")
-    value(:created_at, name: "created_at", description: "Created At")
+    value(:name, name: "name", description: "Order by member name")
+    value(:account, name: "account", description: "Order by member account")
+    value(:created_at, name: "created_at", description: "Order by member creation date")
   end
 end

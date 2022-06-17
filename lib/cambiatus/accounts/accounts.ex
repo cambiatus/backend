@@ -19,10 +19,13 @@ defmodule Cambiatus.Accounts do
     Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
   end
 
-  def query(User, %{query: query, order_by: order_by, order_direction: order_direction}) do
-    ordering = {order_direction, order_by}
+  def query(User, %{filters: filters}) do
+    filters =
+      filters
+      |> Map.put_new(:ordering, {filters.order_direction, filters.order_by})
+      |> Map.drop([:order_direction, :order_by])
 
-    User.search(User, query, ordering)
+    User.search(User, filters)
   end
 
   def query(queryable, _params), do: queryable
