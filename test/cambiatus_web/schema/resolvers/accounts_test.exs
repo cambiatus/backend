@@ -656,6 +656,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
     test "list and sort users" do
       community = insert(:community)
+      community2 = insert(:community)
 
       user_1 =
         insert(:user,
@@ -678,9 +679,18 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
           created_at: DateTime.add(DateTime.now!("Etc/UTC"), -600)
         )
 
+      user_4 =
+        insert(:user,
+          name: "d",
+          account: "dddddddddddd",
+          created_at: DateTime.now!("Etc/UTC")
+        )
+
       insert(:network, community: community, user: user_1)
       insert(:network, community: community, user: user_2)
       insert(:network, community: community, user: user_3)
+      insert(:network, community: community2, user: user_4)
+      insert(:network, community: community2, user: user_1)
 
       user = insert(:user)
       conn = build_conn() |> auth_user(user)

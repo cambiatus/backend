@@ -89,8 +89,11 @@ defmodule Cambiatus.Accounts.User do
     end
   end
 
-  def search(query \\ User, filters) do
-    Enum.reduce(filters, query, fn
+  def search(query \\ User, %{filters: filters}) do
+    filters
+    |> Map.put_new(:ordering, {filters.order_direction, filters.order_by})
+    |> Map.drop([:order_direction, :order_by])
+    |> Enum.reduce(query, fn
       {:search_string, s}, query ->
         query
         |> where([u], fragment("?.name @@ plainto_tsquery(?)", u, ^s))

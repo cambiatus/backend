@@ -30,6 +30,17 @@ defmodule Cambiatus.Accounts do
 
   def query(queryable, _params), do: queryable
 
+  def search_in_community(community, args) do
+    search =
+      User
+      |> join(:inner, [u], c in assoc(u, :communities))
+      |> where([u, c], c.symbol == ^community.symbol)
+      |> User.search(args)
+      |> Repo.all()
+
+    {:ok, search}
+  end
+
   def verify_pass(account, password) do
     with %Request{phrase: phrase} <- Auth.get_valid_request(account),
          {:ok, public_key} <- @contract.get_public_key(account),

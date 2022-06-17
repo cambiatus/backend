@@ -7,7 +7,7 @@ defmodule CambiatusWeb.Schema.SearchTypes do
   use Absinthe.Relay.Schema.Notation, :classic
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
-  alias CambiatusWeb.Resolvers.Commune
+  alias CambiatusWeb.Resolvers.{Commune, Accounts}
   alias CambiatusWeb.Schema.Middleware
 
   @desc "Search queries"
@@ -34,7 +34,7 @@ defmodule CambiatusWeb.Schema.SearchTypes do
 
     field(:members, non_null(list_of(non_null(:user)))) do
       arg(:filters, :members_filter_input)
-      resolve(dataloader(Cambiatus.Accounts))
+      resolve(&Accounts.search_in_community/3)
     end
   end
 
@@ -42,7 +42,7 @@ defmodule CambiatusWeb.Schema.SearchTypes do
     field(:search_string, :string)
     field(:order_by, :order_by_fields, default_value: :name)
     # Field direction defined on CambiatusWeb.Schema.CommuneTypes
-    field(:order_direction, :direction, default_value: :asc)
+    field(:order_direction, :direction, default_value: :desc)
   end
 
   enum(:order_by_fields) do

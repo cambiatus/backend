@@ -20,6 +20,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     Accounts.get_payers_by_account(user, payer)
   end
 
+  def search_in_community(community, args, _) do
+    Accounts.search_in_community(community, args)
+  end
+
   @doc """
   Updates a user
   """
