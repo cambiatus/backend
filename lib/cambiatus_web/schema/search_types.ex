@@ -35,7 +35,7 @@ defmodule CambiatusWeb.Schema.SearchTypes do
     field(:members, non_null(list_of(non_null(:user)))) do
       arg(:query, :string)
       arg(:order_by, :string, default_value: "name")
-      arg(:order_direction, :string, default_value: "asc")
+      arg(:order_direction, :direction, default_value: :asc)
 
       resolve(dataloader(Cambiatus.Accounts))
     end

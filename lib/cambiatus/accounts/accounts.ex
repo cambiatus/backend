@@ -20,7 +20,7 @@ defmodule Cambiatus.Accounts do
   end
 
   def query(User, %{query: query, order_by: order_by, order_direction: order_direction}) do
-    ordering = {String.to_atom(order_direction), String.to_atom(order_by)}
+    ordering = {order_direction, String.to_atom(order_by)}
 
     User.search(User, query, ordering)
   end

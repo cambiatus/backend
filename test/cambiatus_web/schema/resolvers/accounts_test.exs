@@ -689,7 +689,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         """
         {
           search(communityId:"#{community.symbol}") {
-            members(query: "", order_by: "#{order_by}", order_direction: "#{order_direction}") {
+            members(query: "", order_by: "#{order_by}", order_direction: #{order_direction}) {
               account
             }
           }
@@ -697,13 +697,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         """
       end
 
-      response_1 = conn |> post("/api/graph", query: query.("name", "asc")) |> json_response(200)
+      response_1 = conn |> post("/api/graph", query: query.("name", "ASC")) |> json_response(200)
 
       response_2 =
-        conn |> post("/api/graph", query: query.("account", "desc")) |> json_response(200)
+        conn |> post("/api/graph", query: query.("account", "DESC")) |> json_response(200)
 
       response_3 =
-        conn |> post("/api/graph", query: query.("created_at", "desc")) |> json_response(200)
+        conn |> post("/api/graph", query: query.("created_at", "DESC")) |> json_response(200)
 
       assert %{
                "data" => %{
