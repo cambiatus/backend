@@ -689,7 +689,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         """
         {
           search(communityId:"#{community.symbol}") {
-            members(query: "", order_by: "#{order_by}", order_direction: #{order_direction}) {
+            members(query: "", order_by: #{order_by}, order_direction: #{order_direction}) {
               account
             }
           }
