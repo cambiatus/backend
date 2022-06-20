@@ -10,6 +10,8 @@ defmodule CambiatusWeb.RichLinkController do
   alias CambiatusWeb.Resolvers.{Accounts, Commune, Shop}
   alias Cambiatus.Repo
 
+  @product_image "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
+
   def rich_link(conn, params) do
     data =
       with community_subdomain <- conn.host do
@@ -35,49 +37,22 @@ defmodule CambiatusWeb.RichLinkController do
   end
 
   def product_rich_link(id, community_subdomain) do
-    get_image = fn product ->
-      with product <- Repo.preload(product, :images),
-           [image | _] <- product.images do
-        image.uri
-      else
-        _ ->
-          "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
-      end
-    end
+    with {:ok, product} <- Shop.get_product(nil, %{id: id}, nil),
+         {:ok, community} <- Commune.find_community(%{}, %{subdomain: community_subdomain}, %{}) do
+      %{images: images, creator: creator} = Repo.preload(product, [:creator, :images])
 
-    get_currency = fn community_subdomain ->
-      case Commune.find_community(%{}, %{subdomain: community_subdomain}, %{}) do
-        {:ok, community} ->
-          String.slice(community.symbol, 2, 7)
-
-        {:error, reason} ->
-          {:error, reason}
-      end
-    end
-
-    get_creator_name = fn product ->
-      creator =
-        product
-        |> Repo.preload(:creator)
-        |> Map.get(:creator)
-
-      if creator.name, do: creator.name, else: creator.account
-    end
-
-    case Shop.get_product(nil, %{id: id}, nil) do
-      {:ok, product} ->
-        {:ok,
-         %{
-           description: product.description,
-           title: product.title,
-           url: community_subdomain <> "/shop/#{product.id}",
-           image: get_image.(product),
-           locale: nil,
-           price: product.price,
-           currency: get_currency.(community_subdomain),
-           creator: get_creator_name.(product)
-         }}
-
+      {:ok,
+       %{
+         description: product.description,
+         title: product.title,
+         url: community_subdomain <> "/shop/#{product.id}",
+         image: if(images != [], do: Map.get(List.first(images), :uri), else: @product_image),
+         locale: nil,
+         price: product.price,
+         currency: String.slice(community.symbol, 2, 7),
+         creator: if(creator.name, do: creator.name, else: creator.account)
+       }}
+    else
       {:error, reason} ->
         {:error, reason}
     end
