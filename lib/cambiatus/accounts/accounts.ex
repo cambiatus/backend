@@ -9,7 +9,7 @@ defmodule Cambiatus.Accounts do
   alias Cambiatus.Accounts.User
   alias Cambiatus.Auth
   alias Cambiatus.Auth.Request
-  alias Cambiatus.Commune.Transfer
+  alias Cambiatus.Commune.{Community, Transfer}
   alias Cambiatus.Objectives.Check
 
   @contract Application.compile_env(:cambiatus, :contract)
@@ -19,23 +19,18 @@ defmodule Cambiatus.Accounts do
     Dataloader.Ecto.new(Repo, query: &query/2, default_params: params)
   end
 
-  def query(User, %{filters: filters}) do
-    filters =
-      filters
-      |> Map.put_new(:ordering, {filters.order_direction, filters.order_by})
-      |> Map.drop([:order_direction, :order_by])
-
-    User.search(User, filters)
+  def query(User, %{query: query}) do
+    User.search(User, query)
   end
 
   def query(queryable, _params), do: queryable
 
-  def search_in_community(community, args) do
+  def search_in_community(%Community{} = community, filters \\ %{}) do
     search =
       User
       |> join(:inner, [u], c in assoc(u, :communities))
       |> where([u, c], c.symbol == ^community.symbol)
-      |> User.search(args)
+      |> User.search(filters)
       |> Repo.all()
 
     {:ok, search}
