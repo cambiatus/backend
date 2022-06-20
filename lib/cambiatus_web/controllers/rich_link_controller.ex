@@ -10,7 +10,7 @@ defmodule CambiatusWeb.RichLinkController do
   alias CambiatusWeb.Resolvers.{Accounts, Commune, Shop}
   alias Cambiatus.Repo
 
-  @product_image "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
+  @default_product_image "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
 
   def rich_link(conn, params) do
     data =
@@ -46,7 +46,8 @@ defmodule CambiatusWeb.RichLinkController do
          description: product.description,
          title: product.title,
          url: community_subdomain <> "/shop/#{product.id}",
-         image: if(images != [], do: Map.get(List.first(images), :uri), else: @product_image),
+         image:
+           if(images != [], do: Map.get(List.first(images), :uri), else: @default_product_image),
          locale: nil,
          price: product.price,
          currency: String.slice(community.symbol, 2, 7),
