@@ -93,15 +93,11 @@ defmodule Cambiatus.Accounts.User do
     args
     |> Enum.reduce(query, fn
       {:search_string, s}, query ->
+        search_string =
+          dynamic([u], u.name == ^s or u.account == ^s or u.email == ^s or u.bio == ^s)
+
         query
-        |> where([u], fragment("?.name @@ plainto_tsquery(?)", u, ^s))
-        |> or_where([u], fragment("?.account @@ plainto_tsquery(?)", u, ^s))
-        |> or_where([u], fragment("?.bio @@ plainto_tsquery(?)", u, ^s))
-        |> or_where([u], fragment("?.email @@ plainto_tsquery(?)", u, ^s))
-        |> or_where([u], ilike(u.name, ^"%#{s}%"))
-        |> or_where([u], ilike(u.account, ^"%#{s}%"))
-        |> or_where([u], ilike(u.bio, ^"%#{s}%"))
-        |> or_where([u], ilike(u.email, ^"%#{s}%"))
+        |> where([u], ^search_string)
 
       {:ordering, o}, query ->
         query
