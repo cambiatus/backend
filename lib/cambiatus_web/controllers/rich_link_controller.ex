@@ -51,7 +51,7 @@ defmodule CambiatusWeb.RichLinkController do
          locale: nil,
          price: product.price,
          currency: String.slice(community.symbol, 2, 7),
-         creator: if(creator.name, do: creator.name, else: creator.account)
+         creator: Map.get(creator, :name) || creator.account
        }}
     else
       {:error, reason} ->
