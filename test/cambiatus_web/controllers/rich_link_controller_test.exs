@@ -172,7 +172,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         string
         |> HtmlSanitizeEx.strip_tags()
         |> String.trim()
-    else
+
       {:error, _} ->
         ""
     end
