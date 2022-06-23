@@ -9,6 +9,7 @@ defmodule CambiatusWeb.UploadController do
     with %{path: file_path, content_type: content_type} <- Map.get(params, "file"),
          %{path: file_path} <-
            Uploader.resize(file_path, content_type, 1200, 1200, in_place: true),
+         {:ok, file_path} <- Uploader.strip_metadata(file_path),
          file_info <- File.lstat!(file_path),
          file_contents <- File.read!(file_path),
          {:ok, url} <- Uploader.save(file_info, content_type, file_contents) do
