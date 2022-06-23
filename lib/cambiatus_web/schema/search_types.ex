@@ -35,7 +35,8 @@ defmodule CambiatusWeb.Schema.SearchTypes do
     field(:members, non_null(list_of(non_null(:user)))) do
       arg(:query, :string)
 
-      resolve(dataloader(Cambiatus.Accounts))
+      # resolve(dataloader(Cambiatus.Accounts))
+      resolve(&Cambiatus.Shop.search/3)
     end
   end
 end
