@@ -40,9 +40,21 @@ defmodule CambiatusWeb.Schema.SearchTypes do
 
   input_object(:members_filter_input) do
     field(:search_string, :string)
-    field(:order_by, :order_by_fields, default_value: :name)
+
+    field(:search_members_by, list_of(:search_by_fields),
+      default_value: [:name, :account, :bio, :email]
+    )
+
+    field(:order_members_by, :order_by_fields, default_value: :name)
     # Field direction defined on CambiatusWeb.Schema.CommuneTypes
-    field(:order_direction, :direction, default_value: :desc)
+    field(:order_direction, :direction, default_value: :asc)
+  end
+
+  enum(:search_by_fields) do
+    value(:name, name: "name", description: "Search by member name")
+    value(:account, name: "account", description: "Search by member account")
+    value(:bio, name: "bio", description: "Search by member bio")
+    value(:email, name: "email", description: "Search by member email")
   end
 
   enum(:order_by_fields) do

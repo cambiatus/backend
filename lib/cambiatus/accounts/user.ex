@@ -90,48 +90,25 @@ defmodule Cambiatus.Accounts.User do
   end
 
   def search(query \\ User, args) do
-    fields = ["name", "account", "bio", "email"]
+    fields = args.search_members_by
+    args = Map.drop(args, [:search_members_by])
 
-    args
-    |> Enum.reduce(query, fn
+    Enum.reduce(args, query, fn
+      {:ordering, o}, query ->
+        order_by(query, [u], ^o)
+
       {:search_string, s}, query ->
         search_string =
-          Enum.reduce(fields, nil, fn
-            "name", search_string ->
-              dynamic(
-                [u],
-                fragment("?.name @@ plainto_tsquery(?)", u, ^s) or ilike(u.name, ^"%#{s}%") or
-                  ^search_string
-              )
-
-            "account", search_string ->
-              dynamic(
-                [u],
-                fragment("?.account @@ plainto_tsquery(?)", u, ^s) or ilike(u.account, ^"%#{s}%") or
-                  ^search_string
-              )
-
-            "bio", search_string ->
-              dynamic(
-                [u],
-                fragment("?.bio @@ plainto_tsquery(?)", u, ^s) or ilike(u.bio, ^"%#{s}%") or
-                  ^search_string
-              )
-
-            "email", search_string ->
-              dynamic(
-                [u],
-                fragment("?.email @@ plainto_tsquery(?)", u, ^s) or ilike(u.email, ^"%#{s}%") or
-                  ^search_string
-              )
+          Enum.reduce(fields, nil, fn field, search_string ->
+            dynamic(
+              [u],
+              fragment("? @@ plainto_tsquery(?)", field(u, ^field), ^s) or
+                ilike(field(u, ^field), ^"%#{s}%") or
+                ^search_string
+            )
           end)
 
-        query
-        |> where([u], ^search_string)
-
-      {:ordering, o}, query ->
-        query
-        |> order_by([u], ^o)
+        where(query, [u], ^search_string)
     end)
   end
 
