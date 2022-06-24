@@ -661,6 +661,52 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert %{"data" => %{"search" => %{"members" => []}}} = response_3
     end
 
+    test "search members by bio" do
+      community_1 = insert(:community)
+      community_2 = insert(:community)
+
+      user_1 = insert(:user, name: "a", bio: "match")
+      user_2 = insert(:user, name: "b", bio: "match")
+      user_3 = insert(:user, name: "never matches", bio: "nope")
+      user_4 = insert(:user, name: "Lorem ipsum", bio: "match")
+
+      insert(:network, community: community_1, user: user_1)
+      insert(:network, community: community_1, user: user_2)
+      insert(:network, community: community_1, user: user_3)
+      insert(:network, community: community_2, user: user_1)
+      insert(:network, community: community_2, user: user_4)
+
+      user = insert(:user)
+      conn = build_conn() |> auth_user(user)
+
+      query = """
+      {
+        search(communityId:"#{community_1.symbol}") {
+          members(filters: {searchString: "Mat", searchMembersBy: bio}) {
+            account
+          }
+        }
+      }
+      """
+
+      response = conn |> post("/api/graph", query: query) |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "search" => %{
+                   "members" => [
+                     %{
+                       "account" => user_1.account
+                     },
+                     %{
+                       "account" => user_2.account
+                     }
+                   ]
+                 }
+               }
+             } == response
+    end
+
     test "list and sort by name" do
       community = insert(:community)
 
@@ -681,7 +727,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
         """
         {
           search(communityId:"#{community.symbol}") {
-            members(filters: {orderBy: name, orderDirection: #{order_direction}}) {
+            members(filters: {orderMembersBy: name, orderDirection: #{order_direction}}) {
               account
             }
           }
@@ -751,7 +797,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       """
       {
         search(communityId:"#{community.symbol}") {
-          members(filters: {orderBy: account, orderDirection: #{order_direction}}) {
+          members(filters: {orderMembersBy: account, orderDirection: #{order_direction}}) {
             account
           }
         }
@@ -820,7 +866,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       """
       {
         search(communityId:"#{community.symbol}") {
-          members(filters: {orderBy: created_at, orderDirection: #{order_direction}}) {
+          members(filters: {orderMembersBy: created_at, orderDirection: #{order_direction}}) {
             account
           }
         }
