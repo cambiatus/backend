@@ -48,7 +48,7 @@ defmodule CambiatusWeb.RichLinkController do
          url: community_subdomain <> "/shop/#{product.id}",
          image:
            if(images != [], do: Map.get(List.first(images), :uri), else: @default_product_image),
-         locale: nil,
+         locale: Map.get(creator, :language) || :"en-US",
          price: product.price,
          currency: String.slice(community.symbol, 2, 7),
          creator: Map.get(creator, :name) || creator.account
@@ -68,7 +68,7 @@ defmodule CambiatusWeb.RichLinkController do
            title: if(user.name, do: user.name, else: user.account),
            url: community_subdomain <> "/profile/#{user.account}",
            image: user.avatar,
-           locale: user.location
+           locale: Map.get(user, :language) || :"en-US"
          }}
 
       {:error, reason} ->

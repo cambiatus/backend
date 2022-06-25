@@ -52,7 +52,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         title: user.name,
         url: community.subdomain.name <> "/profile/#{user.account}",
         image: user.avatar,
-        locale: user.location
+        locale: user.language
       }
 
       # Submit GET request for a user rich link
@@ -83,7 +83,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         title: user.account,
         url: community.subdomain.name <> "/profile/#{user.account}",
         image: user.avatar,
-        locale: user.location
+        locale: user.language
       }
 
       # Submit GET request for a user rich link
@@ -102,10 +102,11 @@ defmodule CambiatusWeb.RichLinkControllerTest do
     test "generate rich link for product with image",
          %{conn: conn} do
       # Insert product and extract data for the rich link
+      creator = build(:user, language: "pt-BR")
+
       product =
-        insert(:product)
+        insert(:product, creator: creator)
         |> Repo.preload(:images)
-        |> Repo.preload(:creator)
 
       [image | _] = product.images
 
@@ -122,7 +123,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         title: title,
         url: community.subdomain.name <> "/shop/#{product.id}",
         image: image.uri,
-        locale: nil
+        locale: creator.language
       }
 
       # Submit GET request for a product rich link
@@ -142,9 +143,9 @@ defmodule CambiatusWeb.RichLinkControllerTest do
   test "generate rich link for product without image",
        %{conn: conn} do
     # Insert product without images and extract data for the rich link
-    product =
-      insert(:product, images: [])
-      |> Repo.preload(:creator)
+    creator = build(:user, language: "en-US")
+
+    product = insert(:product, images: [], creator: creator)
 
     community =
       insert(:community)
@@ -152,7 +153,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
     title = "#{product.price} #{String.slice(community.symbol, 2, 7)} - #{product.title}"
 
-    description = "Vendido por #{product.creator.name} - #{md_to_txt(product.description)}"
+    description = "Sold by #{product.creator.name} - #{md_to_txt(product.description)}"
 
     expected_data = %{
       description: description,
@@ -160,7 +161,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       url: community.subdomain.name <> "/shop/#{product.id}",
       image:
         "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5",
-      locale: nil
+      locale: product.creator.language
     }
 
     # Submit GET request for a product rich link
