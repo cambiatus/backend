@@ -90,8 +90,14 @@ defmodule Cambiatus.Accounts.User do
   end
 
   def search(query \\ User, args) do
-    fields = args.search_members_by
-    args = Map.drop(args, [:search_members_by])
+    {args, fields} =
+      case Map.fetch(args, :search_members_by) do
+        {:ok, fields} ->
+          {Map.drop(args, [:search_members_by]), fields}
+
+        :error ->
+          {args, [:name, :account, :bio, :email]}
+      end
 
     Enum.reduce(args, query, fn
       {:ordering, o}, query ->
