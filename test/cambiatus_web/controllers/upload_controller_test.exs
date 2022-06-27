@@ -15,7 +15,7 @@ defmodule CambiatusWeb.UploadControllerTest do
 
     test "upload an image",
          %{conn: conn} do
-      filename = "owlbear.jpg"
+      filename = "IMG_7095.jpeg"
 
       upload = %Plug.Upload{
         path: Path.join(@test_image_path, filename),

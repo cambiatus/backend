@@ -57,62 +57,27 @@ defmodule Cambiatus.File.Uploader do
   end
 
   def strip_metadata(image_path) when is_binary(image_path) do
-    with {tags_list, 0} <- System.cmd("exiftool", ["-j", image_path, "-overwrite_original"]),
-         {:ok, [tags_list]} <- Poison.decode(tags_list) do
-      tags_list = Map.keys(tags_list)
+    command =
+      ["-all:all=", "-tagsFromFile", "@"] ++
+        metadata_whitelist() ++ [image_path, "-overwrite_original", "-m"]
 
-      tags_to_remove =
-        metadata_whitelist()
-        |> Enum.reduce(tags_list, fn item, tags_list -> List.delete(tags_list, item) end)
-        |> Enum.map(fn item -> "-#{String.downcase(item)}=" end)
+    strip =
+      System.cmd(
+        "exiftool",
+        command
+      )
 
-      strip = System.cmd("exiftool", tags_to_remove ++ [image_path, "-overwrite_original"])
-
-      if String.match?(Kernel.elem(strip, 0), ~r/image files updated/) do
-        {:ok, image_path}
-      else
-        {:error, "Failed to strip metadata"}
-      end
+    if String.match?(Kernel.elem(strip, 0), ~r/image files updated/) do
+      {:ok, image_path}
     else
-      {:error, _, 0} ->
-        {:error, "Cannot get metadata from image"}
-
-      {:error, reason} ->
-        {:error, reason}
+      {:error, "Failed to strip metadata"}
     end
   end
 
   defp metadata_whitelist() do
     [
-      "Orientation",
-      "FileType",
-      "ColorComponents",
-      "Directory",
-      "EncodingProcess",
-      "ExifByteOrder",
-      "ExifToolVersion",
-      "FileAccessDate",
-      "FileInodeChangeDate",
-      "FileModifyDate",
-      "FileName",
-      "FilePermissions",
-      "FileSize",
-      "FileTypeExtension",
-      "JFIFVersion",
-      "MIMEType",
-      "Megapixels",
-      "SourceFile",
-      "ThumbnailLength",
-      "ThumbnailOffset",
-      "CircleOfConfusion",
-      "Aperture",
-      "MCCData",
-      "ShutterSpeed",
-      "FOV",
-      "HyperfocalDistance",
-      "FocalLength35efl",
-      "ScaleFactor35efl",
-      "LightValue"
+      "-exif:Orientation",
+      "-ICC_Profile"
     ]
   end
 
