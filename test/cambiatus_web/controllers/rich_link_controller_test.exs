@@ -153,7 +153,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
     title = "#{product.price} #{String.slice(community.symbol, 2, 7)} - #{product.title}"
 
-    description = "Sold by #{product.creator.name} - #{md_to_txt(product.description)}"
+    description = "Vendido por #{product.creator.name} - #{md_to_txt(product.description)}"
 
     expected_data = %{
       description: description,
@@ -161,12 +161,14 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       url: community.subdomain.name <> "/shop/#{product.id}",
       image:
         "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5",
-      locale: product.creator.language
+      locale: "es-ES"
     }
 
     # Submit GET request for a product rich link
+    # For this test the user language is overriden by the header "accept-language"
     conn =
       %{conn | host: community.subdomain.name}
+      |> put_req_header("accept-language", "es-ES")
       |> get("/api/rich_link/shop/#{product.id}")
 
     response = html_response(conn, 200)

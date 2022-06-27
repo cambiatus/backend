@@ -13,17 +13,19 @@ defmodule CambiatusWeb.RichLinkController do
   @default_product_image "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
 
   def rich_link(conn, params) do
+    language = get_req_header(conn, "accept-language")
+
     data =
       with community_subdomain <- conn.host do
         case Map.get(params, "page") do
           ["shop", id] ->
-            product_rich_link(id, community_subdomain)
+            product_rich_link(id, community_subdomain, language)
 
           ["profile", account] ->
-            user_rich_link(account, community_subdomain)
+            user_rich_link(account, community_subdomain, language)
 
           _ ->
-            community_rich_link(community_subdomain)
+            community_rich_link(community_subdomain, language)
         end
       end
 
@@ -36,7 +38,7 @@ defmodule CambiatusWeb.RichLinkController do
     end
   end
 
-  def product_rich_link(id, community_subdomain) do
+  def product_rich_link(id, community_subdomain, language) do
     with {:ok, product} <- Shop.get_product(nil, %{id: id}, nil),
          {:ok, community} <- Commune.find_community(%{}, %{subdomain: community_subdomain}, %{}) do
       %{images: images, creator: creator} = Repo.preload(product, [:creator, :images])
@@ -48,7 +50,7 @@ defmodule CambiatusWeb.RichLinkController do
          url: community_subdomain <> "/shop/#{product.id}",
          image:
            if(images != [], do: Map.get(List.first(images), :uri), else: @default_product_image),
-         locale: Map.get(creator, :language) || :"en-US",
+         locale: get_language(language, creator),
          price: product.price,
          currency: String.slice(community.symbol, 2, 7),
          creator: Map.get(creator, :name) || creator.account
@@ -59,7 +61,7 @@ defmodule CambiatusWeb.RichLinkController do
     end
   end
 
-  def user_rich_link(account, community_subdomain) do
+  def user_rich_link(account, community_subdomain, language) do
     case Accounts.get_user(nil, %{account: account}, nil) do
       {:ok, user} ->
         {:ok,
@@ -68,7 +70,7 @@ defmodule CambiatusWeb.RichLinkController do
            title: if(user.name, do: user.name, else: user.account),
            url: community_subdomain <> "/profile/#{user.account}",
            image: user.avatar,
-           locale: Map.get(user, :language) || :"en-US"
+           locale: get_language(language, user)
          }}
 
       {:error, reason} ->
@@ -76,7 +78,7 @@ defmodule CambiatusWeb.RichLinkController do
     end
   end
 
-  def community_rich_link(community_subdomain) do
+  def community_rich_link(community_subdomain, language) do
     case Commune.find_community(%{}, %{subdomain: community_subdomain}, %{}) do
       {:ok, community} ->
         {:ok,
@@ -85,11 +87,21 @@ defmodule CambiatusWeb.RichLinkController do
            title: community.name,
            url: community_subdomain,
            image: community.logo,
-           locale: nil
+           locale: get_language(language, %{})
          }}
 
       {:error, reason} ->
         {:error, reason}
+    end
+  end
+
+  defp get_language(conn_header, map) do
+    case conn_header do
+      [language] ->
+        String.to_atom(language)
+
+      _ ->
+        Map.get(map, :language) || :"en-US"
     end
   end
 end
