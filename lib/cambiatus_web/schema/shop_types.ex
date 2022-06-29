@@ -68,10 +68,13 @@ defmodule CambiatusWeb.Schema.ShopTypes do
       arg(:image_uri, :string)
       arg(:name, :string)
       arg(:description, :string)
+
       arg(:slug, :string)
       arg(:meta_title, :string)
       arg(:meta_description, :string)
       arg(:meta_keywords, :string)
+
+      arg(:position, :integer)
 
       arg(:categories, list_of(non_null(:subcategory_input)),
         description:
@@ -165,6 +168,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:meta_keywords, :string)
 
     field(:parent, :category, resolve: dataloader(Cambiatus.Shop))
+    field(:position, non_null(:integer))
     field(:categories, list_of(non_null(:category)), resolve: dataloader(Cambiatus.Shop))
     field(:products, list_of(non_null(:product)), resolve: dataloader(Cambiatus.Shop))
 
@@ -202,5 +206,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
 
   input_object(:subcategory_input) do
     field(:id, non_null(:integer))
+    field(:position, non_null(:integer))
   end
 end

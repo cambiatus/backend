@@ -126,5 +126,12 @@ defmodule Cambiatus.AccountsTest do
     test "change_user/1 returns a user changeset" do
       assert %Ecto.Changeset{} = Accounts.change_user(@valid_attrs)
     end
+
+    test "create_user/1 with DateTime.utc_now() works properly" do
+      now = DateTime.utc_now()
+      params = Map.merge(@valid_attrs, %{created_at: now})
+      assert {:ok, %User{} = user} = Accounts.create_user(params)
+      assert user.created_at == now |> DateTime.truncate(:second)
+    end
   end
 end

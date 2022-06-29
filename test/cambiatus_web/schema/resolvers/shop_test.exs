@@ -537,6 +537,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
         mutation {
           category(name: "#{category_params[:name]}",
                    description: "#{category_params[:description]}",
+                   position: 1,
                    slug: "#{category_params[:slug]}") {
             name
             description
@@ -573,7 +574,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
           category(name: "#{category_params[:name]}",
                    description: "#{category_params[:description]}",
                    slug: "#{category_params[:slug]}",
-                   categories: [{ id: #{category_1.id}}, { id: #{category_2.id} }]) {
+                   position: 1,
+                   categories: [{ id: #{category_1.id}, position: 1 }, { id: #{category_2.id}, position: 2 }]) {
             name
             categories { id }
           }
@@ -611,7 +613,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       mutation = """
         mutation {
           category(id: #{category_parent.id},
-                   categories: [ { id: #{category.id} }]) {
+                   categories: [ { id: #{category.id}, position: 1}]) {
 
             name
             categories { id }
@@ -646,6 +648,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
           category(name: "New Category",
                    description: "Description",
                    slug: "new-category",
+                   position: 1,
                    parentId: #{parent.id}) {
             parent { id }
           }

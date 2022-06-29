@@ -25,7 +25,8 @@ defmodule Cambiatus.ShopTest do
     @valid_attrs %{
       name: "some name",
       description: "some description",
-      slug: "some slug"
+      slug: "some slug",
+      position: 1
     }
     @update_attrs %{
       description: "some updated description",
@@ -187,6 +188,48 @@ defmodule Cambiatus.ShopTest do
       categories = category.categories |> Enum.map(&Repo.preload(&1, [:categories]))
 
       assert categories == [sub_category, another_sub_category]
+    end
+
+    test "Add subcategories with position argument", %{community: community} do
+      parent = insert(:category)
+
+      {:ok, _one} =
+        :category
+        |> params_for(%{
+          name: "First",
+          community_id: community.symbol,
+          parent_id: parent.id,
+          position: 1
+        })
+        |> Shop.create_category()
+
+      {:ok, _two} =
+        :category
+        |> params_for(%{
+          name: "Second",
+          community_id: community.symbol,
+          parent_id: parent.id,
+          position: 2
+        })
+        |> Shop.create_category()
+
+      {:ok, _three} =
+        :category
+        |> params_for(%{
+          name: "Third",
+          community_id: community.symbol,
+          parent_id: parent.id,
+          position: 3
+        })
+        |> Shop.create_category()
+
+      category = parent.id |> Shop.get_category!() |> Repo.preload(:categories)
+
+      [
+        %{name: "First", position: 1},
+        %{name: "Second", position: 2},
+        %{name: "Third", position: 3}
+      ] = category.categories
     end
   end
 end
