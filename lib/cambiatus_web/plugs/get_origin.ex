@@ -22,7 +22,7 @@ defmodule CambiatusWeb.Plugs.GetOrigin do
 
         case Cambiatus.Commune.get_community_by_subdomain(domain) do
           {:ok, community} ->
-            Absinthe.Plug.assign_context(conn, community: community)
+            Absinthe.Plug.assign_context(conn, current_community: community)
 
           _ ->
             conn
