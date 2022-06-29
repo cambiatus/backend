@@ -139,6 +139,23 @@ defmodule Cambiatus.Accounts do
     end
   end
 
+  def get_member_since(user, community) do
+    query =
+      from(n in Cambiatus.Commune.Network,
+        where: n.account_id == ^user.account,
+        where: n.community_id == ^community.symbol,
+        select: n.created_at
+      )
+
+    case Repo.one(query) do
+      nil ->
+        {:error, "Could not find user in community"}
+
+      member_since ->
+        {:ok, member_since}
+    end
+  end
+
   @doc """
   Creates a user.
   """

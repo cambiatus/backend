@@ -588,6 +588,42 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user.account == session.user_id
     end
 
+    test "member since" do
+      community = insert(:community)
+
+      user = insert(:user)
+
+      network = insert(:network, community: community, user: user)
+
+      conn =
+        build_conn()
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+        |> auth_user(user)
+
+      query = """
+      query {
+        user(account: "#{user.account}") {
+          account,
+          memberSince
+        }
+      }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "account" => user.account,
+                   "memberSince" => DateTime.to_iso8601(network.created_at)
+                 }
+               }
+             } == response
+    end
+
     test "search members" do
       community = insert(:community)
 

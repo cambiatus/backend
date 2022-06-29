@@ -20,6 +20,10 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     Accounts.get_payers_by_account(user, payer)
   end
 
+  def get_member_since(%User{} = user, _, %{context: context}) do
+    Accounts.get_member_since(user, context.community)
+  end
+
   @doc """
   Updates a user
   """
