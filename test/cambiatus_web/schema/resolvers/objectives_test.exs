@@ -379,7 +379,10 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       verifier2 = insert(:user)
       verifier3 = insert(:user)
 
-      conn = build_conn() |> auth_user(verifier3)
+      conn =
+        build_conn()
+        |> auth_user(verifier3)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       # Create action
       action1 = insert(:action, %{verification_type: "claimable", objective: objective})
@@ -406,8 +409,8 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       }
 
       query_analysis = """
-      query($communityId: String!) {
-        pendingClaims(first: #{@num}, communityId: $communityId) {
+      query {
+        pendingClaims(first: #{@num}) {
           edges {
             node {
               id

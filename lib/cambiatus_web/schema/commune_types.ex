@@ -31,7 +31,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required] A list of claims"
     connection field(:pending_claims, node_type: :claim) do
-      arg(:community_id, non_null(:string))
       arg(:filter, :claims_filter)
 
       middleware(Middleware.Authenticate)
