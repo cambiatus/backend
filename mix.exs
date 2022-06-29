@@ -56,7 +56,7 @@ defmodule Cambiatus.Mixfile do
       {:phoenix_swoosh, "~> 0.3"},
 
       # Phoenix
-      {:phoenix, "~> 1.5.3"},
+      {:phoenix, "~> 1.5.13"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
 
