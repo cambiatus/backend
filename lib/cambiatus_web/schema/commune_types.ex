@@ -38,7 +38,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     end
 
     connection field(:analyzed_claims, node_type: :claim) do
-      arg(:community_id, non_null(:string))
       arg(:filter, :claims_filter)
 
       middleware(Middleware.Authenticate)

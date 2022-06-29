@@ -17,10 +17,10 @@ defmodule CambiatusWeb.Resolvers.Objectives do
 
   def get_analyzed_claims(
         _,
-        %{community_id: community_id} = args,
-        %{context: %{current_user: current_user}}
+        args,
+        %{context: %{current_user: current_user, current_community: current_community}}
       ) do
-    query = Objectives.analyzed_claims_query(community_id, current_user.account)
+    query = Objectives.analyzed_claims_query(current_community.symbol, current_user.account)
     count = Claim.count(query)
 
     query =

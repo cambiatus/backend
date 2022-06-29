@@ -427,8 +427,8 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       %{"data" => %{"pendingClaims" => _}} = json_response(res, 200)
 
       query_history = """
-      query($communityId: String!) {
-        analyzedClaims(first: #{@num}, communityId: $communityId) {
+      query {
+        analyzedClaims(first: #{@num}) {
           edges {
             node {
               id
