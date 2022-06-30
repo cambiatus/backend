@@ -7,8 +7,8 @@ defmodule CambiatusWeb.Resolvers.Commune do
   alias Cambiatus.{Auth, Commune, Error, Shop, Social}
   alias Cambiatus.Commune.Community
 
-  def search(_, %{community_id: symbol}, _) do
-    Commune.get_community(symbol)
+  def search(_, _, %{context: %{current_community: current_community}}) do
+    {:ok, current_community}
   end
 
   @doc """

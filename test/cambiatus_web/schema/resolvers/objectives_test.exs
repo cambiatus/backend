@@ -515,18 +515,23 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       user = insert(:user)
       objective = insert(:objective)
 
+      community = objective.community |> Repo.preload(:subdomain)
+
       # Create 3 actions, only modifying the description between them
       params = %{objective: objective, description: ""}
       action_1 = insert(:action, %{params | description: "Lorem ipsum"})
       action_2 = insert(:action, %{params | description: "PlAcEhOlDeR tExT"})
       _action_3 = insert(:action, %{params | description: "never matches"})
 
-      conn = build_conn() |> auth_user(user)
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       query = fn description ->
         """
         {
-          search(communityId:"#{objective.community.symbol}") {
+          search {
             actions(query: "#{description}") {
               description,
               id

@@ -233,15 +233,19 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       _product_3 = insert(:product, %{title: "never matches", community: community})
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       query = fn title ->
         """
         {
-          search(communityId:"#{community.symbol}") {
+          search {
             products(query: "#{title}") {
               title,
-              description,
+              description
             }
           }
         }

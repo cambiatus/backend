@@ -637,12 +637,16 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       insert(:network, community: community, user: user_3)
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       query = fn name ->
         """
         {
-          search(communityId:"#{community.symbol}") {
+          search {
             members(query: "#{name}") {
               name,
               account
