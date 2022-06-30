@@ -24,7 +24,7 @@ defmodule Cambiatus.Shop do
 
   def query(Category, _) do
     Category
-    |> Category.alphabetical()
+    |> Category.positional()
   end
 
   def query(queryable, _params) do
@@ -219,20 +219,13 @@ defmodule Cambiatus.Shop do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_category(%{categories: categories} = attrs) do
+  def create_category(%{categories: _} = attrs) do
     attrs
     |> Map.delete(:categories)
     |> create_category()
     |> case do
       {:ok, category} ->
-        ids = Enum.map(categories, & &1.id)
-        query = from(p in Category, where: p.id in ^ids)
-        sub_categories = Repo.all(query)
-
-        category
-        |> Category.changeset(%{})
-        |> Category.assoc_categories(sub_categories)
-        |> Repo.update()
+        update_category(category, attrs)
 
       {:error, _} = error ->
         error

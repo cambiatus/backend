@@ -59,7 +59,7 @@ defmodule Cambiatus.Shop.Category do
     put_assoc(changeset, :categories, categories)
   end
 
-  def alphabetical(query \\ Category) do
-    order_by(query, [c], asc: :name)
+  def positional(query \\ Category) do
+    order_by(query, [c], asc: :position)
   end
 end

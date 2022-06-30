@@ -689,5 +689,76 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       refute Cambiatus.Shop.get_category(category.id)
     end
+
+    test "Updates existing categories with new positioning", %{conn: conn, community: community} do
+      parent = insert(:category, community: community)
+      leaf_1 = insert(:category, %{community: community, parent_id: parent.id})
+      leaf_2 = insert(:category, %{community: community, parent_id: parent.id})
+
+      mutation = """
+        mutation {
+          category(id: #{parent.id},
+                  name: "new name",
+                  categories: [{id: #{leaf_1.id}, position: 0}, {id: #{leaf_2.id}, position: 1}]) {
+            id
+            name
+            categories { id position }
+          }
+        }
+      """
+
+      response = post(conn, "/api/graph", query: mutation) |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "category" => %{
+                   "id" => parent.id,
+                   "name" => "new name",
+                   "categories" => [
+                     %{"id" => leaf_1.id, "position" => 0},
+                     %{"id" => leaf_2.id, "position" => 1}
+                   ]
+                 }
+               }
+             } == response
+    end
+
+    test "Inserts new category with existing categories using position", %{
+      conn: conn,
+      community: community
+    } do
+      parent_params = params_for(:category, community: community)
+      leaf_1 = insert(:category, community: community)
+      leaf_2 = insert(:category, community: community)
+
+      mutation = """
+        mutation {
+          category(name: "#{parent_params.name}",
+                   description: "#{parent_params.description}",
+                   slug: "#{parent_params.slug}",
+                   position: 0,
+                   categories: [
+                    { id: #{leaf_1.id}, position: #{leaf_1.position} },
+                    { id: #{leaf_2.id}, position: #{leaf_2.position} }]) {
+              name
+              categories { id position}
+            }
+        }
+      """
+
+      response = post(conn, "/api/graph", query: mutation) |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "name" => parent_params.name,
+                 "category" => %{
+                   "categories" => [
+                     %{"id" => leaf_1.id, "position" => leaf_1.position},
+                     %{"id" => leaf_2.id, "position" => leaf_2.position}
+                   ]
+                 }
+               }
+             } == response
+    end
   end
 end
