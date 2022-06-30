@@ -42,7 +42,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     @desc "[Auth required] Upserts a product"
     field :product, :product do
       arg(:id, :integer)
-      arg(:community_id, :string)
       arg(:title, :string)
       arg(:description, :string)
       arg(:price, :float)

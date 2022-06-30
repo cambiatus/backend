@@ -6,8 +6,14 @@ defmodule CambiatusWeb.Resolvers.Shop do
   alias Cambiatus.Shop
   alias Cambiatus.Shop.Product
 
-  def upsert_product(_, %{id: product_id} = params, %{context: %{current_user: current_user}}) do
-    params = Map.merge(params, %{creator_id: current_user.account})
+  def upsert_product(_, %{id: product_id} = params, %{
+        context: %{current_user: current_user, current_community: current_community}
+      }) do
+    params =
+      Map.merge(params, %{
+        creator_id: current_user.account,
+        community_id: current_community.symbol
+      })
 
     with %Product{} = product <- Shop.get_product(product_id),
          {:ok, updated_product} <- Shop.update_product(product, params) do
@@ -22,9 +28,11 @@ defmodule CambiatusWeb.Resolvers.Shop do
     end
   end
 
-  def upsert_product(_, params, %{context: %{current_user: current_user}}) do
+  def upsert_product(_, params, %{
+        context: %{current_user: current_user, current_community: current_community}
+      }) do
     params
-    |> Map.merge(%{creator_id: current_user.account})
+    |> Map.merge(%{creator_id: current_user.account, community_id: current_community.symbol})
     |> Shop.create_product()
     |> case do
       {:error, reason} ->

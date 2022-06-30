@@ -4,14 +4,16 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
   describe "Shop Resolver" do
     test "create product" do
       user = insert(:user, account: "lucca123")
-      conn = build_conn() |> auth_user(user)
-
       community = insert(:community, creator: user.account, has_shop: true)
+
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       mutation = """
         mutation {
-          product(communityId: "#{community.symbol}",
-                  title: "Product title",
+          product(title: "Product title",
                   description: "Product description",
                   price: 10.0000,
                   images: [],
@@ -44,14 +46,16 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "create product fails if not all required fields are filled" do
       user = insert(:user, account: "lucca123")
-      conn = build_conn() |> auth_user(user)
-
       community = insert(:community, creator: user.account, has_shop: true)
+
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       mutation = """
         mutation {
-          product(communityId: "#{community.symbol}",
-                  title: "Product title",
+          product(title: "Product title",
                   images: [],
                   trackStock: false) {
             title
@@ -85,14 +89,17 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "create product fails if shop is not enabled" do
       user = insert(:user, account: "lucca123")
-      conn = build_conn() |> auth_user(user)
 
       community = insert(:community, creator: user.account, has_shop: false)
 
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+
       mutation = """
         mutation {
-          product(communityId: "#{community.symbol}",
-                  title: "Product title",
+          product(title: "Product title",
                   description: "Product description",
                   price: 10.0000,
                   images: [],
@@ -126,8 +133,12 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
     test "update existing product" do
       user = insert(:user)
       product = insert(:product)
+      community = product.community |> Repo.preload(:subdomain)
 
-      conn = build_conn() |> auth_user(user)
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       mutation = """
         mutation {
@@ -159,8 +170,12 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
     test "update images substitutes old images" do
       user = insert(:user)
       product = insert(:product, %{creator: user})
+      community = product.community |> Repo.preload(:subdomain)
 
-      conn = build_conn() |> auth_user(user)
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       mutation = """
       mutation {
@@ -181,8 +196,12 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
     test "update existing product sending track_stock" do
       user = insert(:user)
       product = insert(:product, %{creator: user, track_stock: true, units: 10})
+      community = product.community |> Repo.preload(:subdomain)
 
-      conn = build_conn() |> auth_user(user)
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       mutation = """
       mutation {
