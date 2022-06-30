@@ -36,14 +36,16 @@ defmodule CambiatusWeb.Resolvers.Shop do
     end
   end
 
-  def get_products(_, %{community_id: community_id, filters: filters}, _) do
-    case Shop.list_products(community_id, filters) do
+  def get_products(_, %{filters: filters}, %{
+        context: %{current_community: current_community}
+      }) do
+    case Shop.list_products(current_community.symbol, filters) do
       results -> {:ok, results}
     end
   end
 
-  def get_products(_, %{community_id: community_id}, _) do
-    results = Shop.list_products(community_id)
+  def get_products(_, _, %{context: %{current_community: current_community}}) do
+    results = Shop.list_products(current_community.symbol)
 
     {:ok, results}
   end
