@@ -750,8 +750,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       assert %{
                "data" => %{
-                 "name" => parent_params.name,
                  "category" => %{
+                   "name" => parent_params.name,
                    "categories" => [
                      %{"id" => leaf_1.id, "position" => leaf_1.position},
                      %{"id" => leaf_2.id, "position" => leaf_2.position}
