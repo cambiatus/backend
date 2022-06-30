@@ -28,7 +28,6 @@ defmodule CambiatusWeb.Schema.SocialTypes do
       arg(:id, :integer)
       arg(:title, non_null(:string))
       arg(:description, non_null(:string))
-      arg(:community_id, :string)
       arg(:scheduling, :datetime)
 
       middleware(Middleware.Authenticate)

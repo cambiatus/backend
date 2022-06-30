@@ -6,13 +6,16 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
   describe "Social Resolver" do
     test "create news" do
       user = insert(:user, account: "test1234")
-      conn = build_conn() |> auth_user(user)
-
       community = insert(:community, creator: user.account, has_news: true)
+
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       mutation = """
         mutation {
-          news(communityId: "#{community.symbol}", title: "News title", description: "News description"){
+          news(title: "News title", description: "News description"){
             title
             description
             user {
@@ -51,7 +54,10 @@ defmodule CambiatusWeb.Resolvers.SocialTest do
           description: "Description"
         )
 
-      conn = build_conn() |> auth_user(community_creator)
+      conn =
+        build_conn()
+        |> auth_user(community_creator)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       mutation = """
         mutation {
