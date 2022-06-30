@@ -5,9 +5,11 @@ defmodule CambiatusWeb.Resolvers.Payment do
 
   alias Cambiatus.Payments
 
-  def create_contribution(_, params, %{context: %{current_user: current_user}}) do
+  def create_contribution(_, params, %{
+        context: %{current_user: current_user, current_community: current_community}
+      }) do
     params
-    |> Map.merge(%{user_id: current_user.account})
+    |> Map.merge(%{user_id: current_user.account, community_id: current_community.symbol})
     |> Payments.create_contribution()
     |> case do
       {:ok, _} = success ->

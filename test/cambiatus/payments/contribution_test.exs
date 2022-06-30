@@ -1,5 +1,5 @@
 defmodule Cambiatus.Payments.ContributionTest do
-  use Cambiatus.DataCase
+  use Cambiatus.ApiCase
 
   alias Cambiatus.Payments.Contribution
 
@@ -47,5 +47,42 @@ defmodule Cambiatus.Payments.ContributionTest do
                | currency: "BTC",
                  payment_method: "paypal"
              })
+  end
+
+  test "create new contribution", %{params: params} do
+    community =
+      params.community_id
+      |> Cambiatus.Commune.get_community!()
+      |> Repo.preload(:subdomain)
+
+    user = Cambiatus.Accounts.get_user!(params.user_id)
+
+    query = """
+    mutation {
+      contribution(amount: #{params.amount}, currency: #{params.currency}) {
+        amount,
+        currency
+      }
+    }
+    """
+
+    conn =
+      build_conn()
+      |> auth_user(user)
+      |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+
+    response =
+      conn
+      |> post("api/graph", query: query)
+      |> json_response(200)
+
+    assert %{
+             "data" => %{
+               "contribution" => %{
+                 "amount" => params.amount,
+                 "currency" => params.currency
+               }
+             }
+           } == response
   end
 end
