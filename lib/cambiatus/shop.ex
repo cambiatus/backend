@@ -5,6 +5,8 @@ defmodule Cambiatus.Shop do
 
   import Ecto.Query
 
+  alias Ecto.Multi
+
   alias Cambiatus.Commune
   alias Cambiatus.Repo
   alias Cambiatus.Shop.{Category, Product, Order}
@@ -256,21 +258,26 @@ defmodule Cambiatus.Shop do
 
   """
   def update_category(%Category{} = category, %{categories: categories} = attrs) do
-    category
-    |> update_category(Map.delete(attrs, :categories))
+    transaction =
+      Multi.new()
+      |> Multi.update(:category, Category.changeset(category, Map.delete(attrs, :categories)))
+
+    categories
+    |> Enum.reduce(transaction, fn sub_category_attrs, multi ->
+      changeset =
+        Category
+        |> Repo.get(sub_category_attrs.id)
+        |> Category.changeset(Map.merge(sub_category_attrs, %{parent_id: category.id}))
+
+      Multi.update(multi, {:sub_category, sub_category_attrs.id}, changeset)
+    end)
+    |> Repo.transaction()
     |> case do
-      {:ok, category} ->
-        ids = Enum.map(categories, & &1.id)
-        query = from(p in Category, where: p.id in ^ids)
-        sub_categories = Repo.all(query)
+      {:ok, %{category: category}} ->
+        {:ok, category}
 
-        category
-        |> Category.changeset(%{})
-        |> Category.assoc_categories(sub_categories)
-        |> Repo.update()
-
-      {:error, _} = error ->
-        error
+      _ ->
+        {:error, "Cannot update category"}
     end
   end
 
