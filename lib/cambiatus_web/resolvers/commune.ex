@@ -116,12 +116,12 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.add_photos(current_user, symbol, urls)
   end
 
-  def set_highlighted_news(_, %{community_id: community_id} = args, %{
-        context: %{current_user: current_user}
+  def set_highlighted_news(_, args, %{
+        context: %{current_user: current_user, current_community: current_community}
       }) do
     news_id = Map.get(args, :news_id)
 
-    Commune.set_highlighted_news(community_id, news_id, current_user)
+    Commune.set_highlighted_news(current_community, news_id, current_user)
     |> case do
       {:ok, community} ->
         publish_highlighted_news_change(community.highlighted_news_id, community.symbol)

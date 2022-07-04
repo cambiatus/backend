@@ -105,12 +105,13 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required] Subscribe to highlighted_news change"
     field :highlighted_news, :news do
-      arg(:community_id, non_null(:string))
-
-      config(fn args, %{context: context} ->
+      config(fn _args, %{context: context} ->
         case context do
-          %{current_user: _} -> {:ok, topic: args.community_id}
-          _ -> {:error, "Please login first"}
+          %{current_user: _, current_community: current_community} ->
+            {:ok, topic: current_community.symbol}
+
+          _ ->
+            {:error, "Please login first"}
         end
       end)
     end
@@ -129,7 +130,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required - Admin only] Set highlighted news of community. If news_id is not present, sets highlighted as nil"
     field :highlighted_news, :community do
-      arg(:community_id, non_null(:string))
       arg(:news_id, :integer)
 
       middleware(Middleware.Authenticate)

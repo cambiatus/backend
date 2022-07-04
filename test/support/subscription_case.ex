@@ -31,13 +31,23 @@ defmodule CambiatusWeb.SubscriptionCase do
       Ecto.Adapters.SQL.Sandbox.mode(Cambiatus.Repo, {:shared, self()})
     end
 
+    params = %{}
+
+    params =
+      if tags[:no_domain] do
+        params
+      else
+        community = insert(:community)
+        Map.put(params, "community-domain", community.subdomain.name)
+      end
+
     params =
       if tags[:authenticated_socket] do
         user = insert(:user)
         token = CambiatusWeb.AuthToken.sign(user)
-        %{"Authorization" => "Bearer " <> token}
+        Map.put(params, "Authorization", "Bearer " <> token)
       else
-        %{}
+        params
       end
 
     {:ok, socket} = Phoenix.ChannelTest.connect(UserSocket, params)

@@ -416,9 +416,10 @@ defmodule Cambiatus.Commune do
     end
   end
 
-  def set_highlighted_news(community_id, news_id, current_user \\ nil) do
-    community_id
-    |> get_community
+  def set_highlighted_news(current_community, news_id, user \\ nil)
+
+  def set_highlighted_news(%Community{} = current_community, news_id, current_user) do
+    current_community
     |> check_user_authorization(current_user)
     |> case do
       {:error, error} ->

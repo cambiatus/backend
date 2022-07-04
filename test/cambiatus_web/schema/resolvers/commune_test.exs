@@ -652,11 +652,15 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       news = insert(:news, %{community: community, user: user})
       Community.changeset(community, %{highlighted_news_id: news.id}) |> Repo.update!()
-      conn = build_conn() |> auth_user(user)
+
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       query = """
       mutation {
-        highlightedNews(communityId: "#{community.symbol}"){
+        highlightedNews{
           symbol
           highlighted_news {
             id

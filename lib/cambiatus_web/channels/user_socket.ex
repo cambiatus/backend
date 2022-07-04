@@ -20,23 +20,35 @@ defmodule CambiatusWeb.UserSocket do
   # performing token verification on connect.
 
   def connect(params, socket, _) do
-    context = build_context(params)
+    context =
+      params
+      |> Map.take(["Authorization", "community-domain"])
+      |> build_context()
+
     socket = Absinthe.Phoenix.Socket.put_options(socket, context: context)
 
     {:ok, socket}
   end
 
-  defp build_context(%{"Authorization" => "Bearer " <> token}) do
-    with {:ok, %{id: account}} <- AuthToken.verify(token),
-         %{} = user <- Cambiatus.Accounts.get_user(account) do
-      %{current_user: user}
-    else
-      _ -> %{}
-    end
-  end
+  defp build_context(params) do
+    Enum.reduce(params, %{}, fn
+      {"Authorization", "Bearer " <> token}, context ->
+        with {:ok, %{id: account}} <- AuthToken.verify(token),
+             %Cambiatus.Accounts.User{} = user <- Cambiatus.Accounts.get_user(account) do
+          Map.put(context, :current_user, user)
+        else
+          _ -> context
+        end
 
-  defp build_context(_) do
-    %{}
+      {"community-domain", community_domain}, context ->
+        case Cambiatus.Commune.get_community_by_subdomain(community_domain) do
+          {:ok, current_community} ->
+            Map.put(context, :current_community, current_community)
+
+          _ ->
+            context
+        end
+    end)
   end
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
