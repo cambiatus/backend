@@ -563,11 +563,14 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       community =
         insert(:community, %{creator: user.account, has_news: false, symbol: "symbol-0"})
 
-      conn = build_conn() |> auth_user(user)
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       query = """
       mutation {
-        community(communityId: "#{community.symbol}", input: {hasNews: true}){
+        community(input: {hasNews: true}){
           symbol
           hasNews
         }
@@ -603,11 +606,14 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       news_id = insert(:news, %{community: community, user: user}).id
 
-      conn = build_conn() |> auth_user(user)
+      conn =
+        build_conn()
+        |> auth_user(user)
+        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
 
       query = """
       mutation {
-        highlightedNews(communityId: "#{community.symbol}", newsID: #{news_id}){
+        highlightedNews(newsID: #{news_id}){
           symbol
           highlighted_news {
             id

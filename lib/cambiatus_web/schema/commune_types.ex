@@ -138,7 +138,6 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     @desc "[Auth required - Admin only] Updates various fields in a community"
     field :community, :community do
-      arg(:community_id, non_null(:string))
       arg(:input, non_null(:community_update_input))
 
       middleware(Middleware.Authenticate)

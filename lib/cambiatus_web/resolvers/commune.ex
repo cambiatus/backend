@@ -47,10 +47,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
     {:ok, invite.community}
   end
 
-  def update_community(_, %{community_id: community_id, input: changes}, %{
-        context: %{current_user: current_user}
+  def update_community(_, %{input: changes}, %{
+        context: %{current_user: current_user, current_community: current_community}
       }) do
-    Commune.update_community(community_id, current_user, changes)
+    Commune.update_community(current_community, current_user, changes)
     |> case do
       {:ok, _community} = ok ->
         ok
