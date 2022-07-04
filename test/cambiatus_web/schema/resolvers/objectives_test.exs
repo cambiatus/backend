@@ -379,10 +379,7 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       verifier2 = insert(:user)
       verifier3 = insert(:user)
 
-      conn =
-        build_conn()
-        |> auth_user(verifier3)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(verifier3, community.subdomain.name)
 
       # Create action
       action1 = insert(:action, %{verification_type: "claimable", objective: objective})
@@ -523,10 +520,7 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       action_2 = insert(:action, %{params | description: "PlAcEhOlDeR tExT"})
       _action_3 = insert(:action, %{params | description: "never matches"})
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = fn description ->
         """

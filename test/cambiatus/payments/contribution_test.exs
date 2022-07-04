@@ -66,10 +66,7 @@ defmodule Cambiatus.Payments.ContributionTest do
     }
     """
 
-    conn =
-      build_conn()
-      |> auth_user(user)
-      |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+    conn = auth_conn(user, community.subdomain.name)
 
     response =
       conn

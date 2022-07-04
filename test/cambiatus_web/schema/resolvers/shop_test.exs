@@ -6,10 +6,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       user = insert(:user, account: "lucca123")
       community = insert(:community, creator: user.account, has_shop: true)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
@@ -48,10 +45,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       user = insert(:user, account: "lucca123")
       community = insert(:community, creator: user.account, has_shop: true)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
@@ -92,10 +86,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       community = insert(:community, creator: user.account, has_shop: false)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
@@ -135,10 +126,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       product = insert(:product)
       community = product.community |> Repo.preload(:subdomain)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
@@ -172,10 +160,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       product = insert(:product, %{creator: user})
       community = product.community |> Repo.preload(:subdomain)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
       mutation {
@@ -198,10 +183,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       product = insert(:product, %{creator: user, track_stock: true, units: 10})
       community = product.community |> Repo.preload(:subdomain)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
       mutation {
@@ -253,10 +235,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       user = insert(:user)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = fn title ->
         """

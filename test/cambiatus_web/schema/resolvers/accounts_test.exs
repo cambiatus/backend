@@ -559,7 +559,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       conn =
         build_conn()
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+        |> assign_domain(community.subdomain.name)
         |> put_req_header("user-agent", "Mozilla")
 
       query = """
@@ -595,10 +595,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       network = insert(:network, community: community, user: user)
 
-      conn =
-        build_conn()
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
-        |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = """
       query {
@@ -638,10 +635,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       user = insert(:user)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = fn name ->
         """

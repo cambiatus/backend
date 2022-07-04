@@ -187,10 +187,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       community = insert(:community)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       insert_list(@num, :product, %{community: community, creator: user})
       insert_list(2, :product, %{community: community})
@@ -276,10 +273,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       community = insert(:community)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
@@ -357,10 +351,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       user = insert(:user)
       community = insert(:community)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       insert_list(@num, :product, %{community: community, is_deleted: true, creator: user})
       %{title: title} = insert(:product, %{community: community, creator: user})
@@ -563,10 +554,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       community =
         insert(:community, %{creator: user.account, has_news: false, symbol: "symbol-0"})
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = """
       mutation {
@@ -606,10 +594,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       news_id = insert(:news, %{community: community, user: user}).id
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = """
       mutation {
@@ -653,10 +638,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       news = insert(:news, %{community: community, user: user})
       Community.changeset(community, %{highlighted_news_id: news.id}) |> Repo.update!()
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = """
       mutation {
