@@ -228,10 +228,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       c2 = insert(:community)
       user = insert(:user)
 
-      conn =
-        build_conn()
-        |> auth_user(user)
-        |> put_req_header("community-domain", "https://" <> c1.subdomain.name)
+      conn = auth_conn(user, c1.subdomain.name)
 
       insert_list(@num, :product, %{units: 0, community: c1})
       insert_list(@num, :product, %{community: c1})

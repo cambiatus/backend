@@ -510,9 +510,8 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
 
     test "search actions" do
       user = insert(:user)
-      objective = insert(:objective)
-
-      community = objective.community |> Repo.preload(:subdomain)
+      community = insert(:community)
+      objective = insert(:objective, community: community)
 
       # Create 3 actions, only modifying the description between them
       params = %{objective: objective, description: ""}

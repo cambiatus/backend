@@ -123,8 +123,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "update existing product" do
       user = insert(:user)
-      product = insert(:product)
-      community = product.community |> Repo.preload(:subdomain)
+      community = insert(:community)
+      product = insert(:product, community: community)
 
       conn = auth_conn(user, community.subdomain.name)
 
@@ -157,8 +157,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "update images substitutes old images" do
       user = insert(:user)
-      product = insert(:product, %{creator: user})
-      community = product.community |> Repo.preload(:subdomain)
+      community = insert(:community)
+      product = insert(:product, %{creator: user, community: community})
 
       conn = auth_conn(user, community.subdomain.name)
 
@@ -180,8 +180,10 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "update existing product sending track_stock" do
       user = insert(:user)
-      product = insert(:product, %{creator: user, track_stock: true, units: 10})
-      community = product.community |> Repo.preload(:subdomain)
+      community = insert(:community)
+
+      product =
+        insert(:product, %{creator: user, track_stock: true, units: 10, community: community})
 
       conn = auth_conn(user, community.subdomain.name)
 
@@ -226,14 +228,13 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
     end
 
     test "search products" do
+      user = insert(:user)
       community = insert(:community)
 
       # Create 3 products, only modifying the name between them
       product_1 = insert(:product, %{title: "Lorem ipsum", community: community})
       product_2 = insert(:product, %{title: "PlAcEhOlDeR tExT", community: community})
       _product_3 = insert(:product, %{title: "never matches", community: community})
-
-      user = insert(:user)
 
       conn = auth_conn(user, community.subdomain.name)
 
