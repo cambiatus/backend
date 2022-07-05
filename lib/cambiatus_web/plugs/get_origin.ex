@@ -7,30 +7,35 @@ defmodule CambiatusWeb.Plugs.GetOrigin do
 
   import Plug.Conn
 
+  alias Cambiatus.Commune
+
   def init(opts), do: opts
 
   def call(conn, _) do
-    conn
-    |> get_req_header("community-domain")
-    |> get_domain()
-    |> case do
-      "" ->
-        conn
+    with [domain] <- get_req_header(conn, "community-domain"),
+         {:ok, domain} <- get_domain_from_header(domain),
+         {:ok, current_community} <- Commune.get_community_by_subdomain(domain) do
+      Absinthe.Plug.assign_context(conn, current_community: current_community)
+    else
+      {:error, error} ->
+        Sentry.capture_message("Could not get community from subdomain", extra: %{error: error})
+        {:error, error}
 
-      domain ->
-        conn = Absinthe.Plug.assign_context(conn, domain: domain)
-
-        case Cambiatus.Commune.get_community_by_subdomain(domain) do
-          {:ok, community} ->
-            Absinthe.Plug.assign_context(conn, current_community: community)
-
+      _ ->
+        with domain <- get_domain_from_host(conn.host),
+             {:ok, current_community} <- Commune.get_community_by_subdomain(domain) do
+          Absinthe.Plug.assign_context(conn, current_community: current_community)
+        else
           _ ->
+            Sentry.capture_message("Could not assign community into context")
             conn
         end
     end
   end
 
-  def get_domain(["http://" <> domain]), do: domain
-  def get_domain(["https://" <> domain]), do: domain
-  def get_domain(_), do: ""
+  def get_domain_from_header("http://" <> domain), do: {:ok, domain}
+  def get_domain_from_header("https://" <> domain), do: {:ok, domain}
+  def get_domain_from_header(_), do: :error
+
+  def get_domain_from_host(host), do: host |> String.split(":") |> List.first()
 end
