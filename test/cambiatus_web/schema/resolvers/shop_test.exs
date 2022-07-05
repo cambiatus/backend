@@ -761,4 +761,60 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              } == response
     end
   end
+
+  test "Update list of categories positioning: switch places", %{
+    conn: conn,
+    community: community
+  } do
+    root_1 = insert(:category, community: community, position: 1)
+    root_2 = insert(:category, community: community, position: 2)
+    root_3 = insert(:category, community: community, position: 3)
+
+    mutation = """
+      mutation {
+        category(id: #{root_1.id}, position: 3) {
+          name
+          position
+        }
+      }
+    """
+
+    response = post(conn, "/api/graph", query: mutation) |> json_response(200)
+
+    assert %{
+             "data" => %{
+               "category" => %{
+                 "id" => root_1.id,
+                 "position" => 3
+               }
+             }
+           } == response
+
+    #
+    query = """
+      query {
+        community(symbol: "#{community.symbol}") {
+          categories {
+            name position
+          }
+        }
+      }
+    """
+
+    response_query = post(conn, "/api/graph", query: query) |> json_response(200)
+
+    assert %{
+             "data" => %{
+               "community" => %{
+                 "categories" => [
+                   %{"id" => root_2.id, "position" => 1},
+                   %{"id" => root_3.id, "position" => 2}
+                   %{"id" => root_1.id, "position" => 3},
+                 ]
+               }
+             }
+           } == response
+  end
+
+  test "Remove parent from category"
 end

@@ -234,4 +234,95 @@ defmodule Cambiatus.ShopTest do
       ] = category.categories
     end
   end
+
+  describe "categories positioning" do
+    setup do
+      {:ok, %{community: insert(:community, has_shop: true)}}
+    end
+
+    test "root position validations: can't be negative", %{community: community} do
+      params = params_for(:category, %{community: community, position: -1})
+      assert {:error, details} = Shop.create_category(params)
+      assert %{position: ["position cant be negative"]} == errors_on(details)
+    end
+
+    test "root position validations: can't create new categories with position > biggest position +1",
+         %{community: community} do
+      # Creates random number of root categories
+      n = Enum.random(3..20)
+      root_categories = insert_list(n, :category, community: community)
+
+      # Add more, but this time they belong to a random category
+      _other_categories =
+        insert_list(5, :category,
+          community: community,
+          parent_id: Enum.random(root_categories) |> Map.get(:id)
+        )
+
+      # Try to insert a position, but on a position that doesn't exist today
+      params = params_for(:category, community: community, position: n + 2)
+      assert {:error, details} = Shop.create_category(params)
+      assert %{position: ["isn't valid"]} == errors_on(details)
+    end
+
+    test "root position validations: when updating position must be <= number of categories", %{
+      community: community
+    } do
+      # Creates random number of root categories
+      n = Enum.random(3..20)
+      root_categories = insert_list(n, :category, community: community)
+
+      # Add more, but this time they belong to a random category
+      _other_categories =
+        insert_list(5, :category,
+          community: community,
+          parent_id: Enum.random(root_categories) |> Map.get(:id)
+        )
+
+      # Try to update a position, but on a position that doesn't exist today
+      category = Enum.random(root_categories)
+      assert {:error, details} = Shop.update_category(category, %{position: n + 1})
+      assert %{position: ["isn't valid"]} == errors_on(details)
+
+      assert {:ok, _} = Shop.update_category(category, %{position: n - 1})
+    end
+
+    test "update position on root elements automatically reorders every other category", %{
+      community: community
+    } do
+      # Create random number of root categories
+      # n = Enum.random(3..20) TODO:
+      n = Enum.random(3..5)
+      root_categories = insert_list(n, :category, community: community)
+
+      # Create random number of child categories
+      _other_categories =
+        insert_list(Enum.random(5..10), :category,
+          community: community,
+          # Random parent
+          parent_id: root_categories |> Enum.random() |> Map.get(:id)
+        )
+
+      # Change a single category position to the end
+      # and check if it changed position for every other root category
+      category = root_categories |> Enum.random()
+
+      {:ok, _updated_category} =
+        Shop.update_category(category, %{position: Enum.random(0..(n - 1))})
+
+      updated_root_categories =
+        Category
+        |> where([c], c.community_id == ^community.symbol)
+        |> where([c], is_nil(c.parent_id))
+        |> Repo.all()
+
+      assert Enum.map(root_categories, &Map.take(&1, [:id, :position])) ==
+               Enum.map(updated_root_categories, &Map.take(&1, [:id, :position]))
+    end
+
+    test "new position > old position"
+    test "new position < old position"
+    test "new position beginning of list"
+    test "new position end of list"
+  end
 end
