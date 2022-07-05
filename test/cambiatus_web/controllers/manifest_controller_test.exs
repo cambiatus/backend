@@ -1,33 +1,23 @@
 defmodule CambiatusWeb.ManifestControllerTest do
-  use Cambiatus.DataCase
+  use Cambiatus.ApiCase
   use CambiatusWeb.ConnCase
 
-  alias Cambiatus.Repo
-
-  setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
-  end
-
   describe "Manifest" do
-    setup :valid_community_and_user
+    test "get manifest from existing community" do
+      # Insert community and assign its domain to the http request
+      # using Cambiatus.ApiCase
 
-    test "get manifest from existing community",
-         %{conn: conn, community: community} do
-      # Get community for DataCase.valid_community_and_user,
-      # pattern match community for name and subdomain,
-      # insert subdomain name into conn
+      community = insert(:community)
 
-      %{name: name, subdomain: %{name: subdomain}} = Repo.preload(community, :subdomain)
+      conn = build_conn() |> assign_domain(community.subdomain.name)
 
-      conn =
-        %{conn | host: subdomain}
-        |> get("/api/manifest")
+      response = get(conn, "/api/manifest")
 
-      %{"short_name" => short_name} = json_response(conn, 200)
+      %{"short_name" => short_name} = json_response(response, 200)
 
       # Check http code 200 and if the community name served is the same generated
-      assert conn.status == 200
-      assert short_name == name
+      assert response.status == 200
+      assert short_name == community.name
     end
 
     test "get manifest from non existing community" do
