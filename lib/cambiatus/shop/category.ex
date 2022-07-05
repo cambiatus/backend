@@ -51,6 +51,8 @@ defmodule Cambiatus.Shop.Category do
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> Shop.validate_community_shop_enabled()
+    |> validate_position()
+    |> validate_root_position(category)
   end
 
   def assoc_categories(changeset, []), do: changeset
@@ -58,6 +60,40 @@ defmodule Cambiatus.Shop.Category do
   def assoc_categories(changeset, categories) do
     put_assoc(changeset, :categories, categories)
   end
+
+  def validate_position(changeset) do
+    position = get_field(changeset, :position)
+
+    if position < 0 do
+      add_error(changeset, :position, "position cant be negative")
+    else
+      changeset
+    end
+  end
+
+  def validate_root_position(changeset, %{id: _, community_id: community_id}) do
+    position = get_field(changeset, :position)
+
+    # TODO: Remove this
+    IO.inspect(changeset)
+
+    # Only checks this if it is a root category's position
+    count =
+      Category
+      |> where([c], c.community_id == ^community_id)
+      |> where([c], is_nil(c.parent_id))
+      |> Repo.aggregate(:count, :id)
+
+    IO.puts("Position é #{position}, count é #{count}")
+
+    if position >= count do
+      add_error(changeset, :position, "isn't valid")
+    else
+      changeset
+    end
+  end
+
+  def validate_root_position(changeset, _), do: changeset
 
   def positional(query \\ Category) do
     order_by(query, [c], asc: :position)
