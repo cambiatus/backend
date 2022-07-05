@@ -73,8 +73,9 @@ defmodule Cambiatus.Shop.Category do
 
   # When inserting
   def validate_root_position(
-        %{changes: %{community_id: community_id, position: position}} = changeset
-      ) do
+        %{changes: %{community_id: community_id, position: position, parent_id: p}} = changeset
+      )
+      when is_nil(p) do
     count = Shop.count_categories(community_id)
 
     unless position <= count + 1 do
@@ -91,10 +92,11 @@ defmodule Cambiatus.Shop.Category do
   # When updating
   def validate_root_position(
         %{
-          data: %{id: _, community_id: community_id},
+          data: %{id: id, community_id: community_id},
           changes: %{position: position}
         } = changeset
-      ) do
+      )
+      when not is_nil(id) do
     count = Shop.count_categories(community_id)
 
     unless position <= count do
@@ -108,49 +110,7 @@ defmodule Cambiatus.Shop.Category do
     end
   end
 
-  #
-  #   def validate_root_position(changeset) do
-  #     IO.puts("===========")
-  #     require IEx
-  #     IEx.pry()
-  #
-  #     community_id = "0-symbol"
-  #     attrs = %{}
-  #     position = 0
-  #
-  #     # Only checks this if it is a root category's position
-  #
-  #
-  #     IO.puts("Count deu: #{count}")
-  #
-  #     if is_nil(Map.get(attrs, :id)) do
-  #       # New categories, position must be <= count +1
-  #       IO.puts("INSERT")
-  #
-  #       unless position <= count + 1 do
-  #         add_error(
-  #           changeset,
-  #           :position,
-  #           "for new categories, position must be smaller or equal than #{count + 1}"
-  #         )
-  #       else
-  #         changeset
-  #       end
-  #     else
-  #       # Existing categories, position must be <= count
-  #       IO.puts("UPDATE")
-  #
-  #       unless position <= count do
-  #         add_error(
-  #           changeset,
-  #           :position,
-  #           "for existing categories, position must be smaller or equal than #{count}"
-  #         )
-  #       else
-  #         changeset
-  #       end
-  #     end
-  #   end
+  def validate_root_position(changeset), do: changeset
 
   def from_community(query \\ __MODULE__, community_id) do
     where(query, [cat], cat.community_id == ^community_id)

@@ -104,6 +104,7 @@ defmodule Cambiatus.ShopTest do
       params =
         params_for(:category, %{
           community_id: community.symbol,
+          position: 2,
           categories: [%{id: sub_category.id}]
         })
 
@@ -173,7 +174,7 @@ defmodule Cambiatus.ShopTest do
           name: "Fruit 🍏",
           community_id: community.symbol,
           parent_id: category.id,
-          position: 10
+          position: 2
         })
 
       assert {:ok, %Category{} = sub_category} = Shop.create_category(params)
@@ -192,7 +193,7 @@ defmodule Cambiatus.ShopTest do
           name: "Another fruit 🍒",
           community_id: community.symbol,
           parent_id: category.id,
-          position: 11
+          position: 1
         })
 
       assert {:ok, %Category{} = another_sub_category} = Shop.create_category(another_params)
