@@ -45,14 +45,14 @@ defmodule Cambiatus.Shop.Category do
   @required_fields ~w(community_id name description slug position)a
   @optional_fields ~w(id parent_id icon_uri image_uri meta_title meta_description meta_keywords)a
 
-  def changeset(%Category{} = category, attrs) do
+  def changeset(%__MODULE__{} = category, attrs) do
     category
     |> Repo.preload(:categories)
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
     |> Shop.validate_community_shop_enabled()
     |> validate_position()
-    |> validate_root_position(category)
+    |> validate_root_position(attrs)
   end
 
   def assoc_categories(changeset, []), do: changeset
@@ -71,31 +71,61 @@ defmodule Cambiatus.Shop.Category do
     end
   end
 
-  def validate_root_position(changeset, %{id: _, community_id: community_id}) do
+  def validate_root_position(changeset, %{community_id: community_id} = attrs) do
     position = get_field(changeset, :position)
 
-    # TODO: Remove this
-    IO.inspect(changeset)
+    IO.puts("===========")
+    IO.inspect(attrs)
 
     # Only checks this if it is a root category's position
     count =
       Category
-      |> where([c], c.community_id == ^community_id)
-      |> where([c], is_nil(c.parent_id))
+      |> from_community(community_id)
+      |> roots()
       |> Repo.aggregate(:count, :id)
 
-    IO.puts("Position é #{position}, count é #{count}")
+    IO.puts("Count deu: #{count}")
 
-    if position >= count do
-      add_error(changeset, :position, "isn't valid")
+    if is_nil(Map.get(attrs, :id)) do
+      # New categories, position must be <= count +1
+      IO.puts("INSERT")
+
+      unless position <= count + 1 do
+        add_error(
+          changeset,
+          :position,
+          "for new categories, position must be smaller or equal than #{count + 1}"
+        )
+      else
+        changeset
+      end
     else
-      changeset
+      # Existing categories, position must be <= count
+      IO.puts("UPDATE")
+
+      unless position <= count do
+        add_error(
+          changeset,
+          :position,
+          "for existing categories, position must be smaller or equal than #{count}"
+        )
+      else
+        changeset
+      end
     end
   end
 
   def validate_root_position(changeset, _), do: changeset
 
-  def positional(query \\ Category) do
+  def from_community(query \\ __MODULE__, community_id) do
+    where(query, [cat], cat.community_id == ^community_id)
+  end
+
+  def roots(query \\ __MODULE__) do
+    where(query, [cat], is_nil(cat.parent_id))
+  end
+
+  def positional(query \\ __MODULE__) do
     order_by(query, [c], asc: :position)
   end
 end

@@ -808,8 +808,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                "community" => %{
                  "categories" => [
                    %{"id" => root_2.id, "position" => 1},
-                   %{"id" => root_3.id, "position" => 2}
-                   %{"id" => root_1.id, "position" => 3},
+                   %{"id" => root_3.id, "position" => 2},
+                   %{"id" => root_1.id, "position" => 3}
                  ]
                }
              }

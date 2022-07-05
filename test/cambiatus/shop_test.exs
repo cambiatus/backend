@@ -2,6 +2,7 @@ defmodule Cambiatus.ShopTest do
   use Cambiatus.DataCase
 
   alias Cambiatus.Shop
+  alias Cambiatus.Shop.Category
 
   describe "products" do
     alias Cambiatus.Shop.Product
@@ -261,7 +262,7 @@ defmodule Cambiatus.ShopTest do
       assert %{position: ["position cant be negative"]} == errors_on(details)
     end
 
-    test "root position validations: can't create new categories with position > biggest position +1",
+    test "root position validations: can't create new categories with position > last position +1",
          %{community: community} do
       # Creates random number of root categories
       n = Enum.random(3..20)
@@ -277,7 +278,13 @@ defmodule Cambiatus.ShopTest do
       # Try to insert a position, but on a position that doesn't exist today
       params = params_for(:category, community: community, position: n + 2)
       assert {:error, details} = Shop.create_category(params)
-      assert %{position: ["isn't valid"]} == errors_on(details)
+
+      assert %{position: ["for new categories, position must be smaller or equal than #{n + 1}"]} ==
+               errors_on(details)
+
+      # Modify to a valid position
+      params = %{params | position: n + 1}
+      assert {:ok, _} = Shop.create_category(params)
     end
 
     test "root position validations: when updating position must be <= number of categories", %{
@@ -325,10 +332,11 @@ defmodule Cambiatus.ShopTest do
       {:ok, _updated_category} =
         Shop.update_category(category, %{position: Enum.random(0..(n - 1))})
 
+      # TODO: remove this
       updated_root_categories =
         Category
-        |> where([c], c.community_id == ^community.symbol)
-        |> where([c], is_nil(c.parent_id))
+        |> Category.from_community(community.symbol)
+        |> Category.roots()
         |> Repo.all()
 
       assert Enum.map(root_categories, &Map.take(&1, [:id, :position])) ==
