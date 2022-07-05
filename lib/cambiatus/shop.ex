@@ -177,6 +177,13 @@ defmodule Cambiatus.Shop do
     Repo.all(Category)
   end
 
+  def count_categories(community_id) do
+    Category
+    |> Category.from_community(community_id)
+    |> Category.roots()
+    |> Repo.aggregate(:count, :id)
+  end
+
   @doc """
   Gets a single category. Returns nil if not found
 

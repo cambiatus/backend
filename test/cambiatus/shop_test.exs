@@ -287,7 +287,7 @@ defmodule Cambiatus.ShopTest do
       assert {:ok, _} = Shop.create_category(params)
     end
 
-    test "root position validations: when updating position must be <= number of categories", %{
+    test "root position validations: when updating, position must be a value <= last position", %{
       community: community
     } do
       # Creates random number of root categories
@@ -304,7 +304,9 @@ defmodule Cambiatus.ShopTest do
       # Try to update a position, but on a position that doesn't exist today
       category = Enum.random(root_categories)
       assert {:error, details} = Shop.update_category(category, %{position: n + 1})
-      assert %{position: ["isn't valid"]} == errors_on(details)
+
+      assert %{position: ["for existing categories, position must be smaller or equal than #{n}"]} ==
+               errors_on(details)
 
       assert {:ok, _} = Shop.update_category(category, %{position: n - 1})
     end

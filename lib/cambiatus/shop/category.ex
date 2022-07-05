@@ -52,7 +52,7 @@ defmodule Cambiatus.Shop.Category do
     |> validate_required(@required_fields)
     |> Shop.validate_community_shop_enabled()
     |> validate_position()
-    |> validate_root_position(attrs)
+    |> validate_root_position()
   end
 
   def assoc_categories(changeset, []), do: changeset
@@ -71,51 +71,86 @@ defmodule Cambiatus.Shop.Category do
     end
   end
 
-  def validate_root_position(changeset, %{community_id: community_id} = attrs) do
-    position = get_field(changeset, :position)
+  # When inserting
+  def validate_root_position(
+        %{changes: %{community_id: community_id, position: position}} = changeset
+      ) do
+    count = Shop.count_categories(community_id)
 
-    IO.puts("===========")
-    IO.inspect(attrs)
-
-    # Only checks this if it is a root category's position
-    count =
-      Category
-      |> from_community(community_id)
-      |> roots()
-      |> Repo.aggregate(:count, :id)
-
-    IO.puts("Count deu: #{count}")
-
-    if is_nil(Map.get(attrs, :id)) do
-      # New categories, position must be <= count +1
-      IO.puts("INSERT")
-
-      unless position <= count + 1 do
-        add_error(
-          changeset,
-          :position,
-          "for new categories, position must be smaller or equal than #{count + 1}"
-        )
-      else
-        changeset
-      end
+    unless position <= count + 1 do
+      add_error(
+        changeset,
+        :position,
+        "for new categories, position must be smaller or equal than #{count + 1}"
+      )
     else
-      # Existing categories, position must be <= count
-      IO.puts("UPDATE")
-
-      unless position <= count do
-        add_error(
-          changeset,
-          :position,
-          "for existing categories, position must be smaller or equal than #{count}"
-        )
-      else
-        changeset
-      end
+      changeset
     end
   end
 
-  def validate_root_position(changeset, _), do: changeset
+  # When updating
+  def validate_root_position(
+        %{
+          data: %{id: _, community_id: community_id},
+          changes: %{position: position}
+        } = changeset
+      ) do
+    count = Shop.count_categories(community_id)
+
+    unless position <= count do
+      add_error(
+        changeset,
+        :position,
+        "for existing categories, position must be smaller or equal than #{count}"
+      )
+    else
+      changeset
+    end
+  end
+
+  #
+  #   def validate_root_position(changeset) do
+  #     IO.puts("===========")
+  #     require IEx
+  #     IEx.pry()
+  #
+  #     community_id = "0-symbol"
+  #     attrs = %{}
+  #     position = 0
+  #
+  #     # Only checks this if it is a root category's position
+  #
+  #
+  #     IO.puts("Count deu: #{count}")
+  #
+  #     if is_nil(Map.get(attrs, :id)) do
+  #       # New categories, position must be <= count +1
+  #       IO.puts("INSERT")
+  #
+  #       unless position <= count + 1 do
+  #         add_error(
+  #           changeset,
+  #           :position,
+  #           "for new categories, position must be smaller or equal than #{count + 1}"
+  #         )
+  #       else
+  #         changeset
+  #       end
+  #     else
+  #       # Existing categories, position must be <= count
+  #       IO.puts("UPDATE")
+  #
+  #       unless position <= count do
+  #         add_error(
+  #           changeset,
+  #           :position,
+  #           "for existing categories, position must be smaller or equal than #{count}"
+  #         )
+  #       else
+  #         changeset
+  #       end
+  #     end
+  #   end
 
   def from_community(query \\ __MODULE__, community_id) do
     where(query, [cat], cat.community_id == ^community_id)
