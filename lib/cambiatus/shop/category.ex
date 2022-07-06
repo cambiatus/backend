@@ -71,11 +71,13 @@ defmodule Cambiatus.Shop.Category do
     end
   end
 
+  # Do nothing if there is a parent
+  def validate_root_position(%{changes: %{parent_id: _}} = changeset), do: changeset
+
   # When inserting
   def validate_root_position(
-        %{changes: %{community_id: community_id, position: position, parent_id: p}} = changeset
-      )
-      when is_nil(p) do
+        %{changes: %{community_id: community_id, position: position}} = changeset
+      ) do
     count = Shop.count_categories(community_id)
 
     unless position <= count + 1 do

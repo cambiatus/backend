@@ -204,9 +204,12 @@ defmodule Cambiatus.ShopTest do
         |> Shop.get_category!()
         |> Repo.preload([:categories])
 
-      categories = category.categories |> Enum.map(&Repo.preload(&1, [:categories]))
+      categories =
+        category.categories
+        |> Enum.map(&Repo.preload(&1, [:categories]))
+        |> Enum.sort(fn a, b -> a.position < b.position end)
 
-      assert categories == [sub_category, another_sub_category]
+      assert categories == [another_sub_category, sub_category]
     end
 
     test "Add subcategories with position argument", %{community: community} do
@@ -218,7 +221,7 @@ defmodule Cambiatus.ShopTest do
           name: "First",
           community_id: community.symbol,
           parent_id: parent.id,
-          position: 1
+          position: 0
         })
         |> Shop.create_category()
 
@@ -228,7 +231,7 @@ defmodule Cambiatus.ShopTest do
           name: "Second",
           community_id: community.symbol,
           parent_id: parent.id,
-          position: 2
+          position: 1
         })
         |> Shop.create_category()
 
@@ -238,16 +241,16 @@ defmodule Cambiatus.ShopTest do
           name: "Third",
           community_id: community.symbol,
           parent_id: parent.id,
-          position: 3
+          position: 2
         })
         |> Shop.create_category()
 
       category = parent.id |> Shop.get_category!() |> Repo.preload(:categories)
 
       [
-        %{name: "First", position: 1},
-        %{name: "Second", position: 2},
-        %{name: "Third", position: 3}
+        %{name: "First", position: 0},
+        %{name: "Second", position: 1},
+        %{name: "Third", position: 2}
       ] = category.categories
     end
   end
@@ -277,7 +280,8 @@ defmodule Cambiatus.ShopTest do
         )
 
       # Try to insert a position, but on a position that doesn't exist today
-      params = params_for(:category, community: community, position: n + 2)
+      params = params_for(:category, %{community: community, position: n + 2, parent_id: nil})
+
       assert {:error, details} = Shop.create_category(params)
 
       assert %{position: ["for new categories, position must be smaller or equal than #{n + 1}"]} ==
@@ -312,15 +316,17 @@ defmodule Cambiatus.ShopTest do
       assert {:ok, _} = Shop.update_category(category, %{position: n - 1})
     end
 
-    test "update position on root elements automatically reorders every other category", %{
+    test "Insert new root category reorders all other root categories"
+
+    test "Update root category with new positioning reorders all other root categories", %{
       community: community
     } do
       # Create random number of root categories
-      # n = Enum.random(3..20) TODO:
+      # TODO: n = Enum.random(3..20)
       n = Enum.random(3..5)
       root_categories = insert_list(n, :category, community: community)
 
-      # Create random number of child categories
+      # Create random number of child categories, to make sure they don't affect the ordering
       _other_categories =
         insert_list(Enum.random(5..10), :category,
           community: community,

@@ -258,6 +258,7 @@ defmodule Cambiatus.Shop do
 
   """
   def update_category(%Category{} = category, %{categories: categories} = attrs) do
+    # Happens only on subcategories
     transaction =
       Multi.new()
       |> Multi.update(:category, Category.changeset(category, Map.delete(attrs, :categories)))
@@ -279,6 +280,30 @@ defmodule Cambiatus.Shop do
       _ ->
         {:error, "Cannot update category"}
     end
+  end
+
+  def update_category(
+        %Category{} = %{parent_id: parent_id} = category,
+        %{position: position} = attrs
+      )
+      when is_nil(parent_id) do
+    # Only matches root categories and when there is an update to position
+    transaction =
+      Multi.new()
+      |> Multi.update(:category, Category.changeset(category, attrs))
+
+    # Get the old position first
+    # Get the new position
+
+    # this will generate a delta. we will need to change every position that was inside that delta.
+
+    # We will get two cases:
+    # 1. The new position is bigger than > old position
+    # - All elements with position bigger > old position and smaller > than new postion
+    # - For all of those, we will simply decrease their position by 1
+
+    # 2. The new position is smaller than < old position
+    # -
   end
 
   def update_category(%Category{} = category, attrs) do
