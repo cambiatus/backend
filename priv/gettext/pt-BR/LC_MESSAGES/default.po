@@ -117,3 +117,8 @@ msgstr "clicando aqui"
 #: lib/cambiatus_web/email.ex:52
 msgid "Community News"
 msgstr "Notícias da Comunidade"
+
+#, elixir-format
+#: lib/cambiatus_web/views/rich_link_view.ex.ex:22
+msgid "Sold by"
+msgstr "Vendido por"
