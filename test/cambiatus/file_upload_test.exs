@@ -1,9 +1,9 @@
-defmodule Cambiatus.UploadTest do
+defmodule Cambiatus.FileUploadTest do
   @moduledoc """
   Unit tests for the upload module
   """
   use Cambiatus.DataCase
-  alias Cambiatus.File.Uploader
+  alias Cambiatus.FileUploader, as: Uploader
 
   # We use this header to fool the application into thinking we're giving it a GIF image.
   # Pretend it's this one https://i.imgur.com/0Y1xISa.gif
