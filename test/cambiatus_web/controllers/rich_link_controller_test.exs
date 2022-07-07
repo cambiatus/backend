@@ -198,7 +198,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       %{conn | host: community.subdomain.name}
       |> get("/api/rich_link/categories/#{category.id}")
 
-    response = html_response(conn, 200) |> IO.inspect()
+    response = html_response(conn, 200)
 
     # Check if all the rich link fields are properly filled
     Enum.each(expected_data, fn {k, v} ->
@@ -233,7 +233,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       %{conn | host: community.subdomain.name}
       |> get("/api/rich_link/categories/#{category.id}")
 
-    response = html_response(conn, 200) |> IO.inspect()
+    response = html_response(conn, 200)
 
     # Check if all the rich link fields are properly filled
     Enum.each(expected_data, fn {k, v} ->
