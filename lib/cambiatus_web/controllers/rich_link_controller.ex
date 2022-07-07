@@ -24,6 +24,9 @@ defmodule CambiatusWeb.RichLinkController do
           ["profile", account] ->
             user_rich_link(account, community_subdomain, language)
 
+          ["categories", category_id] ->
+            category_rich_link(category_id, community_subdomain, language)
+
           _ ->
             community_rich_link(community_subdomain, language)
         end
@@ -73,6 +76,23 @@ defmodule CambiatusWeb.RichLinkController do
            locale: get_language(language, user)
          }}
 
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  def category_rich_link(category_id, community_subdomain, language) do
+    with category <- Cambiatus.Shop.get_category(category_id),
+         {:ok, _community} <- Commune.find_community(%{}, %{subdomain: community_subdomain}, %{}) do
+      {:ok,
+       %{
+         description: category.meta_description || category.description,
+         title: category.meta_title || category.name,
+         url: Path.join(community_subdomain, "/categories/#{category.id}"),
+         image: category.icon_uri || category.image_uri,
+         locale: get_language(language, %{})
+       }}
+    else
       {:error, reason} ->
         {:error, reason}
     end
