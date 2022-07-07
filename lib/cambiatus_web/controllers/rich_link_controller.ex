@@ -91,7 +91,7 @@ defmodule CambiatusWeb.RichLinkController do
          description: category.meta_description || category.description,
          title: category.meta_title || category.name,
          url: community_subdomain <> "/shop/categories/#{category.slug}-#{category.id}",
-         image: category.icon_uri || category.image_uri,
+         image: category.icon_uri || category.image_uri || @fallback_image,
          locale: get_language(language, %{})
        }}
     else
