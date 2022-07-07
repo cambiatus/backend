@@ -188,7 +188,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
     expected_data = %{
       description: category.meta_description,
       title: category.meta_title,
-      url: Path.join(community.subdomain.name, "/categories/#{category.id}"),
+      url: community.subdomain.name <> "/shop/categories/#{category.slug}-#{category.id}",
       image: category.icon_uri,
       locale: "en-US"
     }
@@ -196,7 +196,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
     # Submit GET request for a category rich link
     conn =
       %{conn | host: community.subdomain.name}
-      |> get("/api/rich_link/categories/#{category.id}")
+      |> get("/api/rich_link/shop/categories/#{category.slug}-#{category.id}")
 
     response = html_response(conn, 200)
 
@@ -223,7 +223,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
     expected_data = %{
       description: category.description,
       title: category.name,
-      url: Path.join(community.subdomain.name, "/categories/#{category.id}"),
+      url: community.subdomain.name <> "/shop/categories/#{category.slug}-#{category.id}",
       image: category.image_uri,
       locale: "en-US"
     }
@@ -231,7 +231,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
     # Submit GET request for a category rich link
     conn =
       %{conn | host: community.subdomain.name}
-      |> get("/api/rich_link/categories/#{category.id}")
+      |> get("/api/rich_link/shop/categories/#{category.slug}-#{category.id}")
 
     response = html_response(conn, 200)
 

@@ -24,8 +24,11 @@ defmodule CambiatusWeb.RichLinkController do
           ["profile", account] ->
             user_rich_link(account, community_subdomain, language)
 
-          ["categories", category_id] ->
-            category_rich_link(category_id, community_subdomain, language)
+          ["shop", "categories", category_info] ->
+            category_info
+            |> String.split("-")
+            |> List.last()
+            |> category_rich_link(community_subdomain, language)
 
           _ ->
             community_rich_link(community_subdomain, language)
@@ -88,7 +91,7 @@ defmodule CambiatusWeb.RichLinkController do
        %{
          description: category.meta_description || category.description,
          title: category.meta_title || category.name,
-         url: Path.join(community_subdomain, "/categories/#{category.id}"),
+         url: community_subdomain <> "/shop/categories/#{category.slug}-#{category.id}",
          image: category.icon_uri || category.image_uri,
          locale: get_language(language, %{})
        }}
