@@ -8,9 +8,10 @@ defmodule Cambiatus.Shop.Product do
   import Ecto.Query
   @type t :: %__MODULE__{}
 
-  alias Cambiatus.{Accounts.User, Commune, Repo}
+  alias Cambiatus.{Accounts.User, Repo}
   alias Cambiatus.Commune.Community
-  alias Cambiatus.Shop.{Order, Product, ProductImage}
+  alias Cambiatus.Shop
+  alias Cambiatus.Shop.{Category, Order, Product, ProductCategory, ProductImage}
 
   schema "products" do
     field(:title, :string)
@@ -32,9 +33,12 @@ defmodule Cambiatus.Shop.Product do
       on_replace: :delete,
       on_delete: :delete_all
     )
+
+    has_many(:product_categories, ProductCategory)
+    has_many(:categories, through: [:product_categories, :category])
   end
 
-  @required_fields ~w(title description price track_stock community_id)a
+  @required_fields ~w(community_id title description price track_stock)a
   @optional_fields ~w(units deleted_at is_deleted creator_id inserted_at updated_at)a
 
   @doc """
@@ -45,22 +49,26 @@ defmodule Cambiatus.Shop.Product do
 
   def changeset(%Product{}, attrs, :create) do
     %Product{}
-    |> Repo.preload(:images)
+    |> Repo.preload([:images, :categories])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> assoc_images(attrs)
+    |> assoc_categories(attrs)
+    |> validate_categories()
     |> validate_required(@required_fields)
     |> foreign_key_constraint(:creator_id)
     |> foreign_key_constraint(:community_id)
-    |> validate_community_shop_enabled()
+    |> Shop.validate_community_shop_enabled()
     |> validate_track_stock_units()
   end
 
   def changeset(%Product{} = product, attrs, :update) do
     product
-    |> Repo.preload(:images)
+    |> Repo.preload([:images, :categories])
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> assoc_images(attrs)
-    |> validate_community_shop_enabled()
+    |> assoc_categories(attrs)
+    |> validate_categories()
+    |> Shop.validate_community_shop_enabled()
     |> validate_track_stock_units()
   end
 
@@ -82,20 +90,37 @@ defmodule Cambiatus.Shop.Product do
     end
   end
 
-  def validate_community_shop_enabled(changeset) do
-    changeset
-    |> get_field(:community_id)
-    |> Commune.get_community()
-    |> case do
-      {:ok, community} ->
-        if Map.get(community, :has_shop),
-          do: changeset,
-          else: add_error(changeset, :community_id, "shop is not enabled")
+  def assoc_categories(changeset, %{categories: []}), do: changeset
 
-      {:error, _} ->
-        add_error(changeset, :community_id, "does not exist")
-    end
+  def assoc_categories(changeset, %{product_categories: _} = attrs) do
+    put_assoc(changeset, :product_categories, Map.get(attrs, :product_categories))
   end
+
+  def assoc_categories(changeset, _), do: changeset
+
+  def validate_categories(
+        %{
+          changes: %{product_categories: product_categories},
+          data: %{community_id: community_id}
+        } = changeset
+      ) do
+    Enum.reduce(
+      product_categories,
+      changeset,
+      fn product_category, changeset ->
+        with %{category_id: category_id} <- product_category.changes,
+             %Category{} = category <- Repo.get(Category, category_id),
+             true <- category.community_id == community_id do
+          changeset
+        else
+          _ ->
+            add_error(changeset, :product_category, "Can't find category with given ID")
+        end
+      end
+    )
+  end
+
+  def validate_categories(changeset), do: changeset
 
   def validate_track_stock_units(changeset) do
     track_stock = get_field(changeset, :track_stock)
@@ -117,6 +142,13 @@ defmodule Cambiatus.Shop.Product do
   def created_by(query \\ Product, account) do
     query
     |> where([p], p.creator_id == ^account)
+  end
+
+  def in_categories(query \\ Product, categories_ids) do
+    query
+    |> join(:inner, [p], c in assoc(p, :categories))
+    |> where([p, c], c.id in ^categories_ids)
+    |> distinct([p], p.id)
   end
 
   def active(query \\ Product) do

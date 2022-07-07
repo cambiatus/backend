@@ -180,8 +180,10 @@ defmodule Cambiatus.Auth.SignUp do
   def create_user({:error, _} = error), do: error
   def create_user({:error, _, _} = error), do: error
 
-  def create_user(%{name: name, account: account, email: email} = params) do
-    case Accounts.create_user(%{name: name, account: account, email: email}) do
+  def create_user(%{name: _, account: _, email: _} = params) do
+    new_user = Map.merge(params, %{created_at: DateTime.utc_now()})
+
+    case Accounts.create_user(new_user) do
       {:ok, _user} ->
         params
 
