@@ -455,11 +455,11 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       insert(:product_category, product: product_2, category: cat_1)
       insert(:product_category, product: product_3, category: cat_2)
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query_1 = """
       query{
-        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_1.id}]}) {
+        products(filters: {categories_ids: [#{cat_1.id}]}) {
           id,
           title
           }
@@ -468,7 +468,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       query_2 = """
       query{
-        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_1.id}, #{cat_2.id}]}) {
+        products(filters: {categories_ids: [#{cat_1.id}, #{cat_2.id}]}) {
           id,
           title
           }
@@ -477,7 +477,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       query_3 = """
       query{
-        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_3.id}]}) {
+        products(filters: {categories_ids: [#{cat_3.id}]}) {
           id,
           title
           }
