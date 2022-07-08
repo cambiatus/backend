@@ -80,7 +80,7 @@ defmodule Cambiatus.Shop.Category do
       ) do
     count = Shop.count_categories(community_id)
 
-    unless position <= count + 1 do
+    if position > count + 1 do
       add_error(
         changeset,
         :position,
@@ -101,7 +101,7 @@ defmodule Cambiatus.Shop.Category do
       when not is_nil(id) do
     count = Shop.count_categories(community_id)
 
-    unless position <= count do
+    if position > count do
       add_error(
         changeset,
         :position,
