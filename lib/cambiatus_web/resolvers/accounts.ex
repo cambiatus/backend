@@ -94,12 +94,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
           ip_address: ip_address
         }
       }) do
-    subdomain =
-      current_community
-      |> Cambiatus.Repo.preload(:subdomain)
-      |> Map.get(:subdomain)
-
-    case SignIn.sign_in(account, password, domain: subdomain.name) do
+    case SignIn.sign_in(account, password, community: current_community) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
