@@ -56,7 +56,7 @@ defmodule Cambiatus.Mixfile do
       {:phoenix_swoosh, "~> 0.3"},
 
       # Phoenix
-      {:phoenix, "~> 1.5.3"},
+      {:phoenix, "~> 1.5.13"},
       {:phoenix_pubsub, "~> 2.0"},
       {:phoenix_ecto, "~> 4.0"},
 
@@ -85,7 +85,7 @@ defmodule Cambiatus.Mixfile do
       {:web_push_encryption, "~> 0.3.0"},
 
       # Background processing
-      {:oban, "~> 2.9"},
+      {:oban, "~> 2.10.1"},
 
       # Dev only
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},

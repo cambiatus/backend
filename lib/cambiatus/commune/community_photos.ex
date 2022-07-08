@@ -11,7 +11,7 @@ defmodule Cambiatus.Commune.CommunityPhotos do
   @url_regex ~r/ https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/\/=]*)/
 
   schema "communities_photos" do
-    field(:url, :string, null: false)
+    field(:url, :string)
     belongs_to(:community, Community, references: :symbol, type: :string)
 
     timestamps()

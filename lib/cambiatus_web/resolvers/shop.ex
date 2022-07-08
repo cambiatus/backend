@@ -3,8 +3,8 @@ defmodule CambiatusWeb.Resolvers.Shop do
   Resolver module for Shop operations, responsible to parse GraphQL params and adjust responses to it
   """
 
-  alias Cambiatus.Shop
-  alias Cambiatus.Shop.Product
+  alias Cambiatus.{Commune, Shop, Repo}
+  alias Cambiatus.Shop.{Category, Product}
 
   def upsert_product(_, %{id: product_id} = params, %{
         context: %{current_user: current_user, current_community: current_community}
@@ -16,11 +16,18 @@ defmodule CambiatusWeb.Resolvers.Shop do
       })
 
     with %Product{} = product <- Shop.get_product(product_id),
+         %Product{} = product <- Repo.preload(product, :community),
+         true <-
+           product.creator_id == current_user.account ||
+             Commune.is_community_admin?(product.community, current_user.account),
          {:ok, updated_product} <- Shop.update_product(product, params) do
       {:ok, updated_product}
     else
       nil ->
         {:error, "Product not found"}
+
+      false ->
+        {:error, "Logged user can't do this action"}
 
       {:error, error} ->
         Sentry.capture_message("Product update failed", extra: %{error: error})
@@ -72,6 +79,53 @@ defmodule CambiatusWeb.Resolvers.Shop do
     case Shop.delete_product(product_id, current_user) do
       {:error, reason} ->
         Sentry.capture_message("Product deletion failed", extra: %{error: reason})
+
+        {:ok, %{status: :error, reason: reason}}
+
+      {:ok, message} ->
+        {:ok, %{status: :success, reason: message}}
+    end
+  end
+
+  def upsert_category(_, %{id: category_id} = params, %{
+        context: %{current_community_id: community_id}
+      }) do
+    params = Map.merge(params, %{community_id: community_id})
+
+    with %Category{} = category <- Shop.get_category(category_id),
+         {:ok, updated_category} <- Shop.update_category(category, params) do
+      {:ok, updated_category}
+    else
+      nil ->
+        {:error, "Category not found"}
+
+      {:error, error} ->
+        Sentry.capture_message("Category update failed", extra: %{error: error})
+        {:error, message: "Category update failed", details: Cambiatus.Error.from(error)}
+    end
+  end
+
+  def upsert_category(_, params, %{context: %{current_community_id: community_id}}) do
+    params = Map.merge(params, %{community_id: community_id})
+
+    params
+    |> Shop.create_category()
+    |> case do
+      {:error, reason} ->
+        Sentry.capture_message("Category creation failed", extra: %{error: reason})
+        {:error, message: "Category creation failed", details: Cambiatus.Error.from(reason)}
+
+      {:ok, _product} = result ->
+        result
+    end
+  end
+
+  def delete_category(_, %{id: category_id}, %{
+        context: %{current_community_id: community_id, current_user: current_user}
+      }) do
+    case Shop.delete_category(category_id, current_user, community_id) do
+      {:error, reason} ->
+        Sentry.capture_message("Category deletion failed", extra: %{error: reason})
 
         {:ok, %{status: :error, reason: reason}}
 

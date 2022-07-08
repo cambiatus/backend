@@ -37,11 +37,13 @@ jobs:
         path: deps
         key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
         restore-keys: ${{ runner.os }}-mix-
+    - name: Install exiftool
+      run: sudo apt -y install exiftool
     - name: Install dependencies
       run: mix deps.get
     - name: Check Formatting
       run: mix format --check-formatted    
-    - name: Check Credo Warnings
-      run: mix credo --strict --only warning
+    - name: Check format, compile and credo warnings
+      run: mix do compile --warnings-as-errors --all warnings, format --check-formatted, credo --strict --only warning
     - name: Run tests
       run: mix test
