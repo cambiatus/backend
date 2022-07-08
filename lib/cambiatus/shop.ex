@@ -301,13 +301,12 @@ defmodule Cambiatus.Shop do
     |> Enum.reduce(transaction, fn cat, multi ->
       # 1. The new position is  > old position: Decrease position
       # 2. The new position is < old position: Increase position
-      current_position =
-        if new_position > old_position, do: cat.position - 1, else: cat.position + 1
-
       Multi.update(
         multi,
         {:category, cat.id},
-        Category.changeset(cat, %{position: current_position})
+        Category.changeset(cat, %{
+          position: if(new_position > old_position, do: cat.position - 1, else: cat.position + 1)
+        })
       )
     end)
     |> Repo.transaction()
