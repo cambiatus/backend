@@ -323,7 +323,7 @@ defmodule Cambiatus.Shop do
       {:error, :category, error, _} ->
         {:error, error}
 
-      error ->
+      _error ->
         {:error, "Cannot update category"}
     end
   end

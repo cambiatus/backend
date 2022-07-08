@@ -1,4 +1,3 @@
-<% import Phoenix.HTML %>
 <html lang="en" class="h-full" >
   <head>
     <meta charset="utf-8">
