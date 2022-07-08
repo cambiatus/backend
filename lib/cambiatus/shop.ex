@@ -160,7 +160,9 @@ defmodule Cambiatus.Shop do
     end
   end
 
-  def count_categories(community_id) when not is_nil(community_id) do
+  def count_categories(nil), do: {:error, "Community id cannot be `nil`"}
+
+  def count_categories(community_id) do
     Category
     |> Category.from_community(community_id)
     |> Category.roots()
@@ -287,33 +289,26 @@ defmodule Cambiatus.Shop do
         %{position: new_position} = attrs
       )
       when is_nil(parent_id) do
-    # Only matches root categories and when there is an update to position
+    # Do category position change first
     transaction =
       Multi.new()
       |> Multi.update(:category, Category.changeset(category, attrs))
 
-    # this will generate a delta. we will need to change every position that was inside that delta.
+    # Change all elements between the old position and the new position
     Category
     |> Category.between_positions(old_position, new_position)
     |> Repo.all()
     |> Enum.reduce(transaction, fn cat, multi ->
-      if old_position < new_position do
-        # 1. The new position is bigger than > old position
-        # Increase position by one
-        Multi.update(
-          multi,
-          {:category, cat.id},
-          Category.changeset(cat, %{position: cat.position - 1})
-        )
-      else
-        # 2. The new position is smaller than < old position
-        # Decrease position by one
-        Multi.update(
-          multi,
-          {:category, cat.id},
-          Category.changeset(cat, %{position: cat.position + 1})
-        )
-      end
+      # 1. The new position is  > old position: Decrease position
+      # 2. The new position is < old position: Increase position
+      current_position =
+        if new_position > old_position, do: cat.position - 1, else: cat.position + 1
+
+      Multi.update(
+        multi,
+        {:category, cat.id},
+        Category.changeset(cat, %{position: current_position})
+      )
     end)
     |> Repo.transaction()
     |> case do
