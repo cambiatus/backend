@@ -121,9 +121,9 @@ defmodule CambiatusWeb.Resolvers.Shop do
   end
 
   def delete_category(_, %{id: category_id}, %{
-        context: %{current_community_id: community_id, current_user: current_user}
+        context: %{current_community: current_community, current_user: current_user}
       }) do
-    case Shop.delete_category(category_id, current_user, community_id) do
+    case Shop.delete_category(category_id, current_user, current_community.symbol) do
       {:error, reason} ->
         Sentry.capture_message("Category deletion failed", extra: %{error: reason})
 
