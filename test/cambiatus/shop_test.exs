@@ -315,7 +315,101 @@ defmodule Cambiatus.ShopTest do
       assert {:ok, _} = Shop.update_category(category, %{position: n - 1})
     end
 
-    test "Insert new root category reorders all other root categories"
+    test "Insert new root category reorders all other root categories: 1) new element as first" do
+      community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
+      root_categories = insert_list(5, :category, %{community: community})
+
+      # Create random number of child categories, to make sure they don't affect the ordering
+      insert_list(Enum.random(5..10), :category,
+        community: community,
+        parent_id: root_categories |> Enum.random() |> Map.get(:id)
+      )
+
+      params = params_for(:category, %{community: community, position: 0})
+      {:ok, new_category} = Shop.create_category(params)
+
+      root_categories =
+        Category
+        |> Category.from_community(community.symbol)
+        |> Category.roots()
+        |> Category.positional()
+        |> Repo.all()
+        |> Enum.map(&Map.take(&1, [:id, :position]))
+
+      assert [
+               %{id: new_category.id, position: 0},
+               %{id: Enum.at(root_categories, 0).id, position: 1},
+               %{id: Enum.at(root_categories, 1).id, position: 2},
+               %{id: Enum.at(root_categories, 2).id, position: 3},
+               %{id: Enum.at(root_categories, 3).id, position: 4},
+               %{id: Enum.at(root_categories, 4).id, position: 5}
+             ] == root_categories
+    end
+
+    test "Insert new root category reorders all other root categories: 2) new element as last" do
+      community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
+      root_categories = insert_list(5, :category, %{community: community})
+
+      # Create random number of child categories, to make sure they don't affect the ordering
+      insert_list(Enum.random(5..10), :category,
+        community: community,
+        parent_id: root_categories |> Enum.random() |> Map.get(:id)
+      )
+
+      params = params_for(:category, %{community: community, position: 5})
+      {:ok, new_category} = Shop.create_category(params)
+
+      root_categories =
+        Category
+        |> Category.from_community(community.symbol)
+        |> Category.roots()
+        |> Category.positional()
+        |> Repo.all()
+        |> Enum.map(&Map.take(&1, [:id, :position]))
+
+      assert [
+               %{id: Enum.at(root_categories, 0).id, position: 0},
+               %{id: Enum.at(root_categories, 1).id, position: 1},
+               %{id: Enum.at(root_categories, 2).id, position: 2},
+               %{id: Enum.at(root_categories, 3).id, position: 3},
+               %{id: Enum.at(root_categories, 4).id, position: 4},
+               %{id: new_category.id, position: 5}
+             ] == root_categories
+    end
+
+    test "Insert new root category reorders all other root categories: 3) in middle" do
+      community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
+      root_categories = insert_list(5, :category, %{community: community})
+
+      # Create random number of child categories, to make sure they don't affect the ordering
+      insert_list(Enum.random(5..10), :category,
+        community: community,
+        parent_id: root_categories |> Enum.random() |> Map.get(:id)
+      )
+
+      params = params_for(:category, %{community: community, position: 3})
+      {:ok, new_category} = Shop.create_category(params)
+
+      root_categories =
+        Category
+        |> Category.from_community(community.symbol)
+        |> Category.roots()
+        |> Category.positional()
+        |> Repo.all()
+        |> Enum.map(&Map.take(&1, [:id, :position]))
+
+      assert [
+               %{id: Enum.at(root_categories, 0).id, position: 0},
+               %{id: Enum.at(root_categories, 1), position: 1},
+               %{id: Enum.at(root_categories, 2).id, position: 2},
+               %{id: new_category.id, position: 3},
+               %{id: Enum.at(root_categories, 3).id, position: 4},
+               %{id: Enum.at(root_categories, 4).id, position: 5}
+             ] == root_categories
+    end
 
     test "Update root category with new positioning reorders all other root categories: 1) new position < old position" do
       community = insert(:community, has_shop: true)
