@@ -88,7 +88,9 @@ cd backend
 ```
 **Step 3**
 
-The system uses [ImageMagick](https://imagemagick.org/) for ensuring that the process of image uploads runs properly and [Mogrify](https://hex.pm/packages/mogrify) (dependency package) is dependent on this. [Here](https://imagemagick.org/script/download.php) are instructions for installing it.  
+The system uses two external dependencies that need to be manually installed. Both of them are used for dealing with images
+* [ImageMagick](https://imagemagick.org/) is used to ensure that the process of image uploads runs properly and [Mogrify](https://hex.pm/packages/mogrify) (dependency package) is dependent on it. [Here](https://imagemagick.org/script/download.php) are instructions for installing it.  
+* [Exiftool](https://exiftool.org/) is used to remove unnecessary metadata from images, mainly to help protect user privacy. [Here](https://exiftool.org/install.html) are instructions for installing it.
 
 Install dependencies by running 
 ```
