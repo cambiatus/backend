@@ -287,10 +287,6 @@ defmodule Cambiatus.Shop do
         %{position: new_position} = attrs
       )
       when is_nil(parent_id) do
-    IO.puts("====== INIT SPECIAL UPDATE")
-    IO.inspect(category |> Map.take([:id, :position]))
-    IO.inspect(attrs)
-
     # Only matches root categories and when there is an update to position
     transaction =
       Multi.new()
@@ -302,8 +298,6 @@ defmodule Cambiatus.Shop do
     |> Repo.all()
     |> Enum.reduce(transaction, fn cat, multi ->
       if old_position < new_position do
-        IO.puts("INSIDE REDUCE: OLD: #{old_position} <<<<< NEW: #{new_position}")
-        IO.inspect(cat)
         # 1. The new position is bigger than > old position
         # Increase position by one
         Multi.update(
@@ -312,8 +306,6 @@ defmodule Cambiatus.Shop do
           Category.changeset(cat, %{position: cat.position - 1})
         )
       else
-        IO.puts("INSIDE REDUCE: OLD: #{old_position} >>>>>> NEW: #{new_position}")
-        IO.inspect(cat)
         # 2. The new position is smaller than < old position
         # Decrease position by one
         Multi.update(
@@ -332,9 +324,6 @@ defmodule Cambiatus.Shop do
         {:error, error}
 
       error ->
-        IO.puts("🧨 ERROR")
-        IO.inspect(error)
-        IO.puts("🧨 ERROR")
         {:error, "Cannot update category"}
     end
   end

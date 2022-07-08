@@ -256,18 +256,16 @@ defmodule Cambiatus.ShopTest do
   end
 
   describe "categories positioning" do
-    setup do
-      {:ok, %{community: insert(:community, has_shop: true)}}
-    end
-
-    test "root position validations: can't be negative", %{community: community} do
+    test "root position validations: can't be negative" do
+      community = insert(:community, has_shop: true)
       params = params_for(:category, %{community: community, position: -1})
       assert {:error, details} = Shop.create_category(params)
       assert %{position: ["position cant be negative"]} == errors_on(details)
     end
 
-    test "root position validations: can't create new categories with position > last position +1",
-         %{community: community} do
+    test "root position validations: can't create new categories with position > last position +1" do
+      community = insert(:community, has_shop: true)
+
       # Creates random number of root categories
       n = Enum.random(3..20)
       root_categories = insert_list(n, :category, community: community)
@@ -292,14 +290,13 @@ defmodule Cambiatus.ShopTest do
       assert {:ok, _} = Shop.create_category(params)
     end
 
-    test "root position validations: when updating, position must be a value <= last position", %{
-      community: community
-    } do
+    test "root position validations: when updating, position must be a value <= last position" do
+      community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
+
       # Creates random number of root categories
       n = Enum.random(3..8)
       root_categories = insert_list(n, :category, community: community)
-
-      IO.inspect(Enum.map(root_categories, &Map.take(&1, [:id, :position])))
 
       # Add more, but this time they belong to a random category
       _other_categories =
@@ -320,28 +317,21 @@ defmodule Cambiatus.ShopTest do
 
     test "Insert new root category reorders all other root categories"
 
-    test "Update root category with new positioning reorders all other root categories: 1) new position < old position",
-         %{
-           community: community
-         } do
-      root_categories = insert_list(5, :category, community: community)
+    test "Update root category with new positioning reorders all other root categories: 1) new position < old position" do
+      community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
+      root_categories = insert_list(5, :category, %{community: community})
 
       # Create random number of child categories, to make sure they don't affect the ordering
-      _other_categories =
-        insert_list(Enum.random(5..10), :category,
-          community: community,
-          # Random parent
-          parent_id: root_categories |> Enum.random() |> Map.get(:id)
-        )
+      insert_list(Enum.random(5..10), :category,
+        community: community,
+        parent_id: root_categories |> Enum.random() |> Map.get(:id)
+      )
 
-      # Change a single category position to the end
-      # and check if it changed position for every other root category
-      category = root_categories |> Enum.find(fn e -> e.id == 4 end)
-
-      # Shop.update_category(category, %{position: Enum.random(0..(n - 1))})
+      # Get a specific element on the root_categories to be changed position
+      category = root_categories |> Enum.at(3)
       {:ok, _updated_category} = Shop.update_category(category, %{position: 1})
 
-      # TODO: remove this
       updated_root_categories =
         Category
         |> Category.from_community(community.symbol)
@@ -349,38 +339,32 @@ defmodule Cambiatus.ShopTest do
         |> Category.positional()
         |> Repo.all()
 
+      # Check if ordering correction works properly
       assert [
-               %{id: 1, position: 0},
-               %{id: 4, position: 1},
-               %{id: 2, position: 2},
-               %{id: 3, position: 3},
-               %{id: 5, position: 4}
+               %{id: Enum.at(root_categories, 0).id, position: 0},
+               %{id: Enum.at(root_categories, 3).id, position: 1},
+               %{id: Enum.at(root_categories, 1).id, position: 2},
+               %{id: Enum.at(root_categories, 2).id, position: 3},
+               %{id: Enum.at(root_categories, 4).id, position: 4}
              ] ==
                Enum.map(updated_root_categories, &Map.take(&1, [:id, :position]))
     end
 
-    test "Update root category with new positioning reorders all other root categories: 2) new position > old position",
-         %{
-           community: community
-         } do
+    test "Update root category with new positioning reorders all other root categories: 2) new position > old position" do
+      community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
       root_categories = insert_list(4, :category, community: community)
 
       # Create random number of child categories, to make sure they don't affect the ordering
-      _other_categories =
-        insert_list(Enum.random(5..10), :category,
-          community: community,
-          # Random parent
-          parent_id: root_categories |> Enum.random() |> Map.get(:id)
-        )
+      insert_list(Enum.random(5..10), :category,
+        community: community,
+        parent_id: root_categories |> Enum.random() |> Map.get(:id)
+      )
 
-      # Change a single category position to the end
-      # and check if it changed position for every other root category
-      category = root_categories |> Enum.find(fn e -> e.id == 1 end)
-
-      # Shop.update_category(category, %{position: Enum.random(0..(n - 1))})
+      # Get a specific element on the root_categories to be changed position
+      category = root_categories |> Enum.at(0)
       {:ok, _updated_category} = Shop.update_category(category, %{position: 2})
 
-      # TODO: remove this
       updated_root_categories =
         Category
         |> Category.from_community(community.symbol)
@@ -388,35 +372,31 @@ defmodule Cambiatus.ShopTest do
         |> Category.positional()
         |> Repo.all()
 
+      # Check if ordering correction works properly
       assert [
-               %{id: 2, position: 0},
-               %{id: 3, position: 1},
-               %{id: 1, position: 2},
-               %{id: 4, position: 3}
+               %{id: Enum.at(root_categories, 1).id, position: 0},
+               %{id: Enum.at(root_categories, 2).id, position: 1},
+               %{id: Enum.at(root_categories, 0).id, position: 2},
+               %{id: Enum.at(root_categories, 3).id, position: 3}
              ] ==
                Enum.map(updated_root_categories, &Map.take(&1, [:id, :position]))
     end
 
-    test "Update root category with new positioning reorders all other root categories: 3) new position begining of the list",
-         %{community: community} do
+    test "Update root category with new positioning reorders all other root categories: 3) new position begining of the list" do
+      community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
       root_categories = insert_list(5, :category, community: community)
 
       # Create random number of child categories, to make sure they don't affect the ordering
-      _other_categories =
-        insert_list(Enum.random(5..10), :category,
-          community: community,
-          # Random parent
-          parent_id: root_categories |> Enum.random() |> Map.get(:id)
-        )
+      insert_list(Enum.random(5..10), :category,
+        community: community,
+        parent_id: root_categories |> Enum.random() |> Map.get(:id)
+      )
 
-      # Change a single category position to the end
-      # and check if it changed position for every other root category
-      category = root_categories |> Enum.find(fn e -> e.id == 3 end)
-
-      # Shop.update_category(category, %{position: Enum.random(0..(n - 1))})
+      # Get a specific element on the root_categories to be changed position
+      category = root_categories |> Enum.at(2)
       {:ok, _updated_category} = Shop.update_category(category, %{position: 0})
 
-      # TODO: remove this
       updated_root_categories =
         Category
         |> Category.from_community(community.symbol)
@@ -424,36 +404,32 @@ defmodule Cambiatus.ShopTest do
         |> Category.positional()
         |> Repo.all()
 
+      # Check if ordering correction works properly
       assert [
-               %{id: 3, position: 0},
-               %{id: 1, position: 1},
-               %{id: 2, position: 2},
-               %{id: 4, position: 3},
-               %{id: 5, position: 4}
+               %{id: Enum.at(root_categories, 2).id, position: 0},
+               %{id: Enum.at(root_categories, 0).id, position: 1},
+               %{id: Enum.at(root_categories, 1).id, position: 2},
+               %{id: Enum.at(root_categories, 3).id, position: 3},
+               %{id: Enum.at(root_categories, 4).id, position: 4}
              ] ==
                Enum.map(updated_root_categories, &Map.take(&1, [:id, :position]))
     end
 
-    test "Update root category with new positioning reorders all other root categories: 4) new position end of the list",
-         %{community: community} do
+    test "Update root category with new positioning reorders all other root categories: 4) new position end of the list" do
+      community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
       root_categories = insert_list(12, :category, community: community)
 
       # Create random number of child categories, to make sure they don't affect the ordering
-      _other_categories =
-        insert_list(Enum.random(5..10), :category,
-          community: community,
-          # Random parent
-          parent_id: root_categories |> Enum.random() |> Map.get(:id)
-        )
+      insert_list(Enum.random(5..10), :category,
+        community: community,
+        parent_id: root_categories |> Enum.random() |> Map.get(:id)
+      )
 
-      # Change a single category position to the end
-      # and check if it changed position for every other root category
-      category = root_categories |> Enum.find(&(&1.id == 10))
-
-      # Shop.update_category(category, %{position: Enum.random(0..(n - 1))})
+      # Get a specific element on the root_categories to be changed position
+      category = root_categories |> Enum.at(9)
       {:ok, _updated_category} = Shop.update_category(category, %{position: 11})
 
-      # TODO: remove this
       updated_root_categories =
         Category
         |> Category.from_community(community.symbol)
@@ -461,19 +437,20 @@ defmodule Cambiatus.ShopTest do
         |> Category.positional()
         |> Repo.all()
 
+      # Check if ordering correction works properly
       assert [
-               %{id: 1, position: 0},
-               %{id: 2, position: 1},
-               %{id: 3, position: 2},
-               %{id: 4, position: 3},
-               %{id: 5, position: 4},
-               %{id: 6, position: 5},
-               %{id: 7, position: 6},
-               %{id: 8, position: 7},
-               %{id: 9, position: 8},
-               %{id: 11, position: 9},
-               %{id: 12, position: 10},
-               %{id: 10, position: 11}
+               %{id: Enum.at(root_categories, 0).id, position: 0},
+               %{id: Enum.at(root_categories, 1).id, position: 1},
+               %{id: Enum.at(root_categories, 2).id, position: 2},
+               %{id: Enum.at(root_categories, 3).id, position: 3},
+               %{id: Enum.at(root_categories, 4).id, position: 4},
+               %{id: Enum.at(root_categories, 5).id, position: 5},
+               %{id: Enum.at(root_categories, 6).id, position: 6},
+               %{id: Enum.at(root_categories, 7).id, position: 7},
+               %{id: Enum.at(root_categories, 8).id, position: 8},
+               %{id: Enum.at(root_categories, 10).id, position: 9},
+               %{id: Enum.at(root_categories, 11).id, position: 10},
+               %{id: Enum.at(root_categories, 9).id, position: 11}
              ] ==
                Enum.map(updated_root_categories, &Map.take(&1, [:id, :position]))
     end
