@@ -283,27 +283,60 @@ defmodule Cambiatus.Shop do
   end
 
   def update_category(
-        %Category{} = %{parent_id: parent_id} = category,
-        %{position: position} = attrs
+        %Category{} = %{parent_id: parent_id, position: old_position} = category,
+        %{position: new_position} = attrs
       )
       when is_nil(parent_id) do
+    IO.puts("====== INIT SPECIAL UPDATE")
+    IO.inspect(category |> Map.take([:id, :position]))
+    IO.inspect(attrs)
+
     # Only matches root categories and when there is an update to position
     transaction =
       Multi.new()
       |> Multi.update(:category, Category.changeset(category, attrs))
 
-    # Get the old position first
-    # Get the new position
-
     # this will generate a delta. we will need to change every position that was inside that delta.
+    Category
+    |> Category.between_positions(old_position, new_position)
+    |> Repo.all()
+    |> Enum.reduce(transaction, fn cat, multi ->
+      if old_position < new_position do
+        IO.puts("INSIDE REDUCE: OLD: #{old_position} <<<<< NEW: #{new_position}")
+        IO.inspect(cat)
+        # 1. The new position is bigger than > old position
+        # Increase position by one
+        Multi.update(
+          multi,
+          {:category, cat.id},
+          Category.changeset(cat, %{position: cat.position - 1})
+        )
+      else
+        IO.puts("INSIDE REDUCE: OLD: #{old_position} >>>>>> NEW: #{new_position}")
+        IO.inspect(cat)
+        # 2. The new position is smaller than < old position
+        # Decrease position by one
+        Multi.update(
+          multi,
+          {:category, cat.id},
+          Category.changeset(cat, %{position: cat.position + 1})
+        )
+      end
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{category: new_category}} ->
+        {:ok, new_category}
 
-    # We will get two cases:
-    # 1. The new position is bigger than > old position
-    # - All elements with position bigger > old position and smaller > than new postion
-    # - For all of those, we will simply decrease their position by 1
+      {:error, :category, error, _} ->
+        {:error, error}
 
-    # 2. The new position is smaller than < old position
-    # -
+      error ->
+        IO.puts("🧨 ERROR")
+        IO.inspect(error)
+        IO.puts("🧨 ERROR")
+        {:error, "Cannot update category"}
+    end
   end
 
   def update_category(%Category{} = category, attrs) do

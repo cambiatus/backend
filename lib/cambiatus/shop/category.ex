@@ -122,6 +122,24 @@ defmodule Cambiatus.Shop.Category do
     where(query, [cat], is_nil(cat.parent_id))
   end
 
+  def between_positions(query \\ __MODULE__, p_1, p_2) do
+    # invert values if 2 is bigger than 1
+    {position_1, position_2} = if p_2 > p_2, do: {p_2, p_1}, else: {p_1, p_2}
+    IO.puts("p_1: #{p_1} || position: #{position_1}")
+    IO.puts("p_2: #{p_2} || position: #{position_2}")
+
+    query =
+      if p_2 > p_1 do
+        where(query, [cat], cat.position <= ^p_2 and cat.position > ^p_1)
+      else
+        where(query, [cat], cat.position < ^p_1 and cat.position >= ^p_2)
+      end
+
+    query
+    # |> where([cat], cat.position >= ^position_1 and cat.position <= ^position_2)
+    |> positional()
+  end
+
   def positional(query \\ __MODULE__) do
     order_by(query, [c], asc: :position)
   end

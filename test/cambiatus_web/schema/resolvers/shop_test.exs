@@ -813,7 +813,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                  ]
                }
              }
-           } == response
+           } == response_query
   end
 
   test "Remove parent from category"
