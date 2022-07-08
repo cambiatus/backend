@@ -88,9 +88,9 @@ defmodule CambiatusWeb.Resolvers.Shop do
   end
 
   def upsert_category(_, %{id: category_id} = params, %{
-        context: %{current_community_id: community_id}
+        context: %{current_community: current_community}
       }) do
-    params = Map.merge(params, %{community_id: community_id})
+    params = Map.merge(params, %{community_id: current_community.symbol})
 
     with %Category{} = category <- Shop.get_category(category_id),
          {:ok, updated_category} <- Shop.update_category(category, params) do
@@ -105,8 +105,8 @@ defmodule CambiatusWeb.Resolvers.Shop do
     end
   end
 
-  def upsert_category(_, params, %{context: %{current_community_id: community_id}}) do
-    params = Map.merge(params, %{community_id: community_id})
+  def upsert_category(_, params, %{context: %{current_community: current_community}}) do
+    params = Map.merge(params, %{community_id: current_community.symbol})
 
     params
     |> Shop.create_category()

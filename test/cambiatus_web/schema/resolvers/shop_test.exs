@@ -163,7 +163,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       [cat_1, cat_2] = insert_list(2, :category, community: community)
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
@@ -200,7 +200,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       another_community = insert(:community)
       invalid_category = insert(:category, community: another_community)
 
-      conn = build_conn() |> auth_user(user)
+      # conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
