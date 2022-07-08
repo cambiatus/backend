@@ -3,7 +3,7 @@ defmodule Cambiatus.Auth.SignUp do
   Module responsible for SignUp
   """
 
-  alias Cambiatus.{Accounts, Commune, Kyc, Accounts.User, Auth.Invitation, Auth}
+  alias Cambiatus.{Accounts, Kyc, Accounts.User, Auth.Invitation, Auth}
   alias Cambiatus.Kyc.{Address, KycData}
 
   @contract Application.compile_env(:cambiatus, :contract)
@@ -59,7 +59,7 @@ defmodule Cambiatus.Auth.SignUp do
     |> validate(:invitation)
     |> validate(:address)
     |> validate(:kyc)
-    |> validate(:domain)
+    |> validate(:community)
   end
 
   def validate({:error, _} = error, _), do: error
@@ -145,17 +145,7 @@ defmodule Cambiatus.Auth.SignUp do
 
   def validate(params, :kyc), do: params
 
-  def validate(%{domain: domain} = params, :domain) do
-    domain
-    |> Commune.get_community_by_subdomain()
-    |> case do
-      {:error, _reason} ->
-        {:error, "Invalid origin: #{domain}"}
-
-      {:ok, _found} ->
-        params
-    end
-  end
+  def validate(%{community: _community} = params, :community), do: params
 
   def create_eos_account({:error, _} = error), do: error
   def create_eos_account({:error, _, _} = error), do: error
@@ -247,9 +237,8 @@ defmodule Cambiatus.Auth.SignUp do
     end
   end
 
-  def invite_user(%{account: account, domain: domain} = params) do
-    with {:ok, community} <- Commune.get_community_by_subdomain(domain),
-         {true, _} <- {community.auto_invite, community},
+  def invite_user(%{account: account, community: community} = params) do
+    with {true, _} <- {community.auto_invite, community},
          {:ok, %{transaction_id: _txid}} <-
            @contract.netlink(account, community.creator, community.symbol, "natural") do
       params

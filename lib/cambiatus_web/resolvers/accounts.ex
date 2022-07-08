@@ -129,9 +129,9 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_up(_, args, %{context: %{domain: domain}}) do
+  def sign_up(_, args, %{context: %{current_community: current_community}}) do
     args
-    |> Map.merge(%{domain: domain})
+    |> Map.merge(%{community: current_community})
     |> SignUp.sign_up()
     |> case do
       {:error, reason, details} ->

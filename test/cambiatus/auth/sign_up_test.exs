@@ -140,7 +140,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         email: new_user.email,
         public_key: "EOS75St6RFmFyXLBnUwheC4H2YTf6tL38saGWiRW1UkdRopERhE7j",
         user_type: kyc.user_type,
-        domain: community.subdomain.name
+        community: community
       }
 
       assert {:ok, %User{}} = SignUp.sign_up(params)
@@ -202,7 +202,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         public_key: "EOS75St6RFmFyXLBnUwheC4H2YTf6tL38saGWiRW1UkdRopERhE7j",
         user_type: "natural",
         invitation_id: InvitationId.encode(invite.id),
-        domain: community.subdomain.name
+        community: community
       }
 
       assert {:ok, %User{}} = SignUp.sign_up(params)
@@ -251,7 +251,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         public_key: "EOS75St6RFmFyXLBnUwheC4H2YTf6tL38saGWiRW1UkdRopERhE7j",
         user_type: kyc.user_type,
         invitation_id: InvitationId.encode(invite.id),
-        domain: community.subdomain.name,
+        community: community,
         kyc: %{
           user_type: kyc.user_type,
           document: kyc.document,
@@ -295,7 +295,7 @@ defmodule Cambiatus.Auth.SignUpTest do
           phone: kyc.phone,
           country_id: kyc.country.id
         },
-        domain: community.subdomain.name
+        community: community
       }
 
       if kyc.user_type == "juridical" do
@@ -316,7 +316,7 @@ defmodule Cambiatus.Auth.SignUpTest do
         account: user.account,
         public_key: "EOS75St6RFmFyXLBnUwheC4H2YTf6tL38saGWiRW1UkdRopERhE7j",
         user_type: "natural",
-        domain: community.subdomain.name,
+        community: community,
         address: %{
           account_id: address.account.account,
           street: address.street,
