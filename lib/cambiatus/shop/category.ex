@@ -122,6 +122,11 @@ defmodule Cambiatus.Shop.Category do
     where(query, [cat], is_nil(cat.parent_id))
   end
 
+  def position_bigger_equals_then(query \\ __MODULE__, position) do
+    query
+    |> where([cat], cat.position >= ^position)
+  end
+
   def between_positions(query \\ __MODULE__, p_1, p_2) do
     query =
       if p_2 > p_1 do

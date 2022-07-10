@@ -98,13 +98,15 @@ defmodule Cambiatus.ShopTest do
       assert {:error, %Ecto.Changeset{}} = Shop.create_category(@invalid_attrs)
     end
 
-    test "create_category/1 with existing subcategory", %{community: community} do
+    test "create_category/1 with existing subcategory" do
+      community = insert(:community)
+      ExMachina.Sequence.reset("position")
       sub_category = insert(:category, %{community_id: community.symbol})
 
       params =
         params_for(:category, %{
           community_id: community.symbol,
-          position: 2,
+          position: 0,
           categories: [%{id: sub_category.id}]
         })
 
@@ -174,7 +176,7 @@ defmodule Cambiatus.ShopTest do
           name: "Fruit 🍏",
           community_id: community.symbol,
           parent_id: category.id,
-          position: 2
+          position: 1
         })
 
       assert {:ok, %Category{} = sub_category} = Shop.create_category(params)
@@ -212,14 +214,16 @@ defmodule Cambiatus.ShopTest do
       assert categories == [another_sub_category, sub_category]
     end
 
-    test "Add subcategories with position argument", %{community: community} do
-      parent = insert(:category)
+    test "Add subcategories with position argument" do
+      community = insert(:community)
+      ExMachina.Sequence.reset("position")
+      parent = insert(:category, community: community)
 
       {:ok, _one} =
         :category
         |> params_for(%{
           name: "First",
-          community_id: community.symbol,
+          community: community,
           parent_id: parent.id,
           position: 0
         })
@@ -265,6 +269,7 @@ defmodule Cambiatus.ShopTest do
 
     test "root position validations: can't create new categories with position > last position +1" do
       community = insert(:community, has_shop: true)
+      ExMachina.Sequence.reset("position")
 
       # Creates random number of root categories
       n = Enum.random(3..20)
@@ -329,7 +334,7 @@ defmodule Cambiatus.ShopTest do
       params = params_for(:category, %{community: community, position: 0})
       {:ok, new_category} = Shop.create_category(params)
 
-      root_categories =
+      found_root_categories =
         Category
         |> Category.from_community(community.symbol)
         |> Category.roots()
@@ -344,7 +349,7 @@ defmodule Cambiatus.ShopTest do
                %{id: Enum.at(root_categories, 2).id, position: 3},
                %{id: Enum.at(root_categories, 3).id, position: 4},
                %{id: Enum.at(root_categories, 4).id, position: 5}
-             ] == root_categories
+             ] == found_root_categories
     end
 
     test "Insert new root category reorders all other root categories: 2) new element as last" do
@@ -361,7 +366,7 @@ defmodule Cambiatus.ShopTest do
       params = params_for(:category, %{community: community, position: 5})
       {:ok, new_category} = Shop.create_category(params)
 
-      root_categories =
+      found_root_categories =
         Category
         |> Category.from_community(community.symbol)
         |> Category.roots()
@@ -376,7 +381,7 @@ defmodule Cambiatus.ShopTest do
                %{id: Enum.at(root_categories, 3).id, position: 3},
                %{id: Enum.at(root_categories, 4).id, position: 4},
                %{id: new_category.id, position: 5}
-             ] == root_categories
+             ] == found_root_categories
     end
 
     test "Insert new root category reorders all other root categories: 3) in middle" do
@@ -393,7 +398,7 @@ defmodule Cambiatus.ShopTest do
       params = params_for(:category, %{community: community, position: 3})
       {:ok, new_category} = Shop.create_category(params)
 
-      root_categories =
+      found_root_categories =
         Category
         |> Category.from_community(community.symbol)
         |> Category.roots()
@@ -403,12 +408,12 @@ defmodule Cambiatus.ShopTest do
 
       assert [
                %{id: Enum.at(root_categories, 0).id, position: 0},
-               %{id: Enum.at(root_categories, 1), position: 1},
+               %{id: Enum.at(root_categories, 1).id, position: 1},
                %{id: Enum.at(root_categories, 2).id, position: 2},
                %{id: new_category.id, position: 3},
                %{id: Enum.at(root_categories, 3).id, position: 4},
                %{id: Enum.at(root_categories, 4).id, position: 5}
-             ] == root_categories
+             ] == found_root_categories
     end
 
     test "Update root category with new positioning reorders all other root categories: 1) new position < old position" do

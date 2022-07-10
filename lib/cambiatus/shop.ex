@@ -241,6 +241,46 @@ defmodule Cambiatus.Shop do
     end
   end
 
+  def create_category(%{position: position} = attrs) do
+    # Only try to automatically reorder if its a root category
+
+    case Map.get(attrs, :parent_id) do
+      nil ->
+        transaction =
+          Multi.new()
+          |> Multi.insert(:category, Category.changeset(%Category{}, attrs))
+
+        # Get all root categories that have position bigger or equal than
+        Category
+        |> Category.roots()
+        |> Category.position_bigger_equals_then(position)
+        |> Repo.all()
+        |> Enum.reduce(transaction, fn cat, multi ->
+          Multi.update(
+            multi,
+            {:category, cat.id},
+            Category.changeset(cat, %{position: cat.position + 1})
+          )
+        end)
+        |> Repo.transaction()
+        |> case do
+          {:ok, %{category: new_category}} ->
+            {:ok, new_category}
+
+          {:error, :category, error, _} ->
+            {:error, error}
+
+          _error ->
+            {:error, "Can't create new category"}
+        end
+
+      _ ->
+        %Category{}
+        |> Category.changeset(attrs)
+        |> Repo.insert()
+    end
+  end
+
   def create_category(attrs) do
     %Category{}
     |> Category.changeset(attrs)
@@ -311,8 +351,8 @@ defmodule Cambiatus.Shop do
     end)
     |> Repo.transaction()
     |> case do
-      {:ok, %{category: new_category}} ->
-        {:ok, new_category}
+      {:ok, %{category: updated_category}} ->
+        {:ok, updated_category}
 
       {:error, :category, error, _} ->
         {:error, error}
