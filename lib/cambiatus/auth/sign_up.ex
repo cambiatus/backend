@@ -3,7 +3,7 @@ defmodule Cambiatus.Auth.SignUp do
   Module responsible for SignUp
   """
 
-  alias Cambiatus.{Accounts, Kyc, Accounts.User, Auth.Invitation, Auth}
+  alias Cambiatus.{Accounts, Commune, Kyc, Accounts.User, Auth.Invitation, Auth}
   alias Cambiatus.Kyc.{Address, KycData}
 
   @contract Application.compile_env(:cambiatus, :contract)
@@ -145,7 +145,7 @@ defmodule Cambiatus.Auth.SignUp do
 
   def validate(params, :kyc), do: params
 
-  def validate(%{community: _community} = params, :community), do: params
+  def validate(%{community: %Commune.Community{}} = params, :community), do: params
 
   def create_eos_account({:error, _} = error), do: error
   def create_eos_account({:error, _, _} = error), do: error
