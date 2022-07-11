@@ -209,7 +209,7 @@ defmodule Cambiatus.ShopTest do
       categories =
         category.categories
         |> Enum.map(&Repo.preload(&1, [:categories]))
-        |> Enum.sort(fn a, b -> a.position < b.position end)
+        |> Enum.sort(&Kernel.</2)
 
       assert categories == [sub_category, another_sub_category]
     end
