@@ -105,7 +105,7 @@ defmodule Cambiatus.Shop.Category do
       add_error(
         changeset,
         :position,
-        "for existing categories, position must be smaller or equal than #{count}"
+        "for existing categories, position must be smaller than #{count}"
       )
     else
       changeset

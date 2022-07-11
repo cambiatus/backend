@@ -314,7 +314,7 @@ defmodule Cambiatus.ShopTest do
       category = Enum.random(root_categories)
       assert {:error, details} = Shop.update_category(category, %{position: n + 1})
 
-      assert %{position: ["for existing categories, position must be smaller or equal than #{n}"]} ==
+      assert %{position: ["for existing categories, position must be smaller than #{n}"]} ==
                errors_on(details)
 
       assert {:ok, _} = Shop.update_category(category, %{position: n - 1})
