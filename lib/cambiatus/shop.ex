@@ -251,17 +251,20 @@ defmodule Cambiatus.Shop do
           |> Multi.insert(:category, Category.changeset(%Category{}, attrs))
 
         # Get all root categories that have position bigger or equal than
-        Category
-        |> Category.roots()
-        |> Category.position_bigger_equals_then(position)
-        |> Repo.all()
-        |> Enum.reduce(transaction, fn cat, multi ->
-          Multi.update(
-            multi,
-            {:category, cat.id},
-            Category.changeset(cat, %{position: cat.position + 1})
-          )
-        end)
+        transaction =
+          Category
+          |> Category.roots()
+          |> Category.position_bigger_equals_then(position)
+          |> Repo.all()
+          |> Enum.reduce(transaction, fn cat, multi ->
+            Multi.update(
+              multi,
+              {:category, cat.id},
+              Category.changeset(cat, %{position: cat.position + 1})
+            )
+          end)
+
+        transaction
         |> Repo.transaction()
         |> case do
           {:ok, %{category: new_category}} ->
