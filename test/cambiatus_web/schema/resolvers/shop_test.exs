@@ -789,7 +789,6 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                }
              } == response
 
-      #
       query = """
         query {
           community(symbol: "#{community.symbol}") {

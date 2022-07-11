@@ -195,7 +195,7 @@ defmodule Cambiatus.ShopTest do
           name: "Another fruit 🍒",
           community_id: community.symbol,
           parent_id: category.id,
-          position: 1
+          position: 2
         })
 
       assert {:ok, %Category{} = another_sub_category} = Shop.create_category(another_params)
@@ -211,7 +211,7 @@ defmodule Cambiatus.ShopTest do
         |> Enum.map(&Repo.preload(&1, [:categories]))
         |> Enum.sort(fn a, b -> a.position < b.position end)
 
-      assert categories == [another_sub_category, sub_category]
+      assert categories == [sub_category, another_sub_category]
     end
 
     test "Add subcategories with position argument" do
