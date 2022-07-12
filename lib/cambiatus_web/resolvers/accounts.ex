@@ -7,7 +7,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   alias Absinthe.Relay.Connection
   alias Cambiatus.{Accounts, Auth, Auth.SignUp, Auth.SignIn}
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Commune.Transfer
+  alias Cambiatus.Commune.{Community, Transfer}
 
   @doc """
   Collects profile info
@@ -22,6 +22,15 @@ defmodule CambiatusWeb.Resolvers.Accounts do
 
   def get_member_since(%User{} = user, _, %{context: %{current_community: community}}) do
     Accounts.get_member_since(user, community)
+  end
+
+  def search_in_community(%Community{} = community, %{filters: filters}, _) do
+    filters =
+      filters
+      |> Map.put_new(:ordering, {filters.order_direction, filters.order_members_by})
+      |> Map.drop([:order_direction, :order_members_by])
+
+    Accounts.search_in_community(community, filters)
   end
 
   @doc """

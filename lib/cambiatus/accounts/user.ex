@@ -90,16 +90,33 @@ defmodule Cambiatus.Accounts.User do
     end
   end
 
-  def search(query \\ User, q) do
-    query
-    |> where([u], fragment("?.name @@ plainto_tsquery(?)", u, ^q))
-    |> or_where([u], fragment("?.account @@ plainto_tsquery(?)", u, ^q))
-    |> or_where([u], fragment("?.bio @@ plainto_tsquery(?)", u, ^q))
-    |> or_where([u], fragment("?.email @@ plainto_tsquery(?)", u, ^q))
-    |> or_where([u], ilike(u.name, ^"%#{q}%"))
-    |> or_where([u], ilike(u.account, ^"%#{q}%"))
-    |> or_where([u], ilike(u.bio, ^"%#{q}%"))
-    |> or_where([u], ilike(u.email, ^"%#{q}%"))
+  def search(query \\ User, args) do
+    {args, fields} =
+      case Map.fetch(args, :search_members_by) do
+        {:ok, fields} ->
+          {Map.drop(args, [:search_members_by]), fields}
+
+        :error ->
+          {args, [:name, :account, :bio, :email]}
+      end
+
+    Enum.reduce(args, query, fn
+      {:ordering, o}, query ->
+        order_by(query, [u], ^o)
+
+      {:search_string, s}, query ->
+        search_string =
+          Enum.reduce(fields, nil, fn field, search_string ->
+            dynamic(
+              [u],
+              fragment("? @@ plainto_tsquery(?)", field(u, ^field), ^s) or
+                ilike(field(u, ^field), ^"%#{s}%") or
+                ^search_string
+            )
+          end)
+
+        where(query, [u], ^search_string)
+    end)
   end
 
   def accept_digest(query \\ __MODULE__) do

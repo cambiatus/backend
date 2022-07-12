@@ -7,7 +7,7 @@ defmodule CambiatusWeb.Schema.SearchTypes do
   use Absinthe.Relay.Schema.Notation, :classic
   import Absinthe.Resolution.Helpers, only: [dataloader: 1]
 
-  alias CambiatusWeb.Resolvers.Commune
+  alias CambiatusWeb.Resolvers.{Commune, Accounts}
   alias CambiatusWeb.Schema.Middleware
 
   @desc "Search queries"
@@ -31,9 +31,33 @@ defmodule CambiatusWeb.Schema.SearchTypes do
     end
 
     field(:members, non_null(list_of(non_null(:user)))) do
-      arg(:query, :string)
-
-      resolve(dataloader(Cambiatus.Accounts))
+      arg(:filters, :members_filter_input)
+      resolve(&Accounts.search_in_community/3)
     end
+  end
+
+  input_object(:members_filter_input) do
+    field(:search_string, :string)
+
+    field(:search_members_by, list_of(:search_by_fields),
+      default_value: [:name, :account, :bio, :email]
+    )
+
+    field(:order_members_by, :order_by_fields, default_value: :name)
+    # Field direction defined on CambiatusWeb.Schema.CommuneTypes
+    field(:order_direction, :direction, default_value: :asc)
+  end
+
+  enum(:search_by_fields) do
+    value(:name, name: "name", description: "Search by member name")
+    value(:account, name: "account", description: "Search by member account")
+    value(:bio, name: "bio", description: "Search by member bio")
+    value(:email, name: "email", description: "Search by member email")
+  end
+
+  enum(:order_by_fields) do
+    value(:name, name: "name", description: "Order by member name")
+    value(:account, name: "account", description: "Order by member account")
+    value(:created_at, name: "created_at", description: "Order by member creation date")
   end
 end
