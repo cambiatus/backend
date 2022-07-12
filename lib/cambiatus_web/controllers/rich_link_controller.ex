@@ -10,7 +10,7 @@ defmodule CambiatusWeb.RichLinkController do
   alias CambiatusWeb.Resolvers.{Accounts, Commune, Shop}
   alias Cambiatus.Repo
 
-  @default_product_image "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
+  @fallback_image "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
 
   def rich_link(conn, params) do
     language = get_req_header(conn, "accept-language")
@@ -23,6 +23,12 @@ defmodule CambiatusWeb.RichLinkController do
 
           ["profile", account] ->
             user_rich_link(account, community_subdomain, language)
+
+          ["shop", "categories", category_info] ->
+            category_info
+            |> String.split("-")
+            |> List.last()
+            |> category_rich_link(community_subdomain, language)
 
           _ ->
             community_rich_link(community_subdomain, language)
@@ -48,8 +54,7 @@ defmodule CambiatusWeb.RichLinkController do
          description: product.description,
          title: product.title,
          url: community_subdomain <> "/shop/#{product.id}",
-         image:
-           if(images != [], do: Map.get(List.first(images), :uri), else: @default_product_image),
+         image: if(images != [], do: Map.get(List.first(images), :uri), else: @fallback_image),
          locale: get_language(language, creator),
          price: product.price,
          currency: String.slice(community.symbol, 2, 7),
@@ -73,6 +78,23 @@ defmodule CambiatusWeb.RichLinkController do
            locale: get_language(language, user)
          }}
 
+      {:error, reason} ->
+        {:error, reason}
+    end
+  end
+
+  def category_rich_link(category_id, community_subdomain, language) do
+    with category <- Cambiatus.Shop.get_category(category_id),
+         {:ok, _community} <- Commune.find_community(%{}, %{subdomain: community_subdomain}, %{}) do
+      {:ok,
+       %{
+         description: category.meta_description || category.description,
+         title: category.meta_title || category.name,
+         url: community_subdomain <> "/shop/categories/#{category.slug}-#{category.id}",
+         image: category.icon_uri || category.image_uri || @fallback_image,
+         locale: get_language(language, %{})
+       }}
+    else
       {:error, reason} ->
         {:error, reason}
     end

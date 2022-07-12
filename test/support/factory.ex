@@ -417,7 +417,7 @@ defmodule Cambiatus.Factory do
       image_uri: sequence("image_uri", &"image-#{&1}"),
       name: sequence("category"),
       description: sequence("category description"),
-      slug: sequence("category", &"#{&1}/"),
+      slug: sequence("category", &"#{&1}"),
       meta_title: sequence("meta-title-"),
       meta_description: sequence("meta-description-"),
       meta_keywords: sequence("meta-keywords"),
