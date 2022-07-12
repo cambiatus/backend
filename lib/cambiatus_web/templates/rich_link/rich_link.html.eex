@@ -4,13 +4,13 @@
 
     <meta name="twitter:card" content="summary">
     <meta name="twitter:site" content="@_cambiatus">
-    <meta name="description" content="<%= md_to_txt(@data.description) %>">
-    <meta property="og:description" content="<%= md_to_txt(@data.description) %>">
+    <meta name="description" content="<%= create_description(@data) %>">
+    <meta property="og:description" content="<%= create_description(@data) %>">
     <meta property="og:locale" content="<%= @data.locale %>">
     <meta property="og:type" content="website">
-    <meta property="og:title" content="<%= @data.title %>">
+    <meta property="og:title" content="<%= create_title(@data) %>">
     <meta property="og:url" content="<%= @data.url %>">
     <meta property="og:image" content="<%= @data.image %>">
 
-    <title><%= @data.title %></title>
+    <title><%= create_title(@data) %></title>
   </head>

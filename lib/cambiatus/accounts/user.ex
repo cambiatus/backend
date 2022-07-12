@@ -66,7 +66,8 @@ defmodule Cambiatus.Accounts.User do
 
   @required_fields ~w(account email name)a
 
-  @optional_fields ~w(bio location interests avatar created_block created_tx created_at created_eos_account
+  @optional_fields ~w(bio location interests avatar
+                      created_block created_tx created_at created_eos_account
                       language transfer_notification claim_notification digest latest_accepted_terms)a
 
   @doc false

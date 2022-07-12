@@ -260,6 +260,8 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     field(:contacts, non_null(list_of(non_null(:contact))),
       resolve: dataloader(Cambiatus.Accounts)
     )
+
+    field(:categories, non_null(list_of(non_null(:category))), resolve: dataloader(Cambiatus.Shop))
   end
 
   @desc "Community Preview data, public data of a community"
