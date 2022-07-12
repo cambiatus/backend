@@ -56,6 +56,31 @@ defmodule Cambiatus.FileUploader do
     |> Mogrify.save(opts)
   end
 
+  def strip_metadata(image_path) when is_binary(image_path) do
+    command =
+      ["-all:all=", "-tagsFromFile", "@"] ++
+        metadata_whitelist() ++ [image_path, "-overwrite_original", "-m"]
+
+    strip =
+      System.cmd(
+        "exiftool",
+        command
+      )
+
+    if String.match?(Kernel.elem(strip, 0), ~r/image files updated/) do
+      {:ok, image_path}
+    else
+      {:error, "Failed to strip metadata"}
+    end
+  end
+
+  defp metadata_whitelist() do
+    [
+      "-exif:Orientation",
+      "-ICC_Profile"
+    ]
+  end
+
   @doc """
   Saves a file
   """
