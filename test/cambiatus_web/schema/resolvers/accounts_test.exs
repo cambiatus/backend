@@ -642,12 +642,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       user = insert(:user)
 
-      conn = auth_conn(user, community.subdomain.name)
+      conn = auth_conn(user, community_1.subdomain.name)
 
       query = fn name ->
         """
         {
-          search {
+          search{
             members(filters: {searchString: "#{name}"}) {
               name,
               account
@@ -711,11 +711,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       insert(:network, community: community_2, user: user_4)
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community_1.subdomain.name)
 
       query = """
       {
-        search(communityId:"#{community_1.symbol}") {
+        search{
           members(filters: {searchString: "Mat", searchMembersBy: bio}) {
             account
           }
@@ -755,12 +755,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       insert(:network, community: community, user: user_3)
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = fn order_direction ->
         """
         {
-          search(communityId:"#{community.symbol}") {
+          search{
             members(filters: {orderMembersBy: name, orderDirection: #{order_direction}}) {
               account
             }
@@ -825,12 +825,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     insert(:network, community: community, user: user_3)
 
     user = insert(:user)
-    conn = build_conn() |> auth_user(user)
+    conn = auth_conn(user, community.subdomain.name)
 
     query = fn order_direction ->
       """
       {
-        search(communityId:"#{community.symbol}") {
+        search{
           members(filters: {orderMembersBy: account, orderDirection: #{order_direction}}) {
             account
           }
@@ -894,12 +894,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     insert(:network, community: community, user: user_3)
 
     user = insert(:user)
-    conn = build_conn() |> auth_user(user)
+    conn = auth_conn(user, community.subdomain.name)
 
     query = fn order_direction ->
       """
       {
-        search(communityId:"#{community.symbol}") {
+        search{
           members(filters: {orderMembersBy: created_at, orderDirection: #{order_direction}}) {
             account
           }
