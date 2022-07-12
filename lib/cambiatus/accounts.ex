@@ -9,7 +9,7 @@ defmodule Cambiatus.Accounts do
   alias Cambiatus.Accounts.User
   alias Cambiatus.Auth
   alias Cambiatus.Auth.Request
-  alias Cambiatus.Commune.Transfer
+  alias Cambiatus.Commune.{Community, Transfer}
   alias Cambiatus.Objectives.Check
 
   @contract Application.compile_env(:cambiatus, :contract)
@@ -24,6 +24,17 @@ defmodule Cambiatus.Accounts do
   end
 
   def query(queryable, _params), do: queryable
+
+  def search_in_community(%Community{} = community, filters \\ %{}) do
+    search =
+      User
+      |> join(:inner, [u], c in assoc(u, :communities))
+      |> where([u, c], c.symbol == ^community.symbol)
+      |> User.search(filters)
+      |> Repo.all()
+
+    {:ok, search}
+  end
 
   def verify_pass(account, password) do
     with %Request{phrase: phrase} <- Auth.get_valid_request(account),
