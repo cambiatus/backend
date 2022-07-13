@@ -2,6 +2,7 @@ defmodule CambiatusWeb.UnsubscribeControllerTest do
   use Cambiatus.DataCase
   use CambiatusWeb.ConnCase
 
+  alias Cambiatus.Accounts
   alias CambiatusWeb.AuthToken
 
   setup %{conn: conn} do
@@ -38,11 +39,16 @@ defmodule CambiatusWeb.UnsubscribeControllerTest do
       picked_subject = Enum.random(available_subjects)
       other_subjects = List.delete(available_subjects, picked_subject)
 
-      path = "/api/unsubscribe/sub:#{picked_subject}/#{token}"
+      path = "/api/unsubscribe/#{picked_subject}/#{token}"
 
-      response = post(conn, path, "List-Unsubscribe=One-Click")
+      response =
+        conn
+        |> put_req_header("content-type", "text/html")
+        |> post(path, "List-Unsubscribe=One-Click")
 
       assert response.status == 200
+
+      {:ok, user} = Accounts.get_account_profile(user.account)
       # Assert that only the chosen subject was modified
       assert Map.get(user, picked_subject) == false
       assert Enum.all?(other_subjects, &Map.get(user, &1))
