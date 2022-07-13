@@ -8,9 +8,7 @@ defmodule CambiatusWeb.UnsubscribeController do
   def one_click(conn, %{"token" => token, "subject" => subject} = _params) do
     with {:ok, %{id: account}} <- AuthToken.verify(token, "email"),
          %Cambiatus.Accounts.User{} = current_user <- Cambiatus.Accounts.get_user(account) do
-      CambiatusWeb.Resolvers.Accounts.update_preferences(nil, %{subject => false}, %{
-        context: %{current_user: current_user}
-      })
+      Cambiatus.Accounts.update_user(current_user, %{subject => false})
 
       conn |> text("OK")
     end
