@@ -179,6 +179,68 @@ defmodule CambiatusWeb.RichLinkControllerTest do
     end)
   end
 
+  test "generate rich link for category with optional fields",
+       %{conn: conn} do
+    # Insert community and category and extract data for the rich link
+    community = insert(:community)
+    category = insert(:category, %{community: community, community_id: community.symbol})
+
+    expected_data = %{
+      description: category.meta_description,
+      title: category.meta_title,
+      url: community.subdomain.name <> "/shop/categories/#{category.slug}-#{category.id}",
+      image: category.icon_uri,
+      locale: "en-US"
+    }
+
+    # Submit GET request for a category rich link
+    conn =
+      %{conn | host: community.subdomain.name}
+      |> get("/api/rich_link/shop/categories/#{category.slug}-#{category.id}")
+
+    response = html_response(conn, 200)
+
+    # Check if all the rich link fields are properly filled
+    Enum.each(expected_data, fn {k, v} ->
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+    end)
+  end
+
+  test "generate rich link for category without optional fields",
+       %{conn: conn} do
+    # Insert community and category (without optional fields) and extract data for the rich link
+    community = insert(:community)
+
+    category =
+      insert(:category, %{
+        community: community,
+        community_id: community.symbol,
+        meta_description: nil,
+        meta_title: nil,
+        icon_uri: nil
+      })
+
+    expected_data = %{
+      description: category.description,
+      title: category.name,
+      url: community.subdomain.name <> "/shop/categories/#{category.slug}-#{category.id}",
+      image: category.image_uri,
+      locale: "en-US"
+    }
+
+    # Submit GET request for a category rich link
+    conn =
+      %{conn | host: community.subdomain.name}
+      |> get("/api/rich_link/shop/categories/#{category.slug}-#{category.id}")
+
+    response = html_response(conn, 200)
+
+    # Check if all the rich link fields are properly filled
+    Enum.each(expected_data, fn {k, v} ->
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+    end)
+  end
+
   defp md_to_txt(markdown) do
     # Convert markdown to plain text
     case Earmark.as_html(markdown, escape: false) do

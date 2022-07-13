@@ -4,14 +4,13 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
   describe "Product" do
     test "create product" do
       user = insert(:user, account: "lucca123")
-      conn = build_conn() |> auth_user(user)
-
       community = insert(:community, creator: user.account, has_shop: true)
+
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
-          product(communityId: "#{community.symbol}",
-                  title: "Product title",
+          product(title: "Product title",
                   description: "Product description",
                   price: 10.0000,
                   images: [],
@@ -44,14 +43,13 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "create product fails if not all required fields are filled" do
       user = insert(:user, account: "lucca123")
-      conn = build_conn() |> auth_user(user)
-
       community = insert(:community, creator: user.account, has_shop: true)
+
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
-          product(communityId: "#{community.symbol}",
-                  title: "Product title",
+          product(title: "Product title",
                   images: [],
                   trackStock: false) {
             title
@@ -85,14 +83,14 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "create product fails if shop is not enabled" do
       user = insert(:user, account: "lucca123")
-      conn = build_conn() |> auth_user(user)
 
       community = insert(:community, creator: user.account, has_shop: false)
 
+      conn = auth_conn(user, community.subdomain.name)
+
       mutation = """
         mutation {
-          product(communityId: "#{community.symbol}",
-                  title: "Product title",
+          product(title: "Product title",
                   description: "Product description",
                   price: 10.0000,
                   images: [],
@@ -125,9 +123,10 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "owner update existing product" do
       user = insert(:user)
-      product = insert(:product, creator: user)
+      community = insert(:community)
+      product = insert(:product, community: community, creator: user)
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
@@ -164,7 +163,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       [cat_1, cat_2] = insert_list(2, :category, community: community)
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
@@ -201,7 +200,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       another_community = insert(:community)
       invalid_category = insert(:category, community: another_community)
 
-      conn = build_conn() |> auth_user(user)
+      # conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
         mutation {
@@ -304,9 +304,10 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "update images substitutes old images" do
       user = insert(:user)
-      product = insert(:product, %{creator: user})
+      community = insert(:community)
+      product = insert(:product, %{creator: user, community: community})
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
       mutation {
@@ -326,9 +327,12 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
     test "update existing product sending track_stock" do
       user = insert(:user)
-      product = insert(:product, %{creator: user, track_stock: true, units: 10})
+      community = insert(:community)
 
-      conn = build_conn() |> auth_user(user)
+      product =
+        insert(:product, %{creator: user, track_stock: true, units: 10, community: community})
+
+      conn = auth_conn(user, community.subdomain.name)
 
       mutation = """
       mutation {
@@ -371,6 +375,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
     end
 
     test "search products" do
+      user = insert(:user)
       community = insert(:community)
 
       # Create 3 products, only modifying the name between them
@@ -378,16 +383,15 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       product_2 = insert(:product, %{title: "PlAcEhOlDeR tExT", community: community})
       _product_3 = insert(:product, %{title: "never matches", community: community})
 
-      user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = fn title ->
         """
         {
-          search(communityId:"#{community.symbol}") {
+          search {
             products(query: "#{title}") {
               title,
-              description,
+              description
             }
           }
         }
@@ -451,11 +455,11 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       insert(:product_category, product: product_2, category: cat_1)
       insert(:product_category, product: product_3, category: cat_2)
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query_1 = """
       query{
-        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_1.id}]}) {
+        products(filters: {categories_ids: [#{cat_1.id}]}) {
           id,
           title
           }
@@ -464,10 +468,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       query_2 = """
       query{
-        products(
-          communityId: "#{community.symbol}",
-          filters: {categories_ids: [#{cat_1.id}, #{cat_2.id}]}
-          ) {
+        products(filters: {categories_ids: [#{cat_1.id}, #{cat_2.id}]}) {
           id,
           title
           }
@@ -476,7 +477,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
 
       query_3 = """
       query{
-        products(communityId: "#{community.symbol}", filters: {categories_ids: [#{cat_3.id}]}) {
+        products(filters: {categories_ids: [#{cat_3.id}]}) {
           id,
           title
           }

@@ -7,8 +7,8 @@ defmodule CambiatusWeb.Resolvers.Commune do
   alias Cambiatus.{Auth, Commune, Error, Shop, Social}
   alias Cambiatus.Commune.Community
 
-  def search(_, %{community_id: symbol}, _) do
-    Commune.get_community(symbol)
+  def search(_, _, %{context: %{current_community: current_community}}) do
+    {:ok, current_community}
   end
 
   @doc """
@@ -47,10 +47,10 @@ defmodule CambiatusWeb.Resolvers.Commune do
     {:ok, invite.community}
   end
 
-  def update_community(_, %{community_id: community_id, input: changes}, %{
-        context: %{current_user: current_user}
+  def update_community(_, %{input: changes}, %{
+        context: %{current_user: current_user, current_community: current_community}
       }) do
-    Commune.update_community(community_id, current_user, changes)
+    Commune.update_community(current_community, current_user, changes)
     |> case do
       {:ok, _community} = ok ->
         ok
@@ -116,12 +116,12 @@ defmodule CambiatusWeb.Resolvers.Commune do
     Commune.add_photos(current_user, symbol, urls)
   end
 
-  def set_highlighted_news(_, %{community_id: community_id} = args, %{
-        context: %{current_user: current_user}
+  def set_highlighted_news(_, args, %{
+        context: %{current_user: current_user, current_community: current_community}
       }) do
     news_id = Map.get(args, :news_id)
 
-    Commune.set_highlighted_news(community_id, news_id, current_user)
+    Commune.set_highlighted_news(current_community, news_id, current_user)
     |> case do
       {:ok, community} ->
         publish_highlighted_news_change(community.highlighted_news_id, community.symbol)

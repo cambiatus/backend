@@ -6,8 +6,11 @@ defmodule CambiatusWeb.Resolvers.Social do
 
   alias Cambiatus.{Commune, Social}
 
-  def upsert_news(_, %{id: news_id} = params, %{context: %{current_user: current_user}}) do
-    params = Map.merge(params, %{user_id: current_user.account})
+  def upsert_news(_, %{id: news_id} = params, %{
+        context: %{current_user: current_user, current_community: current_community}
+      }) do
+    params =
+      Map.merge(params, %{user_id: current_user.account, commmunity_id: current_community.symbol})
 
     with news <- Social.get_news(news_id),
          {:ok, transaction} <- Social.update_news_with_history(news, params) do
@@ -26,9 +29,11 @@ defmodule CambiatusWeb.Resolvers.Social do
     end
   end
 
-  def upsert_news(_, params, %{context: %{current_user: current_user}}) do
+  def upsert_news(_, params, %{
+        context: %{current_user: current_user, current_community: current_community}
+      }) do
     params
-    |> Map.merge(%{user_id: current_user.account})
+    |> Map.merge(%{user_id: current_user.account, community_id: current_community.symbol})
     |> Social.create_news()
     |> case do
       {:error, reason} ->

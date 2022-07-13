@@ -7,17 +7,16 @@ defmodule CambiatusWeb.Schema.Middleware.AdminAuthenticate do
 
   alias Cambiatus.Commune
 
-  def call(resolution, _) do
-    case resolution.context do
-      %{current_user: user, domain: domain} ->
-        {:ok, community} = Commune.get_community_by_subdomain(domain)
-
-        if Commune.is_community_admin?(community, user.account) do
-          resolution
-        else
-          resolution
-          |> Absinthe.Resolution.put_result({:error, "Logged user isn't an admin"})
-        end
+  def call(
+        %{context: %{current_user: current_user, current_community: current_community}} =
+          resolution,
+        _
+      ) do
+    if Commune.is_community_admin?(current_community, current_user.account) do
+      resolution
+    else
+      resolution
+      |> Absinthe.Resolution.put_result({:error, "Logged user isn't an admin"})
     end
   end
 end

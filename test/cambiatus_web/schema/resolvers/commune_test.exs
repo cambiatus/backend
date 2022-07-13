@@ -184,21 +184,18 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
 
       community = insert(:community)
+
+      conn = auth_conn(user, community.subdomain.name)
 
       insert_list(@num, :product, %{community: community, creator: user})
       insert_list(2, :product, %{community: community})
       %{title: f_title} = insert(:product, %{community: community, inserted_at: latest})
 
-      variables = %{
-        "communityId" => community.symbol
-      }
-
       query = """
-      query($communityId: String!) {
-        products(communityId: $communityId) {
+      query {
+        products {
           id
           title
           description
@@ -209,7 +206,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn |> get("/api/graph", query: query, variables: variables)
+      res = conn |> get("/api/graph", query: query)
 
       %{
         "data" => %{
@@ -231,7 +228,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       c2 = insert(:community)
       user = insert(:user)
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, c1.subdomain.name)
 
       insert_list(@num, :product, %{units: 0, community: c1})
       insert_list(@num, :product, %{community: c1})
@@ -243,13 +240,9 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       insert(:product, %{creator: user, community: c2})
       %{title: f_title} = insert(:product, %{inserted_at: latest, community: c1})
 
-      variables = %{
-        "communityId" => c1.symbol
-      }
-
       query = """
-      query($communityId: String!) {
-        products(communityId: $communityId) {
+      query {
+        products {
           id
           title
           description
@@ -257,7 +250,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn |> get("/api/graph", query: query, variables: variables)
+      res = conn |> get("/api/graph", query: query)
 
       %{
         "data" => %{
@@ -274,9 +267,11 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Repo.aggregate(Product, :count, :id) == 0
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
 
       community = insert(:community)
+
+      conn = auth_conn(user, community.subdomain.name)
+
       latest = NaiveDateTime.add(NaiveDateTime.utc_now(), 3_600_000, :millisecond)
 
       %{title: first_title} =
@@ -285,15 +280,14 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       insert_list(@num, :product, %{creator: user, community: community})
 
       variables = %{
-        "communityId" => community.symbol,
         "filters" => %{
           "account" => user.account
         }
       }
 
       query = """
-      query($communityId: String!, $filters: ProductsFilterInput){
-        products(communityId: $communityId, filters: $filters) {
+      query($filters: ProductsFilterInput){
+        products(filters: $filters) {
           id
           title
           description
@@ -352,19 +346,16 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       assert Repo.aggregate(Product, :count, :id) == 0
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
       community = insert(:community)
+
+      conn = auth_conn(user, community.subdomain.name)
 
       insert_list(@num, :product, %{community: community, is_deleted: true, creator: user})
       %{title: title} = insert(:product, %{community: community, creator: user})
 
-      variables = %{
-        "communityId" => community.symbol
-      }
-
       query = """
-      query($communityId: String!) {
-        products(communityId: $communityId) {
+      query {
+        products {
           id
           title
           description
@@ -375,7 +366,7 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       }
       """
 
-      res = conn |> get("/api/graph", query: query, variables: variables)
+      res = conn |> get("/api/graph", query: query)
 
       %{
         "data" => %{
@@ -560,11 +551,11 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
       community =
         insert(:community, %{creator: user.account, has_news: false, symbol: "symbol-0"})
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = """
       mutation {
-        community(communityId: "#{community.symbol}", input: {hasNews: true}){
+        community(input: {hasNews: true}){
           symbol
           hasNews
         }
@@ -600,11 +591,11 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       news_id = insert(:news, %{community: community, user: user}).id
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = """
       mutation {
-        highlightedNews(communityId: "#{community.symbol}", newsID: #{news_id}){
+        highlightedNews(newsID: #{news_id}){
           symbol
           highlighted_news {
             id
@@ -643,11 +634,12 @@ defmodule CambiatusWeb.Schema.Resolvers.CommuneTest do
 
       news = insert(:news, %{community: community, user: user})
       Community.changeset(community, %{highlighted_news_id: news.id}) |> Repo.update!()
-      conn = build_conn() |> auth_user(user)
+
+      conn = auth_conn(user, community.subdomain.name)
 
       query = """
       mutation {
-        highlightedNews(communityId: "#{community.symbol}"){
+        highlightedNews{
           symbol
           highlighted_news {
             id

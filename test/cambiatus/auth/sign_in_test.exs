@@ -19,12 +19,12 @@ defmodule Cambiatus.Auth.SignInTest do
       user = insert(:user)
       insert(:request, user: user)
 
-      assert {:ok, u} = SignIn.sign_in(user.account, "pass", domain: community.subdomain.name)
+      assert {:ok, u} = SignIn.sign_in(user.account, "pass", community: community)
       assert u.account == user.account
     end
 
     test "non existing user sign_in", %{community: community} do
-      assert SignIn.sign_in("nonexisting", "", domain: community.subdomain.name) ==
+      assert SignIn.sign_in("nonexisting", "", community: community) ==
                {:error, "Account not found"}
     end
 

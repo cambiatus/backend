@@ -7,7 +7,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   alias Absinthe.Relay.Connection
   alias Cambiatus.{Accounts, Auth, Auth.SignUp, Auth.SignIn}
   alias Cambiatus.Accounts.User
-  alias Cambiatus.Commune.Transfer
+  alias Cambiatus.Commune.{Community, Transfer}
 
   @doc """
   Collects profile info
@@ -18,6 +18,19 @@ defmodule CambiatusWeb.Resolvers.Accounts do
 
   def get_payers_by_account(%User{} = user, %{account: _} = payer, _) do
     Accounts.get_payers_by_account(user, payer)
+  end
+
+  def get_member_since(%User{} = user, _, %{context: %{current_community: community}}) do
+    Accounts.get_member_since(user, community)
+  end
+
+  def search_in_community(%Community{} = community, %{filters: filters}, _) do
+    filters =
+      filters
+      |> Map.put_new(:ordering, {filters.order_direction, filters.order_members_by})
+      |> Map.drop([:order_direction, :order_members_by])
+
+    Accounts.search_in_community(community, filters)
   end
 
   @doc """
@@ -84,9 +97,13 @@ defmodule CambiatusWeb.Resolvers.Accounts do
   end
 
   def sign_in(_, %{account: account, password: password}, %{
-        context: %{domain: domain, user_agent: user_agent, ip_address: ip_address}
+        context: %{
+          current_community: current_community,
+          user_agent: user_agent,
+          ip_address: ip_address
+        }
       }) do
-    case SignIn.sign_in(account, password, domain: domain) do
+    case SignIn.sign_in(account, password, community: current_community) do
       {:error, reason} ->
         {:error, message: "Sign In failed", details: Cambiatus.Error.from(reason)}
 
@@ -121,9 +138,9 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def sign_up(_, args, %{context: %{domain: domain}}) do
+  def sign_up(_, args, %{context: %{current_community: current_community}}) do
     args
-    |> Map.merge(%{domain: domain})
+    |> Map.merge(%{community: current_community})
     |> SignUp.sign_up()
     |> case do
       {:error, reason, details} ->

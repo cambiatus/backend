@@ -9,7 +9,7 @@ defmodule Cambiatus.Accounts do
   alias Cambiatus.Accounts.User
   alias Cambiatus.Auth
   alias Cambiatus.Auth.Request
-  alias Cambiatus.Commune.Transfer
+  alias Cambiatus.Commune.{Community, Network, Transfer}
   alias Cambiatus.Objectives.Check
 
   @contract Application.compile_env(:cambiatus, :contract)
@@ -24,6 +24,17 @@ defmodule Cambiatus.Accounts do
   end
 
   def query(queryable, _params), do: queryable
+
+  def search_in_community(%Community{} = community, filters \\ %{}) do
+    search =
+      User
+      |> join(:inner, [u], c in assoc(u, :communities))
+      |> where([u, c], c.symbol == ^community.symbol)
+      |> User.search(filters)
+      |> Repo.all()
+
+    {:ok, search}
+  end
 
   def verify_pass(account, password) do
     with %Request{phrase: phrase} <- Auth.get_valid_request(account),
@@ -136,6 +147,21 @@ defmodule Cambiatus.Accounts do
 
       count ->
         {:ok, count}
+    end
+  end
+
+  def get_member_since(user, community) do
+    Network
+    |> Network.by_community(community.symbol)
+    |> Network.by_user(user.account)
+    |> select([n], n.created_at)
+    |> Repo.one()
+    |> case do
+      nil ->
+        {:error, "Could not find user in community"}
+
+      member_since ->
+        {:ok, member_since}
     end
   end
 

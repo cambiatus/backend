@@ -204,6 +204,8 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve: dataloader(Cambiatus.Accounts)
     )
 
+    field(:member_since, non_null(:datetime), resolve: &AccountsResolver.get_member_since/3)
+
     field(:communities, non_null(list_of(non_null(:community))),
       resolve: dataloader(Cambiatus.Commune)
     )

@@ -13,11 +13,10 @@ defmodule Cambiatus.Auth.SignIn do
   Login logic for Cambiatus.
   We check our demux/postgres database to see if have a entry for this user.
   """
-  def sign_in(account, password, domain: domain) do
-    Sentry.Context.set_extra_context(%{account: account, domain: domain})
+  def sign_in(account, password, community: community) do
+    Sentry.Context.set_extra_context(%{account: account, community: community})
 
-    with {:ok, %Community{} = community} <- Commune.get_community_by_subdomain(domain),
-         %User{} = user <- Accounts.get_user(account),
+    with %User{} = user <- Accounts.get_user(account),
          true <- Accounts.verify_pass(account, password) do
       case {community.auto_invite, Commune.is_community_member?(community.symbol, account)} do
         # Community has auto invite and user is not in yet

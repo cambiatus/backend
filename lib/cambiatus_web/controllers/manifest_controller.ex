@@ -2,17 +2,6 @@ defmodule CambiatusWeb.ManifestController do
   use CambiatusWeb, :controller
 
   alias Cambiatus.Repo
-  alias Cambiatus.Commune
-
-  def get_subdomain(conn) do
-    case conn.host do
-      subdomain when is_binary(subdomain) ->
-        {:ok, subdomain}
-
-      _ ->
-        {:error, "No subdomain provided"}
-    end
-  end
 
   def manifest_template(community) do
     %{
@@ -26,16 +15,18 @@ defmodule CambiatusWeb.ManifestController do
   end
 
   def manifest(conn, _params) do
-    with {:ok, host} <- get_subdomain(conn),
-         {:ok, community} <- Commune.get_community_by_subdomain(host) do
-      manifest =
-        community
-        |> Repo.preload(:subdomain)
-        |> manifest_template()
+    context = conn.private[:absinthe][:context]
 
-      json(conn, manifest)
-    else
-      _ ->
+    case Map.fetch(context, :current_community) do
+      {:ok, community} ->
+        manifest =
+          community
+          |> Repo.preload(:subdomain)
+          |> manifest_template()
+
+        json(conn, manifest)
+
+      :error ->
         conn
         |> put_status(301)
         |> redirect(to: "/manifest.json")
