@@ -16,6 +16,7 @@ config :cambiatus, :s3_client, Cambiatus.ExAwsMock
 
 config :cambiatus, :graphql_secret, "pass"
 config :cambiatus, :auth_salt, "test-salt"
+config :cambiatus, :auth_salt_email, "email-test-salt"
 
 # Print only warnings and errors during test
 config :logger, level: :warn

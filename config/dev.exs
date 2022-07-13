@@ -37,6 +37,10 @@ config :cambiatus, :contract, Cambiatus.Eos
 config :cambiatus, :graphql_secret, "d8Ed.-qfhj7"
 config :cambiatus, :auth_salt, "AVPLxwEAbi4Ff9Lw1IiBKZWYazWVafxm4PWs1WdXboaOt9galg6v8U4bPaSMjAtO"
 
+config :cambiatus,
+       :auth_salt_email,
+       "EsruR3MjgJ8p38NB6bvaRnRL9FsfuTVv3zUHmtyEzt7BfjiaLLsYaMiF7xPEBEde"
+
 config :logger, :console,
   # Do not include metadata nor timestamps in development logs
   format: "[$level] $message\n"
