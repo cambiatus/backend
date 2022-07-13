@@ -156,11 +156,22 @@ defmodule Cambiatus.Commune do
     |> Repo.update()
   end
 
+  def update_community(%Community{} = current_community, current_user, attrs) do
+    current_community
+    |> check_user_authorization(current_user)
+    |> update_community(attrs)
+  end
+
   def update_community(community_id, current_user, attrs) do
     community_id
     |> get_community()
-    |> check_user_authorization(current_user)
-    |> update_community(attrs)
+    |> case do
+      {:ok, community} ->
+        update_community(community, current_user, attrs)
+
+      {:error, error} ->
+        {:error, error}
+    end
   end
 
   @doc """
@@ -405,9 +416,10 @@ defmodule Cambiatus.Commune do
     end
   end
 
-  def set_highlighted_news(community_id, news_id, current_user \\ nil) do
-    community_id
-    |> get_community
+  def set_highlighted_news(current_community, news_id, user \\ nil)
+
+  def set_highlighted_news(%Community{} = current_community, news_id, current_user) do
+    current_community
     |> check_user_authorization(current_user)
     |> case do
       {:error, error} ->
@@ -422,13 +434,23 @@ defmodule Cambiatus.Commune do
     end
   end
 
-  defp check_user_authorization({:error, _} = error, _), do: error
+  def set_highlighted_news(community_id, news_id, current_user) do
+    community_id
+    |> get_community()
+    |> case do
+      {:ok, current_community} ->
+        set_highlighted_news(current_community, news_id, current_user)
 
-  defp check_user_authorization({:ok, _} = community, nil), do: community
+      {:error, error} ->
+        {:error, error}
+    end
+  end
 
-  defp check_user_authorization({:ok, community} = community_response, current_user) do
-    if community.creator == current_user.account do
-      community_response
+  defp check_user_authorization(community, nil), do: {:ok, community}
+
+  defp check_user_authorization(current_community, current_user) do
+    if current_community.creator == current_user.account do
+      {:ok, current_community}
     else
       {:error, "Unauthorized"}
     end

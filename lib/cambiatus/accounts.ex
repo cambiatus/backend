@@ -9,7 +9,7 @@ defmodule Cambiatus.Accounts do
   alias Cambiatus.Accounts.User
   alias Cambiatus.Auth
   alias Cambiatus.Auth.Request
-  alias Cambiatus.Commune.{Community, Transfer}
+  alias Cambiatus.Commune.{Community, Network, Transfer}
   alias Cambiatus.Objectives.Check
 
   @contract Application.compile_env(:cambiatus, :contract)
@@ -147,6 +147,21 @@ defmodule Cambiatus.Accounts do
 
       count ->
         {:ok, count}
+    end
+  end
+
+  def get_member_since(user, community) do
+    Network
+    |> Network.by_community(community.symbol)
+    |> Network.by_user(user.account)
+    |> select([n], n.created_at)
+    |> Repo.one()
+    |> case do
+      nil ->
+        {:error, "Could not find user in community"}
+
+      member_since ->
+        {:ok, member_since}
     end
   end
 

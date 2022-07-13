@@ -5,16 +5,15 @@ defmodule CambiatusWeb.Schema.Middleware.AdminAuthenticateTest do
 
   describe "call/2" do
     setup do
-      domain_name = "test.cambiatus.io"
       admin = insert(:user)
-      insert(:community, creator: admin.account, subdomain: %{name: domain_name})
+      community = insert(:community, creator: admin.account)
 
-      %{admin: admin, domain_name: domain_name}
+      %{admin: admin, community: community}
     end
 
-    test "Admin user, no error", %{admin: admin, domain_name: domain_name} do
+    test "Admin user, no error", %{admin: admin, community: community} do
       resolution = %Absinthe.Resolution{
-        context: %{current_user: admin, domain: domain_name}
+        context: %{current_user: admin, current_community: community}
       }
 
       resolution = AdminAuthenticate.call(resolution, nil)
@@ -22,11 +21,11 @@ defmodule CambiatusWeb.Schema.Middleware.AdminAuthenticateTest do
       assert resolution.errors == []
     end
 
-    test "Regular user, error", %{domain_name: domain_name} do
+    test "Regular user, error", %{community: community} do
       another_user = insert(:user)
 
       resolution = %Absinthe.Resolution{
-        context: %{current_user: another_user, domain: domain_name}
+        context: %{current_user: another_user, current_community: community}
       }
 
       resolution = AdminAuthenticate.call(resolution, nil)

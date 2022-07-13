@@ -6,8 +6,14 @@ defmodule CambiatusWeb.Resolvers.Shop do
   alias Cambiatus.{Commune, Shop, Repo}
   alias Cambiatus.Shop.{Category, Product}
 
-  def upsert_product(_, %{id: product_id} = params, %{context: %{current_user: current_user}}) do
-    params = Map.merge(params, %{creator_id: current_user.account})
+  def upsert_product(_, %{id: product_id} = params, %{
+        context: %{current_user: current_user, current_community: current_community}
+      }) do
+    params =
+      Map.merge(params, %{
+        creator_id: current_user.account,
+        community_id: current_community.symbol
+      })
 
     with %Product{} = product <- Shop.get_product(product_id),
          %Product{} = product <- Repo.preload(product, :community),
@@ -29,9 +35,11 @@ defmodule CambiatusWeb.Resolvers.Shop do
     end
   end
 
-  def upsert_product(_, params, %{context: %{current_user: current_user}}) do
+  def upsert_product(_, params, %{
+        context: %{current_user: current_user, current_community: current_community}
+      }) do
     params
-    |> Map.merge(%{creator_id: current_user.account})
+    |> Map.merge(%{creator_id: current_user.account, community_id: current_community.symbol})
     |> Shop.create_product()
     |> case do
       {:error, reason} ->
@@ -43,14 +51,16 @@ defmodule CambiatusWeb.Resolvers.Shop do
     end
   end
 
-  def get_products(_, %{community_id: community_id, filters: filters}, _) do
-    case Shop.list_products(community_id, filters) do
+  def get_products(_, %{filters: filters}, %{
+        context: %{current_community: current_community}
+      }) do
+    case Shop.list_products(current_community.symbol, filters) do
       results -> {:ok, results}
     end
   end
 
-  def get_products(_, %{community_id: community_id}, _) do
-    results = Shop.list_products(community_id)
+  def get_products(_, _, %{context: %{current_community: current_community}}) do
+    results = Shop.list_products(current_community.symbol)
 
     {:ok, results}
   end
@@ -78,9 +88,9 @@ defmodule CambiatusWeb.Resolvers.Shop do
   end
 
   def upsert_category(_, %{id: category_id} = params, %{
-        context: %{current_community_id: community_id}
+        context: %{current_community: current_community}
       }) do
-    params = Map.merge(params, %{community_id: community_id})
+    params = Map.merge(params, %{community_id: current_community.symbol})
 
     with %Category{} = category <- Shop.get_category(category_id),
          {:ok, updated_category} <- Shop.update_category(category, params) do
@@ -95,8 +105,8 @@ defmodule CambiatusWeb.Resolvers.Shop do
     end
   end
 
-  def upsert_category(_, params, %{context: %{current_community_id: community_id}}) do
-    params = Map.merge(params, %{community_id: community_id})
+  def upsert_category(_, params, %{context: %{current_community: current_community}}) do
+    params = Map.merge(params, %{community_id: current_community.symbol})
 
     params
     |> Shop.create_category()
@@ -111,9 +121,9 @@ defmodule CambiatusWeb.Resolvers.Shop do
   end
 
   def delete_category(_, %{id: category_id}, %{
-        context: %{current_community_id: community_id, current_user: current_user}
+        context: %{current_community: current_community, current_user: current_user}
       }) do
-    case Shop.delete_category(category_id, current_user, community_id) do
+    case Shop.delete_category(category_id, current_user, current_community.symbol) do
       {:error, reason} ->
         Sentry.capture_message("Category deletion failed", extra: %{error: reason})
 

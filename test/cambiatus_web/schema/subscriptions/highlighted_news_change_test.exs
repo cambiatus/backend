@@ -6,12 +6,13 @@ defmodule CambiatusWeb.Schema.Subscriptions.HighlightedNewsChangeTest do
   describe "HighlightedNewsChange Subscription" do
     @tag :authenticated_socket
     test "subscribes to highlighted news changes successfully", %{socket: socket} do
-      community = insert(:community)
+      context = socket.assigns.absinthe.opts[:context]
+      community = context.current_community
       news = insert(:news, community: community, title: "Hello world")
 
       subscription = """
       subscription {
-        highlightedNews(communityId: "#{community.symbol}") {
+        highlightedNews {
           id
           title
         }
@@ -35,11 +36,9 @@ defmodule CambiatusWeb.Schema.Subscriptions.HighlightedNewsChangeTest do
     end
 
     test "returns error when not logged in", %{socket: socket} do
-      community = insert(:community)
-
       subscription = """
       subscription {
-        highlightedNews(communityId: "#{community.symbol}") {
+        highlightedNews {
           id
           title
         }

@@ -379,7 +379,7 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       verifier2 = insert(:user)
       verifier3 = insert(:user)
 
-      conn = build_conn() |> auth_user(verifier3)
+      conn = auth_conn(verifier3, community.subdomain.name)
 
       # Create action
       action1 = insert(:action, %{verification_type: "claimable", objective: objective})
@@ -406,8 +406,8 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       }
 
       query_analysis = """
-      query($communityId: String!) {
-        pendingClaims(first: #{@num}, communityId: $communityId) {
+      query {
+        pendingClaims(first: #{@num}) {
           edges {
             node {
               id
@@ -424,8 +424,8 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       %{"data" => %{"pendingClaims" => _}} = json_response(res, 200)
 
       query_history = """
-      query($communityId: String!) {
-        analyzedClaims(first: #{@num}, communityId: $communityId) {
+      query {
+        analyzedClaims(first: #{@num}) {
           edges {
             node {
               id
@@ -510,7 +510,8 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
 
     test "search actions" do
       user = insert(:user)
-      objective = insert(:objective)
+      community = insert(:community)
+      objective = insert(:objective, community: community)
 
       # Create 3 actions, only modifying the description between them
       params = %{objective: objective, description: ""}
@@ -518,12 +519,12 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       action_2 = insert(:action, %{params | description: "PlAcEhOlDeR tExT"})
       _action_3 = insert(:action, %{params | description: "never matches"})
 
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = fn description ->
         """
         {
-          search(communityId:"#{objective.community.symbol}") {
+          search {
             actions(query: "#{description}") {
               description,
               id

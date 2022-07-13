@@ -559,7 +559,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
 
       conn =
         build_conn()
-        |> put_req_header("community-domain", "https://" <> community.subdomain.name)
+        |> assign_domain(community.subdomain.name)
         |> put_req_header("user-agent", "Mozilla")
 
       query = """
@@ -588,6 +588,39 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       assert user.account == session.user_id
     end
 
+    test "member since" do
+      community = insert(:community)
+
+      user = insert(:user)
+
+      network = insert(:network, community: community, user: user)
+
+      conn = auth_conn(user, community.subdomain.name)
+
+      query = """
+      query {
+        user(account: "#{user.account}") {
+          account,
+          memberSince
+        }
+      }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: query)
+        |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "account" => user.account,
+                   "memberSince" => DateTime.to_iso8601(network.created_at)
+                 }
+               }
+             } == response
+    end
+
     test "search members" do
       community_1 = insert(:community)
       community_2 = insert(:community)
@@ -608,12 +641,13 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       insert(:network, community: community_2, user: user_4)
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+
+      conn = auth_conn(user, community_1.subdomain.name)
 
       query = fn name ->
         """
         {
-          search(communityId:"#{community_1.symbol}") {
+          search{
             members(filters: {searchString: "#{name}"}) {
               name,
               account
@@ -677,11 +711,11 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       insert(:network, community: community_2, user: user_4)
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community_1.subdomain.name)
 
       query = """
       {
-        search(communityId:"#{community_1.symbol}") {
+        search{
           members(filters: {searchString: "Mat", searchMembersBy: bio}) {
             account
           }
@@ -721,12 +755,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
       insert(:network, community: community, user: user_3)
 
       user = insert(:user)
-      conn = build_conn() |> auth_user(user)
+      conn = auth_conn(user, community.subdomain.name)
 
       query = fn order_direction ->
         """
         {
-          search(communityId:"#{community.symbol}") {
+          search{
             members(filters: {orderMembersBy: name, orderDirection: #{order_direction}}) {
               account
             }
@@ -791,12 +825,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     insert(:network, community: community, user: user_3)
 
     user = insert(:user)
-    conn = build_conn() |> auth_user(user)
+    conn = auth_conn(user, community.subdomain.name)
 
     query = fn order_direction ->
       """
       {
-        search(communityId:"#{community.symbol}") {
+        search{
           members(filters: {orderMembersBy: account, orderDirection: #{order_direction}}) {
             account
           }
@@ -860,12 +894,12 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
     insert(:network, community: community, user: user_3)
 
     user = insert(:user)
-    conn = build_conn() |> auth_user(user)
+    conn = auth_conn(user, community.subdomain.name)
 
     query = fn order_direction ->
       """
       {
-        search(communityId:"#{community.symbol}") {
+        search{
           members(filters: {orderMembersBy: created_at, orderDirection: #{order_direction}}) {
             account
           }

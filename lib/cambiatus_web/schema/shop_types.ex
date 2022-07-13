@@ -15,7 +15,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
   object(:shop_queries) do
     @desc "[Auth required] Products in a community"
     field(:products, non_null(list_of(non_null(:product)))) do
-      arg(:community_id, non_null(:string))
       arg(:filters, :products_filter_input)
 
       middleware(Middleware.Authenticate)
@@ -43,7 +42,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     @desc "[Auth required] Upserts a product"
     field :product, :product do
       arg(:id, :integer)
-      arg(:community_id, :string)
       arg(:title, :string)
       arg(:description, :string)
       arg(:price, :float)

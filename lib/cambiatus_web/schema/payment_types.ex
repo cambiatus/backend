@@ -20,7 +20,6 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
     field(:contribution, :contribution) do
       arg(:amount, non_null(:float))
       arg(:currency, non_null(:currency_type))
-      arg(:community_id, non_null(:string))
 
       middleware(Middleware.Authenticate)
       resolve(&PaymentResolver.create_contribution/3)
