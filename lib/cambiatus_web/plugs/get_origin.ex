@@ -18,7 +18,10 @@ defmodule CambiatusWeb.Plugs.GetOrigin do
       Absinthe.Plug.assign_context(conn, %{domain: domain, current_community: current_community})
     else
       {:error, error} ->
-        Sentry.capture_message("Could not get community from subdomain", extra: %{error: error})
+        Sentry.capture_message("Could not get community from subdomain",
+          extra: %{conn: conn, error: error}
+        )
+
         {:error, error}
 
       _ ->
@@ -29,8 +32,11 @@ defmodule CambiatusWeb.Plugs.GetOrigin do
             current_community: current_community
           })
         else
-          _ ->
-            Sentry.capture_message("Could not assign community into context")
+          {:error, error} ->
+            Sentry.capture_message("Could not assign community into context",
+              extra: %{conn: conn, error: error}
+            )
+
             conn
         end
     end
