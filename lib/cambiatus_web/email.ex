@@ -21,22 +21,30 @@ defmodule CambiatusWeb.Email do
 
   def transfer(transfer) do
     transfer = Repo.preload(transfer, [:from, :to, [community: :subdomain]])
+    community = transfer.community
+    recipient = transfer.to
 
-    new(
-      to: transfer.to.email,
-      from: {"#{transfer.community.name} - Cambiatus", "no-reply@cambiatus.com"},
-      subject: gettext("You received a new transfer on") <> " #{transfer.community.name}",
-      html_body: CambiatusWeb.EmailView.render("transfer.html", %{transfer: transfer})
-    )
+    new()
+    |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
+    |> to(recipient.email)
+    |> subject(gettext("You received a new transfer on") <> " #{community.name}")
+    |> render_body("transfer.html", %{transfer: transfer})
+    |> header("List-Unsubscribe", one_click_unsub(recipient, community, "transfer_notification"))
+    |> header("List-Unsubscribe-Post", "One-Click")
     |> set_language(transfer)
     |> Mailer.deliver()
   end
 
   def claim(claim) do
+    community = claim.action.objective.community
+    claimer = claim.claimer
+
     new()
-    |> from({"#{claim.action.objective.community.name} - Cambiatus", "no-reply@cambiatus.com"})
-    |> to(claim.claimer.email)
+    |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
+    |> to(claimer.email)
     |> subject(gettext("Your claim was approved!"))
+    |> header("List-Unsubscribe", one_click_unsub(claimer, community, "claim_notification"))
+    |> header("List-Unsubscribe-Post", "One-Click")
     |> render_body("claim.html", %{claim: claim})
     |> set_language(claim)
     |> Mailer.deliver()
@@ -50,9 +58,17 @@ defmodule CambiatusWeb.Email do
       |> to(member.email)
       |> set_language(member.language)
       |> subject(gettext("Community News"))
+      |> header("List-Unsubscribe", one_click_unsub(member, community, "digest"))
+      |> header("List-Unsubscribe-Post", "One-Click")
       |> render_body("monthly_digest.html", %{community: community, user: member})
       |> Mailer.deliver()
     end)
+  end
+
+  def one_click_unsub(member, community, subject) do
+    token = CambiatusWeb.AuthToken.sign(member, "email")
+
+    "<https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}>"
   end
 
   def current_year, do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
