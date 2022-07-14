@@ -52,7 +52,7 @@ defmodule Cambiatus.Mixfile do
       {:html_sanitize_ex, "~> 1.4"},
 
       # Email capabilities
-      {:swoosh, "~> 1.0"},
+      {:swoosh, "~> 1.7.3"},
       {:phoenix_swoosh, "~> 0.3"},
 
       # Phoenix
