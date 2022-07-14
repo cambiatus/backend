@@ -1,5 +1,5 @@
 # 5 minutes
-ExUnit.start(timeout: 5 * 60_000)
+ExUnit.start(timeout: 5 * 60_000, exclude: [:skip])
 
 # Set the pool mode to manual for explicitly checkouts
 Ecto.Adapters.SQL.Sandbox.mode(Cambiatus.Repo, :manual)

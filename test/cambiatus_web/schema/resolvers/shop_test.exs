@@ -567,6 +567,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       conn: conn,
       community: community
     } do
+      ExMachina.Sequence.reset("position")
       category_1 = insert(:category, community: community, name: "Art")
       category_2 = insert(:category, community: community, name: "Business")
       category_params = params_for(:category, community: community)
@@ -576,8 +577,11 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
           category(name: "#{category_params[:name]}",
                    description: "#{category_params[:description]}",
                    slug: "#{category_params[:slug]}",
-                   position: 1,
-                   categories: [{ id: #{category_1.id}, position: 1 }, { id: #{category_2.id}, position: 2 }]) {
+                   position: 0,
+                   categories: [
+                    { id: #{category_1.id}, position: 1 },
+                    { id: #{category_2.id}, position: 2 }
+                   ]) {
             name
             categories { id }
           }
@@ -593,12 +597,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                  "category" => %{
                    "name" => category_params[:name],
                    "categories" => [
-                     %{
-                       "id" => category_1.id
-                     },
-                     %{
-                       "id" => category_2.id
-                     }
+                     %{"id" => category_1.id},
+                     %{"id" => category_2.id}
                    ]
                  }
                }
@@ -616,7 +616,6 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
         mutation {
           category(id: #{category_parent.id},
                    categories: [ { id: #{category.id}, position: 1}]) {
-
             name
             categories { id }
           }
@@ -726,12 +725,13 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
     end
 
     test "Inserts new category with existing categories using position", %{
-      conn: conn,
-      community: community
+      conn: conn
     } do
+      ExMachina.Sequence.reset("position")
+      community = insert(:community)
       parent_params = params_for(:category, community: community)
-      leaf_1 = insert(:category, community: community)
-      leaf_2 = insert(:category, community: community)
+      leaf_1 = insert(:category, community: community, position: 0)
+      leaf_2 = insert(:category, community: community, position: 1)
 
       mutation = """
         mutation {
@@ -740,10 +740,10 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                    slug: "#{parent_params.slug}",
                    position: 0,
                    categories: [
-                    { id: #{leaf_1.id}, position: #{leaf_1.position} },
-                    { id: #{leaf_2.id}, position: #{leaf_2.position} }]) {
+                    { id: #{leaf_1.id}, position: 0 },
+                    { id: #{leaf_2.id}, position: 1 }]) {
               name
-              categories { id position}
+              categories { id position }
             }
         }
       """
@@ -761,6 +761,59 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                  }
                }
              } == response
+    end
+
+    test "Update list of categories positioning: switch places", %{
+      conn: conn,
+      community: community
+    } do
+      root_1 = insert(:category, community: community, position: 0)
+      root_2 = insert(:category, community: community, position: 1)
+      root_3 = insert(:category, community: community, position: 2)
+
+      mutation = """
+        mutation {
+          category(id: #{root_1.id}, position: 2) {
+            id
+            position
+          }
+        }
+      """
+
+      response = post(conn, "/api/graph", query: mutation) |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "category" => %{
+                   "id" => root_1.id,
+                   "position" => 2
+                 }
+               }
+             } == response
+
+      query = """
+        query {
+          community(symbol: "#{community.symbol}") {
+            categories {
+              id position
+            }
+          }
+        }
+      """
+
+      response_query = post(conn, "/api/graph", query: query) |> json_response(200)
+
+      assert %{
+               "data" => %{
+                 "community" => %{
+                   "categories" => [
+                     %{"id" => root_2.id, "position" => 0},
+                     %{"id" => root_3.id, "position" => 1},
+                     %{"id" => root_1.id, "position" => 2}
+                   ]
+                 }
+               }
+             } == response_query
     end
   end
 end

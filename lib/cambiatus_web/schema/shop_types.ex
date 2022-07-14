@@ -152,7 +152,7 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:uri, non_null(:string))
   end
 
-  @desc "Product category"
+  @desc "Shop category"
   object(:category) do
     field(:id, non_null(:integer))
     field(:icon_uri, :string)
