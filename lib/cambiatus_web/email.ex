@@ -75,8 +75,7 @@ defmodule CambiatusWeb.Email do
 
   def format_date(date) do
     [date.day, date.month, date.year]
-    |> Enum.map(&to_string/1)
-    |> Enum.join("/")
+    |> Enum.map_join("/", &to_string/1)
   end
 
   def set_language(mail, %Cambiatus.Commune.Transfer{:to_id => id} = _transfer) do

@@ -56,7 +56,7 @@ defmodule Cambiatus.Factory do
 
   def user_factory do
     %User{
-      account: 1..12 |> Enum.map(fn _ -> Faker.Util.lower_letter() end) |> Enum.join(),
+      account: 1..12 |> Enum.map_join(fn _ -> Faker.Util.lower_letter() end),
       name: sequence(:name, &"u-name#{&1}"),
       email: sequence(:email, &"mail#{&1}@company#{&1}.com"),
       bio: sequence(:bio, &"my bio  is so awesome I put a number in it #{&1}"),
