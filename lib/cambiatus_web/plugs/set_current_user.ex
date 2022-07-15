@@ -28,7 +28,15 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
          %{} = user <- Cambiatus.Accounts.get_user(account) do
       %{current_user: user}
     else
-      _ -> %{}
+      _ ->
+        with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
+             {:ok, %{id: account}} <- AuthToken.verify(token, "email"),
+             %{} = user <- Cambiatus.Accounts.get_user(account) do
+          %{user_unsub_email: user}
+        else
+          _ ->
+            %{}
+        end
     end
   end
 
