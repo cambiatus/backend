@@ -402,8 +402,11 @@
                                             </span>
                                             <span
                                             style="background-color: rgb(0, 0, 0); color: #fbfbfb"><br>
-                                          </span>>
-                                          <div></div>
+                                          </span>
+                                      <div style="font-family:Nunito,Arial,sans-serif;font-size:12px;line-height:15px;text-align:center;color:#000000;margin-top:16px;">
+                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:12px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("Want to stop receiving these emails?") %></span></p>
+                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:12px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("You can unsubscribe by") %> </span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="<%= @unsub_link %>" style="color:#ffffff;text-decoration:underline;" target="_blank"><%= gettext("clicking here") %>.</a></span></p>
+                                      </div>
                                         </div>
                                     </td>
                                   </tr>

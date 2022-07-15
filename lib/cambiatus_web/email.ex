@@ -7,6 +7,10 @@ defmodule CambiatusWeb.Email do
   use Phoenix.Swoosh, view: CambiatusWeb.EmailView
 
   alias Cambiatus.{Accounts, Mailer, Repo}
+  alias CambiatusWeb.AuthToken
+  alias Cambiatus.Commune.{Community, Transfer}
+  alias Cambiatus.Accounts.User
+  alias Cambiatus.Objectives.Claim
 
   def welcome(user) do
     new(
@@ -28,7 +32,7 @@ defmodule CambiatusWeb.Email do
     |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
     |> to(recipient.email)
     |> subject(gettext("You received a new transfer on") <> " #{community.name}")
-    |> render_body("transfer.html", %{transfer: transfer})
+    |> render_body("transfer.html", render_params(transfer))
     |> header("List-Unsubscribe", one_click_unsub(recipient, community, "transfer_notification"))
     |> header("List-Unsubscribe-Post", "One-Click")
     |> set_language(transfer)
@@ -45,7 +49,7 @@ defmodule CambiatusWeb.Email do
     |> subject(gettext("Your claim was approved!"))
     |> header("List-Unsubscribe", one_click_unsub(claimer, community, "claim_notification"))
     |> header("List-Unsubscribe-Post", "One-Click")
-    |> render_body("claim.html", %{claim: claim})
+    |> render_body("claim.html", render_params(claim))
     |> set_language(claim)
     |> Mailer.deliver()
   end
@@ -60,15 +64,38 @@ defmodule CambiatusWeb.Email do
       |> subject(gettext("Community News"))
       |> header("List-Unsubscribe", one_click_unsub(member, community, "digest"))
       |> header("List-Unsubscribe-Post", "One-Click")
-      |> render_body("monthly_digest.html", %{community: community, user: member})
+      |> render_body("monthly_digest.html", render_params(member, community))
       |> Mailer.deliver()
     end)
   end
 
+  defp render_params(%Transfer{} = transfer) do
+    unsub_link = unsub_link(transfer.to, transfer.community, transfer.to.language)
+    %{transfer: transfer, unsub_link: unsub_link}
+  end
+
+  defp render_params(%Claim{} = claim) do
+    unsub_link =
+      unsub_link(claim.claimer, claim.action.objective.community, claim.claimer.language)
+
+    %{claim: claim, unsub_link: unsub_link}
+  end
+
+  defp render_params(%User{} = user, %Community{} = community) do
+    unsub_link = unsub_link(user, community, user.language)
+    %{community: community, user: user, unsub_link: unsub_link}
+  end
+
   def one_click_unsub(member, community, subject) do
-    token = CambiatusWeb.AuthToken.sign(member, "email")
+    token = AuthToken.sign(member, "email")
 
     "<https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}>"
+  end
+
+  def unsub_link(member, community, language) do
+    token = AuthToken.sign(member, "email")
+
+    "https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}"
   end
 
   def current_year, do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
