@@ -130,7 +130,7 @@ defmodule Cambiatus.Factory do
 
   def community_factory do
     %Community{
-      symbol: sequence(:symbol, &"symbol-#{&1}"),
+      symbol: sequence(:symbol, &"#{Enum.random(0..9)},SYM#{&1}"),
       creator: sequence(:creator, &"creator-#{&1}"),
       logo: sequence(:logo, &"logo-#{&1}"),
       name: sequence(:name, &"community-name#{&1}"),
