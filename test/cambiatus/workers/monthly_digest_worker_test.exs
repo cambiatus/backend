@@ -36,7 +36,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
             |> Map.get(:headers)
             |> Map.get("List-Unsubscribe")
 
-          Regex.run(~r/.*\/api\/unsubscribe\/digest\/(.+)>/, link)
+          Regex.run(~r/.*\/api\/unsubscribe\/digest\/(.+)/, link)
           |> List.last()
         end)
 
@@ -46,7 +46,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community1.subdomain.name}/api/unsubscribe/digest/#{user1_token}>",
+            "https://#{community1.subdomain.name}/api/unsubscribe/digest/#{user1_token}",
           "List-Unsubscribe-Post" => "One-Click"
         }
       )
@@ -57,7 +57,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community1.subdomain.name}/api/unsubscribe/digest/#{user2_token}>",
+            "https://#{community1.subdomain.name}/api/unsubscribe/digest/#{user2_token}",
           "List-Unsubscribe-Post" => "One-Click"
         }
       )
@@ -68,7 +68,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community2.subdomain.name}/api/unsubscribe/digest/#{user3_token}>",
+            "https://#{community2.subdomain.name}/api/unsubscribe/digest/#{user3_token}",
           "List-Unsubscribe-Post" => "One-Click"
         }
       )

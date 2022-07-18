@@ -19,7 +19,6 @@ defmodule CambiatusWeb.EmailTest do
       |> Map.get("List-Unsubscribe")
       |> String.split("/")
       |> List.last()
-      |> String.replace(">", "")
       |> one_click_unsub(community, "transfer_notification")
 
     assert_email_sent(
@@ -54,7 +53,6 @@ defmodule CambiatusWeb.EmailTest do
       |> Map.get("List-Unsubscribe")
       |> String.split("/")
       |> List.last()
-      |> String.replace(">", "")
       |> one_click_unsub(community, "claim_notification")
 
     assert_email_sent(
@@ -86,7 +84,6 @@ defmodule CambiatusWeb.EmailTest do
       |> Map.get("List-Unsubscribe")
       |> String.split("/")
       |> List.last()
-      |> String.replace(">", "")
       |> one_click_unsub(community, "digest")
 
     assert_email_sent(
@@ -101,6 +98,6 @@ defmodule CambiatusWeb.EmailTest do
   end
 
   defp one_click_unsub(token, community, subject) do
-    "<https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}>"
+    "https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}"
   end
 end
