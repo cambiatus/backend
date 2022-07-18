@@ -31,11 +31,11 @@ defmodule CambiatusWeb.Email do
     new()
     |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
     |> to(recipient.email)
+    |> set_language(transfer)
     |> subject(gettext("You received a new transfer on") <> " #{community.name}")
     |> render_body("transfer.html", render_params(transfer))
     |> header("List-Unsubscribe", one_click_unsub(recipient, community, "transfer_notification"))
     |> header("List-Unsubscribe-Post", "One-Click")
-    |> set_language(transfer)
     |> Mailer.deliver()
   end
 
@@ -46,11 +46,11 @@ defmodule CambiatusWeb.Email do
     new()
     |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
     |> to(claimer.email)
+    |> set_language(claim)
     |> subject(gettext("Your claim was approved!"))
     |> header("List-Unsubscribe", one_click_unsub(claimer, community, "claim_notification"))
     |> header("List-Unsubscribe-Post", "One-Click")
     |> render_body("claim.html", render_params(claim))
-    |> set_language(claim)
     |> Mailer.deliver()
   end
 
@@ -105,13 +105,13 @@ defmodule CambiatusWeb.Email do
     |> Enum.map_join("/", &to_string/1)
   end
 
-  def set_language(mail, %Cambiatus.Commune.Transfer{:to_id => id} = _transfer) do
+  def set_language(mail, %Transfer{:to_id => id} = _transfer) do
     user = Accounts.get_user!(id)
 
     set_language(mail, user.language)
   end
 
-  def set_language(mail, %Cambiatus.Objectives.Claim{:claimer_id => id} = _claim) do
+  def set_language(mail, %Claim{:claimer_id => id} = _claim) do
     user = Accounts.get_user!(id)
 
     set_language(mail, user.language)
