@@ -49,7 +49,7 @@ defmodule CambiatusWeb.Email do
     |> set_language(claim)
     |> subject(gettext("Your claim was approved!"))
     |> header("List-Unsubscribe", one_click_unsub(claimer, community, "claim_notification"))
-    |> header("List-Unsubscribe-Post", "One-Click")
+    |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
     |> render_body("claim.html", render_params(claim))
     |> Mailer.deliver()
   end
@@ -63,7 +63,7 @@ defmodule CambiatusWeb.Email do
       |> set_language(member.language)
       |> subject(gettext("Community News"))
       |> header("List-Unsubscribe", one_click_unsub(member, community, "digest"))
-      |> header("List-Unsubscribe-Post", "One-Click")
+      |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
       |> render_body("monthly_digest.html", render_params(member, community))
       |> Mailer.deliver()
     end)
@@ -95,7 +95,7 @@ defmodule CambiatusWeb.Email do
   def unsub_link(member, community, language) do
     token = AuthToken.sign(member, "email")
 
-    "https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}"
+    "<https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}>"
   end
 
   def current_year, do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
