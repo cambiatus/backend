@@ -54,6 +54,7 @@ defmodule Cambiatus.Mixfile do
       # Email capabilities
       {:swoosh, "~> 1.7.3"},
       {:phoenix_swoosh, "~> 0.3"},
+      {:gen_smtp, "~> 1.2"},
 
       # Phoenix
       {:phoenix, "~> 1.5.13"},
@@ -79,6 +80,7 @@ defmodule Cambiatus.Mixfile do
       # AWS Packages
       {:ex_aws, "~> 2.2.1"},
       {:ex_aws_s3, "~> 2.1"},
+      {:ex_aws_ses, "~> 2.4"},
       {:configparser_ex, "~> 4.0"},
 
       # Push Notification Packages
