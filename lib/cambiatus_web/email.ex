@@ -35,7 +35,7 @@ defmodule CambiatusWeb.Email do
     |> subject(gettext("You received a new transfer on") <> " #{community.name}")
     |> render_body("transfer.html", render_params(transfer))
     |> header("List-Unsubscribe", one_click_unsub(recipient, community, "transfer_notification"))
-    |> header("List-Unsubscribe-Post", "One-Click")
+    |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
     |> Mailer.deliver()
   end
 
@@ -89,7 +89,7 @@ defmodule CambiatusWeb.Email do
   def one_click_unsub(member, community, subject) do
     token = AuthToken.sign(member, "email")
 
-    "https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}"
+    "<https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}>"
   end
 
   def unsub_link(member, community, language) do
