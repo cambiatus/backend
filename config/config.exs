@@ -16,6 +16,9 @@ config :ex_aws,
     scheme: "https://",
     host: "cambiatus-uploads.s3.amazonaws.com",
     region: "us-east-1"
+  ],
+  ses: [
+    region: "us-east-1"
   ]
 
 # Configures the endpoint
@@ -30,10 +33,7 @@ config :cambiatus,
 
 config :cambiatus, Cambiatus.Repo, pool_size: 15
 
-config :cambiatus, Cambiatus.Mailer,
-  sender_email: "no-reply@cambiatus.com",
-  adapter: Swoosh.Adapters.Sendinblue,
-  api_key: System.get_env("SENDINBLUE_KEY")
+config :cambiatus, Cambiatus.Mailer, adapter: Swoosh.Adapters.ExAwsAmazonSES
 
 config :logger,
   backends: [:console, Sentry.LoggerBackend]
