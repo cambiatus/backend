@@ -30,11 +30,9 @@ config :eosrpc, EOSRPC.Helper, symbol: System.get_env("EOSIO_SYMBOL") || "EOS"
 
 config :cambiatus, :graphql_secret, System.get_env("GRAPHQL_SECRET")
 config :cambiatus, :auth_salt, System.get_env("USER_SALT")
+config :cambiatus, :auth_salt_email, System.get_env("EMAIL_SALT")
 
-config :cambiatus, Cambiatus.Mailer,
-  sender_email: "no-reply@cambiatus.com",
-  adapter: Swoosh.Adapters.Sendinblue,
-  api_key: System.get_env("SENDINBLUE_KEY")
+config :cambiatus, Cambiatus.Mailer, adapter: Swoosh.Adapters.ExAwsAmazonSES
 
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
