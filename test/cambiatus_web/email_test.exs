@@ -19,6 +19,7 @@ defmodule CambiatusWeb.EmailTest do
       |> Map.get("List-Unsubscribe")
       |> String.split("/")
       |> List.last()
+      |> String.replace(">", "")
       |> one_click_unsub(community, "transfer_notification")
 
     assert_email_sent(
@@ -27,7 +28,7 @@ defmodule CambiatusWeb.EmailTest do
       subject: "Você recebeu uma nova transferência em" <> " #{community.name}",
       headers: %{
         "List-Unsubscribe" => one_click_unsub_link,
-        "List-Unsubscribe-Post" => "One-Click"
+        "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
       }
     )
   end
@@ -53,6 +54,7 @@ defmodule CambiatusWeb.EmailTest do
       |> Map.get("List-Unsubscribe")
       |> String.split("/")
       |> List.last()
+      |> String.replace(">", "")
       |> one_click_unsub(community, "claim_notification")
 
     assert_email_sent(
@@ -61,7 +63,7 @@ defmodule CambiatusWeb.EmailTest do
       subject: "¡Su reclamo fue aprobado!",
       headers: %{
         "List-Unsubscribe" => one_click_unsub_link,
-        "List-Unsubscribe-Post" => "One-Click"
+        "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
       }
     )
   end
@@ -84,6 +86,7 @@ defmodule CambiatusWeb.EmailTest do
       |> Map.get("List-Unsubscribe")
       |> String.split("/")
       |> List.last()
+      |> String.replace(">", "")
       |> one_click_unsub(community, "digest")
 
     assert_email_sent(
@@ -92,12 +95,12 @@ defmodule CambiatusWeb.EmailTest do
       subject: "የማህበረሰብ ዜና",
       headers: %{
         "List-Unsubscribe" => one_click_unsub_link,
-        "List-Unsubscribe-Post" => "One-Click"
+        "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
       }
     )
   end
 
   defp one_click_unsub(token, community, subject) do
-    "https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}"
+    "<https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}>"
   end
 end
