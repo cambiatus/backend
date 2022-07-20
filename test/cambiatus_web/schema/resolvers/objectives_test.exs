@@ -579,11 +579,10 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
       community = insert(:community)
       objective = insert(:objective, community: community)
 
-      # Create 3 actions, only modifying the description between them
+      # Create 2 actions, one completed and the other not
       params = %{objective: objective, is_completed: false}
-      action_1 = insert(:action, params)
-      action_2 = insert(:action, params)
-      action_3 = insert(:action, %{params | is_completed: true})
+      insert(:action, params)
+      insert(:action, %{params | is_completed: true})
 
       conn = auth_conn(user, community.subdomain.name)
 
