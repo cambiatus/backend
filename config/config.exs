@@ -15,10 +15,14 @@ config :ex_aws,
   s3: [
     scheme: "https://",
     host: "cambiatus-uploads.s3.amazonaws.com",
-    region: "us-east-1"
+    region: "us-east-1",
+    access_key_id: System.get_env("AWS_S3_ACCESS_KEY_ID"),
+    secret_access_key: System.get_env("AWS_S3_SECRET_ACCESS_KEY")
   ],
   ses: [
-    region: "us-east-1"
+    region: System.get_env("AWS_SES_REGION"),
+    access_key_id: System.get_env("AWS_SES_ACCESS_KEY_ID"),
+    secret_access_key: System.get_env("AWS_SES_SECRET_ACCESS_KEY")
   ]
 
 # Configures the endpoint
