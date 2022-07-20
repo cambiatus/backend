@@ -29,7 +29,7 @@ defmodule CambiatusWeb.Email do
     recipient = transfer.to
 
     new()
-    |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
+    |> from({"#{community.name} - Cambiatus", Mailer.sender()})
     |> to(recipient.email)
     |> set_language(transfer)
     |> subject(gettext("You received a new transfer on") <> " #{community.name}")
@@ -44,7 +44,7 @@ defmodule CambiatusWeb.Email do
     claimer = claim.claimer
 
     new()
-    |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
+    |> from({"#{community.name} - Cambiatus", Mailer.sender()})
     |> to(claimer.email)
     |> set_language(claim)
     |> subject(gettext("Your claim was approved!"))
@@ -58,7 +58,7 @@ defmodule CambiatusWeb.Email do
   def monthly_digest(community) do
     Enum.each(community.members, fn member ->
       new()
-      |> from({"#{community.name} - Cambiatus", "no-reply@cambiatus.com"})
+      |> from({"#{community.name} - Cambiatus", Mailer.sender()})
       |> to(member.email)
       |> set_language(member.language)
       |> subject(gettext("Community News"))

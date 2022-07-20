@@ -33,7 +33,9 @@ config :cambiatus,
 
 config :cambiatus, Cambiatus.Repo, pool_size: 15
 
-config :cambiatus, Cambiatus.Mailer, adapter: Swoosh.Adapters.ExAwsAmazonSES
+config :cambiatus, Cambiatus.Mailer,
+  sender_email: "no-reply@cambiatus.com",
+  adapter: Swoosh.Adapters.ExAwsAmazonSES
 
 config :logger,
   backends: [:console, Sentry.LoggerBackend]
