@@ -160,6 +160,15 @@ defmodule Cambiatus.Shop do
     end
   end
 
+  def count_categories(nil), do: {:error, "Community id cannot be `nil`"}
+
+  def count_categories(community_id) do
+    Category
+    |> Category.from_community(community_id)
+    |> Category.roots()
+    |> Repo.aggregate(:count, :id)
+  end
+
   def get_order(id) do
     Repo.get(Order, id)
   end
@@ -232,6 +241,49 @@ defmodule Cambiatus.Shop do
     end
   end
 
+  def create_category(%{position: position} = attrs) do
+    # Only try to automatically reorder if its a root category
+
+    case Map.get(attrs, :parent_id) do
+      nil ->
+        transaction =
+          Multi.new()
+          |> Multi.insert(:category, Category.changeset(%Category{}, attrs))
+
+        # Get all root categories that have position bigger or equal than
+        transaction =
+          Category
+          |> Category.roots()
+          |> Category.position_bigger_equals_then(position)
+          |> Repo.all()
+          |> Enum.reduce(transaction, fn cat, multi ->
+            Multi.update(
+              multi,
+              {:category, cat.id},
+              Category.changeset(cat, %{position: cat.position + 1})
+            )
+          end)
+
+        transaction
+        |> Repo.transaction()
+        |> case do
+          {:ok, %{category: new_category}} ->
+            {:ok, new_category}
+
+          {:error, :category, error, _} ->
+            {:error, error}
+
+          _error ->
+            {:error, "Can't create new category"}
+        end
+
+      _ ->
+        %Category{}
+        |> Category.changeset(attrs)
+        |> Repo.insert()
+    end
+  end
+
   def create_category(attrs) do
     %Category{}
     |> Category.changeset(attrs)
@@ -251,6 +303,7 @@ defmodule Cambiatus.Shop do
 
   """
   def update_category(%Category{} = category, %{categories: categories} = attrs) do
+    # Happens only on subcategories
     transaction =
       Multi.new()
       |> Multi.update(:category, Category.changeset(category, Map.delete(attrs, :categories)))
@@ -270,6 +323,44 @@ defmodule Cambiatus.Shop do
         {:ok, category}
 
       _ ->
+        {:error, "Cannot update category"}
+    end
+  end
+
+  def update_category(
+        %Category{} = %{parent_id: parent_id, position: old_position} = category,
+        %{position: new_position} = attrs
+      )
+      when is_nil(parent_id) do
+    # Do category position change first
+    transaction =
+      Multi.new()
+      |> Multi.update(:category, Category.changeset(category, attrs))
+
+    # Change all elements between the old position and the new position
+    Category
+    |> Category.between_positions(old_position, new_position)
+    |> Repo.all()
+    |> Enum.reduce(transaction, fn cat, multi ->
+      # 1. The new position is  > old position: Decrease position
+      # 2. The new position is < old position: Increase position
+      Multi.update(
+        multi,
+        {:category, cat.id},
+        Category.changeset(cat, %{
+          position: if(new_position > old_position, do: cat.position - 1, else: cat.position + 1)
+        })
+      )
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:ok, %{category: updated_category}} ->
+        {:ok, updated_category}
+
+      {:error, :category, error, _} ->
+        {:error, error}
+
+      _error ->
         {:error, "Cannot update category"}
     end
   end

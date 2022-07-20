@@ -421,7 +421,7 @@ defmodule Cambiatus.Factory do
       meta_title: sequence("meta-title-"),
       meta_description: sequence("meta-description-"),
       meta_keywords: sequence("meta-keywords"),
-      position: 1
+      position: sequence("position", &"#{&1}")
     }
   end
 

@@ -84,7 +84,7 @@ defmodule Cambiatus.Mixfile do
       {:configparser_ex, "~> 4.0"},
 
       # Push Notification Packages
-      {:web_push_encryption, "~> 0.3.0"},
+      {:web_push_encryption, "~> 0.3.1"},
 
       # Background processing
       {:oban, "~> 2.10.1"},
