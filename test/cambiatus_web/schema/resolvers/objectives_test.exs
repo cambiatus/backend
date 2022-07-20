@@ -573,5 +573,46 @@ defmodule CambiatusWeb.Schema.Resolvers.ObjectivesTest do
 
       assert %{"data" => %{"search" => %{"actions" => []}}} = response_3
     end
+
+    test "search actions without query string" do
+      user = insert(:user)
+      community = insert(:community)
+      objective = insert(:objective, community: community)
+
+      # Create 3 actions, only modifying the description between them
+      params = %{objective: objective, is_completed: false}
+      action_1 = insert(:action, params)
+      action_2 = insert(:action, params)
+      action_3 = insert(:action, %{params | is_completed: true})
+
+      conn = auth_conn(user, community.subdomain.name)
+
+      string_query = """
+      {
+        search {
+          actions(query: "") {
+            description,
+            id
+          }
+        }
+      }
+      """
+
+      empty_query = """
+      {
+        search {
+          actions{
+            description,
+            id
+          }
+        }
+      }
+      """
+
+      response_1 = conn |> post("/api/graph", query: string_query) |> json_response(200)
+      response_2 = conn |> post("/api/graph", query: empty_query) |> json_response(200)
+
+      assert response_1 == response_2
+    end
   end
 end
