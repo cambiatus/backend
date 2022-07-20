@@ -45,7 +45,6 @@ defmodule Cambiatus.Objectives do
   def query(Action, %{query: query}) do
     Action
     |> Action.search(query)
-    |> Action.available()
   end
 
   def query(Check, %{input: filters}) do
