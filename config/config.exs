@@ -15,14 +15,7 @@ config :ex_aws,
   s3: [
     scheme: "https://",
     host: "cambiatus-uploads.s3.amazonaws.com",
-    region: "us-east-1",
-    access_key_id: System.get_env("AWS_S3_ACCESS_KEY_ID"),
-    secret_access_key: System.get_env("AWS_S3_SECRET_ACCESS_KEY")
-  ],
-  ses: [
-    region: System.get_env("AWS_SES_REGION"),
-    access_key_id: System.get_env("AWS_SES_ACCESS_KEY_ID"),
-    secret_access_key: System.get_env("AWS_SES_SECRET_ACCESS_KEY")
+    region: "us-east-1"
   ]
 
 # Configures the endpoint
@@ -37,9 +30,7 @@ config :cambiatus,
 
 config :cambiatus, Cambiatus.Repo, pool_size: 15
 
-config :cambiatus, Cambiatus.Mailer,
-  sender_email: "no-reply@cambiatus.com",
-  adapter: Swoosh.Adapters.ExAwsAmazonSES
+config :cambiatus, Cambiatus.Mailer, sender_email: "no-reply@cambiatus.com"
 
 config :logger,
   backends: [:console, Sentry.LoggerBackend]

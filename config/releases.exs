@@ -33,8 +33,10 @@ config :cambiatus, :auth_salt, System.get_env("USER_SALT")
 config :cambiatus, :auth_salt_email, System.get_env("EMAIL_SALT")
 
 config :cambiatus, Cambiatus.Mailer,
-  sender_email: "no-reply@cambiatus.com",
-  adapter: Swoosh.Adapters.ExAwsAmazonSES
+  adapter: Swoosh.Adapters.AmazonSES,
+  region: System.get_env("AWS_SES_REGION"),
+  access_key: System.get_env("AWS_SES_ACCESS_KEY"),
+  secret: System.get_env("AWS_SES_SECRET_ACCESS_KEY")
 
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
