@@ -95,7 +95,7 @@ defmodule CambiatusWeb.Email do
   def unsub_link(member, community, language) do
     token = AuthToken.sign(member, "email")
 
-    "<https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}>"
+    "https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}"
   end
 
   def current_year, do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
