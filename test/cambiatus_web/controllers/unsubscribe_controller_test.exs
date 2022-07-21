@@ -39,7 +39,7 @@ defmodule CambiatusWeb.UnsubscribeControllerTest do
       picked_subject = Enum.random(available_subjects)
       other_subjects = List.delete(available_subjects, picked_subject)
 
-      path = "/api/unsubscribe/#{picked_subject}/#{token}"
+      path = "/api/unsubscribe?subject=#{picked_subject}&token=#{token}"
 
       response =
         conn
