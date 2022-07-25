@@ -16,7 +16,7 @@ defmodule CambiatusWeb.Schema.Middleware.EmailSpecialAuthenticate do
       _ ->
         resolution
         |> Absinthe.Resolution.put_result(
-          {:error, "Please sign in firt or use a valid unsubscription link"}
+          {:error, "Please sign in first or use a valid unsubscription link"}
         )
     end
   end
