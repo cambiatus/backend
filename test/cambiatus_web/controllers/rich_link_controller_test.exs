@@ -37,6 +37,24 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       end)
     end
 
+    test "generate rich link for invalid community",
+         %{conn: conn} do
+      # Submit GET request for an invalid community
+      conn =
+        %{conn | host: "invalid.community"}
+        |> get("/api/rich_link")
+
+      response = json_response(conn, 200)
+
+      # Check error message
+      assert %{
+               "data" => %{
+                 "message" => "No community found using the domain invalid.community",
+                 "status" => "failed"
+               }
+             } == response
+    end
+
     test "generate rich link for user",
          %{conn: conn} do
       # Insert user and extract data for the rich link
