@@ -10,7 +10,7 @@ defmodule CambiatusWeb.AuthToken do
 
   @doc "Decodes original data from given `token` and verifies its integrity"
   def verify(token) do
-    Phoenix.Token.verify(Endpoint, auth_salt(), token, max_age: 365 * 24 * 3_600)
+    Phoenix.Token.verify(Endpoint, auth_salt(), token, max_age: 14 * 24 * 3_600)
   end
 
   def auth_salt() do
