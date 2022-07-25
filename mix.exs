@@ -111,6 +111,7 @@ defmodule Cambiatus.Mixfile do
       ],
       check: [
         "compile --warnings-as-errors --all warnings",
+        "sobelow",
         "format --check-formatted",
         "credo"
       ]
