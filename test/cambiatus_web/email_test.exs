@@ -27,7 +27,7 @@ defmodule CambiatusWeb.EmailTest do
       to: user.email,
       subject: "Você recebeu uma nova transferência em" <> " #{community.name}",
       headers: %{
-        "List-Unsubscribe" => one_click_unsub_link,
+        "List-Unsubscribe" => "<#{one_click_unsub_link}>",
         "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
       }
     )
@@ -62,7 +62,7 @@ defmodule CambiatusWeb.EmailTest do
       to: user.email,
       subject: "¡Su reclamo fue aprobado!",
       headers: %{
-        "List-Unsubscribe" => one_click_unsub_link,
+        "List-Unsubscribe" => "<#{one_click_unsub_link}>",
         "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
       }
     )
@@ -94,13 +94,13 @@ defmodule CambiatusWeb.EmailTest do
       to: user.email,
       subject: "የማህበረሰብ ዜና",
       headers: %{
-        "List-Unsubscribe" => one_click_unsub_link,
+        "List-Unsubscribe" => "<#{one_click_unsub_link}>",
         "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
       }
     )
   end
 
   defp one_click_unsub(token, community, subject) do
-    "<https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}>"
+    "https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}"
   end
 end

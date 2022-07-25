@@ -34,7 +34,10 @@ defmodule CambiatusWeb.Email do
     |> set_language(transfer)
     |> subject(gettext("You received a new transfer on") <> " #{community.name}")
     |> render_body("transfer.html", render_params(transfer))
-    |> header("List-Unsubscribe", one_click_unsub(recipient, community, "transfer_notification"))
+    |> header(
+      "List-Unsubscribe",
+      "<#{one_click_unsub(recipient, community, "transfer_notification")}>"
+    )
     |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
     |> Mailer.deliver()
   end
@@ -48,7 +51,10 @@ defmodule CambiatusWeb.Email do
     |> to(claimer.email)
     |> set_language(claim)
     |> subject(gettext("Your claim was approved!"))
-    |> header("List-Unsubscribe", one_click_unsub(claimer, community, "claim_notification"))
+    |> header(
+      "List-Unsubscribe",
+      "<#{one_click_unsub(claimer, community, "claim_notification")}>"
+    )
     |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
     |> render_body("claim.html", render_params(claim))
     |> Mailer.deliver()
@@ -62,7 +68,7 @@ defmodule CambiatusWeb.Email do
       |> to(member.email)
       |> set_language(member.language)
       |> subject(gettext("Community News"))
-      |> header("List-Unsubscribe", one_click_unsub(member, community, "digest"))
+      |> header("List-Unsubscribe", "<#{one_click_unsub(member, community, "digest")}>")
       |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
       |> render_body("monthly_digest.html", render_params(member, community))
       |> Mailer.deliver()
@@ -89,7 +95,7 @@ defmodule CambiatusWeb.Email do
   def one_click_unsub(member, community, subject) do
     token = AuthToken.sign(member, "email")
 
-    "<https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}>"
+    "https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}"
   end
 
   def unsub_link(member, community, language) do
