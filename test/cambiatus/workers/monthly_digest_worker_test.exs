@@ -31,13 +31,12 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
       # Extract the tokens inside the headers in the emails
       [user1_token, user2_token, user3_token] =
         Enum.map(messages, fn {:email, message} ->
-          link =
-            message
-            |> Map.get(:headers)
-            |> Map.get("List-Unsubscribe")
-
-          Regex.run(~r/.*\/api\/unsubscribe\/digest\/(.+)>/, link)
+          message
+          |> Map.get(:headers)
+          |> Map.get("List-Unsubscribe")
+          |> String.split("token=")
           |> List.last()
+          |> String.replace(">", "")
         end)
 
       assert_email_sent(
@@ -46,7 +45,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community1.subdomain.name}/api/unsubscribe/digest/#{user1_token}>",
+            "<https://#{community1.subdomain.name}/api/unsubscribe?list=digest&token=#{user1_token}>",
           "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
         }
       )
@@ -57,7 +56,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community1.subdomain.name}/api/unsubscribe/digest/#{user2_token}>",
+            "<https://#{community1.subdomain.name}/api/unsubscribe?list=digest&token=#{user2_token}>",
           "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
         }
       )
@@ -68,7 +67,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community2.subdomain.name}/api/unsubscribe/digest/#{user3_token}>",
+            "<https://#{community2.subdomain.name}/api/unsubscribe?list=digest&token=#{user3_token}>",
           "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
         }
       )

@@ -17,7 +17,7 @@ defmodule CambiatusWeb.EmailTest do
     one_click_unsub_link =
       sent_email.headers
       |> Map.get("List-Unsubscribe")
-      |> String.split("/")
+      |> String.split("token=")
       |> List.last()
       |> String.replace(">", "")
       |> one_click_unsub(community, "transfer_notification")
@@ -52,7 +52,7 @@ defmodule CambiatusWeb.EmailTest do
     one_click_unsub_link =
       sent_email.headers
       |> Map.get("List-Unsubscribe")
-      |> String.split("/")
+      |> String.split("token=")
       |> List.last()
       |> String.replace(">", "")
       |> one_click_unsub(community, "claim_notification")
@@ -84,7 +84,7 @@ defmodule CambiatusWeb.EmailTest do
     one_click_unsub_link =
       sent_email.headers
       |> Map.get("List-Unsubscribe")
-      |> String.split("/")
+      |> String.split("token=")
       |> List.last()
       |> String.replace(">", "")
       |> one_click_unsub(community, "digest")
@@ -100,7 +100,7 @@ defmodule CambiatusWeb.EmailTest do
     )
   end
 
-  defp one_click_unsub(token, community, subject) do
-    "https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}"
+  defp one_click_unsub(token, community, list) do
+    "https://#{community.subdomain.name}/api/unsubscribe?list=#{list}&token=#{token}"
   end
 end

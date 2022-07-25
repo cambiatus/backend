@@ -78,7 +78,7 @@ defmodule CambiatusWeb.Email do
   def one_click_unsub(member, community, list) do
     token = AuthToken.sign(member, "email")
 
-    "https://#{community.subdomain.name}/api/unsubscribe/#{list}/#{token}"
+    "https://#{community.subdomain.name}/api/unsubscribe?list=#{list}&token=#{token}"
   end
 
   def unsub_link(member, community, language) do

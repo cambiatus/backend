@@ -30,16 +30,16 @@ defmodule CambiatusWeb.UnsubscribeControllerTest do
   describe "Unsubcription" do
     test "unsubscribe using one click functionality",
          %{conn: conn} do
-      subjects = %{transfer_notification: true, claim_notification: true, digest: true}
-      user = insert(:user, subjects)
+      lists = %{transfer_notification: true, claim_notification: true, digest: true}
+      user = insert(:user, lists)
 
       token = AuthToken.sign(user, "email")
 
-      available_subjects = Map.keys(subjects)
-      picked_subject = Enum.random(available_subjects)
-      other_subjects = List.delete(available_subjects, picked_subject)
+      available_lists = Map.keys(lists)
+      picked_list = Enum.random(available_lists)
+      other_lists = List.delete(available_lists, picked_list)
 
-      path = "/api/unsubscribe?subject=#{picked_subject}&token=#{token}"
+      path = "/api/unsubscribe?list=#{picked_list}&token=#{token}"
 
       response =
         conn
@@ -49,9 +49,9 @@ defmodule CambiatusWeb.UnsubscribeControllerTest do
       assert response.status == 200
 
       {:ok, user} = Accounts.get_account_profile(user.account)
-      # Assert that only the chosen subject was modified
-      assert Map.get(user, picked_subject) == false
-      assert Enum.all?(other_subjects, &Map.get(user, &1))
+      # Assert that only the chosen list was modified
+      assert Map.get(user, picked_list) == false
+      assert Enum.all?(other_lists, &Map.get(user, &1))
     end
   end
 end
