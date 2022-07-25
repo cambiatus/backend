@@ -6,7 +6,7 @@ defmodule CambiatusWeb.Email do
 
   use Phoenix.Swoosh, view: CambiatusWeb.EmailView
 
-  alias Cambiatus.{Accounts, Mailer, Repo}
+  alias Cambiatus.{Mailer, Repo}
   alias CambiatusWeb.AuthToken
   alias Cambiatus.Commune.{Community, Transfer}
   alias Cambiatus.Accounts.User
@@ -25,37 +25,16 @@ defmodule CambiatusWeb.Email do
 
   def transfer(transfer) do
     transfer = Repo.preload(transfer, [:from, :to, [community: :subdomain]])
-    community = transfer.community
-    recipient = transfer.to
 
-    new()
-    |> from({"#{community.name} - Cambiatus", Mailer.sender()})
-    |> to(recipient.email)
-    |> set_language(transfer)
-    |> subject(gettext("You received a new transfer on") <> " #{community.name}")
+    compose_email_headers(transfer.to, transfer.community, "transfer_notification")
+    |> subject(gettext("You received a new transfer on") <> " #{transfer.community.name}")
     |> render_body("transfer.html", render_params(transfer))
-    |> header(
-      "List-Unsubscribe",
-      "<#{one_click_unsub(recipient, community, "transfer_notification")}>"
-    )
-    |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
     |> Mailer.deliver()
   end
 
   def claim(claim) do
-    community = claim.action.objective.community
-    claimer = claim.claimer
-
-    new()
-    |> from({"#{community.name} - Cambiatus", Mailer.sender()})
-    |> to(claimer.email)
-    |> set_language(claim)
+    compose_email_headers(claim.claimer, claim.action.objective.community, "claim_notification")
     |> subject(gettext("Your claim was approved!"))
-    |> header(
-      "List-Unsubscribe",
-      "<#{one_click_unsub(claimer, community, "claim_notification")}>"
-    )
-    |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
     |> render_body("claim.html", render_params(claim))
     |> Mailer.deliver()
   end
@@ -63,16 +42,20 @@ defmodule CambiatusWeb.Email do
   # input is a community with preloaded news with less than 30 days and members with active digest
   def monthly_digest(community) do
     Enum.each(community.members, fn member ->
-      new()
-      |> from({"#{community.name} - Cambiatus", Mailer.sender()})
-      |> to(member.email)
-      |> set_language(member.language)
+      compose_email_headers(member, community, "digest")
       |> subject(gettext("Community News"))
-      |> header("List-Unsubscribe", "<#{one_click_unsub(member, community, "digest")}>")
-      |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
       |> render_body("monthly_digest.html", render_params(member, community))
       |> Mailer.deliver()
     end)
+  end
+
+  def compose_email_headers(recipient, community, list) do
+    new()
+    |> from({"#{community.name} - Cambiatus", Mailer.sender()})
+    |> to(recipient.email)
+    |> set_language(recipient.language)
+    |> header("List-Unsubscribe", "<#{one_click_unsub(recipient, community, list)}>")
+    |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
   end
 
   defp render_params(%Transfer{} = transfer) do
@@ -92,10 +75,10 @@ defmodule CambiatusWeb.Email do
     %{community: community, user: user, unsub_link: unsub_link}
   end
 
-  def one_click_unsub(member, community, subject) do
+  def one_click_unsub(member, community, list) do
     token = AuthToken.sign(member, "email")
 
-    "https://#{community.subdomain.name}/api/unsubscribe/#{subject}/#{token}"
+    "https://#{community.subdomain.name}/api/unsubscribe/#{list}/#{token}"
   end
 
   def unsub_link(member, community, language) do
@@ -109,18 +92,6 @@ defmodule CambiatusWeb.Email do
   def format_date(date) do
     [date.day, date.month, date.year]
     |> Enum.map_join("/", &to_string/1)
-  end
-
-  def set_language(mail, %Transfer{:to_id => id} = _transfer) do
-    user = Accounts.get_user!(id)
-
-    set_language(mail, user.language)
-  end
-
-  def set_language(mail, %Claim{:claimer_id => id} = _claim) do
-    user = Accounts.get_user!(id)
-
-    set_language(mail, user.language)
   end
 
   def set_language(mail, language) when is_atom(language),
