@@ -35,6 +35,10 @@ config :cambiatus, Cambiatus.Mailer, sender_email: "no-reply@cambiatus.com"
 config :logger,
   backends: [:console, Sentry.LoggerBackend]
 
+config :ex_cldr,
+  default_locale: "en",
+  default_backend: CambiatusWeb.Cldr
+
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
   included_environments: ~w(prod staging dev),

@@ -7,7 +7,7 @@ defmodule Cambiatus.Mixfile do
       version: "2.0.0",
       elixir: "~> 1.11",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix, :gettext] ++ Mix.compilers(),
+      compilers: [:phoenix] ++ Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
@@ -31,7 +31,7 @@ defmodule Cambiatus.Mixfile do
       {:calendar, "~> 1.0.0", override: true},
       {:ecto_sql, "~> 3.5"},
       {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.11"},
+      {:gettext, "~> 0.20.0"},
       {:cowboy, "~> 2.0"},
       {:tesla, "~> 1.2.1"},
       {:jason, "~> 1.2.0"},
@@ -50,6 +50,8 @@ defmodule Cambiatus.Mixfile do
       {:number, "~> 1.0"},
       {:earmark, "~> 1.4"},
       {:html_sanitize_ex, "~> 1.4"},
+      {:ex_cldr, "~> 2.32"},
+      {:ex_cldr_dates_times, "~> 2.12"},
 
       # Email capabilities
       {:swoosh, "~> 1.7.3"},

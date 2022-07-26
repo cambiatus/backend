@@ -87,18 +87,15 @@ defmodule CambiatusWeb.Email do
     "https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}"
   end
 
-  def current_year, do: DateTime.utc_now() |> Date.year_of_era() |> Tuple.to_list() |> hd
-
-  def format_date(date) do
-    [date.day, date.month, date.year]
-    |> Enum.map_join("/", &to_string/1)
-  end
-
   def set_language(mail, language) when is_atom(language),
     do: set_language(mail, Atom.to_string(language))
 
   def set_language(mail, language) do
-    if language, do: Gettext.put_locale(CambiatusWeb.Gettext, language)
+    if language do
+      Gettext.put_locale(CambiatusWeb.Gettext, language)
+      CambiatusWeb.Cldr.put_gettext_locale(language)
+    end
+
     mail
   end
 end
