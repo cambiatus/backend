@@ -20,7 +20,7 @@ defmodule CambiatusWeb.EmailTest do
       |> String.split("token=")
       |> List.last()
       |> String.replace(">", "")
-      |> one_click_unsub(community, "transfer_notification")
+      |> one_click_unsub(community)
 
     assert_email_sent(
       from: {"#{community.name} - Cambiatus", "no-reply@cambiatus.com"},
@@ -55,7 +55,7 @@ defmodule CambiatusWeb.EmailTest do
       |> String.split("token=")
       |> List.last()
       |> String.replace(">", "")
-      |> one_click_unsub(community, "claim_notification")
+      |> one_click_unsub(community)
 
     assert_email_sent(
       from: {"#{community.name} - Cambiatus", "no-reply@cambiatus.com"},
@@ -87,7 +87,7 @@ defmodule CambiatusWeb.EmailTest do
       |> String.split("token=")
       |> List.last()
       |> String.replace(">", "")
-      |> one_click_unsub(community, "digest")
+      |> one_click_unsub(community)
 
     assert_email_sent(
       from: {"#{community.name} - Cambiatus", "no-reply@cambiatus.com"},
@@ -100,7 +100,7 @@ defmodule CambiatusWeb.EmailTest do
     )
   end
 
-  defp one_click_unsub(token, community, list) do
-    "https://#{community.subdomain.name}/api/unsubscribe?list=#{list}&token=#{token}"
+  defp one_click_unsub(token, community) do
+    "https://#{community.subdomain.name}/api/unsubscribe?token=#{token}"
   end
 end

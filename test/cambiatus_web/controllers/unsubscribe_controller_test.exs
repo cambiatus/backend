@@ -35,11 +35,7 @@ defmodule CambiatusWeb.UnsubscribeControllerTest do
 
       token = AuthToken.sign(user, "email")
 
-      available_lists = Map.keys(lists)
-      picked_list = Enum.random(available_lists)
-      other_lists = List.delete(available_lists, picked_list)
-
-      path = "/api/unsubscribe?list=#{picked_list}&token=#{token}"
+      path = "/api/unsubscribe?token=#{token}"
 
       response =
         conn
@@ -49,9 +45,9 @@ defmodule CambiatusWeb.UnsubscribeControllerTest do
       assert response.status == 200
 
       {:ok, user} = Accounts.get_account_profile(user.account)
-      # Assert that only the chosen list was modified
-      assert Map.get(user, picked_list) == false
-      assert Enum.all?(other_lists, &Map.get(user, &1))
+      keys = Map.keys(lists)
+      # Ensure that all email preferences are false
+      refute Enum.any?(keys, &Map.get(user, &1))
     end
   end
 end

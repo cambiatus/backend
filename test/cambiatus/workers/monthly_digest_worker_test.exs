@@ -45,7 +45,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community1.subdomain.name}/api/unsubscribe?list=digest&token=#{user1_token}>",
+            "<https://#{community1.subdomain.name}/api/unsubscribe?token=#{user1_token}>",
           "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
         }
       )
@@ -56,7 +56,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community1.subdomain.name}/api/unsubscribe?list=digest&token=#{user2_token}>",
+            "<https://#{community1.subdomain.name}/api/unsubscribe?token=#{user2_token}>",
           "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
         }
       )
@@ -67,7 +67,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         subject: "Community News",
         headers: %{
           "List-Unsubscribe" =>
-            "<https://#{community2.subdomain.name}/api/unsubscribe?list=digest&token=#{user3_token}>",
+            "<https://#{community2.subdomain.name}/api/unsubscribe?token=#{user3_token}>",
           "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
         }
       )

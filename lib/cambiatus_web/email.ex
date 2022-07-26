@@ -26,14 +26,14 @@ defmodule CambiatusWeb.Email do
   def transfer(transfer) do
     transfer = Repo.preload(transfer, [:from, :to, [community: :subdomain]])
 
-    compose_email_headers(transfer.to, transfer.community, "transfer_notification")
+    compose_email_headers(transfer.to, transfer.community)
     |> subject(gettext("You received a new transfer on") <> " #{transfer.community.name}")
     |> render_body("transfer.html", render_params(transfer))
     |> Mailer.deliver()
   end
 
   def claim(claim) do
-    compose_email_headers(claim.claimer, claim.action.objective.community, "claim_notification")
+    compose_email_headers(claim.claimer, claim.action.objective.community)
     |> subject(gettext("Your claim was approved!"))
     |> render_body("claim.html", render_params(claim))
     |> Mailer.deliver()
@@ -42,19 +42,19 @@ defmodule CambiatusWeb.Email do
   # input is a community with preloaded news with less than 30 days and members with active digest
   def monthly_digest(community) do
     Enum.each(community.members, fn member ->
-      compose_email_headers(member, community, "digest")
+      compose_email_headers(member, community)
       |> subject(gettext("Community News"))
       |> render_body("monthly_digest.html", render_params(member, community))
       |> Mailer.deliver()
     end)
   end
 
-  def compose_email_headers(recipient, community, list) do
+  def compose_email_headers(recipient, community) do
     new()
     |> from({"#{community.name} - Cambiatus", Mailer.sender()})
     |> to(recipient.email)
     |> set_language(recipient.language)
-    |> header("List-Unsubscribe", "<#{one_click_unsub(recipient, community, list)}>")
+    |> header("List-Unsubscribe", "<#{one_click_unsub(recipient, community)}>")
     |> header("List-Unsubscribe-Post", "List-Unsubscribe=One-Click")
   end
 
@@ -75,10 +75,10 @@ defmodule CambiatusWeb.Email do
     %{community: community, user: user, unsub_link: unsub_link}
   end
 
-  def one_click_unsub(member, community, list) do
+  def one_click_unsub(member, community) do
     token = AuthToken.sign(member, "email")
 
-    "https://#{community.subdomain.name}/api/unsubscribe?list=#{list}&token=#{token}"
+    "https://#{community.subdomain.name}/api/unsubscribe?token=#{token}"
   end
 
   def unsub_link(member, community, language) do
