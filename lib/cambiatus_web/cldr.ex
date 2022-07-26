@@ -9,7 +9,7 @@ defmodule CambiatusWeb.Cldr do
     gettext: CambiatusWeb.Gettext,
     data_dir: "./priv/cldr",
     otp_app: :cambiatus,
-    providers: [Cldr.DateTime, Cldr.Number]
+    providers: [Cldr.DateTime, Cldr.Number, Cldr.Calendar]
 
   def put_gettext_locale(gettext_locale) do
     locale = locale_aliases(gettext_locale)

@@ -397,7 +397,7 @@
                                       <div>
                                         <div style="font-family: inherit; text-align: center"><span
                                             style="font-style: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration: none; box-sizing: border-box; margin-bottom: 16px; font-family: &quot;Nunito Sans&quot;, sans-serif; text-align: center; font-size: 14px; background-color: rgb(0, 0, 0); color: #fbfbfb">
-                                            © <%= Calendar.strftime(DateTime.now!("Etc/UTC"), "%Y" ) %>
+                                            © <%= Cldr.DateTime.to_string!(DateTime.now!("Etc/UTC"), CambiatusWeb.Cldr) %>
                                             <%= gettext("Cambiatus by Satisfied Vagabonds LLC") %>
                                             </span>
                                             <span

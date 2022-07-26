@@ -359,7 +359,7 @@
                                             ><%= @transfer.from.name %>
                                           </strong></span
                                         ><span style="color: #666666"
-                                          ><%= gettext("at") %> <%= Calendar.strftime(@transfer.created_at, "%d/%m/%Y %H:%M:%S") %>,</span
+                                          ><%= gettext("at") %> <%= Cldr.DateTime.to_string!(@transfer.created_at, CambiatusWeb.Cldr) %>,</span
                                         >
                                       </div>
                                       <div

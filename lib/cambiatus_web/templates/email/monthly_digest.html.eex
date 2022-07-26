@@ -229,7 +229,7 @@
                                                     <td align=\"center\" bgcolor=\"transparent\" style=\"border:none;border-radius:0;cursor:auto;mso-padding-alt:0;background:transparent;\" valign=\"middle\">
                                                       <a href=\"https://#{@community.subdomain.name}/news/#{news.id}\" style=\"display:inline-block;width:470px;background:transparent;color:#ffffff;font-family:Nunito,Arial,sans-serif;font-size:13px;font-weight:normal;line-height:100%;margin:0;text-decoration:none;text-transform:none;padding:0;mso-padding-alt:0;border-radius:0;\" target=\"_blank\">
                                                         <span style=\"mso-line-height-rule:exactly;font-size:13px;font-family:Nunito Sans,Arial,sans-serif;font-weight:700;color:#000000;line-height:18px;margin-right:16px;\">
-                                                          #{Calendar.strftime(news.updated_at, "%d/%m/%Y")}
+                                                          #{Cldr.DateTime.to_string!(news.updated_at, CambiatusWeb.Cldr)}
                                                         </span>
                                                         <span style=\"mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#f99d33;line-height:19px;text-decoration:underline;\">
                                                           #{news.title}
