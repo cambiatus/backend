@@ -270,7 +270,7 @@
                                     <div>
                                       <div style="text-align: center">
                                         <span style="font-size: 24px"
-                                          >Hello, </span
+                                          ><%= gettext("Hello") %>, </span
                                         ><span style="font-size: 24px"
                                           ><strong
                                             ><%= @transfer.to.name %></strong
@@ -353,13 +353,13 @@
                                         style="font-family: inherit; text-align: center"
                                       >
                                         <span style="color: #666666"
-                                          >Sent by </span
+                                          ><%= gettext("Sent by") %> </span
                                         ><span style="color: #666666"
                                           ><strong
                                             ><%= @transfer.from.name %>
                                           </strong></span
                                         ><span style="color: #666666"
-                                          >at <%= Calendar.strftime(@transfer.created_at, "%d/%m/%Y %H:%M:%S") %>,</span
+                                          ><%= gettext("at") %> <%= Calendar.strftime(@transfer.created_at, "%d/%m/%Y %H:%M:%S") %>,</span
                                         >
                                       </div>
                                       <div

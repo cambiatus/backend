@@ -29,6 +29,7 @@ msgstr "ወደ መተግበሪያ ይሂዱ"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:208
+#: lib/cambiatus_web/templates/email/transfer.html.eex:273
 msgid "Hello"
 msgstr "ሰላም"
 
@@ -58,7 +59,7 @@ msgid "You received a new transfer on"
 msgstr "በ ላይ አዲስ ዝውውር ተቀብለዋል።"
 
 #, elixir-format
-#: lib/cambiatus_web/email.ex:39
+#: lib/cambiatus_web/email.ex:37
 #: lib/cambiatus_web/templates/email/claim.html.eex:213
 msgid "Your claim was approved!"
 msgstr "የይገባኛል ጥያቄዎ ጸድቋል!"
@@ -67,6 +68,16 @@ msgstr "የይገባኛል ጥያቄዎ ጸድቋል!"
 #: lib/cambiatus_web/templates/email/transfer.html.eex:391
 msgid "more details on app."
 msgstr "በመተግበሪያው ላይ ተጨማሪ ዝርዝሮች."
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/transfer.html.eex:356
+msgid "Sent by"
+msgstr "የተላከው በ"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/transfer.html.eex:362
+msgid "at"
+msgstr "በ"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:126
