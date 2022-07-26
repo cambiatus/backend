@@ -29,6 +29,7 @@ msgstr "Ir a la aplicación"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:208
+#: lib/cambiatus_web/templates/email/transfer.html.eex:273
 msgid "Hello"
 msgstr "Hola"
 
@@ -58,7 +59,7 @@ msgid "You received a new transfer on"
 msgstr "Recibiste una nueva transferencia en"
 
 #, elixir-format
-#: lib/cambiatus_web/email.ex:39
+#: lib/cambiatus_web/email.ex:37
 #: lib/cambiatus_web/templates/email/claim.html.eex:213
 msgid "Your claim was approved!"
 msgstr "¡Su reclamo fue aprobado!"
@@ -67,6 +68,16 @@ msgstr "¡Su reclamo fue aprobado!"
 #: lib/cambiatus_web/templates/email/transfer.html.eex:391
 msgid "more details on app."
 msgstr "más detalles en la aplicación."
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/transfer.html.eex:356
+msgid "Sent by"
+msgstr "Enviado por"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/email/transfer.html.eex:362
+msgid "at"
+msgstr "en"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:126

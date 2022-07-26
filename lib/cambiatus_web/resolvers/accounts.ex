@@ -48,7 +48,7 @@ defmodule CambiatusWeb.Resolvers.Accounts do
     end
   end
 
-  def update_preferences(_, params, %{context: %{current_user: current_user}}) do
+  def update_preferences(current_user, params) do
     current_user
     |> Accounts.update_user(params)
     |> case do
@@ -58,6 +58,14 @@ defmodule CambiatusWeb.Resolvers.Accounts do
       {:error, changeset} ->
         {:error, message: "Could not update user", details: Cambiatus.Error.from(changeset)}
     end
+  end
+
+  def update_preferences(_, params, %{context: %{current_user: current_user}}) do
+    update_preferences(current_user, params)
+  end
+
+  def update_preferences(_, params, %{context: %{user_unsub_email: current_user}}) do
+    update_preferences(current_user, params)
   end
 
   def set_accepted_terms_date(_, _, %{context: %{current_user: current_user}}) do

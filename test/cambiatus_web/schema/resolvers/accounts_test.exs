@@ -162,7 +162,158 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
                    "language" => "PTBR"
                  }
                }
-             } = response
+             } == response
+    end
+
+    test "updates a user email subscription given a normal user token" do
+      email_preferences = %{transfer_notification: true, claim_notification: true, digest: true}
+      user = insert(:user, email_preferences)
+
+      available_preferences = Map.keys(email_preferences)
+      picked_preference = Enum.random(available_preferences)
+
+      [other_preference1, other_preference2] =
+        List.delete(available_preferences, picked_preference)
+
+      conn = build_conn() |> auth_user(user)
+
+      mutation1 = """
+      mutation {
+        preference(#{picked_preference}: false) {
+          account
+          #{picked_preference}
+        }
+      }
+      """
+
+      res1 = conn |> post("/api/graph", query: mutation1)
+
+      assert %{
+               "data" => %{
+                 "preference" => %{
+                   "account" => "#{user.account}",
+                   "#{picked_preference}" => false
+                 }
+               }
+             } == json_response(res1, 200)
+
+      query = """
+      query {
+        user(account: "#{user.account}"){
+          account
+          #{picked_preference}
+          #{other_preference1}
+          #{other_preference2}
+        }
+      }
+      """
+
+      res2 = conn |> post("/api/graph", query: query)
+
+      assert %{
+               "data" => %{
+                 "user" => %{
+                   "account" => "#{user.account}",
+                   "#{picked_preference}" => false,
+                   "#{other_preference1}" => true,
+                   "#{other_preference2}" => true
+                 }
+               }
+             } == json_response(res2, 200)
+
+      mutation2 = """
+      mutation {
+        preference(#{picked_preference}: true) {
+          account
+          #{picked_preference}
+        }
+      }
+      """
+
+      res3 = conn |> post("/api/graph", query: mutation2)
+
+      assert %{
+               "data" => %{
+                 "preference" => %{
+                   "account" => "#{user.account}",
+                   "#{picked_preference}" => true
+                 }
+               }
+             } == json_response(res3, 200)
+    end
+
+    test "updates a user email subscription given a token specific for email unsubscritpion" do
+      email_preferences = %{transfer_notification: true, claim_notification: true, digest: true}
+      user = insert(:user, email_preferences)
+      email_token = CambiatusWeb.AuthToken.sign(user, "email")
+
+      available_preferences = Map.keys(email_preferences)
+      picked_preference = Enum.random(available_preferences)
+
+      conn =
+        build_conn()
+        |> put_req_header("authorization", "Bearer #{email_token}")
+
+      mutation1 = """
+      mutation {
+        preference(#{picked_preference}: false) {
+          account
+          #{picked_preference}
+        }
+      }
+      """
+
+      res1 = conn |> post("/api/graph", query: mutation1)
+
+      assert %{
+               "data" => %{
+                 "preference" => %{
+                   "account" => "#{user.account}",
+                   "#{picked_preference}" => false
+                 }
+               }
+             } == json_response(res1, 200)
+
+      mutation2 = """
+      mutation {
+        preference(#{picked_preference}: true) {
+          account
+          #{picked_preference}
+        }
+      }
+      """
+
+      res2 = conn |> post("/api/graph", query: mutation2)
+
+      assert %{
+               "data" => %{
+                 "preference" => %{
+                   "account" => "#{user.account}",
+                   "#{picked_preference}" => true
+                 }
+               }
+             } == json_response(res2, 200)
+
+      query = """
+      query {
+        user(account: "#{user.account}") {
+          account
+        }
+      }
+      """
+
+      res3 = conn |> post("/api/graph", query: query)
+
+      assert %{
+               "data" => %{"user" => nil},
+               "errors" => [
+                 %{
+                   "locations" => [%{"column" => 3, "line" => 2}],
+                   "message" => "Please sign in first!",
+                   "path" => ["user"]
+                 }
+               ]
+             } == json_response(res3, 200)
     end
   end
 

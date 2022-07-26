@@ -70,7 +70,7 @@ defmodule Cambiatus.Payments.ContributionTest do
 
     response =
       conn
-      |> post("api/graph", query: query)
+      |> post("/api/graph", query: query)
       |> json_response(200)
 
     assert %{

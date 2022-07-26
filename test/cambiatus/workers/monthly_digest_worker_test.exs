@@ -25,22 +25,51 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
 
       assert :ok == perform_job(MonthlyDigestWorker, %{})
 
+      # Get messages in mailbox
+      {:messages, messages} = :erlang.process_info(self(), :messages)
+
+      # Extract the tokens inside the headers in the emails
+      [user1_token, user2_token, user3_token] =
+        Enum.map(messages, fn {:email, message} ->
+          message
+          |> Map.get(:headers)
+          |> Map.get("List-Unsubscribe")
+          |> String.split("token=")
+          |> List.last()
+          |> String.replace(">", "")
+        end)
+
       assert_email_sent(
         to: user1.email,
         from: {"#{community1.name} - Cambiatus", "no-reply@cambiatus.com"},
-        subject: "Community News"
+        subject: "Community News",
+        headers: %{
+          "List-Unsubscribe" =>
+            "<https://#{community1.subdomain.name}/api/unsubscribe?token=#{user1_token}>",
+          "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
+        }
       )
 
       assert_email_sent(
         to: user2.email,
         from: {"#{community1.name} - Cambiatus", "no-reply@cambiatus.com"},
-        subject: "Community News"
+        subject: "Community News",
+        headers: %{
+          "List-Unsubscribe" =>
+            "<https://#{community1.subdomain.name}/api/unsubscribe?token=#{user2_token}>",
+          "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
+        }
       )
 
       assert_email_sent(
         to: user3.email,
         from: {"#{community2.name} - Cambiatus", "no-reply@cambiatus.com"},
-        subject: "Community News"
+        subject: "Community News",
+        headers: %{
+          "List-Unsubscribe" =>
+            "<https://#{community2.subdomain.name}/api/unsubscribe?token=#{user3_token}>",
+          "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"
+        }
       )
 
       refute_email_sent(%{to: ^user4_email, subject: "Community News"})

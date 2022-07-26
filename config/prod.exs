@@ -18,6 +18,7 @@ config :cambiatus, :contract, Cambiatus.Eos
 
 config :cambiatus, :graphql_secret, System.get_env("GRAPHQL_SECRET")
 config :cambiatus, :auth_salt, System.get_env("USER_SALT")
+config :cambiatus, :auth_salt_email, System.get_env("EMAIL_SALT")
 
 config :cambiatus, Cambiatus.Eos,
   cambiatus_wallet: System.get_env("EOSIO_WALLET_NAME") || "default",
