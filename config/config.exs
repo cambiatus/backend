@@ -30,13 +30,14 @@ config :cambiatus,
 
 config :cambiatus, Cambiatus.Repo, pool_size: 15
 
-config :cambiatus, Cambiatus.Mailer,
-  sender_email: "no-reply@cambiatus.com",
-  adapter: Swoosh.Adapters.Sendinblue,
-  api_key: System.get_env("SENDINBLUE_KEY")
+config :cambiatus, Cambiatus.Mailer, sender_email: "no-reply@cambiatus.com"
 
 config :logger,
   backends: [:console, Sentry.LoggerBackend]
+
+config :ex_cldr,
+  default_locale: "en",
+  default_backend: CambiatusWeb.Cldr
 
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",

@@ -78,7 +78,7 @@ defmodule Cambiatus.Auth do
   {:error, :decode_failed}
   """
   @spec find_invitation(binary) ::
-          {:ok, %Invitation{}} | {:error, :invitation_not_found} | {:error, :decode_failed}
+          {:ok, Invitation.t()} | {:error, :invitation_not_found} | {:error, :decode_failed}
   def find_invitation(code) do
     case InvitationId.decode(code) do
       {:ok, id} ->

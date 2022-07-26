@@ -74,14 +74,14 @@ defmodule CambiatusWeb.Schema.AccountTypes do
       resolve(&AccountsResolver.sign_in/3)
     end
 
-    @desc "[Auth required] A mutation to only the preferences of the logged user"
+    @desc "[Auth required] A mutation to set the preferences of the logged user"
     field :preference, :user do
       arg(:language, :language)
       arg(:claim_notification, :boolean)
       arg(:transfer_notification, :boolean)
       arg(:digest, :boolean)
 
-      middleware(Middleware.Authenticate)
+      middleware(Middleware.EmailSpecialAuthenticate)
       resolve(&AccountsResolver.update_preferences/3)
     end
 
