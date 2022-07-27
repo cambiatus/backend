@@ -13,6 +13,7 @@ defmodule CambiatusWeb.Router do
   end
 
   pipeline :browser do
+    plug(:put_secure_browser_headers, %{"content-security-policy" => "default-src 'self'"})
     plug(:accepts, ["html"])
   end
 
