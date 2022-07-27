@@ -18,6 +18,7 @@ defmodule Cambiatus.Release do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
+  # sobelow_skip ["RCE"]
   def seed() do
     load_app()
     seed_script = Application.app_dir(:cambiatus, "priv/repo/seeds.exs")
