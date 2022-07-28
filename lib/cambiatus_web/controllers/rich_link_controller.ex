@@ -76,7 +76,7 @@ defmodule CambiatusWeb.RichLinkController do
            description: user.bio || (user.name || user.account) <> " is on " <> community.name,
            title: user.name || user.account,
            url: community.subdomain.name <> "/profile/#{user.account}",
-           image: user.avatar,
+           image: user.avatar || @fallback_image,
            locale: get_language(language, user)
          }}
 
