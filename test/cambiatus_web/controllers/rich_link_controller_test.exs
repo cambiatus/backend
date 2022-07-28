@@ -21,7 +21,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         title: community.name,
         url: community.subdomain.name,
         image: community.logo,
-        locale: nil
+        locale: "en-US"
       }
 
       # Submit GET request for a community rich link
@@ -33,7 +33,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
 
@@ -64,7 +64,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
 
@@ -95,7 +95,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
 
@@ -126,7 +126,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
 
@@ -166,7 +166,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
   end
@@ -206,7 +206,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
     # Check if all the rich link fields are properly filled
     Enum.each(expected_data, fn {k, v} ->
-      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
     end)
   end
 
@@ -233,7 +233,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
     # Check if all the rich link fields are properly filled
     Enum.each(expected_data, fn {k, v} ->
-      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
     end)
   end
 
@@ -268,7 +268,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
     # Check if all the rich link fields are properly filled
     Enum.each(expected_data, fn {k, v} ->
-      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
     end)
   end
 
