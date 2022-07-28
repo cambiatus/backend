@@ -99,6 +99,37 @@ defmodule CambiatusWeb.RichLinkControllerTest do
       end)
     end
 
+    test "generate rich link for user without bio",
+         %{conn: conn} do
+      # Insert user and extract data for the rich link
+
+      user = insert(:user, bio: nil)
+
+      community =
+        insert(:community)
+        |> Repo.preload(:subdomain)
+
+      expected_data = %{
+        description: user.name <> " is on " <> community.name,
+        title: user.name,
+        url: community.subdomain.name <> "/profile/#{user.account}",
+        image: user.avatar,
+        locale: user.language
+      }
+
+      # Submit GET request for a user rich link
+      conn =
+        %{conn | host: community.subdomain.name}
+        |> get("/api/rich_link/profile/#{user.account}")
+
+      response = html_response(conn, 200)
+
+      # Check if all the rich link fields are properly filled
+      Enum.each(expected_data, fn {k, v} ->
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      end)
+    end
+
     test "generate rich link for product with image",
          %{conn: conn} do
       # Insert product and extract data for the rich link

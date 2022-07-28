@@ -7,7 +7,7 @@ defmodule CambiatusWeb.RichLinkController do
 
   use CambiatusWeb, :controller
 
-  alias CambiatusWeb.Resolvers.{Accounts, Commune, Shop}
+  alias CambiatusWeb.Resolvers.{Accounts, Shop}
   alias Cambiatus.Repo
 
   @fallback_image "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
@@ -73,7 +73,7 @@ defmodule CambiatusWeb.RichLinkController do
       {:ok, user} ->
         {:ok,
          %{
-           description: user.bio,
+           description: user.bio || (user.name || user.account) <> " is on " <> community.name,
            title: user.name || user.account,
            url: community.subdomain.name <> "/profile/#{user.account}",
            image: user.avatar,
@@ -87,6 +87,9 @@ defmodule CambiatusWeb.RichLinkController do
 
   def category_rich_link(category_id, community, language) do
     case Cambiatus.Shop.get_category(category_id) do
+      nil ->
+        {:error, "Category not found"}
+
       category ->
         {:ok,
          %{
@@ -96,9 +99,6 @@ defmodule CambiatusWeb.RichLinkController do
            image: category.icon_uri || category.image_uri || @fallback_image,
            locale: get_language(language, %{})
          }}
-
-      nil ->
-        {:error, "Category not found"}
     end
   end
 
