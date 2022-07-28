@@ -130,6 +130,11 @@ msgid "Community News"
 msgstr "የማህበረሰብ ዜና"
 
 #, elixir-format
-#: lib/cambiatus_web/views/rich_link_view.ex.ex:22
+#: lib/cambiatus_web/views/rich_link_view.ex.ex:23
 msgid "Sold by"
 msgstr "የተሸጠው በ"
+
+#, elixir-format
+#: lib/cambiatus_web/views/rich_link_view.ex.ex:31
+msgid "makes part of Cambiatus"
+msgstr "የካምቢያተስ አካል ያደርጋል"

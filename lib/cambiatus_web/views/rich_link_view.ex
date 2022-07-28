@@ -27,7 +27,8 @@ defmodule CambiatusWeb.RichLinkView do
     if data.description do
       md_to_txt(data.description)
     else
-      data.title <> " makes part of Cambiatus"
+      Gettext.put_locale(CambiatusWeb.Gettext, Atom.to_string(data.locale))
+      "#{data.title} " <> gettext("makes part of Cambiatus")
     end
   end
 
