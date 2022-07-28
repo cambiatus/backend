@@ -110,7 +110,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         |> Repo.preload(:subdomain)
 
       expected_data = %{
-        description: user.name <> " is on " <> community.name,
+        description: user.name <> " makes part of Cambiatus",
         title: user.name,
         url: community.subdomain.name <> "/profile/#{user.account}",
         image: user.avatar,

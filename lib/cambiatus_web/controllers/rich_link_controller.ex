@@ -53,6 +53,7 @@ defmodule CambiatusWeb.RichLinkController do
 
         {:ok,
          %{
+           type: :product,
            description: product.description,
            title: product.title,
            url: community.subdomain.name <> "/shop/#{product.id}",
@@ -73,7 +74,8 @@ defmodule CambiatusWeb.RichLinkController do
       {:ok, user} ->
         {:ok,
          %{
-           description: user.bio || (user.name || user.account) <> " is on " <> community.name,
+           type: :user,
+           description: user.bio,
            title: user.name || user.account,
            url: community.subdomain.name <> "/profile/#{user.account}",
            image: user.avatar || @fallback_image,
@@ -93,6 +95,7 @@ defmodule CambiatusWeb.RichLinkController do
       category ->
         {:ok,
          %{
+           type: :category,
            description: category.meta_description || category.description,
            title: category.meta_title || category.name,
            url: community.subdomain.name <> "/shop/categories/#{category.slug}-#{category.id}",
@@ -105,6 +108,7 @@ defmodule CambiatusWeb.RichLinkController do
   def community_rich_link(community, language) do
     {:ok,
      %{
+       type: :community,
        description: community.description,
        title: community.name,
        url: community.subdomain.name,

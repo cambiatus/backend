@@ -18,9 +18,17 @@ defmodule CambiatusWeb.RichLinkView do
     end
   end
 
-  def create_description(%{description: description, creator: creator, locale: locale}) do
-    Gettext.put_locale(CambiatusWeb.Gettext, Atom.to_string(locale))
-    gettext("Sold by") <> " #{creator} - #{md_to_txt(description)}"
+  def create_description(%{type: :product} = data) do
+    Gettext.put_locale(CambiatusWeb.Gettext, Atom.to_string(data.locale))
+    gettext("Sold by") <> " #{data.creator} - #{md_to_txt(data.description)}"
+  end
+
+  def create_description(%{type: :user} = data) do
+    if data.description do
+      md_to_txt(data.description)
+    else
+      data.title <> " makes part of Cambiatus"
+    end
   end
 
   def create_description(data), do: md_to_txt(data.description)
