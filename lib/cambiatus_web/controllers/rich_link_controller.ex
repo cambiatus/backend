@@ -60,7 +60,7 @@ defmodule CambiatusWeb.RichLinkController do
            image: if(images != [], do: Map.get(List.first(images), :uri), else: @fallback_image),
            locale: get_language(language, creator),
            price: product.price,
-           currency: String.slice(community.symbol, 2, 7),
+           currency: String.split(community.symbol, ",") |> Enum.at(1),
            creator: Map.get(creator, :name) || creator.account
          }}
 
