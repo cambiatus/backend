@@ -3,7 +3,7 @@
   private: false,
   skip: true,
   router: "",
-  exit: "false",
+  exit: "true",
   format: "txt",
   out: "",
   threshold: "low",
