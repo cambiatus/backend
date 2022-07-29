@@ -14,10 +14,9 @@ defmodule CambiatusWeb.RichLinkController do
 
   def rich_link(conn, params) do
     language = get_req_header(conn, "accept-language")
-    context = conn.private[:absinthe][:context]
 
     data =
-      with {:ok, community} <- Map.fetch(context, :current_community),
+      with {:ok, community} <- Map.fetch(conn.assigns, :current_community),
            community <- Repo.preload(community, :subdomain) do
         case Map.get(params, "page") do
           ["shop", id] ->
