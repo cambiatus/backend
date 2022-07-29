@@ -88,10 +88,7 @@ defmodule CambiatusWeb.RichLinkController do
 
   def category_rich_link(category_id, community, language) do
     case Cambiatus.Shop.get_category(category_id) do
-      nil ->
-        {:error, "Category not found"}
-
-      category ->
+      {:ok, category} ->
         {:ok,
          %{
            type: :category,
@@ -101,6 +98,9 @@ defmodule CambiatusWeb.RichLinkController do
            image: category.icon_uri || category.image_uri || @fallback_image,
            locale: get_language(language, %{})
          }}
+
+      {:error, reason} ->
+        {:error, reason}
     end
   end
 
