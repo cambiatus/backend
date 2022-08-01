@@ -21,7 +21,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
         title: community.name,
         url: community.subdomain.name,
         image: community.logo,
-        locale: nil
+        locale: "en-US"
       }
 
       # Submit GET request for a community rich link
@@ -33,7 +33,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
 
@@ -64,7 +64,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
 
@@ -95,7 +95,38 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
+      end)
+    end
+
+    test "generate rich link for user without bio",
+         %{conn: conn} do
+      # Insert user and extract data for the rich link
+
+      user = insert(:user, bio: nil)
+
+      community =
+        insert(:community)
+        |> Repo.preload(:subdomain)
+
+      expected_data = %{
+        description: user.name <> " makes part of Cambiatus",
+        title: user.name,
+        url: community.subdomain.name <> "/profile/#{user.account}",
+        image: user.avatar,
+        locale: user.language
+      }
+
+      # Submit GET request for a user rich link
+      conn =
+        %{conn | host: community.subdomain.name}
+        |> get("/api/rich_link/profile/#{user.account}")
+
+      response = html_response(conn, 200)
+
+      # Check if all the rich link fields are properly filled
+      Enum.each(expected_data, fn {k, v} ->
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
 
@@ -135,7 +166,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
       # Check if all the rich link fields are properly filled
       Enum.each(expected_data, fn {k, v} ->
-        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+        assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
       end)
     end
   end
@@ -175,7 +206,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
     # Check if all the rich link fields are properly filled
     Enum.each(expected_data, fn {k, v} ->
-      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
     end)
   end
 
@@ -202,7 +233,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
     # Check if all the rich link fields are properly filled
     Enum.each(expected_data, fn {k, v} ->
-      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
     end)
   end
 
@@ -237,7 +268,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
 
     # Check if all the rich link fields are properly filled
     Enum.each(expected_data, fn {k, v} ->
-      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}/)
+      assert String.match?(response, ~r/meta property=\"og:#{k}\" content=\"#{v}\"/)
     end)
   end
 

@@ -15,9 +15,7 @@ defmodule CambiatusWeb.ManifestController do
   end
 
   def manifest(conn, _params) do
-    context = conn.private[:absinthe][:context]
-
-    case Map.fetch(context, :current_community) do
+    case Map.fetch(conn.assigns, :current_community) do
       {:ok, community} ->
         manifest =
           community

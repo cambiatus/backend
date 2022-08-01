@@ -130,6 +130,11 @@ msgid "Community News"
 msgstr "Noticias de la comunidad"
 
 #, elixir-format
-#: lib/cambiatus_web/views/rich_link_view.ex.ex:22
+#: lib/cambiatus_web/views/rich_link_view.ex.ex:23
 msgid "Sold by"
 msgstr "Vendido por"
+
+#, elixir-format
+#: lib/cambiatus_web/views/rich_link_view.ex.ex:31
+msgid "makes part of Cambiatus"
+msgstr "hace parte de Cambiatus"

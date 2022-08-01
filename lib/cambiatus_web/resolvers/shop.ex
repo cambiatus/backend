@@ -92,7 +92,7 @@ defmodule CambiatusWeb.Resolvers.Shop do
       }) do
     params = Map.merge(params, %{community_id: current_community.symbol})
 
-    with %Category{} = category <- Shop.get_category(category_id),
+    with %Category{} = category <- Shop.get_category!(category_id),
          {:ok, updated_category} <- Shop.update_category(category, params) do
       {:ok, updated_category}
     else
