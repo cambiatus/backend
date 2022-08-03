@@ -4,8 +4,16 @@ import Ecto.Query
 
 alias Cambiatus.Repo
 alias Cambiatus.Objectives.{Action, Claim}
+alias Cambiatus.Commune.{Community, Transfer}
+alias Cambiatus.Shop.Product
 
-fields = %{Action => [:image], Claim => [:proof_photo, :proof_code]}
+fields = %{
+  Action => [:photo_proof_instructions, :image],
+  Claim => [:proof_photo, :proof_code],
+  Community => [:logo, :description, :website],
+  Product => [:description],
+  Transfer => [:memo]
+}
 
 Enum.each(Map.keys(fields), fn schema ->
   fields
