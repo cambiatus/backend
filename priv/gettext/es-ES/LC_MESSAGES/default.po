@@ -82,7 +82,7 @@ msgstr "en"
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:126
 msgid "During this month we've released some news in the app, and so you don't miss any of them, we've prepared a super summary!"
-msgstr ""
+msgstr "¡Durante este mes hemos lanzado algunas novedades en la app, y para que no te pierdas ninguna, hemos preparado un súper resumen!"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:252
