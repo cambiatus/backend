@@ -8,16 +8,13 @@ defmodule Cambiatus.Shop.Order do
   alias Cambiatus.{Accounts.User, Shop.Product}
 
   schema "orders" do
-    field(:amount, :float)
-    field(:units, :integer)
+    field(:payment_method, :string)
+    field(:total, :float)
+    field(:status, :string)
 
-    field(:created_block, :integer)
-    field(:created_tx, :string)
-    field(:created_eos_account, :string)
+    field(:updated_at, :utc_datetime)
     field(:created_at, :utc_datetime)
 
-    belongs_to(:product, Product)
-    belongs_to(:from, User, references: :account, type: :string)
-    belongs_to(:to, User, references: :account, type: :string)
+    belongs_to(:buyer_id, User, references: :account, type: :string)
   end
 end
