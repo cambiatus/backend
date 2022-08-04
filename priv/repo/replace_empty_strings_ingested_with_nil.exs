@@ -1,4 +1,17 @@
-IO.puts("Replacing empty strings with null")
+IO.puts("""
+Replace the following empty string ingested by the event-source with nil:
+  Objectives.Action.photo_proof_instructions
+  Objectives.Action.image
+  Objectives.Claim.proof_photo
+  Objectives.Claim.proof_code
+  Commune.Community.logo
+  Commune.Community.description
+  Commune.Community.website
+  Commune.Transfer.memo
+  Shop.Product.description
+
+""")
+
 
 import Ecto.Query
 
@@ -14,6 +27,10 @@ fields = %{
   Product => [:description],
   Transfer => [:memo]
 }
+
+# Iterate over the schemas defined as the keys in the field map
+# Then iterate over the fields defined as the values in the fields map
+# And for each field find entries with empty strings and update them as nil
 
 Enum.each(Map.keys(fields), fn schema ->
   fields
