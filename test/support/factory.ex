@@ -44,6 +44,11 @@ defmodule Cambiatus.Factory do
     PushSubscription
   }
 
+  alias Cambiatus.Orders.{
+    Order,
+    Item
+  }
+
   alias Cambiatus.Payments.Contribution
   alias Cambiatus.Repo
   alias Cambiatus.Shop.{Category, Product, ProductImage, ProductCategory}
@@ -430,6 +435,26 @@ defmodule Cambiatus.Factory do
       position: sequence(:position, &"#{&1}"),
       product: build(:product),
       category: build(:category)
+    }
+  end
+
+  def order_factory do
+    %Order{
+      payment_method: Enum.random([:paypal, :bitcoin, :ethereum, :eos]),
+      total: :rand.uniform(),
+      status: "pending",
+      buyer: build(:user)
+    }
+  end
+
+  def item_factory do
+    %Item{
+      units: Enum.random(1..10),
+      unit_price: Enum.random(1..50),
+      status: "cart",
+      shipping: "chariot",
+      product: build(:product),
+      order: build(:order)
     }
   end
 end
