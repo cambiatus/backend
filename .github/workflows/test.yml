@@ -45,5 +45,7 @@ jobs:
       run: mix format --check-formatted    
     - name: Check format, compile and credo warnings
       run: mix do compile --warnings-as-errors --all warnings, format --check-formatted, credo --strict --only warning
+    - name: Look for security vulnerabilities
+      run: mix sobelow --config 
     - name: Run tests
       run: mix test

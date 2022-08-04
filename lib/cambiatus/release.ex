@@ -18,6 +18,10 @@ defmodule Cambiatus.Release do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
+  # This Remote Code Execution potentail vulnerabilty is skipped beacuse the file
+  # beign evaluated is stored within our server. Therefore it and cannot be tampered by users
+
+  # sobelow_skip ["RCE"]
   def seed() do
     load_app()
     seed_script = Application.app_dir(:cambiatus, "priv/repo/seeds.exs")
