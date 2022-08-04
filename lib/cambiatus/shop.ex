@@ -198,7 +198,15 @@ defmodule Cambiatus.Shop do
       nil
 
   """
-  def get_category(id), do: Repo.get(Category, id)
+  def get_category(id) do
+    case Repo.get(Category, id) do
+      nil ->
+        {:error, "No category exists with the id: #{id}"}
+
+      val ->
+        {:ok, val}
+    end
+  end
 
   @doc """
   Gets a single category.
@@ -384,7 +392,7 @@ defmodule Cambiatus.Shop do
 
   """
   def delete_category(category_id, user, community_id) do
-    with %Category{} = category <- get_category(category_id),
+    with %Category{} = category <- get_category!(category_id),
          true <- category.community_id == community_id,
          true <- Commune.is_community_admin?(category.community_id, user.account) do
       case Repo.delete(category) do

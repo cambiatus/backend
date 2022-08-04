@@ -15,7 +15,9 @@ defmodule CambiatusWeb.Plugs.GetOrigin do
     with [domain] <- get_req_header(conn, "community-domain"),
          {:ok, domain} <- get_domain_from_header(domain),
          {:ok, current_community} <- Commune.get_community_by_subdomain(domain) do
-      Absinthe.Plug.assign_context(conn, %{domain: domain, current_community: current_community})
+      conn
+      |> assign(:current_community, current_community)
+      |> Absinthe.Plug.assign_context(%{domain: domain, current_community: current_community})
     else
       {:error, error} ->
         Sentry.capture_message("Could not get community from subdomain",
@@ -27,10 +29,9 @@ defmodule CambiatusWeb.Plugs.GetOrigin do
       _ ->
         with domain <- get_domain_from_host(conn.host),
              {:ok, current_community} <- Commune.get_community_by_subdomain(domain) do
-          Absinthe.Plug.assign_context(conn, %{
-            domain: domain,
-            current_community: current_community
-          })
+          conn
+          |> assign(:current_community, current_community)
+          |> Absinthe.Plug.assign_context(%{domain: domain, current_community: current_community})
         else
           {:error, error} ->
             Sentry.capture_message("Could not assign community into context",

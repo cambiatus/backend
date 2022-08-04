@@ -688,7 +688,8 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                }
              } == response
 
-      refute Cambiatus.Shop.get_category(category.id)
+      assert {:error, "No category exists with the id: #{category.id}"} ==
+               Cambiatus.Shop.get_category(category.id)
     end
 
     test "Updates existing categories with new positioning", %{conn: conn, community: community} do
