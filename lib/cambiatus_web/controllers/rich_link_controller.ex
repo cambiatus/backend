@@ -36,6 +36,9 @@ defmodule CambiatusWeb.RichLinkController do
           _ ->
             community_rich_link(community, language)
         end
+      else
+        :error ->
+          {:error, "No community found using the domain #{conn.host}"}
       end
 
     case data do
