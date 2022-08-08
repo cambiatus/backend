@@ -48,7 +48,16 @@ defmodule Cambiatus.Shop do
     end
   end
 
-  def create_product(attrs \\ %{}) do
+  def create_product(%{categories: categories} = attrs) do
+    attrs =
+      attrs
+      |> Map.merge(%{product_categories: Enum.map(categories, &%{category_id: &1})})
+      |> Map.delete(:categories)
+
+    create_product(attrs)
+  end
+
+  def create_product(attrs) do
     %Product{}
     |> Product.changeset(attrs, :create)
     |> Repo.insert()

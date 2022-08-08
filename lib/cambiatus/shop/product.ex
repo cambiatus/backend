@@ -34,7 +34,7 @@ defmodule Cambiatus.Shop.Product do
       on_delete: :delete_all
     )
 
-    has_many(:product_categories, ProductCategory)
+    has_many(:product_categories, ProductCategory, on_replace: :delete)
     has_many(:categories, through: [:product_categories, :category])
   end
 
@@ -100,12 +100,38 @@ defmodule Cambiatus.Shop.Product do
 
   def validate_categories(
         %{
+          changes: %{
+            product_categories: product_categories,
+            community_id: community_id
+          }
+        } = changeset
+      ) do
+    product_categories
+    |> Enum.filter(&(&1.changes != %{}))
+    |> Enum.reduce(
+      changeset,
+      fn product_category, changeset ->
+        with %{category_id: category_id} <- product_category.changes,
+             %Category{} = category <- Repo.get(Category, category_id),
+             true <- category.community_id == community_id do
+          changeset
+        else
+          _ ->
+            add_error(changeset, :product_category, "Can't find category with given ID")
+        end
+      end
+    )
+  end
+
+  def validate_categories(
+        %{
           changes: %{product_categories: product_categories},
           data: %{community_id: community_id}
         } = changeset
       ) do
-    Enum.reduce(
-      product_categories,
+    product_categories
+    |> Enum.filter(&(&1.changes != %{}))
+    |> Enum.reduce(
       changeset,
       fn product_category, changeset ->
         with %{category_id: category_id} <- product_category.changes,
