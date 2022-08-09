@@ -59,19 +59,18 @@ defmodule CambiatusWeb.Email do
   end
 
   defp render_params(%Transfer{} = transfer) do
-    unsub_link = unsub_link(transfer.to, transfer.community, transfer.to.language)
+    unsub_link = unsub_link(transfer.to, transfer.community)
     %{transfer: transfer, unsub_link: unsub_link}
   end
 
   defp render_params(%Claim{} = claim) do
-    unsub_link =
-      unsub_link(claim.claimer, claim.action.objective.community, claim.claimer.language)
+    unsub_link = unsub_link(claim.claimer, claim.action.objective.community)
 
     %{claim: claim, unsub_link: unsub_link}
   end
 
   defp render_params(%User{} = user, %Community{} = community) do
-    unsub_link = unsub_link(user, community, user.language)
+    unsub_link = unsub_link(user, community)
     %{community: community, user: user, unsub_link: unsub_link}
   end
 
@@ -81,7 +80,7 @@ defmodule CambiatusWeb.Email do
     "https://#{community.subdomain.name}/api/unsubscribe?token=#{token}"
   end
 
-  def unsub_link(member, community, language) do
+  def unsub_link(member, community) do
     token = AuthToken.sign(member, "email")
 
     "https://#{community.subdomain.name}/api/unsubscribe?token=#{token}"
