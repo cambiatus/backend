@@ -87,14 +87,10 @@ defmodule CambiatusWeb.Email do
     "https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}"
   end
 
-  def set_language(mail, language) when is_atom(language),
-    do: set_language(mail, Atom.to_string(language))
-
   def set_language(mail, language) do
-    if language do
-      Gettext.put_locale(CambiatusWeb.Gettext, language)
-      CambiatusWeb.Cldr.put_gettext_locale(language)
-    end
+    language = if language, do: Atom.to_string(language), else: "en-US"
+    Gettext.put_locale(CambiatusWeb.Gettext, language)
+    CambiatusWeb.Cldr.put_gettext_locale(language)
 
     mail
   end
