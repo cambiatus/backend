@@ -84,7 +84,7 @@ defmodule CambiatusWeb.Email do
   def unsub_link(member, community, language) do
     token = AuthToken.sign(member, "email")
 
-    "https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}"
+    "https://#{community.subdomain.name}/api/unsubscribe?token=#{token}"
   end
 
   def set_language(mail, language) do
