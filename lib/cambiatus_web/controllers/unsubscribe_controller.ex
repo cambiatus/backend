@@ -6,13 +6,15 @@ defmodule CambiatusWeb.UnsubscribeController do
   alias CambiatusWeb.AuthToken
   alias Cambiatus.Accounts
 
-  def unsubscribe(conn, %{"token" => token} = params) do
+  def unsubscribe(conn, %{"token" => token} = _params) do
     with {:ok, %{id: account}} <- AuthToken.verify(token, "email"),
          %Accounts.User{} = current_user <- Accounts.get_user(account) do
-      if Map.has_key?(params, "language") do
-        unsubscribe_page(conn, current_user, token)
-      else
-        one_click(conn, current_user)
+      case conn.method do
+        "GET" ->
+          unsubscribe_page(conn, current_user, token)
+
+        "POST" ->
+          one_click(conn, current_user)
       end
     else
       _ ->
