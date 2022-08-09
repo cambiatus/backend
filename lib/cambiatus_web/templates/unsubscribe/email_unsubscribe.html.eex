@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<% import CambiatusWeb.Gettext %>
+<% Gettext.put_locale(CambiatusWeb.Gettext, Atom.to_string(@data.language)) %>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Cambiatus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+        @media screen and (max-width: 600px) {
+            table[class="container"] {
+                width: 95% !important;
+            }
+        }
+    </style>
+</head>
+
+<body style="margin: 0; padding: 0;">
+    <h1 style="text-align: center;"><%= gettext("Which mailing list do you wisth to unsubscribe?") %></h1>
+
+    <form style="text-align: left;" action="/api/graph" method="post">
+        <input type="checkbox" id="digest" />
+        <label for="digest"> <%= gettext("News Digest") %></label><br>
+        <input type="checkbox" id="claims" />
+        <label for="claims"> <%= gettext("Claims Notifications") %></label><br>
+        <input type="checkbox" id="transfers" />
+        <label for="transfers"> <%= gettext("Transfer Notifications") %></label><br>
+        <button type="button" onclick="emailUnsubscribe()"> <%= gettext("Submit") %> </button>
+    </form>
+
+    <script>
+        function emailUnsubscribe() {
+            const digest = document.getElementById('digest').checked;
+            const claims = document.getElementById('claims').checked;
+            const transfers = document.getElementById('transfers').checked;
+
+            if (digest == false && claims == false && transfers == false) {
+                return alert("<%= gettext("You must select at least one mailing list to unsubscribe from.") %>");
+            };
+
+            var body = "";
+            if (digest) {
+                body += "digest: false "
+                };
+            if (claims) {
+                body += "claimNotification: false "
+                };
+            if (transfers) {
+                body += "transferNotification: false"
+                };
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', '/api/graph', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.setRequestHeader('Authorization', 'Bearer ' + '<%= @data.token %>');
+            xhr.send(JSON.stringify({
+                query: "mutation {preference(" + body + ") {account}} "
+            }));
+        };
+    </script>
+</body>
+
+
+</html>
