@@ -56,7 +56,7 @@ defmodule CambiatusWeb.Router do
     post("/invite", InviteController, :invite)
     get("/manifest", ManifestController, :manifest)
     get("/rich_link/*page", RichLinkController, :rich_link)
-    post("/unsubscribe", UnsubscribeController, :one_click)
+    post("/unsubscribe", UnsubscribeController, :unsubscribe)
 
     post("/paypal", PaypalController, :index)
   end
