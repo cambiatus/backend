@@ -4,7 +4,7 @@ defmodule Cambiatus.Workers.ClaimEmailWorker do
   """
 
   use Oban.Worker,
-    queue: :claim_email,
+    queue: :mailers,
     max_attempts: 3,
     tags: ["claim"],
     unique: [period: 120]

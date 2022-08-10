@@ -4,7 +4,7 @@ defmodule Cambiatus.Workers.TransferEmailWorker do
   """
 
   use Oban.Worker,
-    queue: :transfer_email,
+    queue: :mailers,
     max_attempts: 3,
     tags: ["transfer"],
     unique: [period: 120]
