@@ -6,6 +6,7 @@ defmodule Cambiatus.DbListener do
   require Logger
 
   alias Cambiatus.{Accounts, Notifications, Repo, Objectives}
+  alias Cambiatus.Workers.{ClaimEmailWorker, TransferEmailWorker}
   alias Cambiatus.Commune.Transfer
   alias Cambiatus.Objectives.Claim
 
@@ -98,7 +99,9 @@ defmodule Cambiatus.DbListener do
       user = Accounts.get_user!(record.to_id)
 
       if user.transfer_notification do
-        CambiatusWeb.Email.transfer(record)
+        %{transfer_id: record.id}
+        |> TransferEmailWorker.new()
+        |> Oban.insert()
       end
 
       {:noreply, :event_handled}
@@ -150,7 +153,9 @@ defmodule Cambiatus.DbListener do
           user = Accounts.get_user!(claim.claimer_id)
 
           if user.claim_notification do
-            CambiatusWeb.Email.claim(claim)
+            %{claim_id: claim.id}
+            |> ClaimEmailWorker.new()
+            |> Oban.insert()
           end
 
           Notifications.notify_claim_approved(record.id)
