@@ -168,9 +168,9 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
       mutation = """
         mutation {
           product(id: #{product.id}, categories: [#{cat_1.id}, #{cat_2.id}]) {
-                    title
-                    categories { id }
-                  }
+            title
+            categories { id }
+          }
         }
       """
 
@@ -519,6 +519,104 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              } == response2
 
       assert %{"data" => %{"products" => []}} == response3
+    end
+
+    test "Update change categories" do
+      user = insert(:user)
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+      [cat_1, cat_2, cat_3, cat_4] = insert_list(4, :category, community: community)
+
+      product = insert(:product, community: community, creator: user, categories: [cat_1])
+
+      conn = auth_conn(user, community.subdomain.name)
+
+      mutation = """
+        mutation {
+          product(id: #{product.id}, description: "Sample" categories: [#{cat_2.id}, #{cat_4.id}]) {
+            title
+            categories { id }
+          }
+        }
+      """
+
+      response = conn |> post("/api/graph", query: mutation) |> json_response(200)
+
+      expected_response = %{
+        "data" => %{
+          "product" => %{
+            "title" => product.title,
+            "categories" => [
+              %{"id" => cat_2.id},
+              %{"id" => cat_4.id}
+            ]
+          }
+        }
+      }
+
+      assert(response == expected_response)
+
+      mutation_2 = """
+        mutation {
+          product(id: #{product.id}, categories: [#{cat_3.id}]) {
+            title
+            categories { id }
+          }
+        }
+      """
+
+      response_2 = conn |> post("/api/graph", query: mutation_2) |> json_response(200)
+
+      expected_response_2 = %{
+        "data" => %{
+          "product" => %{
+            "title" => product.title,
+            "categories" => [
+              %{"id" => cat_3.id}
+            ]
+          }
+        }
+      }
+
+      assert(response_2 == expected_response_2)
+    end
+
+    test "create with existing categories" do
+      user = insert(:user)
+      community = insert(:community, creator: user.account)
+
+      [category, another_category] = insert_list(2, :category, community: community)
+
+      conn = auth_conn(user, community.subdomain.name)
+
+      mutation = """
+        mutation {
+          product(title: "Product title",
+            description: "Product description",
+            price: 10.0000,
+            images: [],
+            categories: [#{category.id}, #{another_category.id}]
+            trackStock: false) {
+
+            categories { id }
+          }
+        }
+      """
+
+      response = conn |> post("/api/graph", query: mutation) |> json_response(200)
+
+      expected_response = %{
+        "data" => %{
+          "product" => %{
+            "categories" => [
+              %{"id" => category.id},
+              %{"id" => another_category.id}
+            ]
+          }
+        }
+      }
+
+      assert(response == expected_response)
     end
   end
 

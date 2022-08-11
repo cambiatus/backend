@@ -39,4 +39,13 @@ defmodule CambiatusWeb.RichLinkView do
   end
 
   def create_title(data), do: data.title
+
+  def render("error.json", %{error: value}) when is_binary(value) do
+    %{
+      data: %{
+        status: "failed",
+        message: value
+      }
+    }
+  end
 end

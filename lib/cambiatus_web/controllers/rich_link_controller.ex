@@ -10,6 +10,8 @@ defmodule CambiatusWeb.RichLinkController do
   alias CambiatusWeb.Resolvers.{Accounts, Shop}
   alias Cambiatus.Repo
 
+  action_fallback(CambiatusWeb.FallbackController)
+
   @fallback_image "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/b214c106482a46ad89f3272761d3f5b5"
 
   def rich_link(conn, params) do
@@ -34,6 +36,9 @@ defmodule CambiatusWeb.RichLinkController do
           _ ->
             community_rich_link(community, language)
         end
+      else
+        :error ->
+          {:error, "No community found using the domain #{conn.host}"}
       end
 
     case data do
@@ -41,7 +46,7 @@ defmodule CambiatusWeb.RichLinkController do
         render(conn, "rich_link.html", %{data: data})
 
       {:error, reason} ->
-        send_resp(conn, 404, reason)
+        render(conn, "error.json", %{error: reason})
     end
   end
 
@@ -119,7 +124,7 @@ defmodule CambiatusWeb.RichLinkController do
   defp get_language(conn_header, map) do
     case conn_header do
       [language] ->
-        String.to_atom(language)
+        String.to_existing_atom(language)
 
       _ ->
         Map.get(map, :language) || :"en-US"
