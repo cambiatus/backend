@@ -12,6 +12,7 @@ defmodule CambiatusWeb.UnsubscribeController do
         data = %{
           language: current_user.language || :"en-US",
           token: token,
+          account: current_user.account,
           transfer_notification: current_user.transfer_notification,
           claim_notification: current_user.claim_notification,
           digest: current_user.digest

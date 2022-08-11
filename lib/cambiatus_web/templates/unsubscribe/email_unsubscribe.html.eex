@@ -115,7 +115,6 @@
                     padding-left: 25px;
                     padding-right: 25px;
                     margin: 25px;
-                    font: 14px 'nunito', sans-serif;
                     border-radius: 20px;
                     width: 100%;
                     max-width: 80vw;
@@ -157,15 +156,28 @@
                 .header {
                     background-color: white;
                     padding: 12px;
-                    margin-bottom: 50px;
                     text-align: center;
+                }
+
+                .alert {
+                    width: 100%;
+                    margin-bottom: 50px;
+                    padding: 10px;
+                    position: -webkit-sticky;
+                    position: sticky;
+                    top: 0;
+                    text-align: center;
+                    color: white;
                 }
             </style>
         </head>
 
-        <body style="margin: 0; padding: 0; background-color: #F6F6F6;">
+        <body style="margin: 0; padding: 0; background-color: #F6F6F6; font: 14px 'nunito', sans-serif;">
         <div class="header">
             <a href="https://www.cambiatus.com/" target="_blank"> <img src="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e4ede46179566acc07948ca_complete.svg" alt=""> </a>
+        </div>
+        <div class="alert" id="feedback" style="visibility: hidden;">
+            <span id="feedback-string" style="font-weight: bold;"></span>
         </div>
             <form class="form" action="/api/graph" method="post">
             <h1 style="text-align: center; font-size: 22px;">
@@ -253,6 +265,8 @@
                 });
 
                 function emailUnsubscribe() {
+                    document.getElementById("feedback").style.visibility = "hidden";
+
                     const digest = document.getElementById('digest').checked;
                     const claims = document.getElementById('claims').checked;
                     const transfers = document.getElementById('transfers').checked;
@@ -281,6 +295,21 @@
                     xhr.send(JSON.stringify({
                         query: "mutation {preference(" + body + ") {account}} "
                     }));
+
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == XMLHttpRequest.DONE) {
+                            if (xhr.responseText === '{"data":{"preference":{"account":"<%= @data.account %>"}}}') {
+                                document.getElementById("feedback").style.visibility = "visible";
+                                document.getElementById("feedback").style.backgroundColor = "#8ACC9E";
+                                document.getElementById("feedback-string").innerText = "<%= gettext("Preferences updated successfully!")%>";
+                            } else {
+                                document.getElementById("feedback").style.visibility = "visible";
+                                document.getElementById("feedback").style.backgroundColor = "#DB1B1B";
+                                document.getElementById("feedback-string").innerText = "<%= gettext("Something went wrong. Please try again.") %>";
+                            }
+                        }
+                    }
+
                 };
             </script>
         </body>
