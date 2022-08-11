@@ -7,6 +7,7 @@ defmodule Cambiatus.Orders do
   alias Cambiatus.Repo
 
   alias Cambiatus.Orders.Order
+  alias Cambiatus.Shop.Product
 
   @doc """
   Returns the list of orders.
@@ -77,9 +78,11 @@ defmodule Cambiatus.Orders do
   """
 
   # TODO: Add current_user to query
-  def get_shopping_cart() do
+  def get_shopping_cart(buyer) do
     Order
     |> where([o], o.status == "cart")
+    |> join(:left, [o], b in assoc(o, :buyer))
+    |> where([o, b], b.account == ^buyer.account)
     |> Repo.all()
     |> case do
       [] ->
@@ -130,8 +133,8 @@ defmodule Cambiatus.Orders do
   end
 
   @doc """
-  Updates a order.
-
+  Updates an order.
+  
   ## Examples
 
       iex> update_order(order, %{field: new_value})
@@ -245,21 +248,19 @@ defmodule Cambiatus.Orders do
   """
   def create_item(attrs \\ %{})
 
-  def create_item(%{order_id: id} = attrs) do
+  def create_item(%{order_id: _id} = attrs) do
     %Item{}
     |> Item.changeset(attrs)
     |> Repo.insert()
   end
 
-  def create_item(attrs) do
-    case get_shopping_cart() do
+  def create_item(%{buyer: buyer} = attrs) do
+    case get_shopping_cart(buyer) do
       {:error, "User has no shopping cart"} ->
-        cart_id =
-          create_order!()
-          |> Map.get(:id)
+        cart = create_order!()
 
         attrs
-        |> Map.put(:order_id, cart_id)
+        |> Map.put(:order_id, cart.id)
         |> create_item()
 
       {:ok, order} ->
@@ -273,8 +274,8 @@ defmodule Cambiatus.Orders do
   end
 
   @doc """
-  Updates a item.
-
+  Updates an item.
+  
   ## Examples
 
       iex> update_item(item, %{field: new_value})
@@ -291,8 +292,8 @@ defmodule Cambiatus.Orders do
   end
 
   @doc """
-  Deletes a item.
-
+  Deletes an item.
+  
   ## Examples
 
       iex> delete_item(item)
