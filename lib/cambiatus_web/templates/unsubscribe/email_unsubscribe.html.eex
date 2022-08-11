@@ -8,7 +8,8 @@
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <title>Cambiatus</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <link rel="icon" type="image/png" href="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e511ffe258ffe3e9e8243fc_logo32.svg">
+            <link rel="icon" type="image/png"
+                href="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e511ffe258ffe3e9e8243fc_logo32.svg">
 
             <style>
                 .switch {
@@ -173,64 +174,69 @@
         </head>
 
         <body style="margin: 0; padding: 0; background-color: #F6F6F6; font: 14px 'nunito', sans-serif;">
-        <div class="header">
-            <a href="https://www.cambiatus.com/" target="_blank"> <img src="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e4ede46179566acc07948ca_complete.svg" alt=""> </a>
-        </div>
-        <div class="alert" id="feedback" style="visibility: hidden;">
-            <span id="feedback-string" style="font-weight: bold;"></span>
-        </div>
+            <div class="header">
+                <a href="https://www.cambiatus.com/" target="_blank"> <img
+                        src="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e4ede46179566acc07948ca_complete.svg"
+                        alt=""> </a>
+            </div>
+            <div class="alert" id="feedback" style="visibility: hidden;">
+                <span id="feedback-string" style="font-weight: bold;"></span>
+            </div>
             <form class="form" action="/api/graph" method="post">
-            <h1 style="text-align: center; font-size: 22px;">
-                <%= gettext("Which mailing list do you wish to unsubscribe from?") %>
-            </h1>
-                    <ul class="ul">
-                        <li class="row">
-                            <div class="flexing">
-                                <span>
-                                    <%= gettext("News Digest") %>
-                                </span>
-                                <div class="flexing">
-                                        <label for="digest" class="switch-label">
-                                        </label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="digest" class="switch" <%=if @data.digest, do: "checked" %> />
-                                        <span class="slider round"></span>
-                                </label>
-                                </div>
-                            </div>
-                        </li>
-                        <li class="row">
+                <h1 style="text-align: center; font-size: 22px;">
+                    <%= gettext("Which mailing list do you wish to unsubscribe from?") %>
+                </h1>
+                <ul class="ul">
+                    <li class="row">
                         <div class="flexing">
-                                <span>
-                                    <%= gettext("Claims Notifications") %>
-                                </span>
-                                <div class="flexing">
-                                    <label for="claims" class="switch-label"></label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="claims" class="switch" <%=if @data.claim_notification, do: "checked" %> />
-                                        <span class="slider round"></span>
-                                </label>
-                                </div>
-                                </div>
-                        </li>
-                        <li class="bottom-row">
+                            <span>
+                                <%= gettext("News Digest") %>
+                            </span>
                             <div class="flexing">
-                                <span>
-                                    <%= gettext("Transfer Notifications") %>
-                                </span>
-                                <div class="flexing">
-                                    <label for="transfers" class="switch-label"></label>
-                                    <label class="switch">
-                                        <input type="checkbox" id="transfers" class="switch" <%=if @data.transfer_notification, do: "checked" %> />
-                                        <span class="slider round"></span>
+                                <label for="digest" class="switch-label">
                                 </label>
-                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="digest" class="switch"
+                                        <%= if @data.digest, do: "checked" %> />
+                                    <span class="slider round"></span>
+                                </label>
                             </div>
-                        </li>
-                    </ul>
-                    <button class="button-style" type="button" onclick="emailUnsubscribe()">
-                        <%= gettext("Submit") %>
-                    </button>
+                        </div>
+                    </li>
+                    <li class="row">
+                        <div class="flexing">
+                            <span>
+                                <%= gettext("Claims Notifications") %>
+                            </span>
+                            <div class="flexing">
+                                <label for="claims" class="switch-label"></label>
+                                <label class="switch">
+                                    <input type="checkbox" id="claims" class="switch"
+                                        <%=if @data.claim_notification, do: "checked" %> />
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bottom-row">
+                        <div class="flexing">
+                            <span>
+                                <%= gettext("Transfer Notifications") %>
+                            </span>
+                            <div class="flexing">
+                                <label for="transfers" class="switch-label"></label>
+                                <label class="switch">
+                                    <input type="checkbox" id="transfers" class="switch"
+                                        <%=if @data.transfer_notification, do: "checked" %> />
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <button class="button-style" type="button" onclick="emailUnsubscribe()">
+                    <%= gettext("Submit") %>
+                </button>
             </form>
 
             <script>
@@ -296,16 +302,16 @@
                         query: "mutation {preference(" + body + ") {account}} "
                     }));
 
-                    xhr.onreadystatechange = function() {
+                    xhr.onreadystatechange = function () {
                         if (xhr.readyState == XMLHttpRequest.DONE) {
                             if (xhr.responseText === '{"data":{"preference":{"account":"<%= @data.account %>"}}}') {
                                 document.getElementById("feedback").style.visibility = "visible";
                                 document.getElementById("feedback").style.backgroundColor = "#8ACC9E";
-                                document.getElementById("feedback-string").innerText = "<%= gettext("Preferences updated successfully!")%>";
+                                document.getElementById("feedback-string").innerText = "<%= gettext("Preferences updated successfully!") %>";
                             } else {
                                 document.getElementById("feedback").style.visibility = "visible";
                                 document.getElementById("feedback").style.backgroundColor = "#DB1B1B";
-                                document.getElementById("feedback-string").innerText = "<%= gettext("Something went wrong. Please try again.") %>";
+                                document.getElementById("feedback-string").innerText = "<%= gettext("Something went wrong.Please try again.") %>";
                             }
                         }
                     }
@@ -313,6 +319,5 @@
                 };
             </script>
         </body>
-
 
 </html>
