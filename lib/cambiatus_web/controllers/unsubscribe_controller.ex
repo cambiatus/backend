@@ -11,7 +11,10 @@ defmodule CambiatusWeb.UnsubscribeController do
       {:ok, current_user} ->
         data = %{
           language: current_user.language || :"en-US",
-          token: token
+          token: token,
+          transfer_notification: current_user.transfer_notification,
+          claim_notification: current_user.claim_notification,
+          digest: current_user.digest
         }
 
         render(conn, "email_unsubscribe.html", %{data: data})

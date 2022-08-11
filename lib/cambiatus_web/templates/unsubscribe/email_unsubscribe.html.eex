@@ -8,13 +8,14 @@
             <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
             <title>Cambiatus</title>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <link rel="icon" type="image/png" href="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e511ffe258ffe3e9e8243fc_logo32.svg">
 
             <style>
                 .switch {
                     position: relative;
                     display: inline-block;
                     width: 46px;
-                    height: 22px;
+                    height: 24px;
                 }
 
                 .switch input {
@@ -24,17 +25,8 @@
                 }
 
                 .switch-label {
-                    text-align: left;
-                    margin-left: -70px;
-                    position: absolute;
-                    top: -18px;
-                }
-
-                .switch-label:before {
-                    margin-left: -70px;
-                    position: absolute;
-                    top: -14px;
-                    color: #5C5C5C;
+                    margin-left: 15px;
+                    margin-right: 5px;
                 }
 
                 .slider {
@@ -44,7 +36,7 @@
                     left: 0;
                     right: 0;
                     bottom: 0;
-                    background-color: #FFFFFF;
+                    background-color: white;
                     -webkit-transition: .4s;
                     transition: .4s;
                 }
@@ -52,8 +44,8 @@
                 .slider:before {
                     position: absolute;
                     content: "";
-                    height: 18px;
-                    width: 18px;
+                    height: 16px;
+                    width: 16px;
                     left: 2px;
                     bottom: 2px;
                     background-color: #5C5C5C;
@@ -70,21 +62,16 @@
                 }
 
                 input:checked+.slider:before {
-                    -webkit-transform: translateX(24px);
-                    -ms-transform: translateX(24px);
-                    transform: translateX(24px);
+                    -webkit-transform: translateX(22px);
+                    -ms-transform: translateX(22px);
+                    transform: translateX(22px);
                     background-color: white;
                 }
 
-                input:checked+.switch-label:before {
-                    -webkit-transform: translateX(12px);
-                    -ms-transform: translateX(12px);
-                    transform: translateX(12px);
-                    background-color: white;
-                }
 
                 .slider.round {
                     border-radius: 19px;
+                    border: 2px solid #F8F8F8;
                 }
 
                 .slider.round:before {
@@ -92,20 +79,16 @@
                 }
 
                 .row {
-                    width: 600px;
-                    min-width: 80px;
+                    width: 100%;
                     height: 60px;
                     line-height: 60px;
-                    background-color: #F8F8F8;
                     border-bottom: 1px solid #E7E7E7;
                 }
 
                 .bottom-row {
-                    width: 600px;
-                    min-width: 80px;
+                    width: 100%;
                     height: 60px;
                     line-height: 60px;
-                    background-color: #F8F8F8;
                 }
 
 
@@ -113,7 +96,7 @@
                     list-style-type: none;
                     margin: 5px;
                     padding: 5px;
-                    overflow: hidden;
+                    width: 100%;
                 }
 
                 .flexing {
@@ -128,28 +111,37 @@
                     flex-direction: column;
                     justify-content: space-between;
                     align-items: center;
-                }
-
-                .bg {
-                    background-color: #F8F8F8;
+                    background-color: white;
                     padding-left: 25px;
                     padding-right: 25px;
+                    margin: 25px;
                     font: 14px 'nunito', sans-serif;
                     border-radius: 20px;
+                    width: 100%;
+                    max-width: 80vw;
+                    min-width: 80px;
+                    margin: 0 auto;
+                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                }
+
+                @media (min-width: 768px) {
+                    .form {
+                        width: 100%;
+                        max-width: 600px;
+                        min-width: 100px;
+                        margin: 0 auto;
+                    }
                 }
 
                 .button-style {
-                    margin: 0;
-                    position: absolute;
-                    left: 50%;
-                    -ms-transform: translate(-50%, -50%);
-                    transform: translate(-50%, -50%);
                     background-color: #F99D33;
+                    width: 100%;
                     height: 40px;
                     border: none;
                     color: white;
                     padding-left: 20px;
                     padding-right: 20px;
+                    margin: 15px;
                     text-align: center;
                     text-decoration: none;
                     display: inline-block;
@@ -161,15 +153,24 @@
                     background-color: #FAB15C;
                     color: white;
                 }
+
+                .header {
+                    background-color: white;
+                    padding: 12px;
+                    margin-bottom: 50px;
+                    text-align: center;
+                }
             </style>
         </head>
 
-        <body style="margin: 0; padding: 0;">
-            <h1 style="text-align: center;">
-                <%= gettext("Which mailing list do you wisth to unsubscribe?") %>
-            </h1>
+        <body style="margin: 0; padding: 0; background-color: #F6F6F6;">
+        <div class="header">
+            <a href="https://www.cambiatus.com/" target="_blank"> <img src="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e4ede46179566acc07948ca_complete.svg" alt=""> </a>
+        </div>
             <form class="form" action="/api/graph" method="post">
-                <div class="bg">
+            <h1 style="text-align: center; font-size: 22px;">
+                <%= gettext("Which mailing list do you wish to unsubscribe from?") %>
+            </h1>
                     <ul class="ul">
                         <li class="row">
                             <div class="flexing">
@@ -177,31 +178,28 @@
                                     <%= gettext("News Digest") %>
                                 </span>
                                 <div class="flexing">
+                                        <label for="digest" class="switch-label">
+                                        </label>
                                     <label class="switch">
-                                        <div class="switch-label">
-                                            <%= gettext("disabled") %>
-                                        </div>
-                                        <input type="checkbox" id="digest" class="switch" />
+                                        <input type="checkbox" id="digest" class="switch" <%=if @data.digest, do: "checked" %> />
                                         <span class="slider round"></span>
-                                </div>
                                 </label>
+                                </div>
                             </div>
                         </li>
                         <li class="row">
-                            <div class="flexing">
+                        <div class="flexing">
                                 <span>
                                     <%= gettext("Claims Notifications") %>
                                 </span>
                                 <div class="flexing">
+                                    <label for="claims" class="switch-label"></label>
                                     <label class="switch">
-                                        <div class="switch-label">
-                                            <%= gettext("disabled") %>
-                                        </div>
-                                        <input type="checkbox" id="claims" class="switch" />
+                                        <input type="checkbox" id="claims" class="switch" <%=if @data.claim_notification, do: "checked" %> />
                                         <span class="slider round"></span>
-                                </div>
                                 </label>
-                            </div>
+                                </div>
+                                </div>
                         </li>
                         <li class="bottom-row">
                             <div class="flexing">
@@ -209,44 +207,71 @@
                                     <%= gettext("Transfer Notifications") %>
                                 </span>
                                 <div class="flexing">
+                                    <label for="transfers" class="switch-label"></label>
                                     <label class="switch">
-                                        <div class="switch-label">
-                                            <%= gettext("disabled") %>
-                                        </div>
-                                        <input type="checkbox" id="transfers" class="switch" />
+                                        <input type="checkbox" id="transfers" class="switch" <%=if @data.transfer_notification, do: "checked" %> />
                                         <span class="slider round"></span>
-                                </div>
                                 </label>
+                                </div>
                             </div>
                         </li>
-                        <li style="height=80px; line-height: 80px;">
-                            <button class="button-style" type="button" onclick="emailUnsubscribe()">
-                                <%= gettext("Submit") %>
-                            </button>
-                        <li>
                     </ul>
-                </div>
+                    <button class="button-style" type="button" onclick="emailUnsubscribe()">
+                        <%= gettext("Submit") %>
+                    </button>
             </form>
 
             <script>
+                let toggles = [
+                    document.getElementById("digest"),
+                    document.getElementById("claims"),
+                    document.getElementById("transfers")
+                ];
+
+                toggles.forEach(function (toggle) {
+                    toggle.addEventListener("change", function () {
+                        if (toggle.checked) {
+                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = "enabled";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "#45469B";
+                        } else {
+                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = "disabled";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "black";
+                        }
+                    });
+                });
+
+                window.addEventListener("load", function () {
+                    toggles.forEach(function (toggle) {
+                        if (toggle.checked) {
+                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = "enabled";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "#45469B";
+                        } else {
+                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = "disabled";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "black";
+                        }
+                    });
+                });
+
                 function emailUnsubscribe() {
                     const digest = document.getElementById('digest').checked;
                     const claims = document.getElementById('claims').checked;
                     const transfers = document.getElementById('transfers').checked;
 
-                    if (digest == false && claims == false && transfers == false) {
-                        return alert("<%= gettext("You must select at least one mailing list to unsubscribe from.") %>");
-                    };
-
                     var body = "";
                     if (digest) {
+                        body += "digest: true "
+                    } else {
                         body += "digest: false "
                     };
                     if (claims) {
+                        body += "claimNotification: true "
+                    } else {
                         body += "claimNotification: false "
                     };
                     if (transfers) {
-                        body += "transferNotification: false"
+                        body += "transferNotification: true"
+                    } else {
+                        body += "transferNotification: false "
                     };
 
                     var xhr = new XMLHttpRequest();
