@@ -236,9 +236,10 @@
                         </div>
                     </li>
                 </ul>
-                <button class="button-style" type="button" onclick="emailUnsubscribe()">
+                <button class="button-style">
                     <%= gettext("Submit") %>
                 </button>
+
             </form>
 
             <script>
