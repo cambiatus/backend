@@ -142,7 +142,7 @@ msgstr "faz parte da Cambiatus"
 #, elixir-format
 #: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:187
 msgid "Which mailing list do you wish to unsubscribe from?"
-msgstr "Você deseja cancelar a inscirção de qual lista de e-mail?"
+msgstr "Você deseja cancelar a inscrição de qual lista de e-mail?"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:193
