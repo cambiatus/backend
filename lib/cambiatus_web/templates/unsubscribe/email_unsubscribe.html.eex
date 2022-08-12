@@ -184,7 +184,7 @@
             <div class="alert" id="feedback" style="visibility: hidden;">
                 <span id="feedback-string" style="font-weight: bold;"></span>
             </div>
-            <form class="form" action="/api/graph" method="post">
+            <form class="form">
                 <h1 style="text-align: center; font-size: 22px;">
                     <%= gettext("Which mailing list do you wish to unsubscribe from?") %>
                 </h1>
@@ -277,7 +277,9 @@
                     });
                 });
 
-                function emailUnsubscribe() {
+                function emailUnsubscribe(e) {
+                    e.preventDefault();
+
                     document.getElementById("feedback").style.visibility = "hidden";
 
                     const digest = document.getElementById('digest').checked;
@@ -309,6 +311,8 @@
                     }
 
                 };
+
+                document.querySelector('.form').addEventListener('submit', emailUnsubscribe);
             </script>
         </body>
 
