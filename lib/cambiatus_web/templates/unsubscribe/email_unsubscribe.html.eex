@@ -288,28 +288,26 @@
 
                     const body = 'digest: ' + digest + ' claimNotification: ' + claims + ' transferNotification: ' + transfers;
 
-                    var xhr = new XMLHttpRequest();
-                    xhr.open('POST', '/api/graph', true);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.setRequestHeader('Authorization', 'Bearer ' + '<%= @data.token %>');
-                    xhr.send(JSON.stringify({
-                        query: "mutation {preference(" + body + ") {account}} "
-                    }));
-
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState == XMLHttpRequest.DONE) {
-                            if (xhr.responseText === '{"data":{"preference":{"account":"<%= @data.account %>"}}}') {
-                                document.getElementById("feedback").style.visibility = "visible";
-                                document.getElementById("feedback").style.backgroundColor = "#8ACC9E";
-                                document.getElementById("feedback-string").innerText = '<%= gettext("Preferences updated successfully!") %>';
+                    fetch('/api/graph', {
+                        method: 'POST',
+                        body: JSON.stringify({ query: 'mutation { preference(' + body + ') { account }}' }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: 'Bearer ' + '<%= @data.token %>'
+                        }
+                    })
+                        .then((res) => res.json())
+                        .then((res) => {
+                            if (res.hasOwnProperty('data') && res.data.preference.account === '<%= @data.account %>') {
+                                document.getElementById("feedback").style.visibility = 'visible';
+                                document.getElementById("feedback").style.backgroundColor = '#8ACC9E';
+                                document.getElementById("feedback-string").innerText = '<%= gettext("Preferences updated successfully!") %>!';
                             } else {
                                 document.getElementById("feedback").style.visibility = "visible";
                                 document.getElementById("feedback").style.backgroundColor = "#DB1B1B";
                                 document.getElementById("feedback-string").innerText = '<%= gettext("Something went wrong. Please try again.") %>';
                             }
-                        }
-                    }
-
+                        });
                 };
 
                 document.querySelector('.form').addEventListener('submit', emailUnsubscribe);
