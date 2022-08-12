@@ -242,11 +242,12 @@
             </form>
 
             <script>
-                let toggles = [
+                const toggles = [
                     document.getElementById("digest"),
                     document.getElementById("claims"),
                     document.getElementById("transfers")
                 ];
+
 
                 const enabled_text = "<%= gettext("enabled") %>";
                 const disabled_text = "<%= gettext("disabled") %>";
