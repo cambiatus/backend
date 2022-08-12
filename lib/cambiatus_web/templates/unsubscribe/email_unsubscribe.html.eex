@@ -282,22 +282,7 @@
                     const claims = document.getElementById('claims').checked;
                     const transfers = document.getElementById('transfers').checked;
 
-                    var body = "";
-                    if (digest) {
-                        body += "digest: true "
-                    } else {
-                        body += "digest: false "
-                    };
-                    if (claims) {
-                        body += "claimNotification: true "
-                    } else {
-                        body += "claimNotification: false "
-                    };
-                    if (transfers) {
-                        body += "transferNotification: true"
-                    } else {
-                        body += "transferNotification: false "
-                    };
+                    const body = 'digest: ' + digest + ' claimNotification: ' + claims + ' transferNotification: ' + transfers;
 
                     var xhr = new XMLHttpRequest();
                     xhr.open('POST', '/api/graph', true);
