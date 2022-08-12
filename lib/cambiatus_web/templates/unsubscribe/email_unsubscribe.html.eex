@@ -147,7 +147,9 @@
                     display: inline-block;
                     font-size: 16px;
                     border-radius: 24px;
+                    cursor: pointer;
                 }
+
 
                 .button-style:hover {
                     background-color: #FAB15C;
