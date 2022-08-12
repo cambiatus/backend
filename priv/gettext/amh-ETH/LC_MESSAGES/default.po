@@ -130,11 +130,56 @@ msgid "Community News"
 msgstr "የማህበረሰብ ዜና"
 
 #, elixir-format
-#: lib/cambiatus_web/views/rich_link_view.ex.ex:23
+#: lib/cambiatus_web/views/rich_link_view.ex:23
 msgid "Sold by"
 msgstr "የተሸጠው በ"
 
 #, elixir-format
-#: lib/cambiatus_web/views/rich_link_view.ex.ex:31
+#: lib/cambiatus_web/views/rich_link_view.ex:31
 msgid "makes part of Cambiatus"
 msgstr "የካምቢያተስ አካል ያደርጋል"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:187
+msgid "Which mailing list do you wish to unsubscribe from?"
+msgstr "ከየትኛው የደብዳቤ መላኪያ ዝርዝር ከደንበኝነት ምዝገባ መውጣት ይፈልጋሉ?"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:193
+msgid "Claim Notification"
+msgstr "የይገባኛል ጥያቄ ማስታወቂያ"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:208
+msgid "Transfer notification"
+msgstr "ማሳወቂያ ማስተላለፍ"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:223
+msgid "Monthly news about the community"
+msgstr "ስለ ማህበረሰቡ ወርሃዊ ዜና"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:238
+msgid "Submit"
+msgstr "አስገባ"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:249
+msgid "enabled"
+msgstr "ተችሏል"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:250
+msgid "disabled"
+msgstr "አልተቻለም"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:313
+msgid "Preferences updated successfully!"
+msgstr "ምርጫዎች በተሳካ ሁኔታ ተዘምነዋል!"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:317
+msgid "Something went wrong. Please try again."
+msgstr "የሆነ ስህተት ተከስቷል. እባክዎ ዳግም ይሞክሩ."

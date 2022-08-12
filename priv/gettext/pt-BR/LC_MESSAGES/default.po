@@ -130,11 +130,56 @@ msgid "Community News"
 msgstr "Notícias da Comunidade"
 
 #, elixir-format
-#: lib/cambiatus_web/views/rich_link_view.ex.ex:23
+#: lib/cambiatus_web/views/rich_link_view.ex:23
 msgid "Sold by"
 msgstr "Vendido por"
 
 #, elixir-format
-#: lib/cambiatus_web/views/rich_link_view.ex.ex:31
+#: lib/cambiatus_web/views/rich_link_view.ex:31
 msgid "makes part of Cambiatus"
 msgstr "faz parte da Cambiatus"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:187
+msgid "Which mailing list do you wish to unsubscribe from?"
+msgstr "Você deseja cancelar a inscirção de qual lista de e-mail?"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:193
+msgid "Claim Notification"
+msgstr "Notificação de reivindicação"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:208
+msgid "Transfer notification"
+msgstr "Notificação de transferência"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:223
+msgid "Monthly news about the community"
+msgstr "Notícias mensais sobre a comunidade"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:238
+msgid "Submit"
+msgstr "Enviar"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:249
+msgid "enabled"
+msgstr "habilitado"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:250
+msgid "disabled"
+msgstr "desabilitado"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:313
+msgid "Preferences updated successfully!"
+msgstr "Preferências atualizadas com sucesso!"
+
+#, elixir-format
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:317
+msgid "Something went wrong. Please try again."
+msgstr "Algo deu errado. Por favor, tente novamente."

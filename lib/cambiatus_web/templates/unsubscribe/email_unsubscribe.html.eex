@@ -190,23 +190,7 @@
                     <li class="row">
                         <div class="flexing">
                             <span>
-                                <%= gettext("News Digest") %>
-                            </span>
-                            <div class="flexing">
-                                <label for="digest" class="switch-label">
-                                </label>
-                                <label class="switch">
-                                    <input type="checkbox" id="digest" class="switch"
-                                        <%= if @data.digest, do: "checked" %> />
-                                    <span class="slider round"></span>
-                                </label>
-                            </div>
-                        </div>
-                    </li>
-                    <li class="row">
-                        <div class="flexing">
-                            <span>
-                                <%= gettext("Claims Notifications") %>
+                                <%= gettext("Claim Notification") %>
                             </span>
                             <div class="flexing">
                                 <label for="claims" class="switch-label"></label>
@@ -218,16 +202,32 @@
                             </div>
                         </div>
                     </li>
-                    <li class="bottom-row">
+                    <li class="row">
                         <div class="flexing">
                             <span>
-                                <%= gettext("Transfer Notifications") %>
+                                <%= gettext("Transfer Notification") %>
                             </span>
                             <div class="flexing">
                                 <label for="transfers" class="switch-label"></label>
                                 <label class="switch">
                                     <input type="checkbox" id="transfers" class="switch"
                                         <%=if @data.transfer_notification, do: "checked" %> />
+                                    <span class="slider round"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="bottom-row">
+                        <div class="flexing">
+                            <span>
+                                <%= gettext("Monthly news about the community") %>
+                            </span>
+                            <div class="flexing">
+                                <label for="digest" class="switch-label">
+                                </label>
+                                <label class="switch">
+                                    <input type="checkbox" id="digest" class="switch"
+                                        <%= if @data.digest, do: "checked" %> />
                                     <span class="slider round"></span>
                                 </label>
                             </div>
@@ -246,13 +246,16 @@
                     document.getElementById("transfers")
                 ];
 
+                const enabled_text = "<%= gettext("enabled") %>";
+                const disabled_text = "<%= gettext("disabled") %>";
+
                 toggles.forEach(function (toggle) {
                     toggle.addEventListener("change", function () {
                         if (toggle.checked) {
-                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = "enabled";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = enabled_text;
                             toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "#45469B";
                         } else {
-                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = "disabled";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = disabled_text;
                             toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "black";
                         }
                     });
@@ -261,10 +264,10 @@
                 window.addEventListener("load", function () {
                     toggles.forEach(function (toggle) {
                         if (toggle.checked) {
-                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = "enabled";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = enabled_text;
                             toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "#45469B";
                         } else {
-                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = "disabled";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").innerText = disabled_text;
                             toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "black";
                         }
                     });
@@ -307,11 +310,11 @@
                             if (xhr.responseText === '{"data":{"preference":{"account":"<%= @data.account %>"}}}') {
                                 document.getElementById("feedback").style.visibility = "visible";
                                 document.getElementById("feedback").style.backgroundColor = "#8ACC9E";
-                                document.getElementById("feedback-string").innerText = "<%= gettext("Preferences updated successfully!") %>";
+                                document.getElementById("feedback-string").innerText = '<%= gettext("Preferences updated successfully!") %>';
                             } else {
                                 document.getElementById("feedback").style.visibility = "visible";
                                 document.getElementById("feedback").style.backgroundColor = "#DB1B1B";
-                                document.getElementById("feedback-string").innerText = "<%= gettext("Something went wrong.Please try again.") %>";
+                                document.getElementById("feedback-string").innerText = '<%= gettext("Something went wrong. Please try again.") %>';
                             }
                         }
                     }
