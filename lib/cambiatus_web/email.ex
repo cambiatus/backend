@@ -43,7 +43,7 @@ defmodule CambiatusWeb.Email do
   def monthly_digest(community) do
     Enum.each(community.members, fn member ->
       compose_email_headers(member, community)
-      |> subject(gettext("Community News"))
+      |> subject("#{community.name} - " <> gettext("Community News"))
       |> render_body("monthly_digest.html", render_params(member, community))
       |> Mailer.deliver()
     end)
