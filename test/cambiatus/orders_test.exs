@@ -91,7 +91,8 @@ defmodule Cambiatus.OrdersTest do
 
     test "valid checkout" do
       order = insert(:order, status: "cart")
-      item = insert(:item, %{order: order})
+      product = insert(:product, %{track_stock: true, units: 50})
+      item = insert(:item, %{order: order, product: product, units: 2})
 
       order = Repo.preload(order, :items)
 
@@ -104,6 +105,20 @@ defmodule Cambiatus.OrdersTest do
 
       assert {:error, changeset} = Orders.update_order(order, %{status: "checkout"})
       assert [items: {"Orders has no items", []}] == changeset.errors
+    end
+
+    test "refute checkout with an item out of stock" do
+      order = insert(:order, %{status: "cart"})
+      product = insert(:product, %{track_stock: true, units: 4})
+      item = insert(:item, %{order: order, product: product, units: 6})
+
+      assert {:error, changeset} = Orders.update_order(order, %{status: "checkout"})
+
+      assert [
+               items:
+                 {"Item with id #{item.id} is invalid",
+                  [{:reason, [units: {"Not enough product in stock", []}]}]}
+             ] == changeset.errors
     end
   end
 

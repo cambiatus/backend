@@ -2,6 +2,8 @@ defmodule Cambiatus.Orders.Order do
   use Ecto.Schema
   import Ecto.Changeset
 
+  alias Cambiatus.Repo
+
   alias Cambiatus.Accounts.User
   alias Cambiatus.Orders.Item
   alias Cambiatus.Orders
@@ -33,10 +35,12 @@ defmodule Cambiatus.Orders.Order do
     |> validate_checkout(order)
   end
 
+  # TODO: Validate other fields(shipping, payment, total)
   def validate_checkout(changeset, order) do
     if Map.get(order, :status) == "cart" and get_field(changeset, :status) == "checkout" do
       changeset
       |> order_has_items(order)
+      |> validate_items(order)
     else
       changeset
     end
@@ -48,5 +52,25 @@ defmodule Cambiatus.Orders.Order do
     else
       add_error(changeset, :items, "Orders has no items")
     end
+  end
+
+  def validate_items(changeset, order) do
+    order
+    |> Repo.preload(:items)
+    |> Map.get(:items)
+    |> Enum.reduce(changeset, fn item, changeset ->
+      case Item.validate_item(%Ecto.Changeset{errors: []}, item) do
+        %{errors: []} ->
+          changeset
+
+        error ->
+          add_error(
+            changeset,
+            :items,
+            "Item with id #{item.id} is invalid",
+            reason: error.errors
+          )
+      end
+    end)
   end
 end

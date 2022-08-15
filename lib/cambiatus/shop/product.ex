@@ -36,6 +36,7 @@ defmodule Cambiatus.Shop.Product do
 
     has_many(:product_categories, ProductCategory, on_replace: :delete)
     has_many(:categories, through: [:product_categories, :category])
+    has_many(:items, Cambiatus.Orders.Item)
   end
 
   @required_fields ~w(community_id title description price track_stock)a

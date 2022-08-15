@@ -33,18 +33,26 @@ defmodule Cambiatus.Orders.Item do
     |> validate_required(@required_fields)
   end
 
-  def validate_item_stock(%{id: id} = changeset) do
-    with {:ok, item} <- Orders.get_item(id),
-         item <- Repo.preload(item, :product),
+  @spec changeset(Changeset.t(), Item.t()) :: Ecto.Changeset.t()
+  def validate_item(changeset, item \\ %{}) do
+    item = item || Orders.get_item!(fetch_change!(changeset, :id))
+
+    changeset
+    |> validate_item_stock(item)
+  end
+
+  def validate_item_stock(changeset, item) do
+    with item <- Repo.preload(item, :product),
          product <- Map.get(item, :product) do
-      case product.track_stock do
-        false ->
+      case {product.track_stock, product.units >= item.units} do
+        {true, true} ->
           changeset
 
-        true ->
-          if product.units >= item.units,
-            do: changeset,
-            else: add_error(changeset, :units, "Not enough product in stock")
+        {true, false} ->
+          add_error(changeset, :units, "Not enough product in stock")
+
+        {false, _} ->
+          changeset
       end
     end
   end
