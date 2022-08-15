@@ -264,7 +264,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "Community Preview data, public data of a community"
   object :community_preview do
     field(:symbol, non_null(:string))
-    field(:logo, non_null(:string))
+    field(:logo, :string)
     field(:name, non_null(:string))
     field(:description, non_null(:string))
     field(:has_objectives, non_null(:boolean))
