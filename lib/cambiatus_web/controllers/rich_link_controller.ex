@@ -116,7 +116,7 @@ defmodule CambiatusWeb.RichLinkController do
        description: community.description,
        title: community.name,
        url: community.subdomain.name,
-       image: community.logo || Application.fetch_env!(:cambiatus, :community_logo),
+       image: community.logo || Application.fetch_env!(:cambiatus, :fallback_community_logo),
        locale: get_language(language, %{})
      }}
   end

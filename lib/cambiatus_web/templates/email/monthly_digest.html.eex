@@ -73,7 +73,7 @@
                                       <table border="0" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border-spacing:0;">
                                         <tbody>
                                           <tr>
-                                            <td style="width:92px;"> <img alt="<%= @community.name %>" height="auto" src="<%= @community.logo || Application.fetch_env!(:cambiatus, :community_logo) %>" style="border:0;border-radius:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="107"></td>
+                                            <td style="width:92px;"> <img alt="<%= @community.name %>" height="auto" src="<%= @community.logo || Application.fetch_env!(:cambiatus, :fallback_community_logo) %>" style="border:0;border-radius:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="107"></td>
                                           </tr>
                                         </tbody>
                                       </table>
