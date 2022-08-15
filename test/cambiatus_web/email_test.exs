@@ -92,7 +92,7 @@ defmodule CambiatusWeb.EmailTest do
     assert_email_sent(
       from: {"#{community.name} - Cambiatus", "no-reply@cambiatus.com"},
       to: user.email,
-      subject: "የማህበረሰብ ዜና",
+      subject: "#{community.name} - የማህበረሰብ ዜና",
       headers: %{
         "List-Unsubscribe" => "<#{one_click_unsub_link}>",
         "List-Unsubscribe-Post" => "List-Unsubscribe=One-Click"

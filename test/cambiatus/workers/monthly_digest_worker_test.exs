@@ -42,7 +42,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
       assert_email_sent(
         to: user1.email,
         from: {"#{community1.name} - Cambiatus", "no-reply@cambiatus.com"},
-        subject: "Community News",
+        subject: "#{community1.name} - Community News",
         headers: %{
           "List-Unsubscribe" =>
             "<https://#{community1.subdomain.name}/api/unsubscribe?token=#{user1_token}>",
@@ -53,7 +53,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
       assert_email_sent(
         to: user2.email,
         from: {"#{community1.name} - Cambiatus", "no-reply@cambiatus.com"},
-        subject: "Community News",
+        subject: "#{community1.name} - Community News",
         headers: %{
           "List-Unsubscribe" =>
             "<https://#{community1.subdomain.name}/api/unsubscribe?token=#{user2_token}>",
@@ -64,7 +64,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
       assert_email_sent(
         to: user3.email,
         from: {"#{community2.name} - Cambiatus", "no-reply@cambiatus.com"},
-        subject: "Community News",
+        subject: "#{community2.name} - Community News",
         headers: %{
           "List-Unsubscribe" =>
             "<https://#{community2.subdomain.name}/api/unsubscribe?token=#{user3_token}>",
