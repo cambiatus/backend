@@ -220,7 +220,7 @@
                                     width="80" alt=""
                                     data-proportionally-constrained="true"
                                     data-responsive="false"
-                                    src="<%= @transfer.community.logo%>" />
+                                    src="<%= @transfer.community.logo || Application.fetch_env!(:cambiatus, :community_logo) %>" />
                                   </td>
                                 </tr>
                               </tbody>
