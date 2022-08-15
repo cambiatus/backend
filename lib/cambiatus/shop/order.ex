@@ -5,7 +5,7 @@ defmodule Cambiatus.Shop.Order do
 
   use Ecto.Schema
 
-  alias Cambiatus.{Accounts.User, Shop.Product}
+  alias Cambiatus.Accounts.User
 
   schema "orders" do
     field(:payment_method, :string)

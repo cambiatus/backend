@@ -88,6 +88,23 @@ defmodule Cambiatus.OrdersTest do
       assert Orders.get_item(item2.id) == {:error, "No item exists with the id: #{item2.id}"}
       assert Orders.get_item(item3.id) == {:error, "No item exists with the id: #{item3.id}"}
     end
+
+    test "valid checkout" do
+      order = insert(:order, status: "cart")
+      item = insert(:item, %{order: order})
+
+      order = Repo.preload(order, :items)
+
+      assert {:ok, %{order | status: "checkout"}} ==
+               Orders.update_order(order, %{status: "checkout"})
+    end
+
+    test "refute checkout without items" do
+      order = insert(:order, %{items: [], status: "cart"})
+
+      assert {:error, changeset} = Orders.update_order(order, %{status: "checkout"})
+      assert [items: {"Orders has no items", []}] == changeset.errors
+    end
   end
 
   describe "items" do

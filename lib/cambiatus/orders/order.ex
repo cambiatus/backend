@@ -30,14 +30,23 @@ defmodule Cambiatus.Orders.Order do
     order
     |> cast(attrs, @required_fields ++ @optional_fields)
     |> validate_required(@required_fields)
-    |> validate_checkout()
+    |> validate_checkout(order)
   end
 
-  def validate_checkout(changeset) do
-    with order_id <- get_field(changeset, :id),
-         {:ok, order} <- Orders.get_order(order_id) do
-      if Map.get(order, :status) == "cart" and get_field(changeset, :status) == "checkout" do
-      end
+  def validate_checkout(changeset, order) do
+    if Map.get(order, :status) == "cart" and get_field(changeset, :status) == "checkout" do
+      changeset
+      |> order_has_items(order)
+    else
+      changeset
+    end
+  end
+
+  def order_has_items(changeset, order) do
+    if Orders.has_items?(order) do
+      changeset
+    else
+      add_error(changeset, :items, "Orders has no items")
     end
   end
 end

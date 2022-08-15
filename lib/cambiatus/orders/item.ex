@@ -3,7 +3,6 @@ defmodule Cambiatus.Orders.Item do
   import Ecto.Changeset
 
   alias Cambiatus.Shop.Product
-  alias Cambiatus.Accounts.User
   alias Cambiatus.Orders.Order
   alias Cambiatus.Orders
   alias Cambiatus.Repo

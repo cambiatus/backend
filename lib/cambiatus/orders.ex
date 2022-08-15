@@ -7,7 +7,6 @@ defmodule Cambiatus.Orders do
   alias Cambiatus.Repo
 
   alias Cambiatus.Orders.Order
-  alias Cambiatus.Shop.Product
 
   @doc """
   Returns the list of orders.
@@ -134,7 +133,7 @@ defmodule Cambiatus.Orders do
 
   @doc """
   Updates an order.
-  
+
   ## Examples
 
       iex> update_order(order, %{field: new_value})
@@ -151,7 +150,7 @@ defmodule Cambiatus.Orders do
   end
 
   @doc """
-  Deletes a order.
+  Deletes an order.
 
   ## Examples
 
@@ -177,6 +176,13 @@ defmodule Cambiatus.Orders do
   """
   def change_order(%Order{} = order, attrs \\ %{}) do
     Order.changeset(order, attrs)
+  end
+
+  def has_items?(%Order{} = order) do
+    order
+    |> Repo.preload(:items)
+    |> Map.get(:items)
+    |> Enum.any?()
   end
 
   alias Cambiatus.Orders.Item
@@ -235,7 +241,7 @@ defmodule Cambiatus.Orders do
   def get_item!(id), do: Repo.get!(Item, id)
 
   @doc """
-  Creates a item.
+  Creates an item.
 
   ## Examples
 
@@ -275,7 +281,7 @@ defmodule Cambiatus.Orders do
 
   @doc """
   Updates an item.
-  
+
   ## Examples
 
       iex> update_item(item, %{field: new_value})
@@ -293,7 +299,7 @@ defmodule Cambiatus.Orders do
 
   @doc """
   Deletes an item.
-  
+
   ## Examples
 
       iex> delete_item(item)
