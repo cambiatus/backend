@@ -1,9 +1,13 @@
-defmodule Cambiatus.Orders.Item do
+defmodule Cambiatus.Shop.Item do
+  @moduledoc """
+  This module holds the data structure that represents an instance of a `Cambiatus.CShop.Item` use it to
+  build and validate changesets for operating on an item
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
   alias Cambiatus.Shop.Product
-  alias Cambiatus.Orders.Order
+  alias Cambiatus.Shop.Order
   alias Cambiatus.Orders
   alias Cambiatus.Repo
 

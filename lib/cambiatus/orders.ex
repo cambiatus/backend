@@ -6,7 +6,7 @@ defmodule Cambiatus.Orders do
   import Ecto.Query, warn: false
   alias Cambiatus.Repo
 
-  alias Cambiatus.Orders.Order
+  alias Cambiatus.Shop.Order
 
   @doc """
   Returns the list of orders.
@@ -185,7 +185,7 @@ defmodule Cambiatus.Orders do
     |> Enum.any?()
   end
 
-  alias Cambiatus.Orders.Item
+  alias Cambiatus.Shop.Item
 
   @doc """
   Returns the list of items.

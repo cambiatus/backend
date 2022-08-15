@@ -44,14 +44,9 @@ defmodule Cambiatus.Factory do
     PushSubscription
   }
 
-  alias Cambiatus.Orders.{
-    Order,
-    Item
-  }
-
   alias Cambiatus.Payments.Contribution
   alias Cambiatus.Repo
-  alias Cambiatus.Shop.{Category, Product, ProductImage, ProductCategory}
+  alias Cambiatus.Shop.{Category, Product, ProductImage, ProductCategory, Order, Item}
 
   alias Cambiatus.Social.{
     News,
