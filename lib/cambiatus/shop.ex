@@ -496,7 +496,6 @@ defmodule Cambiatus.Shop do
 
   """
 
-  # TODO: Add current_user to query
   def get_shopping_cart(buyer) do
     Order
     |> where([o], o.status == "cart")
