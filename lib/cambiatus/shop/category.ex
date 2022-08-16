@@ -39,7 +39,7 @@ defmodule Cambiatus.Shop.Category do
       on_replace: :nilify
     )
 
-    many_to_many(:products, Product, join_through: ProductCategory)
+    many_to_many(:products, Product, join_through: ProductCategory, on_delete: :delete_all)
   end
 
   @required_fields ~w(community_id name description slug position)a

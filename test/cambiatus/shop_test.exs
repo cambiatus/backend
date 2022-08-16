@@ -163,6 +163,20 @@ defmodule Cambiatus.ShopTest do
       assert_raise Ecto.NoResultsError, fn -> Shop.get_category!(grandchild.id) end
     end
 
+    test "delete_category/1 deletes category and product_category associations" do
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+      category = insert(:category, community: community)
+      product = insert(:product, community: community)
+      product_category = insert(:product_category, product: product, category: category)
+
+      assert {:ok, "Category deleted successfully"} =
+               Shop.delete_category(category.id, admin, community.symbol)
+
+      assert_raise Ecto.NoResultsError, fn -> Shop.get_category!(category.id) end
+      assert_raise Ecto.NoResultsError, fn -> Shop.get_product_category!(product_category.id) end
+    end
+
     test "change_category/1 returns a category changeset", %{community: community} do
       category = insert(:category, community_id: community.symbol)
       assert %Ecto.Changeset{} = Shop.change_category(category)
