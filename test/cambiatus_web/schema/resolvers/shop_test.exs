@@ -265,6 +265,45 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              }
     end
 
+    test "when admin updates other member's offer, the ownership remains the same" do
+      user = insert(:user)
+      admin = insert(:user)
+      community = insert(:community, creator: admin.account)
+      product = insert(:product, community: community, creator: user)
+
+      conn = build_conn() |> auth_user(admin) |> assign_domain(community.subdomain.name)
+
+      mutation = """
+        mutation {
+          product(id: #{product.id},
+                  description: "one") {
+                    title
+                    description
+                    creator {
+                      account
+                    }
+                  }
+        }
+      """
+
+      response =
+        conn
+        |> post("/api/graph", query: mutation)
+        |> json_response(200)
+
+      assert response == %{
+               "data" => %{
+                 "product" => %{
+                   "title" => product.title,
+                   "description" => "one",
+                   "creator" => %{
+                     "account" => user.account
+                   }
+                 }
+               }
+             }
+    end
+
     test "users can't update products they do not own" do
       user = insert(:user)
       admin = insert(:user)

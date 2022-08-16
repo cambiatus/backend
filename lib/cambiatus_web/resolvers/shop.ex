@@ -9,11 +9,7 @@ defmodule CambiatusWeb.Resolvers.Shop do
   def upsert_product(_, %{id: product_id} = params, %{
         context: %{current_user: current_user, current_community: current_community}
       }) do
-    params =
-      Map.merge(params, %{
-        creator_id: current_user.account,
-        community_id: current_community.symbol
-      })
+    params = Map.merge(params, %{community_id: current_community.symbol})
 
     with %Product{} = product <- Shop.get_product(product_id),
          %Product{} = product <- Repo.preload(product, :community),

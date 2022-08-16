@@ -11,6 +11,10 @@ config :phoenix, :json_library, Jason
 
 config :cambiatus, env: Mix.env()
 
+config :cambiatus,
+       :fallback_community_logo,
+       "https://cambiatus-uploads.s3.amazonaws.com/cambiatus-uploads/community_2.png"
+
 config :ex_aws,
   s3: [
     scheme: "https://",
