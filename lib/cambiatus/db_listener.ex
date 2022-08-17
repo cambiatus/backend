@@ -100,8 +100,8 @@ defmodule Cambiatus.DbListener do
 
       if user.transfer_notification do
         %{transfer_id: record.id}
-        |> TransferEmailWorker.new()
-        |> Oban.insert()
+        #  |> TransferEmailWorker.new() Commented to prevent emails from beign sent
+        #  |> Oban.insert()
       end
 
       {:noreply, :event_handled}
@@ -154,8 +154,8 @@ defmodule Cambiatus.DbListener do
 
           if user.claim_notification do
             %{claim_id: claim.id}
-            |> ClaimEmailWorker.new()
-            |> Oban.insert()
+            #  |> ClaimEmailWorker.new() Commented to prevent emails from beign sent
+            #  |> Oban.insert()
           end
 
           Notifications.notify_claim_approved(record.id)
