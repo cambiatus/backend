@@ -10,6 +10,10 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
             <link rel="icon" type="image/png"
                 href="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e511ffe258ffe3e9e8243fc_logo32.svg">
+            <link
+                href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,200;0,300;0,400;0,600;0,700;0,800;0,900;1,200;1,300;1,400;1,600;1,700;1,800;1,900&display=swap"
+                rel="stylesheet">
+            <link rel="preconnect" href="https://fonts.googleapis.com">
 
             <style>
                 .switch {
@@ -175,7 +179,8 @@
             </style>
         </head>
 
-        <body style="margin: 0; padding: 0; background-color: #F6F6F6; font: 14px 'nunito', sans-serif;">
+        <body style="margin: 0; padding: 0; background-color: #F6F6F6; font-size: 14px;
+                font-family: 'Nunito Sans', 'Lato', 'San Francisco', 'Helvetica', 'Verdana', sans-serif;">
             <div class="header">
                 <a href="https://www.cambiatus.com/" target="_blank"> <img
                         src="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e4ede46179566acc07948ca_complete.svg"
