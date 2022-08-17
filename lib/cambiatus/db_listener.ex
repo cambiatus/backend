@@ -6,7 +6,7 @@ defmodule Cambiatus.DbListener do
   require Logger
 
   alias Cambiatus.{Accounts, Notifications, Repo, Objectives}
-  alias Cambiatus.Workers.{ClaimEmailWorker, TransferEmailWorker}
+  #  alias Cambiatus.Workers.{ClaimEmailWorker, TransferEmailWorker} Commented to prevent emails from beign sent
   alias Cambiatus.Commune.Transfer
   alias Cambiatus.Objectives.Claim
 
