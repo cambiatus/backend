@@ -306,7 +306,7 @@
                             toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "#45469B";
                         } else {
                             toggle.parentElement.parentElement.querySelector(".switch-label").innerText = disabled_text;
-                            toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "black";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "#9E9E9E";
                         }
                     });
                 });
@@ -318,7 +318,7 @@
                             toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "#45469B";
                         } else {
                             toggle.parentElement.parentElement.querySelector(".switch-label").innerText = disabled_text;
-                            toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "black";
+                            toggle.parentElement.parentElement.querySelector(".switch-label").style.color = "#9E9E9E";
                         }
                     });
                 });
