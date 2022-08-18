@@ -55,7 +55,8 @@ config :cambiatus, Oban,
   queues: [
     contribution_paypal: 50,
     scheduled_news: 10,
-    monthly_digest: 20
+    monthly_digest: 20,
+    mailers: 20
   ],
   plugins: [
     {Oban.Plugins.Cron, crontab: [{"@daily", Cambiatus.Workers.RemoveRequestsWorker}]},

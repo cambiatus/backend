@@ -23,7 +23,7 @@ defmodule CambiatusWeb.Email do
     |> Mailer.deliver()
   end
 
-  def transfer(transfer) do
+  def transfer(%Transfer{} = transfer) do
     transfer = Repo.preload(transfer, [:from, :to, [community: :subdomain]])
 
     compose_email_headers(transfer.to, transfer.community)
@@ -32,7 +32,9 @@ defmodule CambiatusWeb.Email do
     |> Mailer.deliver()
   end
 
-  def claim(claim) do
+  def claim(%Claim{} = claim) do
+    claim = Repo.preload(claim, [:claimer, action: [objective: [community: :subdomain]]])
+
     compose_email_headers(claim.claimer, claim.action.objective.community)
     |> subject(gettext("Your claim was approved!"))
     |> render_body("claim.html", render_params(claim))
