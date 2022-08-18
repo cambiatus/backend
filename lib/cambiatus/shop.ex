@@ -290,7 +290,8 @@ defmodule Cambiatus.Shop do
           {:error, :category, error, _} ->
             {:error, error}
 
-          _error ->
+          error ->
+            Sentry.capture_message("Category creation failed", extra: %{error: error})
             {:error, "Can't create new category"}
         end
 
