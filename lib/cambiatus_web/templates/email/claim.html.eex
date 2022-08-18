@@ -280,141 +280,176 @@
                                   </tr>
                                 </tbody>
                               </table>
-                              <table class="module" role="module" data-type="spacer" border="0" cellpadding="0"
-                                cellspacing="0" width="100%" style="table-layout: fixed;"
-                                data-muid="d74389a4-6a94-4b0a-904a-7b50fbad7b44">
+                              <table style="background:#17181a;background-color:#17181a;width:100%;border-radius:0;" cellspacing="0" cellpadding="0" border="0" align="center">
                                 <tbody>
-                                  <tr>
-                                    <td style="padding:0px 0px 30px 0px;" role="module-content" bgcolor="#000000">
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
-                              <table border="0" cellpadding="0" cellspacing="0" align="center" width="100%"
-                                role="module" data-type="columns" style="padding:0px 0px 0px 0px;" bgcolor="#000000"
-                                data-distribution="1,1,1">
-                                <tbody>
-                                  <tr role="module-content">
-                                    <td height="100%" valign="top">
-                                      <table width="198"
-                                        style="width:198px; border-spacing:0; border-collapse:collapse; margin:0px 1px 0px 0px;"
-                                        cellpadding="0" cellspacing="0" align="left" border="0" bgcolor=""
-                                        class="column column-0">
-                                        <tbody>
-                                          <tr>
-                                            <td style="padding:0px;margin:0px;border-spacing:0;">
-                                              <table class="module" role="module" data-type="text" border="0"
-                                                cellpadding="0" cellspacing="0" width="100%"
-                                                style="table-layout: fixed;"
-                                                data-muid="fae758a3-24f0-4a5c-9429-61f919c9763a"
-                                                data-mc-module-version="2019-10-22">
+                                <tr>
+                                    <td style="border:none;direction:ltr;font-size:0;padding:32px 32px 32px 32px;text-align:center;">
+                                    <!--[if mso | IE]>
+                                    <table border="0" cellpadding="0" cellspacing="0">
+                                        <tr>
+                                        <td class="c-outlook -outlook -outlook" style="vertical-align:middle;width:536px;">
+                                            <![endif]-->
+                                            <div class="xc536 ogf c " style="font-size:0;text-align:left;direction:ltr;display:inline-block;vertical-align:middle;width:100%;">
+                                            <table style="background-color:transparent;border:none;vertical-align:middle;" width="100%" cellspacing="0" cellpadding="0" border="0">
                                                 <tbody>
-                                                  <tr>
-                                                    <td
-                                                      style="padding:18px 0px 18px 0px; line-height:22px; text-align:inherit;"
-                                                      height="100%" valign="top" bgcolor="" role="module-content">
-                                                      <div>
-                                                        <div style="font-family: inherit; text-align: inherit"><br>
-                                                        </div>
-                                                        <div></div>
-                                                      </div>
+                                                <tr>
+                                                    <td class="o m" style="font-size:0;padding:0;padding-bottom:32px;word-break:break-word;" align="center">
+                                                    <!--[if mso | IE]>
+                                                    <table align="center" border="0" cellpadding="0" cellspacing="0">
+                                                        <tr>
+                                                        <td>
+                                                            <![endif]-->
+                                                            <table style="float:none;display:inline-table;" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                            <tbody>
+                                                                <tr class="e m">
+                                                                <td style="padding:0 24px 0 0;vertical-align:middle;">
+                                                                    <table style="border-radius:0;width:20px;" cellspacing="0" cellpadding="0" border="0">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                        <td style="font-size:0;height:20px;vertical-align:middle;width:20px;"> <a href="https://www.linkedin.com/company/cambiatus/about/" target="_blank"> <img alt="LinkedIn" src="https://cambiatus-uploads.s3.amazonaws.com/email/linkedin.png" style="border-radius:0;display:block;" width="20" height="20"></a></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    </table>
+                                                                </td>
+                                                                </tr>
+                                                            </tbody>
+                                                            </table>
+                                                            <!--[if mso | IE]>
+                                                        </td>
+                                                        <td>
+                                                            <![endif]-->
+                                                            <table style="float:none;display:inline-table;" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                            <tbody>
+                                                                <tr class="e m">
+                                                                <td style="padding:0 24px 0 0;vertical-align:middle;">
+                                                                    <table style="border-radius:0;width:20px;" cellspacing="0" cellpadding="0" border="0">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                        <td style="font-size:0;height:20px;vertical-align:middle;width:20px;"> <a href="https://www.instagram.com/cambiatus/" target="_blank"> <img alt="Instagram" src="https://cambiatus-uploads.s3.amazonaws.com/email/insta.png" style="border-radius:0;display:block;" width="20" height="20"></a></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    </table>
+                                                                </td>
+                                                                </tr>
+                                                            </tbody>
+                                                            </table>
+                                                            <!--[if mso | IE]>
+                                                        </td>
+                                                        <td>
+                                                            <![endif]-->
+                                                            <table style="float:none;display:inline-table;" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                            <tbody>
+                                                                <tr class="e m">
+                                                                <td style="padding:0 24px 0 0;vertical-align:middle;">
+                                                                    <table style="border-radius:0;width:20px;" cellspacing="0" cellpadding="0" border="0">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                        <td style="font-size:0;height:20px;vertical-align:middle;width:20px;"> <a href="https://medium.com/cambiatus" target="_blank"> <img alt="Medium" src="https://cambiatus-uploads.s3.amazonaws.com/email/medium.png" style="border-radius:0;display:block;" width="20" height="20"></a></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    </table>
+                                                                </td>
+                                                                </tr>
+                                                            </tbody>
+                                                            </table>
+                                                            <!--[if mso | IE]>
+                                                        </td>
+                                                        <td>
+                                                            <![endif]-->
+                                                            <table style="float:none;display:inline-table;" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                            <tbody>
+                                                                <tr class="e ">
+                                                                <td style="padding:0 24px 0 0;vertical-align:middle;">
+                                                                    <table style="border-radius:0;width:20px;" cellspacing="0" cellpadding="0" border="0">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                        <td style="font-size:0;height:20px;vertical-align:middle;width:20px;"> <a href="https://twitter.com/_cambiatus" target="_blank"> <img alt="Twitter" src="https://cambiatus-uploads.s3.amazonaws.com/email/twitter.png" style="border-radius:0;display:block;" width="20" height="20"></a></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    </table>
+                                                                </td>
+                                                                </tr>
+                                                            </tbody>
+                                                            </table>
+                                                            <!--[if mso | IE]>
+                                                        </td>
+                                                        <td>
+                                                            <![endif]-->
+                                                            <table style="float:none;display:inline-table;" cellspacing="0" cellpadding="0" border="0" align="center">
+                                                            <tbody>
+                                                                <tr class="e ">
+                                                                <td style="padding:0;vertical-align:middle;">
+                                                                    <table style="border-radius:0;width:20px;" cellspacing="0" cellpadding="0" border="0">
+                                                                    <tbody>
+                                                                        <tr>
+                                                                        <td style="font-size:0;height:20px;vertical-align:middle;width:20px;"> <a href="https://github.com/cambiatus" target="_blank"> <img alt="GitHub" src="https://cambiatus-uploads.s3.amazonaws.com/email/github.png" style="border-radius:0;display:block;" width="20" height="20"></a></td>
+                                                                        </tr>
+                                                                    </tbody>
+                                                                    </table>
+                                                                </td>
+                                                                </tr>
+                                                            </tbody>
+                                                            </table>
+                                                            <!--[if mso | IE]>
+                                                        </td>
+                                                        </tr>
+                                                    </table>
+                                                    <![endif]-->
                                                     </td>
-                                                  </tr>
-                                                </tbody>
-                                              </table>
-                                            </td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <table width="198"
-                                        style="width:198px; border-spacing:0; border-collapse:collapse; margin:0px 1px 0px 1px;"
-                                        cellpadding="0" cellspacing="0" align="left" border="0" bgcolor=""
-                                        class="column column-1">
-                                        <tbody>
-                                          <tr>
-                                            <td style="padding:0px;margin:0px;border-spacing:0;">
-                                              <table class="wrapper" role="module" data-type="image" border="0"
-                                                cellpadding="0" cellspacing="0" width="100%"
-                                                style="table-layout: fixed;" data-muid="x8MgwHLBw8wngJXgjQutho">
-                                                <tbody>
-                                                  <tr>
-                                                    <td
-                                                      style="font-size:6px; line-height:10px; padding:0px 0px 0px 0px;"
-                                                      valign="top" align="center">
-                                                      <img class="max-width" border="0"
-                                                        style="display:block; color:#000000; text-decoration:none; font-family:Helvetica, arial, sans-serif; font-size:16px;"
-                                                        width="72" alt="" data-proportionally-constrained="true"
-                                                        data-responsive="false"
-                                                        src="http://cdn.mcauto-images-production.sendgrid.net/79140e7151777f94/3afabb7d-aad3-4fd2-b660-aad1b53b965e/72x46.png"
-                                                        height="46">
+                                                </tr>
+                                                <tr>
+                                                    <td class="i m" style="font-size:0;padding:0;padding-bottom:21px;word-break:break-word;" align="center">
+                                                    <table style="border-collapse:collapse;border-spacing:0;" cellspacing="0" cellpadding="0" border="0">
+                                                        <tbody>
+                                                        <tr>
+                                                            <td style="width:68px;"> <img alt="Cambiatus Logo" src="https://cambiatus-uploads.s3.amazonaws.com/email/cambiatus.png" style="border:0;border-radius:0;display:block;outline:none;text-decoration:none;height:auto;width:100%;font-size:13px;" width="74" height="auto"></td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
                                                     </td>
-                                                  </tr>
-                                                </tbody>
-                                              </table>
-                                            </td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
-                                      <table width="198"
-                                        style="width:198px; border-spacing:0; border-collapse:collapse; margin:0px 0px 0px 1px;"
-                                        cellpadding="0" cellspacing="0" align="left" border="0" bgcolor=""
-                                        class="column column-2">
-                                        <tbody>
-                                          <tr>
-                                            <td style="padding:0px;margin:0px;border-spacing:0;">
-                                              <table class="module" role="module" data-type="text" border="0"
-                                                cellpadding="0" cellspacing="0" width="100%"
-                                                style="table-layout: fixed;"
-                                                data-muid="3cf956ca-4b3c-4481-9a9a-57130c5370cf"
-                                                data-mc-module-version="2019-10-22">
-                                                <tbody>
-                                                  <tr>
-                                                    <td
-                                                      style="padding:18px 0px 18px 0px; line-height:22px; text-align:inherit;"
-                                                      height="100%" valign="top" bgcolor="" role="module-content">
-                                                      <div>
-                                                        <div style="font-family: inherit; text-align: inherit"><br>
-                                                        </div>
-                                                        <div></div>
-                                                      </div>
+                                                </tr>
+                                                <tr>
+                                                    <td class="x m" style="font-size:0;padding:0;padding-bottom:21px;word-break:break-word;" align="center">
+                                                    <div style="font-family:Nunito,Arial,sans-serif;font-size:13px;line-height:15px;text-align:center;color:#000000;">
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;">© <%= Cldr.DateTime.to_string!(DateTime.now!("Etc/UTC"), CambiatusWeb.Cldr, format: "y") %> </span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="https://www.cambiatus.com/" style="color:#ffffff;text-decoration:underline;" target="_blank">Cambiatus</a></span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"> by </span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="https://www.satisfiedvagabonds.com/" style="color:#ffffff;text-decoration:underline;" target="_blank">Satisfied Vagabonds LLC</a></span></p>
+                                                    </div>
                                                     </td>
-                                                  </tr>
+                                                </tr>
+                                                <tr>
+                                                    <td class="x m" style="font-size:0;padding:0;padding-bottom:21px;word-break:break-word;" align="center">
+                                                    <div style="font-family:Nunito,Arial,sans-serif;font-size:14px;line-height:22px;text-align:center;color:#000000;">
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;">Powered by </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://eos.io/" style="color:#ffffff;text-decoration:underline;" target="_blank">EOSIO</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://ipfs.io/" style="color:#ffffff;text-decoration:underline;" target="_blank">IPFS</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://elm-lang.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Elm</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://www.phoenixframework.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Phoenix</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;"> and </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://elixir-lang.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Elixir</a></span></p>
+                                                    </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="x m" style="font-size:0;padding:0;padding-bottom:21px;word-break:break-word;" align="center">
+                                                    <div style="font-family:Nunito,Arial,sans-serif;font-size:13px;line-height:15px;text-align:center;color:#000000;">
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("You are receiving this email because you signed up for Cambiatus or") %></span></p>
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("a company that uses the Cambiatus platform.") %></span></p>
+                                                    </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td class="x " style="font-size:0;padding:0;padding-bottom:0;word-break:break-word;" align="center">
+                                                    <div style="font-family:Nunito,Arial,sans-serif;font-size:13px;line-height:15px;text-align:center;color:#000000;">
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("Want to stop receiving these emails?") %></span></p>
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("You can unsubscribe by") %> </span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="<%= @unsub_link %>" style="color:#ffffff;text-decoration:underline;" target="_blank"><%= gettext("clicking here") %>.</a></span></p>
+                                                    </div>
+                                                    </td>
+                                                </tr>
                                                 </tbody>
-                                              </table>
-                                            </td>
-                                          </tr>
-                                        </tbody>
-                                      </table>
+                                            </table>
+                                            </div>
+                                            <!--[if mso | IE]>
+                                        </td>
+                                        </tr>
+                                    </table>
+                                    <![endif]-->
                                     </td>
-                                  </tr>
+                                </tr>
                                 </tbody>
-                              </table>
-                              <table class="module" role="module" data-type="text" border="0" cellpadding="0"
-                                cellspacing="0" width="100%" style="table-layout: fixed;"
-                                data-muid="44af487b-1a8b-468a-97b8-8119a4cd4f50" data-mc-module-version="2019-10-22">
-                                <tbody>
-                                  <tr>
-                                    <td
-                                      style="padding:18px 0px 18px 0px; line-height:22px; text-align:inherit; background-color:#000000;"
-                                      height="100%" valign="top" bgcolor="#000000" role="module-content">
-                                      <div>
-                                        <div style="font-family: inherit; text-align: center"><span
-                                            style="font-style: normal; font-variant-caps: normal; font-weight: normal; letter-spacing: normal; text-indent: 0px; text-transform: none; white-space: normal; word-spacing: 0px; -webkit-text-stroke-width: 0px; text-decoration: none; box-sizing: border-box; margin-bottom: 16px; font-family: &quot;Nunito Sans&quot;, sans-serif; text-align: center; font-size: 14px; background-color: rgb(0, 0, 0); color: #fbfbfb">
-                                            © <%= Cldr.DateTime.to_string!(DateTime.now!("Etc/UTC"), CambiatusWeb.Cldr) %>
-                                            <%= gettext("Cambiatus by Satisfied Vagabonds LLC") %>
-                                            </span>
-                                            <span
-                                            style="background-color: rgb(0, 0, 0); color: #fbfbfb"><br>
-                                          </span>
-                                      <div style="font-family:Nunito,Arial,sans-serif;font-size:12px;line-height:15px;text-align:center;color:#000000;margin-top:16px;">
-                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:12px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("Want to stop receiving these emails?") %></span></p>
-                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:12px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("You can unsubscribe by") %> </span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="<%= @unsub_link %>" style="color:#ffffff;text-decoration:underline;" target="_blank"><%= gettext("clicking here") %>.</a></span></p>
-                                      </div>
-                                        </div>
-                                    </td>
-                                  </tr>
-                                </tbody>
-                              </table>
+                            </table>
                             </td>
                           </tr>
                         </table>
