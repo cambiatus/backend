@@ -15,7 +15,8 @@ defmodule CambiatusWeb.UnsubscribeController do
           account: current_user.account,
           transfer_notification: current_user.transfer_notification,
           claim_notification: current_user.claim_notification,
-          digest: current_user.digest
+          digest: current_user.digest,
+          avatar: current_user.avatar
         }
 
         render(conn, "email_unsubscribe.html", %{data: data})
