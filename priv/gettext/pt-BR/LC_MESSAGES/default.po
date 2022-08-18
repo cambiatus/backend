@@ -183,3 +183,7 @@ msgstr "Preferências atualizadas com sucesso!"
 #: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:317
 msgid "Something went wrong. Please try again."
 msgstr "Algo deu errado. Por favor, tente novamente."
+
+#: lib/cambiatus_web/templates/unsubscribe/email_unsubscribe.html.eex:226
+msgid "Hello,"
+msgstr "Olá,"
