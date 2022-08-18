@@ -163,10 +163,27 @@
                 .header {
                     background-color: white;
                     padding: 12px;
+                }
+
+                .header-content {
+                    margin: 0 auto;
+                    max-width: 80vw;
+                    min-height: 80px;
                     display: flex;
-                    flex-direction: row;
+                    flex-direction: column;
                     justify-content: space-between;
                     align-items: center;
+                }
+
+                @media (min-width: 768px) {
+                    .header-content {
+                        flex-direction: row;
+                        min-height: 0;
+                        width: 100%;
+                        max-width: 650px;
+                        min-width: 100px;
+                        margin: 0 auto;
+                    }
                 }
 
                 .alert {
@@ -191,21 +208,23 @@
         <body style="margin: 0; padding: 0; background-color: #F6F6F6; font-size: 14px;
                 font-family: 'Nunito Sans', 'Lato', 'San Francisco', 'Helvetica', 'Verdana', sans-serif;">
             <div class="header">
-                <a style="left: 50%" href="https://www.cambiatus.com/" target="_blank"> <img
-                        src="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e4ede46179566acc07948ca_complete.svg"
-                        alt=""> </a>
-                <div class="flexing">
-                    <div style="height: 32px; width: 32px;">
-                        <%= if @data.avatar do
-                                Phoenix.HTML.Tag.tag(:img, [src: @data.avatar, class: "avatar", alt: ""])
-                            else
-                                Phoenix.HTML.Tag.content_tag(:svg, viewBox: "0 0 43 43", class: "w-20 h-20 mr-6 xs-max:w-16 xs-max:h-16 xs-max:mr-3") do
-                                    [Phoenix.HTML.Tag.tag(:path, d: "M21.5 0C33.378 0 43 9.622 43 21.5 43 33.306 33.426 43 21.5 43 9.598 43 0 33.33 0 21.5 0 9.622 9.622 0 21.5 0zm14.853 32.418c2.232-3.071 3.576-6.839 3.576-10.918 0-10.15-8.279-18.429-18.429-18.429-10.15 0-18.429 8.279-18.429 18.429 0 4.08 1.344 7.847 3.576 10.918.864-4.295 2.951-7.847 7.342-7.847 1.944 1.896 4.584 3.072 7.511 3.072 2.927 0 5.567-1.176 7.51-3.072 4.392 0 6.48 3.552 7.343 7.847zm-5.639-15.525c0 5.087-4.127 9.214-9.214 9.214-5.087 0-9.214-4.127-9.214-9.214 0-5.087 4.127-9.214 9.214-9.214 5.087 0 9.214 4.127 9.214 9.214z")]
+                <div class="header-content">
+                    <a href="https://www.cambiatus.com/" target="_blank"> <img
+                            src="https://uploads-ssl.webflow.com/5e4e898f09bfea6abb6f44be/5e4ede46179566acc07948ca_complete.svg"
+                            alt=""> </a>
+                    <div class="flexing">
+                        <div style="height: 32px; width: 32px;">
+                            <%= if @data.avatar do
+                                    Phoenix.HTML.Tag.tag(:img, [src: @data.avatar, class: "avatar", alt: ""])
+                                else
+                                    Phoenix.HTML.Tag.content_tag(:svg, viewBox: "0 0 43 43", class: "w-20 h-20 mr-6 xs-max:w-16 xs-max:h-16 xs-max:mr-3") do
+                                        [Phoenix.HTML.Tag.tag(:path, d: "M21.5 0C33.378 0 43 9.622 43 21.5 43 33.306 33.426 43 21.5 43 9.598 43 0 33.33 0 21.5 0 9.622 9.622 0 21.5 0zm14.853 32.418c2.232-3.071 3.576-6.839 3.576-10.918 0-10.15-8.279-18.429-18.429-18.429-10.15 0-18.429 8.279-18.429 18.429 0 4.08 1.344 7.847 3.576 10.918.864-4.295 2.951-7.847 7.342-7.847 1.944 1.896 4.584 3.072 7.511 3.072 2.927 0 5.567-1.176 7.51-3.072 4.392 0 6.48 3.552 7.343 7.847zm-5.639-15.525c0 5.087-4.127 9.214-9.214 9.214-5.087 0-9.214-4.127-9.214-9.214 0-5.087 4.127-9.214 9.214-9.214 5.087 0 9.214 4.127 9.214 9.214z")]
+                                    end
                                 end
-                            end
-                        %>
+                            %>
+                        </div>
+                        <span style="padding-left: .5rem"> <%= gettext("Hello,") <> " #{@data.account}" %> </span>
                     </div>
-                <span> Olá, <%= @data.account %> </span>
                 </div>
             </div>
             <div class="alert" id="feedback" style="visibility: hidden;">
