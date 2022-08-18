@@ -742,7 +742,7 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
                    "imageUri" => nil,
                    "position" => 0,
                    "iconUri" => nil,
-                   "metaTitle" => nil,
+                   "metaTitle" => nil
                  }
                }
              } == response
