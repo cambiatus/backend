@@ -13,9 +13,7 @@ defmodule CambiatusWeb.Router do
   end
 
   pipeline :browser do
-    plug(:put_secure_browser_headers, %{
-      "content-security-policy" => "default-src 'self'; style-src 'unsafe-inline'"
-    })
+    plug(CambiatusWeb.Plugs.SetCSP)
 
     plug(:accepts, ["html"])
   end
