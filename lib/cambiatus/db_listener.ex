@@ -6,8 +6,7 @@ defmodule Cambiatus.DbListener do
   require Logger
 
   alias Cambiatus.{Accounts, Notifications, Repo, Objectives}
-  #  Commented to prevent emails from beign sent
-  #  alias Cambiatus.Workers.{ClaimEmailWorker, TransferEmailWorker}
+  alias Cambiatus.Workers.{ClaimEmailWorker, TransferEmailWorker}
   alias Cambiatus.Commune.Transfer
   alias Cambiatus.Objectives.Claim
 
@@ -101,8 +100,8 @@ defmodule Cambiatus.DbListener do
 
       if user.transfer_notification do
         %{transfer_id: record.id}
-        #  |> TransferEmailWorker.new() Commented to prevent emails from beign sent
-        #  |> Oban.insert()
+        |> TransferEmailWorker.new()
+        |> Oban.insert()
       end
 
       {:noreply, :event_handled}
@@ -155,8 +154,8 @@ defmodule Cambiatus.DbListener do
 
           if user.claim_notification do
             %{claim_id: claim.id}
-            #  |> ClaimEmailWorker.new() Commented to prevent emails from beign sent
-            #  |> Oban.insert()
+            |> ClaimEmailWorker.new()
+            |> Oban.insert()
           end
 
           Notifications.notify_claim_approved(record.id)
