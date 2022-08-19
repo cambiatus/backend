@@ -1,6 +1,6 @@
 defmodule Cambiatus.Shop.Product do
   @moduledoc """
-  This module holds the data structure that represents an instance of a `Cambiatus.Commune.Product` use it to
+  This module holds the data structure that represents an instance of a `Cambiatus.Shop.Product` use it to
   build and validate changesets for operating on a product
   """
   use Ecto.Schema
@@ -11,7 +11,7 @@ defmodule Cambiatus.Shop.Product do
   alias Cambiatus.{Accounts.User, Repo}
   alias Cambiatus.Commune.Community
   alias Cambiatus.Shop
-  alias Cambiatus.Shop.{Category, Order, Product, ProductCategory, ProductImage}
+  alias Cambiatus.Shop.{Category, Item, Product, ProductCategory, ProductImage}
 
   schema "products" do
     field(:title, :string)
@@ -27,8 +27,6 @@ defmodule Cambiatus.Shop.Product do
     belongs_to(:creator, User, references: :account, type: :string)
     belongs_to(:community, Community, references: :symbol, type: :string)
 
-    has_many(:orders, Order, foreign_key: :product_id)
-
     has_many(:images, ProductImage,
       on_replace: :delete,
       on_delete: :delete_all
@@ -36,6 +34,7 @@ defmodule Cambiatus.Shop.Product do
 
     has_many(:product_categories, ProductCategory, on_replace: :delete)
     has_many(:categories, through: [:product_categories, :category])
+    has_many(:items, Item)
   end
 
   @required_fields ~w(community_id title description price track_stock)a
