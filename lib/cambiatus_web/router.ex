@@ -59,7 +59,7 @@ defmodule CambiatusWeb.Router do
     post("/paypal", PaypalController, :index)
   end
 
-  scope "/", CambiatusWeb do
+  scope "/mailer", CambiatusWeb do
     pipe_through([:browser])
 
     get("/unsubscribe", UnsubscribeController, :unsubscribe_page)
