@@ -270,6 +270,7 @@ defmodule Cambiatus.Shop do
         # Get all root categories that have position bigger or equal than
         transaction =
           Category
+          |> Category.from_community(attrs.community_id)
           |> Category.roots()
           |> Category.position_bigger_equals_then(position)
           |> Repo.all()
