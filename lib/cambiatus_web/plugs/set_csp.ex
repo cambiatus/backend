@@ -12,11 +12,12 @@ defmodule CambiatusWeb.Plugs.SetCSP do
   def init(opts), do: opts
 
   def call(conn, _) do
-    policies = Enum.reduce(list_policies(), "", fn {policy, srcs}, csp ->
-      srcs = Enum.join(srcs, " ")
+    policies =
+      Enum.reduce(list_policies(), "", fn {policy, srcs}, csp ->
+        srcs = Enum.join(srcs, " ")
 
-      csp <> "#{policy} #{srcs}; "
-    end)
+        csp <> "#{policy} #{srcs}; "
+      end)
 
     put_secure_browser_headers(conn, %{"content-security-policy" => policies})
   end
