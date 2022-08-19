@@ -700,6 +700,54 @@ defmodule CambiatusWeb.Resolvers.ShopTest do
              } == response
     end
 
+    test "create new with full params" do
+      user = insert(:user)
+      community = insert(:community, creator: user.account)
+
+      conn = auth_conn(user, community.subdomain.name)
+
+      mutation = """
+        mutation {
+          category(description: "the first one!",
+                    name: "First category :)",
+                    position: 0,
+                    slug: "first-category") {
+            slug
+            name
+            position
+            metaKeywords
+            metaDescription
+            metaTitle
+            parent { id: id }
+            imageUri
+            iconUri
+            description
+          }
+        }
+      """
+
+      res = post(conn, "/api/graph", query: mutation)
+
+      response = json_response(res, 200)
+
+      assert %{
+               "data" => %{
+                 "category" => %{
+                   "name" => "First category :)",
+                   "description" => "the first one!",
+                   "slug" => "first-category",
+                   "parent" => nil,
+                   "metaKeywords" => nil,
+                   "metaDescription" => nil,
+                   "imageUri" => nil,
+                   "position" => 0,
+                   "iconUri" => nil,
+                   "metaTitle" => nil
+                 }
+               }
+             } == response
+    end
+
     test "add existing categories as subcategories to a new category", %{
       conn: conn,
       community: community
