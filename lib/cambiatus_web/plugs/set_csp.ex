@@ -7,7 +7,7 @@ defmodule CambiatusWeb.Plugs.SetCSP do
 
   @behaviour Plug
 
-  use Phoenix.Controller
+  import Phoenix.Controller
 
   def init(opts), do: opts
 
