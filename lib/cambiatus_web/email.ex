@@ -23,7 +23,7 @@ defmodule CambiatusWeb.Email do
     |> Mailer.deliver()
   end
 
-  def transfer(transfer) do
+  def transfer(%Transfer{} = transfer) do
     transfer = Repo.preload(transfer, [:from, :to, [community: :subdomain]])
 
     compose_email_headers(transfer.to, transfer.community)
@@ -32,7 +32,9 @@ defmodule CambiatusWeb.Email do
     |> Mailer.deliver()
   end
 
-  def claim(claim) do
+  def claim(%Claim{} = claim) do
+    claim = Repo.preload(claim, [:claimer, action: [objective: [community: :subdomain]]])
+
     compose_email_headers(claim.claimer, claim.action.objective.community)
     |> subject(gettext("Your claim was approved!"))
     |> render_body("claim.html", render_params(claim))
@@ -59,19 +61,18 @@ defmodule CambiatusWeb.Email do
   end
 
   defp render_params(%Transfer{} = transfer) do
-    unsub_link = unsub_link(transfer.to, transfer.community, transfer.to.language)
+    unsub_link = unsub_link(transfer.to, transfer.community)
     %{transfer: transfer, unsub_link: unsub_link}
   end
 
   defp render_params(%Claim{} = claim) do
-    unsub_link =
-      unsub_link(claim.claimer, claim.action.objective.community, claim.claimer.language)
+    unsub_link = unsub_link(claim.claimer, claim.action.objective.community)
 
     %{claim: claim, unsub_link: unsub_link}
   end
 
   defp render_params(%User{} = user, %Community{} = community) do
-    unsub_link = unsub_link(user, community, user.language)
+    unsub_link = unsub_link(user, community)
     %{community: community, user: user, unsub_link: unsub_link}
   end
 
@@ -81,20 +82,16 @@ defmodule CambiatusWeb.Email do
     "https://#{community.subdomain.name}/api/unsubscribe?token=#{token}"
   end
 
-  def unsub_link(member, community, language) do
+  def unsub_link(member, community) do
     token = AuthToken.sign(member, "email")
 
-    "https://#{community.subdomain.name}/unsubscribe?lang=#{language}&token=#{token}"
+    "https://#{community.subdomain.name}/api/unsubscribe?token=#{token}"
   end
 
-  def set_language(mail, language) when is_atom(language),
-    do: set_language(mail, Atom.to_string(language))
-
   def set_language(mail, language) do
-    if language do
-      Gettext.put_locale(CambiatusWeb.Gettext, language)
-      CambiatusWeb.Cldr.put_gettext_locale(language)
-    end
+    language = if language, do: Atom.to_string(language), else: "en-US"
+    Gettext.put_locale(CambiatusWeb.Gettext, language)
+    CambiatusWeb.Cldr.put_gettext_locale(language)
 
     mail
   end

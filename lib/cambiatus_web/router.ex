@@ -13,9 +13,7 @@ defmodule CambiatusWeb.Router do
   end
 
   pipeline :browser do
-    plug(:put_secure_browser_headers, %{
-      "content-security-policy" => "default-src 'self'; style-src 'unsafe-inline'"
-    })
+    plug(CambiatusWeb.Plugs.SetCSP)
 
     plug(:accepts, ["html"])
   end
@@ -59,5 +57,11 @@ defmodule CambiatusWeb.Router do
     post("/unsubscribe", UnsubscribeController, :one_click)
 
     post("/paypal", PaypalController, :index)
+  end
+
+  scope "/mailer", CambiatusWeb do
+    pipe_through([:browser])
+
+    get("/unsubscribe", UnsubscribeController, :unsubscribe_page)
   end
 end

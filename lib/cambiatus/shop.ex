@@ -9,7 +9,7 @@ defmodule Cambiatus.Shop do
 
   alias Cambiatus.Commune
   alias Cambiatus.Repo
-  alias Cambiatus.Shop.{Category, Product, Order}
+  alias Cambiatus.Shop.{Category, Product, ProductCategory, Order}
 
   @spec data(any) :: Dataloader.Ecto.t()
   def data(params \\ %{}) do
@@ -270,6 +270,7 @@ defmodule Cambiatus.Shop do
         # Get all root categories that have position bigger or equal than
         transaction =
           Category
+          |> Category.from_community(attrs.community_id)
           |> Category.roots()
           |> Category.position_bigger_equals_then(position)
           |> Repo.all()
@@ -290,7 +291,8 @@ defmodule Cambiatus.Shop do
           {:error, :category, error, _} ->
             {:error, error}
 
-          _error ->
+          error ->
+            Sentry.capture_message("Category creation failed", extra: %{error: error})
             {:error, "Can't create new category"}
         end
 
@@ -429,4 +431,6 @@ defmodule Cambiatus.Shop do
   def change_category(%Category{} = category, attrs \\ %{}) do
     Category.changeset(category, attrs)
   end
+
+  def get_product_category!(id), do: Repo.get!(ProductCategory, id)
 end
