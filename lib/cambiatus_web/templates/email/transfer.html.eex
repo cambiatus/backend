@@ -117,7 +117,7 @@
 <center
   class="wrapper"
   data-link-color="#F99D33"
-  data-body-style="font-size:16px; color:#000; background-color:#FFFFFF;"
+  data-body-style="font-family: 'Nunito Sans', 'Lato', 'San Francisco', 'Helvetica', 'Verdana', sans-serif; font-size:16px; color:#000; background-color:#FFFFFF;"
 >
   <div class="webkit">
     <table
@@ -309,7 +309,7 @@
                                   >
                                     <div>
                                       <div
-                                        style="font-family: inherit; text-align: center"
+                                        style="text-align: center"
                                       >
                                         <span
                                           style="font-size: 36px; color: #8acc9e"
@@ -320,7 +320,7 @@
                                         >
                                       </div>
                                       <div
-                                        style="font-family: inherit; text-align: center"
+                                        style="text-align: center"
                                       >
                                         <%= gettext("You received") %> <%= @transfer.community_id |> String.split(",") |> Enum.reverse |> hd %>
                                       </div>
@@ -353,7 +353,7 @@
                                   >
                                     <div>
                                       <div
-                                        style="font-family: inherit; text-align: center"
+                                        style="text-align: center"
                                       >
                                         <span style="color: #666666"
                                           ><%= gettext("Sent by") %> </span
@@ -366,7 +366,7 @@
                                         >
                                       </div>
                                       <div
-                                        style="font-family: inherit; text-align: center"
+                                        style="text-align: center"
                                       >
                                         <span style="color: #666666"
                                           > <%= gettext("more details on app.") %> </span
@@ -557,31 +557,31 @@
                                                 </tr>
                                                 <tr>
                                                     <td class="x m" style="font-size:0;padding:0;padding-bottom:21px;word-break:break-word;" align="center">
-                                                    <div style="font-family:Nunito,Arial,sans-serif;font-size:13px;line-height:15px;text-align:center;color:#000000;">
-                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;">© <%= Cldr.DateTime.to_string!(DateTime.now!("Etc/UTC"), CambiatusWeb.Cldr, format: "y") %> </span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="https://www.cambiatus.com/" style="color:#ffffff;text-decoration:underline;" target="_blank">Cambiatus</a></span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"> by </span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="https://www.satisfiedvagabonds.com/" style="color:#ffffff;text-decoration:underline;" target="_blank">Satisfied Vagabonds LLC</a></span></p>
+                                                    <div style="font-size:13px;line-height:15px;text-align:center;color:#000000;">
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:400;color:#ffffff;line-height:15px;">© <%= Cldr.DateTime.to_string!(DateTime.now!("Etc/UTC"), CambiatusWeb.Cldr, format: "y") %> </span><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:700;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="https://www.cambiatus.com/" style="color:#ffffff;text-decoration:underline;" target="_blank">Cambiatus</a></span><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:400;color:#ffffff;line-height:15px;"> by </span><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:700;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="https://www.satisfiedvagabonds.com/" style="color:#ffffff;text-decoration:underline;" target="_blank">Satisfied Vagabonds LLC</a></span></p>
                                                     </div>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="x m" style="font-size:0;padding:0;padding-bottom:21px;word-break:break-word;" align="center">
-                                                    <div style="font-family:Nunito,Arial,sans-serif;font-size:14px;line-height:22px;text-align:center;color:#000000;">
-                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;">Powered by </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://eos.io/" style="color:#ffffff;text-decoration:underline;" target="_blank">EOSIO</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://ipfs.io/" style="color:#ffffff;text-decoration:underline;" target="_blank">IPFS</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://elm-lang.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Elm</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://www.phoenixframework.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Phoenix</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:22px;"> and </span><span style="mso-line-height-rule:exactly;font-size:14px;font-family:Nunito,Arial,sans-serif;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://elixir-lang.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Elixir</a></span></p>
+                                                    <div style="font-size:14px;line-height:22px;text-align:center;color:#000000;">
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:400;color:#ffffff;line-height:22px;">Powered by </span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://eos.io/" style="color:#ffffff;text-decoration:underline;" target="_blank">EOSIO</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://ipfs.io/" style="color:#ffffff;text-decoration:underline;" target="_blank">IPFS</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://elm-lang.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Elm</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:400;color:#ffffff;line-height:22px;">, </span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://www.phoenixframework.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Phoenix</a></span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:400;color:#ffffff;line-height:22px;"> and </span><span style="mso-line-height-rule:exactly;font-size:14px;font-weight:700;color:#ffffff;line-height:22px;text-decoration:underline;"><a href="https://elixir-lang.org/" style="color:#ffffff;text-decoration:underline;" target="_blank">Elixir</a></span></p>
                                                     </div>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="x m" style="font-size:0;padding:0;padding-bottom:21px;word-break:break-word;" align="center">
-                                                    <div style="font-family:Nunito,Arial,sans-serif;font-size:13px;line-height:15px;text-align:center;color:#000000;">
-                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("You are receiving this email because you signed up for Cambiatus or") %></span></p>
-                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("a company that uses the Cambiatus platform.") %></span></p>
+                                                    <div style="font-size:13px;line-height:15px;text-align:center;color:#000000;">
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("You are receiving this email because you signed up for Cambiatus or") %></span></p>
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("a company that uses the Cambiatus platform.") %></span></p>
                                                     </div>
                                                     </td>
                                                 </tr>
                                                 <tr>
                                                     <td class="x " style="font-size:0;padding:0;padding-bottom:0;word-break:break-word;" align="center">
-                                                    <div style="font-family:Nunito,Arial,sans-serif;font-size:13px;line-height:15px;text-align:center;color:#000000;">
-                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("Want to stop receiving these emails?") %></span></p>
-                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("You can unsubscribe by") %> </span><span style="mso-line-height-rule:exactly;font-size:13px;font-family:Nunito,Arial,sans-serif;font-weight:400;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="<%= @unsub_link %>" style="color:#ffffff;text-decoration:underline;" target="_blank"><%= gettext("clicking here") %>.</a></span></p>
+                                                    <div style="font-size:13px;line-height:15px;text-align:center;color:#000000;">
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("Want to stop receiving these emails?") %></span></p>
+                                                        <p style="Margin:0;"><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:400;color:#ffffff;line-height:15px;"><%= gettext("You can unsubscribe by") %> </span><span style="mso-line-height-rule:exactly;font-size:13px;font-weight:400;color:#ffffff;line-height:15px;text-decoration:underline;"><a href="<%= @unsub_link %>" style="color:#ffffff;text-decoration:underline;" target="_blank"><%= gettext("clicking here") %>.</a></span></p>
                                                     </div>
                                                     </td>
                                                 </tr>
