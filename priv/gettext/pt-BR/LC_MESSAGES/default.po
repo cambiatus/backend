@@ -23,9 +23,9 @@ msgid "Cambiatus by Satisfied Vagabonds LLC"
 msgstr "Cambiatus por Satisfied Vagabonds LLC"
 
 #, elixir-format
-#: lib/cambiatus_web/templates/email/transfer.html.eex:439
-msgid "Go to app"
-msgstr "Vá para o app"
+#: lib/cambiatus_web/templates/email/transfer.html.eex:420
+msgid "GO TO APP"
+msgstr "VÁ PARA O APP"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:208
