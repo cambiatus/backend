@@ -24,7 +24,7 @@ msgstr "Cambiatus by Satisfied Vagabonds LLC"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/transfer.html.eex:420
-msgid "GO TO APP"
+msgid "Go to app"
 msgstr "ወደ መተግበሪያ ይሂዱ"
 
 #, elixir-format
@@ -40,7 +40,7 @@ msgstr "ሄይ ተቀብለሃል"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:261
-msgid "MORE ON APP"
+msgid "More on app"
 msgstr "በመተግበሪያው ላይ ተጨማሪ"
 
 #, elixir-format
@@ -86,7 +86,7 @@ msgstr "በዚህ ወር በመተግበሪያው ውስጥ አንዳንድ ዜ�
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:252
-msgid "GO TO COMMUNITY"
+msgid "Go to community"
 msgstr "ወደ ማህበረሰብ ሂድ"
 
 #, elixir-format
