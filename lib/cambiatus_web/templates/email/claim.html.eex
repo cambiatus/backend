@@ -208,8 +208,7 @@
                                         </div>
                                         <div style="text-align: center">
                                           <%= gettext("Thanks for your contribution on") %>
-                                          <%= @claim.action.objective.community.name %>
-                                          <%= gettext(", here is your reward") %>
+                                          <%= @claim.action.objective.community.name <> gettext(", here is your reward") %>
                                         </div>
                                         <div></div>
                                       </div>
