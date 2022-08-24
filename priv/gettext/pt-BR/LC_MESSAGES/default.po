@@ -23,7 +23,7 @@ msgid "Cambiatus by Satisfied Vagabonds LLC"
 msgstr "Cambiatus por Satisfied Vagabonds LLC"
 
 #, elixir-format
-#: lib/cambiatus_web/templates/email/transfer.html.eex:439
+#: lib/cambiatus_web/templates/email/transfer.html.eex:420
 msgid "Go to app"
 msgstr "Vá para o app"
 
@@ -40,8 +40,8 @@ msgstr "Hey, você recebeu"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:261
-msgid "MORE ON APP"
-msgstr "MAIS NO APP"
+msgid "More on app"
+msgstr "Mais no app"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:216
@@ -86,8 +86,8 @@ msgstr "Durante esse mês divulgamos algumas notícias no aplicativo, e para que
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:252
-msgid "GO TO COMMUNITY"
-msgstr "IR PARA COMUNIDADE"
+msgid "Go to community"
+msgstr "Ir para comunidade"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/monthly_digest.html.eex:119
