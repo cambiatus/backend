@@ -251,7 +251,7 @@
                     <li class="row">
                         <div class="flexing">
                             <span>
-                                <%= gettext("Transfer Notification") %>
+                                <%= gettext("Transfer notification") %>
                             </span>
                             <div class="flexing">
                                 <label for="transfers" class="switch-label"></label>
