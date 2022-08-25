@@ -126,7 +126,7 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 #Boom! Now you can hack away!
 
-## NGINX setup
+## NGINX crawlers setup
 
 We use NGINX to manage our server infrastructure. You can check out how to install and run it on their [official site](https://nginx.org/)
 
@@ -166,6 +166,39 @@ if ($rich_link_prefix != 0) {
 Note: Replace `#{backend_listening_port}` with the port to which the backend server is setup to listen.
 
 This code redirects the identified crawler to the correct rich link URL. Nut if a crawler was not detected the server runs normally.
+
+## Nginx redirect setup
+
+We use pretty straight forward configurations. Make sure we reply to our backend from both `/api` and `/mailer`: 
+
+```
+        location /api/ {
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header X-Forwarded-For $remote_addr;
+                proxy_redirect off;
+                proxy_http_version 1.1;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Origin *;
+                proxy_pass http://ADDRESS:PORT;
+                client_max_body_size CLIENT_SIZE;
+        }
+	
+	location /mailer/ {
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header X-Forwarded-For $remote_addr;
+                proxy_redirect off;
+                proxy_http_version 1.1;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Origin *;
+                proxy_pass http://ADDRESS:PORT;
+                client_max_body_size CLIENT_SIZE;
+        }
+```
+
 
 ## Contributing
 
