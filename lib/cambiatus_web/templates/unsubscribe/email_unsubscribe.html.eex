@@ -187,7 +187,6 @@
                 }
 
                 .alert {
-                    width: 100%;
                     margin-bottom: 50px;
                     padding: 10px;
                     position: -webkit-sticky;
