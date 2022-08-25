@@ -87,6 +87,9 @@
                     width: 100%;
                     line-height: 15px;
                     padding-top: 16px;
+                }
+
+                .row:not(:last-of-type) {
                     padding-bottom: 16px;
                     border-bottom: 1px solid #E7E7E7;
                 }
@@ -257,7 +260,7 @@
                             </div>
                         </div>
                     </li>
-                    <li class="row" style="border-bottom: 0px; padding-bottom: 0px;">
+                    <li class="row">
                         <div class="flexing">
                             <span>
                                 <%= gettext("Monthly news about the community") %>
