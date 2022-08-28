@@ -167,7 +167,7 @@ Note: Replace `#{backend_listening_port}` with the port to which the backend ser
 
 This code redirects the identified crawler to the correct rich link URL. Nut if a crawler was not detected the server runs normally.
 
-## Nginx redirect setup
+## NGINX redirect setup
 
 We use pretty straight forward configurations. Make sure we reply to our backend from both `/api` and `/mailer`: 
 
