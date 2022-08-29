@@ -164,7 +164,7 @@ We use pretty straight forward configurations. Make sure we reply to our backend
 ```
 ## NGINX Setup: Crawlers
 
-Cambiatus has builtin support for social media crawlers, in order to dynamically serve rich links (or Open Graphs) in accordance to the [Open Graph Protocol](https://ogp.me/). To setup, follow this steps:
+Cambiatus has builtin support for social media crawlers, in order to dynamically serve rich links (or Open Graphs) in accordance to the [Open Graph Protocol](https://ogp.me/). To setup, follow these steps:
 
 **Step 0**
 
