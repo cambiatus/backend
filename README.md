@@ -126,11 +126,45 @@ Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 #Boom! Now you can hack away!
 
-## NGINX crawlers setup
+## NGINX Setup
 
-We use NGINX to manage our server infrastructure. You can check out how to install and run it on their [official site](https://nginx.org/)
+This project was written with NGINX in mind and so we need to configure it properly. You can check out how to install and run it on their [official site](https://nginx.org/).
+When running your own servers or setting up a new env for Cambiatus, without those configurations we will not be able to fully operate. We basically need to setup [redirects](#nginx-setup-api-and-mailer-redirects) and [crawlers](#nginx-setup-crawlers)
 
-We also use NGINX to redirect social media crawlers in order to dynamically serve rich links (or Open Graphs) in accordance to the [Open Graph Protocol](https://ogp.me/). To set this up on your NGINX follow these steps:
+## NGINX Setup: API and Mailer redirects
+
+We use pretty straight forward configurations. Make sure we reply to our backend from both `/api` and `/mailer`: 
+
+```
+        location /api/ {
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header X-Forwarded-For $remote_addr;
+                proxy_redirect off;
+                proxy_http_version 1.1;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Origin *;
+                proxy_pass http://ADDRESS:PORT;
+                client_max_body_size CLIENT_SIZE;
+        }
+	
+	location /mailer/ {
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header X-Forwarded-For $remote_addr;
+                proxy_redirect off;
+                proxy_http_version 1.1;
+                proxy_set_header Connection "upgrade";
+                proxy_set_header Origin *;
+                proxy_pass http://ADDRESS:PORT;
+                client_max_body_size CLIENT_SIZE;
+        }
+```
+## NGINX Setup: Crawlers
+
+Cambiatus has builtin support for social media crawlers, in order to dynamically serve rich links (or Open Graphs) in accordance to the [Open Graph Protocol](https://ogp.me/). To setup, follow this steps:
 
 **Step 0**
 
@@ -166,38 +200,6 @@ if ($rich_link_prefix != 0) {
 Note: Replace `#{backend_listening_port}` with the port to which the backend server is setup to listen.
 
 This code redirects the identified crawler to the correct rich link URL. Nut if a crawler was not detected the server runs normally.
-
-## NGINX redirect setup
-
-We use pretty straight forward configurations. Make sure we reply to our backend from both `/api` and `/mailer`: 
-
-```
-        location /api/ {
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header X-Forwarded-For $remote_addr;
-                proxy_redirect off;
-                proxy_http_version 1.1;
-                proxy_set_header Connection "upgrade";
-                proxy_set_header Origin *;
-                proxy_pass http://ADDRESS:PORT;
-                client_max_body_size CLIENT_SIZE;
-        }
-	
-	location /mailer/ {
-                proxy_set_header Host $host;
-                proxy_set_header X-Real-IP $remote_addr;
-                proxy_set_header Upgrade $http_upgrade;
-                proxy_set_header X-Forwarded-For $remote_addr;
-                proxy_redirect off;
-                proxy_http_version 1.1;
-                proxy_set_header Connection "upgrade";
-                proxy_set_header Origin *;
-                proxy_pass http://ADDRESS:PORT;
-                client_max_body_size CLIENT_SIZE;
-        }
-```
 
 
 ## Contributing
