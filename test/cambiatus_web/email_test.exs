@@ -75,7 +75,7 @@ defmodule CambiatusWeb.EmailTest do
 
     community
     |> Repo.preload([:members, :news])
-    |> CambiatusWeb.Email.monthly_digest()
+    |> CambiatusWeb.Email.monthly_digest(user)
 
     {:messages, messages} = :erlang.process_info(self(), :messages)
 
