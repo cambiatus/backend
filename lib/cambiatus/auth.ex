@@ -167,10 +167,10 @@ defmodule Cambiatus.Auth do
     account
     |> Accounts.get_user()
     |> case do
-      nil ->
-        {:error, "Could not find user"}
+      {:error, reason} ->
+        {:error, reason}
 
-      user ->
+      {:ok, user} ->
         params = %{
           user_id: user.account,
           phrase: :crypto.strong_rand_bytes(64) |> Base.encode64() |> binary_part(0, 64),

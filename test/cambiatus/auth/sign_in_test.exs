@@ -25,7 +25,7 @@ defmodule Cambiatus.Auth.SignInTest do
 
     test "non existing user sign_in", %{community: community} do
       assert SignIn.sign_in("nonexisting", "", community: community) ==
-               {:error, "Account not found"}
+               {:error, "No user with account: nonexisting found"}
     end
 
     test "sign in with invitation" do

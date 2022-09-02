@@ -34,7 +34,7 @@ defmodule Cambiatus.Shop.ProductTest do
     test "deletes product" do
       user = insert(:user)
       product = insert(:product, %{creator: user})
-      user = Cambiatus.Accounts.get_user(product.creator_id)
+      user = Cambiatus.Accounts.get_user!(product.creator_id)
 
       assert Shop.get_product(product.id)
 

@@ -291,7 +291,7 @@ defmodule Cambiatus.SocialTest do
       community = insert(:community, has_news: true, creator: user.account)
       news = insert(:news, community: community, user: user)
 
-      user = Cambiatus.Accounts.get_user(news.user_id)
+      user = Cambiatus.Accounts.get_user!(news.user_id)
 
       assert Social.get_news(news.id)
 

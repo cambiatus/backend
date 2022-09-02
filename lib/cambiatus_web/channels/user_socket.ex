@@ -3,6 +3,7 @@ defmodule CambiatusWeb.UserSocket do
   use Absinthe.Phoenix.Socket, schema: CambiatusWeb.Schema
 
   alias CambiatusWeb.AuthToken
+  alias Cambiatus.Accounts.User
 
   ## Channels
   # channel "room:*", EatYourDayWeb.RoomChannel
@@ -30,7 +31,7 @@ defmodule CambiatusWeb.UserSocket do
   defp build_context(%{"Authorization" => "Bearer " <> token} = params, context) do
     context =
       with {:ok, %{id: account}} <- AuthToken.verify(token),
-           %Cambiatus.Accounts.User{} = user <- Cambiatus.Accounts.get_user(account) do
+           {:ok, %User{} = user} <- Cambiatus.Accounts.get_user(account) do
         Map.put(context, :current_user, user)
       else
         _ -> context
