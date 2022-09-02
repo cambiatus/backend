@@ -12,8 +12,6 @@ defmodule Cambiatus.Workers.MonthlyDigestWorker do
   alias Ecto.Multi
 
   def perform(_) do
-    multi = Multi.new()
-
     transaction =
       Community
       |> Community.with_news_enabled()
@@ -24,7 +22,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorker do
         :subdomain
       ])
       |> Enum.filter(&Enum.any?(&1.news))
-      |> Enum.reduce(multi, fn community, multi ->
+      |> Enum.reduce(Multi.new(), fn community, multi ->
         Enum.reduce(community.members, multi, fn member, multi ->
           Oban.insert(
             multi,
