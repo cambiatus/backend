@@ -11,6 +11,7 @@ defmodule CambiatusWeb.Email do
   alias Cambiatus.Commune.{Community, Transfer}
   alias Cambiatus.Accounts.User
   alias Cambiatus.Objectives.Claim
+  alias Cambiatus.Social.News
 
   def welcome(user) do
     new(
@@ -41,8 +42,11 @@ defmodule CambiatusWeb.Email do
     |> Mailer.deliver()
   end
 
-  # input is a community with preloaded news with less than 30 days and members with active digest
-  def monthly_digest(community, member) do
+  # input is a community and a user
+  # community and memebr filtering is done by the MonthlyDigestWorker
+  def monthly_digest(%Community{} = community, %User{} = member) do
+    community = Repo.preload(community, [:subdomain, [news: News.last_thirty_days()]])
+
     compose_email_headers(member, community)
     |> subject("#{community.name} - " <> gettext("Community News"))
     |> render_body("monthly_digest.html", render_params(member, community))
