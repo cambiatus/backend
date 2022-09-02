@@ -43,7 +43,7 @@ defmodule CambiatusWeb.Email do
   end
 
   # input is a community and a user
-  # community and memebr filtering is done by the MonthlyDigestWorker
+  # community and member filtering is done by the MonthlyDigestWorker
   def monthly_digest(%Community{} = community, %User{} = member) do
     community = Repo.preload(community, [:subdomain, [news: News.last_thirty_days()]])
 
