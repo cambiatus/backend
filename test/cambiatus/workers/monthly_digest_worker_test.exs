@@ -104,8 +104,8 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
 
     test "emails won't be sent if community does not have news in last 30 days" do
       community = insert(:community, has_news: true)
-
       user = insert(:user)
+      insert(:network, user: user, community: community)
 
       insert(:news,
         community: community,
@@ -116,9 +116,6 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
         community: community,
         updated_at: DateTime.utc_now() |> DateTime.add(-3600 * 24 * 40, :second)
       )
-
-      user = insert(:user)
-      insert(:network, user: user, community: community)
 
       assert {:ok, _} = perform_job(MonthlyDigestWorker, %{})
 
