@@ -44,7 +44,7 @@ defmodule CambiatusWeb.UnsubscribeController do
 
   def get_current_user(token) do
     with {:ok, %{id: account}} <- AuthToken.verify(token, "email"),
-         %Accounts.User{} = current_user <- Accounts.get_user(account) do
+         {:ok, %Accounts.User{} = current_user} <- Accounts.get_user(account) do
       {:ok, current_user}
     else
       _ ->

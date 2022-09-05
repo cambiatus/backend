@@ -34,7 +34,7 @@ defmodule Cambiatus.Auth.SignUp do
         error
 
       _result ->
-        {:ok, Accounts.get_user(params.account)}
+        {:ok, Accounts.get_user!(params.account)}
     end
   end
 
@@ -72,10 +72,10 @@ defmodule Cambiatus.Auth.SignUp do
           map() | {:error, any()}
   def validate(%{account: account} = params, :account) do
     case Accounts.get_user(account) do
-      nil ->
+      {:error, _} ->
         params
 
-      %User{} ->
+      {:ok, %User{}} ->
         {:error, :user_already_registred}
     end
   end

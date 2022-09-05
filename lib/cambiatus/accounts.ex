@@ -105,7 +105,16 @@ defmodule Cambiatus.Accounts do
 
   """
   def get_user!(id), do: Repo.get!(User, id)
-  def get_user(id), do: Repo.get(User, id)
+
+  def get_user(id) do
+    case Repo.get(User, id) do
+      nil ->
+        {:error, "No user with account: #{id} found"}
+
+      val ->
+        {:ok, val}
+    end
+  end
 
   @doc """
   Returns the number of analysis the user already did

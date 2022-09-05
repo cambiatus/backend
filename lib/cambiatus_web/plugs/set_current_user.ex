@@ -10,6 +10,7 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
   import Plug.Conn
 
   alias CambiatusWeb.AuthToken
+  alias Cambiatus.Accounts.User
 
   def init(opts), do: opts
 
@@ -25,13 +26,13 @@ defmodule CambiatusWeb.Plugs.SetCurrentUser do
   def set_current_user(conn) do
     with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
          {:ok, %{id: account}} <- AuthToken.verify(token),
-         %{} = user <- Cambiatus.Accounts.get_user(account) do
+         {:ok, %User{} = user} <- Cambiatus.Accounts.get_user(account) do
       %{current_user: user}
     else
       _ ->
         with ["Bearer " <> token] <- get_req_header(conn, "authorization"),
              {:ok, %{id: account}} <- AuthToken.verify(token, "email"),
-             %{} = user <- Cambiatus.Accounts.get_user(account) do
+             {:ok, %User{} = user} <- Cambiatus.Accounts.get_user(account) do
           %{user_unsub_email: user}
         else
           _ ->

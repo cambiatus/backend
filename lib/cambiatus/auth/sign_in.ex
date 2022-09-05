@@ -16,7 +16,7 @@ defmodule Cambiatus.Auth.SignIn do
   def sign_in(account, password, community: community) do
     Sentry.Context.set_extra_context(%{account: account, community: community})
 
-    with %User{} = user <- Accounts.get_user(account),
+    with {:ok, %User{} = user} <- Accounts.get_user(account),
          true <- Accounts.verify_pass(account, password) do
       case {community.auto_invite, Commune.is_community_member?(community.symbol, account)} do
         # Community has auto invite and user is not in yet
@@ -35,11 +35,8 @@ defmodule Cambiatus.Auth.SignIn do
            "Sorry we can't add you to this community: #{community.symbol}, as it don't allow for auto invites, please provide an invitation"}
       end
     else
-      {:error, _reason} = error ->
-        error
-
-      nil ->
-        {:error, "Account not found"}
+      {:error, reason} ->
+        {:error, reason}
 
       false ->
         {:error, "Invalid password"}
@@ -50,10 +47,10 @@ defmodule Cambiatus.Auth.SignIn do
     Sentry.Context.set_extra_context(%{account: account, invitation_id: invitation_id})
 
     case Accounts.get_user(account) do
-      nil ->
+      {:error, _} ->
         {:error, :not_found}
 
-      user ->
+      {:ok, user} ->
         if Accounts.verify_pass(account, password) do
           Auth.delete_request(account)
 
