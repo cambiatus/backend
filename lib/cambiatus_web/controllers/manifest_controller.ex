@@ -8,7 +8,7 @@ defmodule CambiatusWeb.ManifestController do
       name: "#{community.name} | Cambiatus",
       short_name: community.name,
       description: community.description,
-      start_url: community.subdomain.name,
+      start_url: "/",
       icons: %{
         src: community.logo || Application.fetch_env!(:cambiatus, :fallback_community_logo),
         sizes: "144x144",
