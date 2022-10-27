@@ -204,7 +204,7 @@
                                           </b>
                                         </div>
                                         <div style="text-align: center"><br></div>
-                                        <div style="text-align: center"> <%= gettext("Your claim on the action") %><span style="font-weight:bold;"><%= " #{@claim.action.description} " %></span><%= gettext("was approved!") %>
+                                        <div style="text-align: center"> <%= gettext("Your claim was approved!") %>
                                         </div>
                                         <div style="text-align: center">
                                           <%= gettext("Thanks for your contribution on") %>
