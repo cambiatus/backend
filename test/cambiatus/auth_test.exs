@@ -118,4 +118,27 @@ defmodule Cambiatus.AuthTest do
       assert 1 == Request |> Repo.all() |> Enum.count()
     end
   end
+
+  describe "Session" do
+    test "create_session/1 creates a session" do
+      user = insert(:user)
+      session = Auth.create_session(user)
+
+      assert session.user_id == user.account
+    end
+
+    test "get_session/1 returns the session with given id" do
+      user = insert(:user)
+      session = Auth.create_session(user)
+      found_session = Auth.get_session!(session.id)
+
+      assert found_session.id == session.id
+      assert found_session.user_id == session.user_id
+    end
+
+    test "create_session/1 with invalid data returns error changeset" do
+      assert {:error, "Can't parse arguments"} = Auth.create_session(%{})
+      lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+      assert {:error, "Can't parse arguments"} = Auth.create_session(%{user_agent: lorem})
+    end
 end
