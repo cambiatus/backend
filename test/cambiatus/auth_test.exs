@@ -118,4 +118,31 @@ defmodule Cambiatus.AuthTest do
       assert 1 == Request |> Repo.all() |> Enum.count()
     end
   end
+
+  describe "Session" do
+    setup do
+      {:ok, %{user_agent: "Safari", ip_address: "192.168.1.1", token: Faker.String.base64(32)}}
+    end
+
+    test "create_session/1 creates a session", params do
+      user = insert(:user)
+      {:ok, session} = Auth.create_session(Map.merge(params, %{user_id: user.account}))
+
+      assert session.user_id == user.account
+    end
+
+    test "create_session/1 with a long user-agent", params do
+      user = insert(:user)
+
+      {:ok, session} =
+        Auth.create_session(
+          Map.merge(params, %{
+            user_id: user.account,
+            user_agent: Faker.String.base64(300)
+          })
+        )
+
+      assert session.user_id == user.account
+    end
+  end
 end
