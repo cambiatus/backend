@@ -120,29 +120,29 @@ defmodule Cambiatus.AuthTest do
   end
 
   describe "Session" do
-    test "create_session/1 creates a session" do
+    setup do
+      {:ok, %{user_agent: "Safari", ip_address: "192.168.1.1", token: Faker.String.base64(32)}}
+    end
+
+    test "create_session/1 creates a session", params do
       user = insert(:user)
-      session = Auth.create_session(user)
+      {:ok, session} = Auth.create_session(Map.merge(params, %{user_id: user.account}))
 
       assert session.user_id == user.account
     end
 
-    test "get_session/1 returns the session with given id" do
+    test "create_session/1 with a long user-agent", params do
       user = insert(:user)
-      session = Auth.create_session(user)
-      found_session = Auth.get_session!(session.id)
 
-      assert found_session.id == session.id
-      assert found_session.user_id == session.user_id
-    end
+      {:ok, session} =
+        Auth.create_session(
+          Map.merge(params, %{
+            user_id: user.account,
+            user_agent: Faker.String.base64(300)
+          })
+        )
 
-    test "create_session/1 with invalid data returns error changeset" do
-      assert {:error, "Can't parse arguments"} = Auth.create_session(%{})
-
-      lorem =
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-
-      assert {:error, "Can't parse arguments"} = Auth.create_session(%{user_agent: lorem})
+      assert session.user_id == user.account
     end
   end
 end
