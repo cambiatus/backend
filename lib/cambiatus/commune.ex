@@ -34,13 +34,13 @@ defmodule Cambiatus.Commune do
   Fetch a transfer
 
   ## Parameters
-  * id: id of the tranfer to be fetched
+  * id: id of the transfer to be fetched
   """
   @spec get_transfer(integer()) :: {:ok, Transfer.t()} | {:error, term}
   def get_transfer(id) do
     case Repo.get(Transfer, id) do
       nil ->
-        {:error, "No tranfer with the id: #{id} found"}
+        {:error, "No transfer with the id: #{id} found"}
 
       val ->
         {:ok, val}

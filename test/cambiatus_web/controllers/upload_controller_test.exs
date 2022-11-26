@@ -33,7 +33,7 @@ defmodule CambiatusWeb.UploadControllerTest do
     test "remove metada from an image",
          %{conn: conn} do
       # Send a post request to upload the image "portrait.jpg" and check if metadata
-      # has been removed and only allowd metadata was kept
+      # has been removed and only allowed metadata was kept
 
       filename = "portrait.jpg"
 

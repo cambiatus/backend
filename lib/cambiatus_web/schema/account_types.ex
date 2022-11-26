@@ -264,7 +264,7 @@ defmodule CambiatusWeb.Schema.AccountTypes do
   end
 
   @desc """
-  Contact information for an user. Everytime contact is updated it replaces all entries
+  Contact information for an user. Every time contact is updated it replaces all entries
   """
   object(:contact) do
     field(:type, :contact_type)

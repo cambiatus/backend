@@ -339,7 +339,7 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "Action verification types"
   enum :verification_type do
     value(:automatic, as: "automatic", description: "An action that is verified automatically")
-    value(:claimable, as: "claimable", description: "An action that needs be mannually verified")
+    value(:claimable, as: "claimable", description: "An action that needs be manually verified")
   end
 
   @desc "Sort direction"

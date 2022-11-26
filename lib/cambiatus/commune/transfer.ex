@@ -28,7 +28,7 @@ defmodule Cambiatus.Commune.Transfer do
   @required_fields ~w(amount memo created_block created_tx created_eos_account)a
 
   @doc """
-  This function takes a Tranfer and a map of parameters and proceeeds to build a changeset for the transfer
+  This function takes a Transfer and a map of parameters and proceeds to build a changeset for the transfer
   """
   @spec changeset(Transfer.t(), map()) :: Ecto.Changeset.t()
   def changeset(%Transfer{} = transfer, attrs) do

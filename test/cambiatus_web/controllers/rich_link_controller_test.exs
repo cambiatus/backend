@@ -214,7 +214,7 @@ defmodule CambiatusWeb.RichLinkControllerTest do
     }
 
     # Submit GET request for a product rich link
-    # For this test the user language is overriden by the header "accept-language"
+    # For this test the user language is overridden by the header "accept-language"
     conn =
       %{conn | host: community.subdomain.name}
       |> put_req_header("accept-language", "es-ES")

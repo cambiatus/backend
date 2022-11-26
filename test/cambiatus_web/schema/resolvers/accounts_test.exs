@@ -242,7 +242,7 @@ defmodule CambiatusWeb.Schema.Resolvers.AccountsTest do
              } == json_response(res3, 200)
     end
 
-    test "updates a user email subscription given a token specific for email unsubscritpion" do
+    test "updates a user email subscription given a token specific for email unsubscription" do
       email_preferences = %{transfer_notification: true, claim_notification: true, digest: true}
       user = insert(:user, email_preferences)
       email_token = CambiatusWeb.AuthToken.sign(user, "email")

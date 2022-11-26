@@ -100,7 +100,7 @@ defmodule Cambiatus.NotificationsTest do
       push = insert(:push_subscription, %{account: claim.claimer})
 
       payload = %{
-        title: "Your claim has recieved a validation",
+        title: "Your claim has received a validation",
         body: "",
         type: :validation
       }
