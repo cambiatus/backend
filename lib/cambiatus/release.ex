@@ -18,7 +18,7 @@ defmodule Cambiatus.Release do
     {:ok, _, _} = Ecto.Migrator.with_repo(repo, &Ecto.Migrator.run(&1, :down, to: version))
   end
 
-  # This Remote Code Execution potentail vulnerabilty is skipped beacuse the file
+  # This Remote Code Execution potential vulnerability is skipped because the file
   # beign evaluated is stored within our server. Therefore it and cannot be tampered by users
 
   # sobelow_skip ["RCE"]

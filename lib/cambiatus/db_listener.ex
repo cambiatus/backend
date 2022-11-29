@@ -222,7 +222,7 @@ defmodule Cambiatus.DbListener do
         Sentry.capture_message("Cambiatus.DbListener Decoding Error", %{extra: err})
 
       error ->
-        Sentry.capture_message("Uknown Cambiatus.DbListener Error", error)
+        Sentry.capture_message("Unknown Cambiatus.DbListener Error", error)
     end
 
     {:noreply, :error_handled}

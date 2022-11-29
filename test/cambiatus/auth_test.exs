@@ -97,7 +97,7 @@ defmodule Cambiatus.AuthTest do
       assert request.phrase == response.phrase
     end
 
-    test "retuns nil if non requests are valid" do
+    test "returns nil if non requests are valid" do
       user = insert(:user)
 
       insert(:request, user: user, updated_at: DateTime.add(DateTime.utc_now(), -31, :second))

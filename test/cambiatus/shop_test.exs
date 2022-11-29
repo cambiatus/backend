@@ -148,7 +148,7 @@ defmodule Cambiatus.ShopTest do
       assert_raise Ecto.NoResultsError, fn -> Shop.get_category!(category.id) end
     end
 
-    test "delete_category/1 deletes a root category and its childs" do
+    test "delete_category/1 deletes a root category and its children" do
       admin = insert(:user)
       community = insert(:community, creator: admin.account)
       root = insert(:category, community: community)
@@ -278,7 +278,7 @@ defmodule Cambiatus.ShopTest do
       community = insert(:community, has_shop: true)
       params = params_for(:category, %{community: community, position: -1})
       assert {:error, details} = Shop.create_category(params)
-      assert %{position: ["position cant be negative"]} == errors_on(details)
+      assert %{position: ["position can't be negative"]} == errors_on(details)
     end
 
     test "root position validations: can't create new categories with position > last position +1" do
@@ -495,7 +495,7 @@ defmodule Cambiatus.ShopTest do
                Enum.map(updated_root_categories, &Map.take(&1, [:id, :position]))
     end
 
-    test "Update root category with new positioning reorders all other root categories: 3) new position begining of the list" do
+    test "Update root category with new positioning reorders all other root categories: 3) new position beginning of the list" do
       community = insert(:community, has_shop: true)
       ExMachina.Sequence.reset("position")
       root_categories = insert_list(5, :category, community: community)

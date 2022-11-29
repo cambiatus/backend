@@ -10,7 +10,7 @@ defmodule Cambiatus.Repo do
 
   @doc """
   Listener for an event on on the PostgreSQL Channels this function accepts an event name to listen to
-  and will connect to our database and listen for an event of the provided name occuring
+  and will connect to our database and listen for an event of the provided name occurring
   """
   @spec listen(String.t()) :: {:ok, pid(), reference()}
   def listen(name) do

@@ -65,7 +65,7 @@ defmodule Cambiatus.Shop.Category do
     position = get_field(changeset, :position)
 
     if position < 0 do
-      add_error(changeset, :position, "position cant be negative")
+      add_error(changeset, :position, "position can't be negative")
     else
       changeset
     end

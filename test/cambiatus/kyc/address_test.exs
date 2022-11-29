@@ -42,7 +42,7 @@ defmodule Cambiatus.Kyc.AddressTest do
     assert(Map.get(changeset, :errors) == [zip: {"Invalid Zip Code", []}])
   end
 
-  test "changeset is invalid wth the wrong state" do
+  test "changeset is invalid with the wrong state" do
     address = build(:address)
 
     another_country = insert(:country, name: "Not Costa Rica")
@@ -73,7 +73,7 @@ defmodule Cambiatus.Kyc.AddressTest do
     )
   end
 
-  test "changeset is invalid wth the wrong city" do
+  test "changeset is invalid with the wrong city" do
     address = build(:address)
 
     another_country = insert(:country, name: "Brazil")

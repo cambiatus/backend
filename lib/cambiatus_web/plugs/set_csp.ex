@@ -1,6 +1,6 @@
 defmodule CambiatusWeb.Plugs.SetCSP do
   @moduledoc """
-  Plug used to define the Content Security Policy used when the backend diplays HTML pages
+  Plug used to define the Content Security Policy used when the backend displays HTML pages
 
   This makes our pages more resilitent to attacks such as XSS and CSRF
   """

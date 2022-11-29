@@ -1,6 +1,6 @@
 defmodule Cambiatus.Objectives.Validator do
   @moduledoc """
-  Datatstructure for an action validator in `Cambiatus`
+  Datastructure for an action validator in `Cambiatus`
   """
 
   use Ecto.Schema

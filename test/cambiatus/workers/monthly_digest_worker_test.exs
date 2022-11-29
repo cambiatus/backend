@@ -86,7 +86,7 @@ defmodule Cambiatus.Workers.MonthlyDigestWorkerTest do
       )
     end
 
-    test "emails wont be sent if user has disabled digest" do
+    test "emails won't be sent if user has disabled digest" do
       community = insert(:community, has_news: true)
 
       insert(:news, community: community)

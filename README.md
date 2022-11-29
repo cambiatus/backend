@@ -216,7 +216,7 @@ Once done with the contributing guide, here are some developing tips to help you
 		
 **Files Not To Commit**
 
-Changes related to local Postgres database credentials must not be commited to the repo
+Changes related to local Postgres database credentials must not be committed to the repo
 
 Here one way of how to not commit changes related to your local database connection credentials (user & password) to `dev.exs` and `text.exs` files:
 

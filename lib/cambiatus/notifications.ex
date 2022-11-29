@@ -111,7 +111,7 @@ defmodule Cambiatus.Notifications do
   end
 
   @doc """
-  Notifies a Claimer of a check their claim has recieved
+  Notifies a Claimer of a check their claim has received
 
   ## Parameters
   * claim: The claim whose claimer should be notified of the incoming check
@@ -168,7 +168,7 @@ defmodule Cambiatus.Notifications do
   end
 
   @doc """
-  Notifies a reciever of a mint whenever some currency is issued to them
+  Notifies a receiver of a mint whenever some currency is issued to them
 
 
   ## Parameters:
