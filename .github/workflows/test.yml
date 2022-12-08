@@ -32,8 +32,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: ${{matrix.otp}}
-          elixir-version: ${{matrix.elixir}}
+          otp-version: '24.2'
+          elixir-version: '1.14.2'
 
 		  - run: sudo apt -y install exiftool
       - run: mix deps.get
