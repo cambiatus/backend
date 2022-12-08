@@ -34,6 +34,7 @@ jobs:
         with:
           otp-version: ${{matrix.otp}}
           elixir-version: ${{matrix.elixir}}
+
 		  - run: sudo apt -y install exiftool
       - run: mix deps.get
 		  - run: mix format --check-formatted    
