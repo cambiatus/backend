@@ -10,7 +10,6 @@ jobs:
   test:
     name: Build and test
     runs-on: ubuntu-latest
-    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
     strategy:
       matrix:
         otp: ['24.2']
