@@ -50,7 +50,7 @@ defmodule Cambiatus.Mixfile do
       {:number, "~> 1.0"},
       {:earmark, "~> 1.4"},
       {:html_sanitize_ex, "~> 1.4"},
-      {:ex_cldr, "~> 2.32"},
+      {:ex_cldr, "~> 2.33"},
       {:ex_cldr_dates_times, "~> 2.12"},
 
       # Email capabilities

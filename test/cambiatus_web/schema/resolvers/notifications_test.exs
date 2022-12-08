@@ -44,7 +44,7 @@ defmodule CambiatusWeb.Schema.Resolvers.NotificationsTests do
       conn = build_conn() |> auth_user(user)
 
       query = """
-      mutation($input: PushSubscriptionInput) {
+      mutation($input: PushSubscriptionInput!) {
         registerPush(input: $input) {
           accountId
         }
