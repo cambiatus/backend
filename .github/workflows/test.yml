@@ -7,10 +7,14 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
+  test:
     name: Build and test
     runs-on: ubuntu-latest
+    name: OTP ${{matrix.otp}} / Elixir ${{matrix.elixir}}
+    strategy:
+      matrix:
+        otp: ['24.2']
+        elixir: ['1.11.4', '1.14.2']
 
     services:
       db:
@@ -25,27 +29,15 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Elixir
-      uses: erlef/setup-elixir@885971a72ed1f9240973bd92ab57af8c1aa68f24
-      with:
-        elixir-version: '1.14.2'
-        otp-version: '24'
-    - name: Restore dependencies cache
-      uses: actions/cache@v2
-      with:
-        path: deps
-        key: ${{ runner.os }}-mix-${{ hashFiles('**/mix.lock') }}
-        restore-keys: ${{ runner.os }}-mix-
-    - name: Install exiftool
-      run: sudo apt -y install exiftool
-    - name: Install dependencies
-      run: mix deps.get
-    - name: Check Formatting
-      run: mix format --check-formatted    
-    - name: Check format, compile and credo warnings
-      run: mix do compile --warnings-as-errors --all warnings, format --check-formatted, credo --strict --only warning
-    - name: Look for security vulnerabilities
-      run: mix sobelow --config 
-    - name: Run tests
-      run: mix test
+      - uses: actions/checkout@v2
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: ${{matrix.otp}}
+          elixir-version: ${{matrix.elixir}}
+		  - run: sudo apt -y install exiftool
+      - run: mix deps.get
+		  - run: mix format --check-formatted    
+		  - run: mix do compile --warnings-as-errors --all warnings, format --check-formatted, credo --strict --only warning
+		  - run: mix sobelow --config 
+		  - run: mix test
+
