@@ -35,10 +35,10 @@ jobs:
           otp-version: '24.2'
           elixir-version: '1.14.2'
 
-		  - run: sudo apt -y install exiftool
+      - run: sudo apt -y install exiftool
       - run: mix deps.get
-		  - run: mix format --check-formatted    
-		  - run: mix do compile --warnings-as-errors --all warnings, format --check-formatted, credo --strict --only warning
-		  - run: mix sobelow --config 
-		  - run: mix test
+      - run: mix format --check-formatted    
+      - run: mix do compile --warnings-as-errors --all warnings, format --check-formatted, credo --strict --only warning
+      - run: mix sobelow --config 
+      - run: mix test
 
