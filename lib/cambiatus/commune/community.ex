@@ -72,6 +72,7 @@ defmodule Cambiatus.Commune.Community do
     has_many(:uploads, CommunityPhotos, foreign_key: :community_id, on_replace: :delete)
     has_many(:contributions, Contribution, foreign_key: :community_id)
     has_many(:rewards, through: [:objectives, :actions, :rewards])
+    has_many(:roles, Cambiatus.Commune.Role, foreign_key: :community_id)
 
     has_many(:contacts, Contact,
       foreign_key: :community_id,
