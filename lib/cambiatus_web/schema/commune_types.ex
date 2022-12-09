@@ -187,21 +187,29 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
   @desc "A community on Cambiatus"
   object :community do
     field(:symbol, non_null(:string))
+
+    # Basic information
     field(:creator, non_null(:string))
     field(:name, non_null(:string))
     field(:description, non_null(:string))
+    field(:logo, :string)
+    field(:website, :string)
+
+    # Token
     field(:inviter_reward, non_null(:float))
     field(:invited_reward, non_null(:float))
-    field(:uploads, non_null(list_of(non_null(:upload))), resolve: dataloader(Cambiatus.Commune))
-
-    field(:logo, :string)
-    field(:type, :string)
     field(:issuer, :string)
     field(:supply, :float)
     field(:max_supply, :float)
     field(:min_balance, :float)
+    field(:type, :string)
 
-    field(:website, :string)
+    # Configuration
+    field(:has_objectives, non_null(:boolean))
+    field(:has_shop, non_null(:boolean))
+    field(:has_kyc, non_null(:boolean))
+    field(:has_news, non_null(:boolean))
+    field(:highlighted_news, :news, resolve: dataloader(Cambiatus.Social))
     field(:auto_invite, non_null(:boolean))
     field(:subdomain, :subdomain, resolve: dataloader(Cambiatus.Commune))
 
@@ -209,33 +217,39 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve: dataloader(Cambiatus.Commune)
     )
 
+    # Sync data
     field(:created_block, non_null(:integer))
     field(:created_tx, non_null(:string))
     field(:created_eos_account, non_null(:string))
     field(:created_at, non_null(:datetime))
 
-    field(:has_objectives, non_null(:boolean))
-    field(:has_shop, non_null(:boolean))
-    field(:has_kyc, non_null(:boolean))
-
-    field(:has_news, non_null(:boolean))
-    field(:highlighted_news, :news, resolve: dataloader(Cambiatus.Social))
+    field(:uploads, non_null(list_of(non_null(:upload))), resolve: dataloader(Cambiatus.Commune))
 
     connection field(:transfers, node_type: :transfer) do
       resolve(&Commune.get_transfers/3)
     end
 
+    # Calculated fields
+    field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
+    field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
+    field(:product_count, non_null(:integer), resolve: &Commune.get_product_count/3)
+    field(:order_count, non_null(:integer), resolve: &Commune.get_order_count/3)
+    field(:action_count, non_null(:integer), resolve: &Objectives.get_action_count/3)
+    field(:claim_count, non_null(:integer), resolve: &Objectives.get_claim_count/3)
+
+    @desc "List of users that are claim validators"
+    field(:validators, non_null(list_of(non_null(:user))), resolve: &Commune.get_validators/3)
+    field(:roles, non_null(list_of(non_null(:role))), resolve: dataloader(Cambiatus.Commune))
+
+    field(:members, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Commune))
+    field(:news, non_null(list_of(non_null(:news))), resolve: dataloader(Cambiatus.Social))
+
     field(:objectives, non_null(list_of(non_null(:objective))),
       resolve: dataloader(Cambiatus.Objectives)
     )
 
-    @desc "List of users that are claim validators"
-    field(:validators, non_null(list_of(non_null(:user))), resolve: &Commune.get_validators/3)
-
+    # Earning methods
     field(:mints, non_null(list_of(non_null(:mint))), resolve: dataloader(Cambiatus.Commune))
-    field(:members, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Commune))
-    field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
-    field(:news, non_null(list_of(non_null(:news))), resolve: dataloader(Cambiatus.Social))
 
     field(:rewards, non_null(list_of(non_null(:reward))),
       resolve: dataloader(Cambiatus.Objectives)
@@ -247,18 +261,14 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       resolve(dataloader(Cambiatus.Payments))
     end
 
-    field(:member_count, non_null(:integer), resolve: &Commune.get_members_count/3)
-    field(:transfer_count, non_null(:integer), resolve: &Commune.get_transfer_count/3)
-    field(:product_count, non_null(:integer), resolve: &Commune.get_product_count/3)
-    field(:order_count, non_null(:integer), resolve: &Commune.get_order_count/3)
-    field(:action_count, non_null(:integer), resolve: &Objectives.get_action_count/3)
-    field(:claim_count, non_null(:integer), resolve: &Objectives.get_claim_count/3)
+    # Shop
+    field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
+
+    field(:categories, non_null(list_of(non_null(:category))), resolve: dataloader(Cambiatus.Shop))
 
     field(:contacts, non_null(list_of(non_null(:contact))),
       resolve: dataloader(Cambiatus.Accounts)
     )
-
-    field(:categories, non_null(list_of(non_null(:category))), resolve: dataloader(Cambiatus.Shop))
   end
 
   @desc "Community Preview data, public data of a community"
