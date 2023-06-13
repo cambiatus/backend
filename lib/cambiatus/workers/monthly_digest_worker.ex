@@ -12,26 +12,28 @@ defmodule Cambiatus.Workers.MonthlyDigestWorker do
   alias Ecto.Multi
 
   def perform(_) do
-    transaction =
-      Community
-      |> Community.with_news_enabled()
-      |> Repo.all()
-      |> Repo.preload([
-        [news: News.last_thirty_days()],
-        [members: User.accept_digest()],
-        :subdomain
-      ])
-      |> Enum.filter(&Enum.any?(&1.news))
-      |> Enum.reduce(Multi.new(), fn community, multi ->
-        Enum.reduce(community.members, multi, fn member, multi ->
-          Oban.insert(
-            multi,
-            "#{community.symbol}-#{member.account}",
-            DigestEmailWorker.new(%{community_id: community.symbol, account: member.account})
-          )
-        end)
+    Community
+    |> Community.with_news_enabled()
+    |> Repo.all()
+    |> Repo.preload([
+      [news: News.last_thirty_days()],
+      [members: User.accept_digest()],
+      :subdomain
+    ])
+    |> Enum.filter(&Enum.any?(&1.news))
+    |> Enum.reduce(Multi.new(), fn community, multi ->
+      Enum.reduce(community.members, multi, fn member, multi ->
+        Oban.insert(
+          multi,
+          "#{community.symbol}-#{member.account}",
+          DigestEmailWorker.new(%{community_id: community.symbol, account: member.account})
+        )
       end)
-
-    Repo.transaction(transaction)
+    end)
+    |> Repo.transaction()
+    |> case do
+      {:error, stage, _, _} -> {:error, stage}
+      any -> any
+    end
   end
 end

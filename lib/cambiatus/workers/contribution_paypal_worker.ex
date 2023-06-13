@@ -24,7 +24,7 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
       {:error, _} = error ->
         error
 
-      {:error, _, %{valid?: false}} ->
+      {:error, _, %{valid?: false}, _} ->
         {:error, :invalid_changeset}
     end
   end
