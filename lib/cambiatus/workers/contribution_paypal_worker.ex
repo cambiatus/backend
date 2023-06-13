@@ -35,6 +35,7 @@ defmodule Cambiatus.Workers.ContributionPaypalWorker do
         {:ok, contribution} = Payments.get_contribution(contribution_id)
         contribution = Repo.preload(contribution, :payment_callbacks)
 
+        # credo:disable-for-next-line CredoCheckErrorHandlingEctoOban.Check.TransactionErrorInObanJob
         Multi.new()
         |> Multi.run(:contribution, fn repo, _ ->
           contribution
