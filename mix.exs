@@ -92,6 +92,7 @@ defmodule Cambiatus.Mixfile do
 
       # Dev only
       {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
+      {:credo_check_error_handling_ecto_oban, "~> 0.9.0", only: :dev, runtime: false},
       {:sobelow, "~> 0.11.1", only: :dev},
 
       # Test Only
