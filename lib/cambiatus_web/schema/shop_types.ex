@@ -100,9 +100,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     end
   end
 
-  @desc "Shop subscriptions"
-  object(:shop_subscriptions) do
-  end
 
   @desc "Product"
   object(:product) do

@@ -59,8 +59,11 @@ config :cambiatus, Oban,
     mailers: 20
   ],
   plugins: [
-    {Oban.Plugins.Cron, crontab: [{"@daily", Cambiatus.Workers.RemoveRequestsWorker}]},
-    {Oban.Plugins.Cron, crontab: [{"@monthly", Cambiatus.Workers.MonthlyDigestWorker}]}
+    {Oban.Plugins.Cron, 
+     crontab: [
+       {"@daily", Cambiatus.Workers.RemoveRequestsWorker},
+       {"@monthly", Cambiatus.Workers.MonthlyDigestWorker}
+     ]}
   ]
 
 # Import environment specific config. This must remain at the bottom

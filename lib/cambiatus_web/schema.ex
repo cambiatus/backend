@@ -47,7 +47,6 @@ defmodule CambiatusWeb.Schema do
     import_fields(:shop_queries)
     import_fields(:search_queries)
     import_fields(:social_queries)
-    import_fields(:payment_queries)
     import_fields(:objective_queries)
   end
 
@@ -65,6 +64,5 @@ defmodule CambiatusWeb.Schema do
   subscription do
     import_fields(:community_subscriptions)
     import_fields(:notifications_subscriptions)
-    import_fields(:shop_subscriptions)
   end
 end

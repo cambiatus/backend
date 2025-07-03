@@ -8,7 +8,7 @@ defmodule Cambiatus.Repo.Migrations.MemberRole do
     """)
 
     create table(:roles) do
-      add(:community_id, references(:communities, column: :symbol, type: :string, null: false))
+      add(:community_id, references(:communities, column: :symbol, type: :string), null: false)
 
       add(:name, :string, comment: "Name of the role")
       add(:color, :string, comment: "Primary color associated with the role")

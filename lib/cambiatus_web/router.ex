@@ -18,7 +18,7 @@ defmodule CambiatusWeb.Router do
     plug(:accepts, ["html"])
   end
 
-  if Application.get_env(:cambiatus, :env) == :dev do
+  if Application.compile_env(:cambiatus, :env) == :dev do
     scope "/dev" do
       pipe_through([:browser])
 

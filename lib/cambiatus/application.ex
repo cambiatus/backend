@@ -14,7 +14,7 @@ defmodule Cambiatus.Application do
       DbListener,
       Endpoint,
       {Phoenix.PubSub, name: PubSub},
-      {Absinthe.Subscription, [Endpoint]},
+      {Absinthe.Subscription, Endpoint},
       {Oban, oban_config()}
     ]
 

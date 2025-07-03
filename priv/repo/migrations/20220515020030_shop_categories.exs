@@ -3,7 +3,7 @@ defmodule Cambiatus.Repo.Migrations.ShopCategories do
 
   def change do
     create table(:categories) do
-      add(:community_id, references(:communities, column: :symbol, type: :string, null: false))
+      add(:community_id, references(:communities, column: :symbol, type: :string), null: false)
       add(:parent_id, references(:categories))
 
       add(:icon_uri, :string, null: true, comment: "URI for the icon")
@@ -33,8 +33,8 @@ defmodule Cambiatus.Repo.Migrations.ShopCategories do
     create(index(:categories, [:parent_id]))
 
     create table(:product_categories) do
-      add(:product_id, references(:products, null: false))
-      add(:category_id, references(:categories, null: false))
+      add(:product_id, references(:products), null: false)
+      add(:category_id, references(:categories), null: false)
       add(:position, :integer, comment: "Ordering position")
 
       timestamps()
