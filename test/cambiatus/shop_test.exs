@@ -107,7 +107,7 @@ defmodule Cambiatus.ShopTest do
     test "create_category/1 with existing subcategory" do
       community = insert(:community)
       ExMachina.Sequence.reset("position")
-      sub_category = insert(:category, %{community_id: community.symbol})
+      sub_category = insert(:category, %{community: community})
 
       params =
         params_for(:category, %{
@@ -148,7 +148,7 @@ defmodule Cambiatus.ShopTest do
     test "delete_category/1 deletes the category if the user is an admin" do
       admin = insert(:user)
       community = insert(:community, creator: admin.account)
-      category = insert(:category, community_id: community.symbol)
+      category = insert(:category, community: community)
 
       assert {:ok, "Category deleted successfully"} =
                Shop.delete_category(category.id, admin, community.symbol)
@@ -186,13 +186,13 @@ defmodule Cambiatus.ShopTest do
     end
 
     test "change_category/1 returns a category changeset", %{community: community} do
-      category = insert(:category, community_id: community.symbol)
+      category = insert(:category, community: community)
       assert %Ecto.Changeset{} = Shop.change_category(category)
     end
 
     test "Adds subcategories to existing categories", %{community: community} do
       category =
-        insert(:category, %{name: "Tree 🌳", community_id: community.symbol, community: community})
+        insert(:category, %{name: "Tree 🌳", community: community})
 
       params =
         params_for(:category, %{

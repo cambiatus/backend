@@ -422,7 +422,7 @@ defmodule Cambiatus.Factory do
       meta_description: sequence("meta-description-"),
       meta_keywords: sequence("meta-keywords"),
       position: sequence("position", &"#{&1}"),
-      community_id: build(:community).symbol
+      community: build(:community)
     }
   end
 
