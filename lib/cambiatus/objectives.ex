@@ -228,10 +228,10 @@ defmodule Cambiatus.Objectives do
     query =
       from(c in Claim,
         join: a in Action,
+        on: c.action_id == a.id,
         join: o in Objective,
         on: a.objective_id == o.id,
         where: o.community_id == ^id,
-        where: c.action_id == a.id,
         select: count(c.id)
       )
 

@@ -11,7 +11,6 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
   alias CambiatusWeb.Resolvers.Payment, as: PaymentResolver
   alias CambiatusWeb.Schema.Middleware
 
-
   object :payment_mutations do
     @desc "[Auth required] Create a new contribution"
     field(:contribution, :contribution) do

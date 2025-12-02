@@ -1,44 +1,51 @@
 #!/bin/bash
 set -e
 
-# Colors for output
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+echo "Starting Cambiatus Backend..."
 
-echo -e "${GREEN}Starting Cambiatus Backend...${NC}"
+# Load environment variables from .env.production if present and not already loaded
+if [ -z "$ENV_LOADED" ] && [ -f "/opt/cambiatus/backend/.env.production" ]; then
+    echo "Loading environment from /opt/cambiatus/backend/.env.production"
+    # Export all variables defined in the env file
+    set -a
+    # shellcheck disable=SC1091
+    source /opt/cambiatus/backend/.env.production
+    set +a
+fi
 
-# Check if release exists
-if [ ! -f "_build/prod/rel/cambiatus/bin/cambiatus" ]; then
-    echo -e "${RED}Error: Release not found at _build/prod/rel/cambiatus/bin/cambiatus${NC}"
-    echo -e "${YELLOW}Please build the release first with: MIX_ENV=prod mix release${NC}"
+# Check if we're in development (with _build) or production (extracted release)
+if [ -f "_build/prod/rel/cambiatus/bin/cambiatus" ]; then
+    # Development environment
+    RELEASE_PATH="_build/prod/rel/cambiatus/bin/cambiatus"
+    echo "Using development release at $RELEASE_PATH"
+elif [ -f "bin/cambiatus" ]; then
+    # Production environment (extracted release)
+    RELEASE_PATH="bin/cambiatus"
+    echo "Using production release at $RELEASE_PATH"
+else
+    echo "Error: Cambiatus binary not found"
+    echo "For development: build the release first with 'MIX_ENV=prod mix release'"
+    echo "For production: ensure this script is run from the extracted release directory"
     exit 1
 fi
 
 # Ensure required environment variables are set
 if [ -z "$DATABASE_URL" ]; then
-    echo -e "${RED}Error: DATABASE_URL environment variable is required${NC}"
+    echo "Error: DATABASE_URL environment variable is required"
     exit 1
 fi
 
 if [ -z "$SECRET_KEY_BASE" ]; then
-    echo -e "${RED}Error: SECRET_KEY_BASE environment variable is required${NC}"
-    echo -e "${YELLOW}Generate one with: mix phx.gen.secret${NC}"
+    echo "Error: SECRET_KEY_BASE environment variable is required"
+    echo "Generate one with: mix phx.gen.secret"
     exit 1
 fi
 
-# Check database connectivity
-echo -e "${YELLOW}Checking database connectivity...${NC}"
-if ! timeout 10 _build/prod/rel/cambiatus/bin/cambiatus eval "Cambiatus.Repo.query!(\"SELECT 1\")" > /dev/null 2>&1; then
-    echo -e "${RED}Warning: Could not connect to database. Make sure the database is running and accessible.${NC}"
-fi
-
 # Run database migrations if needed
-echo -e "${YELLOW}Running database migrations...${NC}"
-_build/prod/rel/cambiatus/bin/cambiatus eval "Cambiatus.Release.migrate()"
+echo "Running database migrations..."
+$RELEASE_PATH eval "Cambiatus.Release.migrate()"
 
-echo -e "${GREEN}Starting Cambiatus server...${NC}"
+echo "Starting Cambiatus server..."
 
 # Start the release
-exec _build/prod/rel/cambiatus/bin/cambiatus start
+exec $RELEASE_PATH start

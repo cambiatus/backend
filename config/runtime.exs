@@ -80,8 +80,7 @@ if config_env() == :prod do
     tags: %{
       env: "production",
       url: host
-    },
-    included_environments: [:prod]
+    }
 
   # Push notifications
   config :web_push_encryption, :vapid_details,
@@ -90,6 +89,5 @@ if config_env() == :prod do
     private_key: System.get_env("PUSH_PRIVATE_KEY")
 
   # Notifications
-  config :cambiatus, Cambiatus.Notifications, 
-    adapter: Cambiatus.Notifications.HttpAdapter
+  config :cambiatus, Cambiatus.Notifications, adapter: Cambiatus.Notifications.HttpAdapter
 end

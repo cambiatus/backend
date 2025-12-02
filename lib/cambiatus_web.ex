@@ -21,7 +21,7 @@ defmodule CambiatusWeb do
     quote do
       use Phoenix.Controller, namespace: CambiatusWeb
       import Plug.Conn
-      import CambiatusWeb.Gettext
+      use Gettext, backend: CambiatusWeb.Gettext
     end
   end
 
@@ -35,7 +35,7 @@ defmodule CambiatusWeb do
       import Phoenix.Controller, only: [get_flash: 2, view_module: 1]
 
       import CambiatusWeb.ErrorHelpers
-      import CambiatusWeb.Gettext
+      use Gettext, backend: CambiatusWeb.Gettext
     end
   end
 
@@ -50,7 +50,7 @@ defmodule CambiatusWeb do
   def channel do
     quote do
       use Phoenix.Channel
-      import CambiatusWeb.Gettext
+      use Gettext, backend: CambiatusWeb.Gettext
     end
   end
 

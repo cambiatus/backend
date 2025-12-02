@@ -45,7 +45,6 @@ config :ex_cldr,
 
 config :sentry,
   dsn: "https://cf10887ac4c346ebb26cbc3522578465@sentry.io/1467632",
-  included_environments: ~w(prod staging dev),
   environment_name: Mix.env(),
   enable_source_code_context: true,
   root_source_code_path: File.cwd!()
@@ -59,7 +58,7 @@ config :cambiatus, Oban,
     mailers: 20
   ],
   plugins: [
-    {Oban.Plugins.Cron, 
+    {Oban.Plugins.Cron,
      crontab: [
        {"@daily", Cambiatus.Workers.RemoveRequestsWorker},
        {"@monthly", Cambiatus.Workers.MonthlyDigestWorker}

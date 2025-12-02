@@ -194,7 +194,7 @@ defmodule Cambiatus.Eos do
   @spec parse_symbol(binary) :: {float, binary}
   def parse_symbol(asset) do
     {amount, symbol} = Float.parse(asset)
-    symbol = String.slice(symbol, 1..-1)
+    symbol = String.slice(symbol, 1..-1//1)
 
     {amount, symbol}
   end

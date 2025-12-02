@@ -246,7 +246,12 @@ defmodule Cambiatus.SocialTest do
       community = insert(:community, has_news: true, creator: user.account)
 
       news =
-        insert(:news, title: "Title", description: "Description", community: community, user: user)
+        insert(:news,
+          title: "Title",
+          description: "Description",
+          community: community,
+          user: user
+        )
 
       news_params = %{
         title: "Updated title",

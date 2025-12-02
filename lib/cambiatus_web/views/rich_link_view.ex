@@ -1,7 +1,7 @@
 defmodule CambiatusWeb.RichLinkView do
   use CambiatusWeb, :view
 
-  import CambiatusWeb.Gettext
+  use Gettext, backend: CambiatusWeb.Gettext
 
   require Earmark
   require HtmlSanitizeEx

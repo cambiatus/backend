@@ -15,7 +15,9 @@ defmodule Cambiatus.Repo.Migrations.CompoundIds do
 
       modify(:action_id, references(:actions), primary_key: true)
 
-      modify(:validator_id, references(:users, column: :account, type: :string), primary_key: true)
+      modify(:validator_id, references(:users, column: :account, type: :string),
+        primary_key: true
+      )
     end
 
     alter table(:checks) do
@@ -23,7 +25,9 @@ defmodule Cambiatus.Repo.Migrations.CompoundIds do
 
       modify(:claim_id, references(:claims), primary_key: true)
 
-      modify(:validator_id, references(:users, column: :account, type: :string), primary_key: true)
+      modify(:validator_id, references(:users, column: :account, type: :string),
+        primary_key: true
+      )
     end
   end
 
