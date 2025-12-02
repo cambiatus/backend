@@ -101,6 +101,7 @@ defmodule Cambiatus.Social do
     |> Repo.all()
     |> Enum.reduce(%{}, &sum_reactions/2)
     |> Enum.map(fn {reaction, count} -> %{reaction: reaction, count: count} end)
+    |> Enum.sort_by(fn %{reaction: reaction} -> reaction end)
   end
 
   def get_news_receipt_from_user(news_id, user_id) do
