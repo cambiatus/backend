@@ -100,10 +100,6 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     end
   end
 
-  @desc "Shop subscriptions"
-  object(:shop_subscriptions) do
-  end
-
   @desc "Product"
   object(:product) do
     field(:id, non_null(:integer))
@@ -126,7 +122,9 @@ defmodule CambiatusWeb.Schema.ShopTypes do
     field(:inserted_at, non_null(:naive_datetime))
     field(:updated_at, non_null(:naive_datetime))
 
-    field(:categories, non_null(list_of(non_null(:category))), resolve: dataloader(Cambiatus.Shop))
+    field(:categories, non_null(list_of(non_null(:category))),
+      resolve: dataloader(Cambiatus.Shop)
+    )
 
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
   end

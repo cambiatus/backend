@@ -64,9 +64,11 @@ defmodule CambiatusWeb.UploadControllerTest do
       # After the image upload, check if only the allowed metadata are present in the output
 
       {metadata_output, 0} = System.cmd("exiftool", ["-j", upload.path])
-      metadata_output = metadata_output |> Poison.decode!() |> List.first() |> Map.keys()
 
-      assert basic_metadata == metadata_output
+      metadata_output =
+        metadata_output |> Poison.decode!() |> List.first() |> Map.keys() |> Enum.sort()
+
+      assert basic_metadata |> Enum.sort() == metadata_output
       assert conn.status == 200
     end
   end

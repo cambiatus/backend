@@ -103,7 +103,9 @@ defmodule CambiatusWeb.Schema.ObjectiveTypes do
 
     field(:objective, non_null(:objective), resolve: dataloader(Cambiatus.Objectives))
 
-    field(:validators, non_null(list_of(non_null(:user))), resolve: dataloader(Cambiatus.Accounts))
+    field(:validators, non_null(list_of(non_null(:user))),
+      resolve: dataloader(Cambiatus.Accounts)
+    )
 
     field(:claims, non_null(list_of(non_null(:claim))), resolve: dataloader(Cambiatus.Objectives))
     field(:creator, non_null(:user), resolve: dataloader(Cambiatus.Accounts))

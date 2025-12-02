@@ -3,7 +3,7 @@ defmodule Cambiatus.Repo.Migrations.News do
 
   def change do
     create table(:news) do
-      add(:community_id, references(:communities, column: :symbol, type: :string, null: false))
+      add(:community_id, references(:communities, column: :symbol, type: :string), null: false)
       add(:title, :string, comment: "Title of the news, bring impact!")
 
       add(:description, :string,

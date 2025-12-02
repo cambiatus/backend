@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Language: pt-BR\n"
-"Plural-Forms: nplurals=2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #, elixir-format
 #: lib/cambiatus_web/templates/email/claim.html.eex:218

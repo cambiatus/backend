@@ -2,7 +2,7 @@ defmodule CambiatusWeb.Email do
   @moduledoc "Module responsible for mails templates"
 
   import Swoosh.Email
-  import CambiatusWeb.Gettext
+  use Gettext, backend: CambiatusWeb.Gettext
 
   use Phoenix.Swoosh, view: CambiatusWeb.EmailView
 

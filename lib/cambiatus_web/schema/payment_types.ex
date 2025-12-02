@@ -11,10 +11,6 @@ defmodule CambiatusWeb.Schema.PaymentTypes do
   alias CambiatusWeb.Resolvers.Payment, as: PaymentResolver
   alias CambiatusWeb.Schema.Middleware
 
-  @desc "Queries to payment stuff, like Paypal and crypto processing"
-  object :payment_queries do
-  end
-
   object :payment_mutations do
     @desc "[Auth required] Create a new contribution"
     field(:contribution, :contribution) do

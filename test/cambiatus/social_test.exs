@@ -180,12 +180,14 @@ defmodule Cambiatus.SocialTest do
 
       response = Social.get_news_reactions(news.id)
 
-      assert response == [
-               %{reaction: :red_heart, count: 4},
-               %{reaction: :rocket, count: 2},
-               %{reaction: :thumbs_down, count: 1},
-               %{reaction: :thumbs_up, count: 2}
-             ]
+      assert response ==
+               [
+                 %{reaction: :red_heart, count: 4},
+                 %{reaction: :rocket, count: 2},
+                 %{reaction: :thumbs_down, count: 1},
+                 %{reaction: :thumbs_up, count: 2}
+               ]
+               |> Enum.sort_by(fn %{reaction: reaction} -> reaction end)
     end
 
     test "returns an empty list if news has no reactions" do
@@ -212,11 +214,13 @@ defmodule Cambiatus.SocialTest do
 
       response = Social.get_news_reactions(news.id)
 
-      assert response == [
-               %{reaction: :red_heart, count: 2},
-               %{reaction: :rocket, count: 1},
-               %{reaction: :thumbs_up, count: 1}
-             ]
+      assert response ==
+               [
+                 %{reaction: :red_heart, count: 2},
+                 %{reaction: :rocket, count: 1},
+                 %{reaction: :thumbs_up, count: 1}
+               ]
+               |> Enum.sort_by(fn %{reaction: reaction} -> reaction end)
     end
   end
 
@@ -246,7 +250,12 @@ defmodule Cambiatus.SocialTest do
       community = insert(:community, has_news: true, creator: user.account)
 
       news =
-        insert(:news, title: "Title", description: "Description", community: community, user: user)
+        insert(:news,
+          title: "Title",
+          description: "Description",
+          community: community,
+          user: user
+        )
 
       news_params = %{
         title: "Updated title",

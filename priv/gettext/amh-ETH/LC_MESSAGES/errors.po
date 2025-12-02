@@ -9,4 +9,4 @@
 msgid ""
 msgstr ""
 "Language: amh-ETH\n"
-"Plural-Forms: nplurals=2\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"

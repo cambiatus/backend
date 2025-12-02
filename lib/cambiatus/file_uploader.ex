@@ -16,9 +16,6 @@ defmodule Cambiatus.FileUploader do
     case @s3_client.request(operation) do
       {:ok, _} ->
         {:ok, "https://#{bucket_name}.s3.amazonaws.com/#{bucket_name}/#{file_uuid}"}
-
-      {:error, err} ->
-        {:error, err}
     end
   end
 

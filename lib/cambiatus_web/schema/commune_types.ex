@@ -264,7 +264,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
     # Shop
     field(:orders, non_null(list_of(non_null(:order))), resolve: dataloader(Cambiatus.Shop))
 
-    field(:categories, non_null(list_of(non_null(:category))), resolve: dataloader(Cambiatus.Shop))
+    field(:categories, non_null(list_of(non_null(:category))),
+      resolve: dataloader(Cambiatus.Shop)
+    )
 
     field(:contacts, non_null(list_of(non_null(:contact))),
       resolve: dataloader(Cambiatus.Accounts)
@@ -366,7 +368,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
 
     value(:claim, description: "Role permission that allows to claim actions")
 
-    value(:order, description: "Role permission that allows to create orders to buy from the shop")
+    value(:order,
+      description: "Role permission that allows to create orders to buy from the shop"
+    )
 
     value(:verify, description: "Role permission that allows to verify claims")
 
@@ -374,7 +378,9 @@ defmodule CambiatusWeb.Schema.CommuneTypes do
       description: "Role permission that allows to sell products and services in the community"
     )
 
-    value(:award, description: "Role permission that allows to award rewards on community actions")
+    value(:award,
+      description: "Role permission that allows to award rewards on community actions"
+    )
 
     value(:transfer,
       description: "Role permission that allows users to transfer tokens on their community"

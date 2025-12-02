@@ -156,8 +156,8 @@ defmodule Cambiatus.Shop do
     query =
       from(o in Order,
         join: p in Product,
+        on: p.id == o.product_id,
         where: p.community_id == ^community_id,
-        where: p.id == o.product_id,
         select: count(o.id)
       )
 

@@ -41,8 +41,7 @@ config :sentry,
   tags: %{
     env: "production",
     url: System.get_env("HOSTNAME")
-  },
-  included_environments: [:prod]
+  }
 
 # ## SSL Support
 #

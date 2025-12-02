@@ -7,9 +7,9 @@ defmodule Cambiatus.Repo.Migrations.CommunityContacts do
         :community_id,
         references(:communities,
           column: :symbol,
-          type: :string,
-          comment: "Reference to the community this contact belongs to."
-        )
+          type: :string
+        ),
+        comment: "Reference to the community this contact belongs to."
       )
 
       add(:label, :text,

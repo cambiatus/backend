@@ -17,8 +17,8 @@ defmodule Cambiatus.Repo.Migrations.Contributions do
           "ID representing the contribution. Its an UUID to make sure its unique across our envs"
       )
 
-      add(:community_id, references(:communities, column: :symbol, type: :string, null: false))
-      add(:user_id, references(:users, column: :account, type: :string, null: false))
+      add(:community_id, references(:communities, column: :symbol, type: :string), null: false)
+      add(:user_id, references(:users, column: :account, type: :string), null: false)
 
       add(:amount, :float,
         null: false,

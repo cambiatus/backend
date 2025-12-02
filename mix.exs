@@ -5,13 +5,14 @@ defmodule Cambiatus.Mixfile do
     [
       app: :cambiatus,
       version: "2.0.0",
-      elixir: "~> 1.11",
+      elixir: "~> 1.18",
       elixirc_paths: elixirc_paths(Mix.env()),
-      compilers: [:phoenix] ++ Mix.compilers(),
+      compilers: Mix.compilers(),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
       deps: deps(),
-      releases: releases()
+      releases: releases(),
+      elixirc_options: [no_gradual_types: false]
     ]
   end
 
@@ -29,42 +30,43 @@ defmodule Cambiatus.Mixfile do
     [
       # Basic packages
       {:calendar, "~> 1.0.0", override: true},
-      {:ecto_sql, "~> 3.5"},
+      {:ecto_sql, "~> 3.12"},
       {:postgrex, ">= 0.0.0"},
-      {:gettext, "~> 0.20.0"},
+      {:gettext, "~> 0.26.0"},
       {:cowboy, "~> 2.0"},
-      {:tesla, "~> 1.2.1"},
-      {:jason, "~> 1.2.0"},
-      {:cors_plug, "~> 1.5"},
+      {:tesla, "~> 1.3"},
+      {:jason, "~> 1.4"},
+      {:cors_plug, "~> 3.0"},
       {:poolboy, ">= 0.0.0"},
-      {:timex, "~> 3.4"},
+      {:timex, "~> 3.7"},
       {:poison, "~> 3.0"},
-      {:hackney,
-       github: "benoitc/hackney", override: true, ref: "d8a0d979b9bdb916fe090bf1d5b076e35c2efc33"},
+      {:hackney, "~> 1.24"},
       {:uuid, "~> 1.1"},
       {:magic_number, "~> 0.0.4"},
       {:mogrify, "~> 0.8.0"},
+      {:ssl_verify_fun, "~> 1.1.7", manager: :rebar3, override: true},
 
       # Formatters
       {:ex_phone_number, "~> 0.2"},
       {:number, "~> 1.0"},
       {:earmark, "~> 1.4"},
       {:html_sanitize_ex, "~> 1.4"},
-      {:ex_cldr, "~> 2.33"},
-      {:ex_cldr_dates_times, "~> 2.12"},
+      {:ex_cldr, "~> 2.40"},
+      {:ex_cldr_dates_times, "~> 2.19"},
 
       # Email capabilities
-      {:swoosh, "~> 1.7.3"},
-      {:phoenix_swoosh, "~> 0.3"},
-      {:gen_smtp, "~> 1.2"},
+      {:swoosh, "~> 1.19"},
+      {:phoenix_swoosh, "~> 1.2"},
 
       # Phoenix
-      {:phoenix, "~> 1.5.13"},
-      {:phoenix_pubsub, "~> 2.0"},
-      {:phoenix_ecto, "~> 4.0"},
+      {:phoenix, "~> 1.7.0"},
+      {:phoenix_pubsub, "~> 2.1"},
+      {:phoenix_ecto, "~> 4.6"},
+      {:phoenix_html, "~> 4.0"},
+      {:plug_cowboy, "~> 2.0"},
 
       # Absinthe Packages
-      {:absinthe, "~> 1.6"},
+      {:absinthe, "~> 1.7"},
       {:absinthe_plug, "~> 1.5.0"},
       {:absinthe_phoenix, "~> 2.0"},
       {:absinthe_relay, "~> 1.5.0"},
@@ -76,28 +78,27 @@ defmodule Cambiatus.Mixfile do
       {:eosjs_auth_wrapper, "~> 0.1.7"},
 
       # Sentry
-      {:sentry, "8.0.0"},
-      {:plug_cowboy, "~> 2.3"},
+      {:sentry, "~> 10.0"},
 
       # AWS Packages
-      {:ex_aws, "~> 2.2.1"},
-      {:ex_aws_s3, "~> 2.1"},
+      {:ex_aws, "~> 2.5"},
+      {:ex_aws_s3, "~> 2.5"},
       {:configparser_ex, "~> 4.0"},
 
       # Push Notification Packages
       {:web_push_encryption, "~> 0.3.1"},
 
       # Background processing
-      {:oban, "~> 2.10.1"},
+      {:oban, "~> 2.18"},
 
       # Dev only
-      {:credo, "~> 1.5", only: [:dev, :test], runtime: false},
-      {:sobelow, "~> 0.11.1", only: :dev},
+      {:credo, "~> 1.7", only: [:dev, :test], runtime: false},
+      {:sobelow, "~> 0.13", only: :dev},
 
       # Test Only
-      {:ex_machina, "~> 2.3", only: :test},
-      {:faker, "~> 0.14", only: :test},
-      {:mox, "~> 0.5.0", only: :test}
+      {:ex_machina, "~> 2.8", only: :test},
+      {:faker, "~> 0.18", only: :test},
+      {:mox, "~> 1.1", only: :test}
     ]
   end
 

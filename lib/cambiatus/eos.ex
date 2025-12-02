@@ -27,24 +27,6 @@ defmodule Cambiatus.Eos do
     |> case do
       {:ok, _res} ->
         :ok
-
-      # wallet already unlocked
-      {:error, %{body: %{"error" => %{"code" => 3_120_007}}}} ->
-        :ok
-
-      {:error, :econnrefused} ->
-        Sentry.capture_message("Can't reach wallet via http",
-          extra: %{wallet_name: cambiatus_wallet()}
-        )
-
-        :error
-
-      {:error, error} ->
-        Sentry.capture_message("Something went wrong while unlocking wallet",
-          extra: %{error: error}
-        )
-
-        :error
     end
   end
 
@@ -53,22 +35,10 @@ defmodule Cambiatus.Eos do
           | {:error, :account_already_exists | :blockchain_unaccessible | :wallet_error}
   def create_account(public_key, account \\ random_eos_account()) do
     case @eosrpc_chain.get_account(account) do
-      {:ok, _} ->
-        {:error, :account_already_exists}
-
-      {:error, :nxdomain} ->
-        {:error, :blockchain_unacessible}
-
-      {:error, :econnrefused} ->
-        {:error, :blockchain_unacessible}
-
       {:error, _} ->
         case unlock_wallet() do
           :ok ->
             push_create_account_transaction(account, public_key, public_key)
-
-          :error ->
-            {:error, :wallet_error}
         end
     end
   end
@@ -79,9 +49,6 @@ defmodule Cambiatus.Eos do
     |> case do
       {:ok, %{body: %{"transaction_id" => trx_id}}} ->
         {:ok, %{transaction_id: trx_id, account: account_name}}
-
-      {:error, %{body: %{"error" => error}}} ->
-        {:error, error}
 
       unhandled_reply ->
         {:error, unhandled_reply}
@@ -115,9 +82,6 @@ defmodule Cambiatus.Eos do
       {:ok, %{body: %{"transaction_id" => trx_id}}} ->
         {:ok, %{transaction_id: trx_id}}
 
-      {:error, %{body: %{"error" => error}}} ->
-        {:error, error}
-
       unhandled_reply ->
         {:error, unhandled_reply}
     end
@@ -143,9 +107,6 @@ defmodule Cambiatus.Eos do
     case response do
       {:ok, %{"transaction_id" => trx_id}} ->
         %{transaction_id: trx_id}
-
-      {:error, %{body: %{"error" => error}}} ->
-        {:error, error}
 
       unhandled_reply ->
         {:error, unhandled_reply}
@@ -194,7 +155,7 @@ defmodule Cambiatus.Eos do
   @spec parse_symbol(binary) :: {float, binary}
   def parse_symbol(asset) do
     {amount, symbol} = Float.parse(asset)
-    symbol = String.slice(symbol, 1..-1)
+    symbol = String.slice(symbol, 1..-1//1)
 
     {amount, symbol}
   end

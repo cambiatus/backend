@@ -65,17 +65,23 @@ defmodule Cambiatus.ShopTest do
 
     test "list_categories/0 returns all categories" do
       category = insert(:category)
-      assert Shop.list_categories() == [category]
+      fetched = Shop.list_categories()
+      assert length(fetched) == 1
+      assert Enum.at(fetched, 0).id == category.id
     end
 
     test "get_category!/1 returns the category with given id" do
       category = insert(:category)
-      assert Shop.get_category!(category.id) == category
+      fetched = Shop.get_category!(category.id)
+      assert fetched.id == category.id
+      assert fetched.name == category.name
     end
 
     test "get_category/1 returns the category with given id" do
       category = insert(:category)
-      assert Shop.get_category!(category.id) == category
+      fetched = Shop.get_category!(category.id)
+      assert fetched.id == category.id
+      assert fetched.name == category.name
     end
 
     test "create_category/1 with valid data creates a category", %{community: community} do
@@ -101,7 +107,7 @@ defmodule Cambiatus.ShopTest do
     test "create_category/1 with existing subcategory" do
       community = insert(:community)
       ExMachina.Sequence.reset("position")
-      sub_category = insert(:category, %{community_id: community.symbol})
+      sub_category = insert(:category, %{community: community})
 
       params =
         params_for(:category, %{
@@ -134,13 +140,15 @@ defmodule Cambiatus.ShopTest do
       params = Map.merge(@invalid_attrs, %{community_id: community.symbol})
 
       assert {:error, %Ecto.Changeset{}} = Shop.update_category(category, params)
-      assert category == Shop.get_category!(category.id)
+      fetched = Shop.get_category!(category.id)
+      assert fetched.id == category.id
+      assert fetched.name == category.name
     end
 
     test "delete_category/1 deletes the category if the user is an admin" do
       admin = insert(:user)
       community = insert(:community, creator: admin.account)
-      category = insert(:category, community_id: community.symbol)
+      category = insert(:category, community: community)
 
       assert {:ok, "Category deleted successfully"} =
                Shop.delete_category(category.id, admin, community.symbol)
@@ -178,12 +186,13 @@ defmodule Cambiatus.ShopTest do
     end
 
     test "change_category/1 returns a category changeset", %{community: community} do
-      category = insert(:category, community_id: community.symbol)
+      category = insert(:category, community: community)
       assert %Ecto.Changeset{} = Shop.change_category(category)
     end
 
     test "Adds subcategories to existing categories", %{community: community} do
-      category = insert(:category, %{name: "Tree 🌳", community_id: community.symbol})
+      category =
+        insert(:category, %{name: "Tree 🌳", community: community})
 
       params =
         params_for(:category, %{
