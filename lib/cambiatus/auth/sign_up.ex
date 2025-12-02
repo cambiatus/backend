@@ -155,9 +155,6 @@ defmodule Cambiatus.Auth.SignUp do
       {:ok, _} ->
         params
 
-      {:error, :account_already_exists} ->
-        {:error, :account_already_exists}
-
       other_error ->
         Sentry.capture_message("Error creating account on EOS", extra: other_error)
         {:error, :eos_account_creation_failed}
@@ -227,10 +224,6 @@ defmodule Cambiatus.Auth.SignUp do
     case @contract.netlink(account, invitation.creator_id, invitation.community_id, user_type) do
       {:ok, %{transaction_id: _txid}} ->
         params
-
-      {:error, details} ->
-        Sentry.capture_message("Error during netlink", extra: details)
-        {:error, :netlink_failed}
 
       _ ->
         {:error, :netlink_failed}
