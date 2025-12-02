@@ -2,9 +2,9 @@ name: Elixir CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   test:
@@ -12,13 +12,13 @@ jobs:
     runs-on: ubuntu-22.04
     strategy:
       matrix:
-        otp: ['24.2']
-        elixir: ['1.14.2']
+        otp: ["28.0.0"]
+        elixir: ["1.18.4"]
 
     services:
       db:
         image: postgres
-        ports: ['5432:5432']
+        ports: ["5432:5432"]
         env:
           POSTGRES_PASSWORD: postgres
         options: >-
@@ -31,13 +31,12 @@ jobs:
       - uses: actions/checkout@v2
       - uses: erlef/setup-beam@v1
         with:
-          otp-version: '24.2'
-          elixir-version: '1.14.2'
+          otp-version: "28.0.0"
+          elixir-version: "1.18.4"
 
       - run: sudo apt -y install exiftool
       - run: mix deps.get
-      - run: mix format --check-formatted    
+      - run: mix format --check-formatted
       - run: mix do format --check-formatted, credo --strict --only warning
-      - run: mix sobelow --config 
+      - run: mix sobelow --config
       - run: mix test
-
