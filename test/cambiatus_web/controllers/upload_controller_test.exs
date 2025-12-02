@@ -104,8 +104,11 @@ defmodule CambiatusWeb.UploadControllerTest do
       "MIMEType",
       "Megapixels",
       "Orientation",
+      "ResolutionUnit",
       "SourceFile",
-      "YCbCrPositioning"
+      "XResolution",
+      "YCbCrPositioning",
+      "YResolution"
     ]
   end
 end
